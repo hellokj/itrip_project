@@ -1,7 +1,18 @@
 const express = require('express');
-
 const app = express();
+const config = require('./config');
+const router = require('./routes');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-app.listen(3000, () => {
-    console.log('listening on ' + 3000);
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:false}));
+app.use('/api', router);
+
+mongoose.connect(config.mongodb).then(() => {
+    app.listen(config.port, ()=> {
+        console.log('listening on ' + config.port);
+    });
+}).catch((err) => {
+    console.log(err);
+})
