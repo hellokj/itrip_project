@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "ssh": "ssh ryanchen34057@34.66.1.37 -p 22 -i \"./.ssh/id_rsa\"",
+    "ssh": "ssh ryanchen34057@35.194.247.229 -p 22 -i \"./.ssh/id_rsa\"",
     "start": "node index.js"
   },
   "repository": {
@@ -17,6 +17,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/ryanchen34057/itrip_project#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.6.1"
   }
 }
