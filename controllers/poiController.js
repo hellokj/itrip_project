@@ -1,10 +1,11 @@
-const Place = require('../models/poiBank');
+const Place = require('../models/place');
 
-const getAllPlaces = (req, res, next) => {
-    
-    res.json({status: -1, msg: "Success"})
+const getPlaceByCity = async(req, res, next) => {
+    let city = req.params.city;
+    let places = await Place.findByCity(city).limit(10);
+    res.json({status: -1, msg: places});
 }
 
 module.exports = {
-    getAllPlaces
+    getPlaceByCity
 }

@@ -9,7 +9,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use('/api', router);
 
-mongoose.connect(config.mongodb).then(() => {
+mongoose.connect(config.mongodb,{
+    useNewUrlParser: true }).then(() => {
     app.listen(config.port, ()=> {
         console.log('listening on ' + config.port);
     });
