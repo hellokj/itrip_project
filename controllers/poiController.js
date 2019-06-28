@@ -1,9 +1,11 @@
 const Place = require('../models/place');
+const NilChecker = require('../utils/nilChecker');
 
 const getPlaceByCity = async(req, res, next) => {
-    let city = req.params.city;
-    let places = await Place.findByCity(city).limit(10);
-    res.json({status: -1, msg: places});
+    let place = req.query.place;
+    let places = await Place.findByPlace(place).limit(10);
+    console.log(places)
+    res.json({status: -1, msg: 'success'});
 }
 
 module.exports = {

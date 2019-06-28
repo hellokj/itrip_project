@@ -20,9 +20,9 @@ const placeSchema = new Schema({
 );
 
 // 靜態方法 => 通常多用在搜尋Table裡的內容
-placeSchema.statics.findByCity = function(city) {
-    return this.find({"address.city": city});
-}   
-
+placeSchema.statics.findByPlace = function(place) {
+    return this.find({$or:[{"address.city": place}, {"address.state": place}, 
+    {"address.county": place}, {"address.suburb": place}, {"address.town": place}]}).sort({checkins: -1});
+}
 
 module.exports = mongoose.model('Place', placeSchema);
