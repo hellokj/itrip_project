@@ -20,12 +20,12 @@ const placeSchema = new Schema({
 );
 
 // 靜態方法 => 通常多用在搜尋Table裡的內容
-placeSchema.statics.getPlaces = function(place, category) {
-    if(category == undefined) {
+placeSchema.statics.getPlaces = function(place, category, name) {
+    if(name != undefined) {
         return this.find({$or:[{"address.city": place}, {"address.state": place}, 
                         {"address.county": place}, {"address.suburb": place}, {"address.town": place}]}).sort({checkins: -1});
     }
-    else {
+    else if(category != undefined){
         return this.find({$or:[{"address.city": place}, {"address.state": place}, 
                         {"address.county": place}, {"address.suburb": place}, {"address.town": place}], category: category}).sort({checkins: -1});
     }
