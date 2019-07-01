@@ -4,8 +4,8 @@ const NilChecker = (body, num, params) => {
         return true;
     }
     i = 0
-    for(let key in a_list) {
-        if(!params.includes(key)){
+    for(let n in a_list) {
+        if(!params.includes(a_list[n])){
             i++;
         }
     }

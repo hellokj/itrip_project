@@ -4,6 +4,7 @@ const router = express.Router();
 
 const poiController = require('../controllers/poiController');
 
-router.get('/get', poiController.getPlaces);
+router.get('/get', poiController.getSpots);
+router.get('/getNearby', poiController.getNearbySpots);
 
 module.exports = router;
