@@ -20,6 +20,8 @@ const spotSchema = new Schema({
 }
 );
 
+spotSchema.indexes({location: '2dsphere'});
+
 // 靜態方法 => 通常多用在搜尋Table裡的內容
 spotSchema.statics.getSpots = function(place, category, name, sortBy) {
     if(name != undefined) {
@@ -36,13 +38,27 @@ spotSchema.statics.getSpots = function(place, category, name, sortBy) {
 }
 
 spotSchema.statics.get = function(name) {
-    spot = this.find({name:{$regex:name,$options:"$i"}});
+    let spot = this.find({name:{$regex:name,$options:"$i"}});
     return spot;
 }
 
-spotSchema.statics.getNearby = function(region, location) {
-    nearbySpots = this.find({$or:[{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]});
-    return nearbySpots;
+spotSchema.statics.getNearby = function(location, distance) {
+    let x = this.aggregate([{
+          $geoNear: {
+             near: { 
+               type: "Point",
+               coordinates: [parseFloat(location['lon']), parseFloat(location['lat'])]
+             },
+             distanceField: "dist.calculated",
+             maxDistance: distance,
+             spherical: true
+          }
+        }
+       ]).
+       then(function (res) {
+         return res;  
+       });  
+    return x;
 }
 
 module.exports = mongoose.model('Spot', spotSchema);

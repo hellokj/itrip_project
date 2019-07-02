@@ -1,7 +1,6 @@
 const Spot = require('../models/spot');
 const NilChecker = require('../utils/nilChecker');
 const FieldChecker = require('../utils/fieldChecker');
-const Geo = require('geo-nearby');
 
 const getSpots = async(req, res, next) => {
     let spot = req.query.spot;
@@ -19,23 +18,23 @@ const getSpots = async(req, res, next) => {
 const getNearbySpots = async(req, res, next) => {
     // get spot's address from req and get region name
     let name = req.query.name;
+    let distance = req.query.distance;
     let spot = (await Spot.get(name))[0];
     let region = FieldChecker(spot.address, ['town', 'state_district', 'suburb']);
     if(region == null) {
         res.json({status: 400, msg: 'BAD REQUEST'});
         return;
     }
-    // get all spots in region
-    let nearby = await Spot.getNearby(region);
 
-    // get origin lat and lon
-    let origin_lat = spot.location.lat;
-    let origin_lon = spot.location.lon;
-    
-    const dataSet = Geo.createCompactSet(nearby, {id: '_id', lat: ['location', 'lat'], lon: ['location', 'lon']});
-    const geo = new Geo(dataSet, {sorted: true });
- 
-    console.log(geo.nearBy(origin_lat, origin_lon, 5000));
+    // get origin lon and lat
+    let origin_lon = spot.location.coordinates[0];
+    let origin_lat = spot.location.coordinates[1];
+
+    let loc = {lon: origin_lon, lat: origin_lat};
+    let nearby = await Spot.getNearby(loc, distance);
+
+    console.log(nearby);
+
     //console.log(nearby);
     res.json({status: -1, msg: 'success'});
 }
