@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const CheckSortBy = require('../utils/checkSortBy');
 const Schema = mongoose.Schema;
 
-//姓名 電話 密碼 性別(數字) 職業
+//Spot schema
 const spotSchema = new Schema({
     _id: String,
     name: String,
@@ -19,29 +20,36 @@ const spotSchema = new Schema({
     collection: 'Places_from_fb'
 }
 );
+const Place_query = (place) => {
+    return [{"address.city": place}, {"address.state": place}, 
+    {"address.county": place}, {"address.suburb": place}, {"address.town": place}, {"address.state_district": place}];
+}
 
+// create 2dsphere index. NEEDED for MongoDB built-in sort-by-distance functionality
 spotSchema.indexes({location: '2dsphere'});
 
-// 靜態方法 => 通常多用在搜尋Table裡的內容
+// sortBy => checkins, ig_post_num
 spotSchema.statics.getSpots = function(place, category, name, sortBy) {
     if(name != undefined) {
         return this.find({$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]}).sort({checkins: -1}).limit(10);
     }
     else if(category != undefined){
-        return this.find({$or:[{"address.city": place}, {"address.state": place}, 
-                        {"address.county": place}, {"address.suburb": place}, {"address.town": place}, {"address.state_district": place}], category: category}).sort({sortBy: -1}).limit(10);
+        return CheckSortBy(this, {$or: Place_query(place), category: category}, sortBy);
     }
     else {
-        return this.find({$or:[{"address.city": place}, {"address.state": place}, 
-                        {"address.county": place}, {"address.suburb": place}, {"address.town": place}, {"address.state_district": place}]}).sort({sortBy: -1}).limit(10);
+        // return this.find({$or:[{"address.city": place}, {"address.state": place}, 
+        //                 {"address.county": place}, {"address.suburb": place}, {"address.town": place}, {"address.state_district": place}]}).sort({checkins: -1}).limit(10);
+        return CheckSortBy(this, {$or: Place_query(place)}, sortBy);
     }
 }
 
-spotSchema.statics.get = function(name) {
-    let spot = this.find({name:{$regex:name,$options:"$i"}});
+// get spot info by its name
+spotSchema.statics.get = function(_id) {
+    let spot = this.find({_id:_id});
     return spot;
 }
 
+// get nearby places sort by distance
 spotSchema.statics.getNearby = function(location, distance) {
     let x = this.aggregate([{
           $geoNear: {

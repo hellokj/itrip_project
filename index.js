@@ -1,17 +1,18 @@
 const express = require('express');
 const app = express();
+
+// CORS: 前後端整合時需要: https://developer.mozilla.org/zh-TW/docs/Web/HTTP/CORS
+// 在需要請求不同網域資源時要使用，express預設是禁止非同源的請求
+const cors = require('cors');
+
 const config = require('./config');
 const router = require('./routes');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next()
-})
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
+app.use(cors());
 app.use('/api', router);
 
 mongoose.connect(config.mongodb,{
