@@ -20,6 +20,7 @@ const spotSchema = new Schema({
     collection: 'Places_from_fb'
 }
 );
+// query for place search => shortening
 const Place_query = (place) => {
     return [{"address.city": place}, {"address.state": place}, 
     {"address.county": place}, {"address.suburb": place}, {"address.town": place}, {"address.state_district": place}];
@@ -43,7 +44,7 @@ spotSchema.statics.getSpots = function(place, category, name, sortBy) {
     }
 }
 
-// get spot info by its name
+// get spot info by its id
 spotSchema.statics.get = function(_id) {
     let spot = this.find({_id:_id});
     return spot;
