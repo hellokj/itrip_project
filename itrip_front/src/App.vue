@@ -1,20 +1,59 @@
 <template>
   <div id="app">
+    <Header v-on:search-click="Search"/>
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+
     </div>
-    <router-view/>
+    <router-view v-bind:region="region" v-bind:type="type"/>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<script>
+import Header from './components/layout/Header'
+
+
+export default {
+  name:'app',
+  components: {
+    Header
+  },
+  data() {
+    return {
+      togos: [],
+      region: '',
+      type: ''
+    }
+  },
+  methods: {
+    Search(t, r) {
+      this.region = r;
+      this.type = t;
+      alert(this.region+", "+this.type);
+    }
+  }
 }
+</script>
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .btn {
+    display: inline-block;
+    border: none;
+    background: #555;
+    color:#fff;
+    padding: 7px 20px;
+    cursor: pointer;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.4;
+  }
+
+
 </style>
