@@ -42,7 +42,7 @@ export default {
       return {
         selected_type: '',
         selected_region: '',
-        regions: ['台北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '台東縣', '桃園市', '新竹縣' ,'苗栗縣', '台中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '台南市', '高雄市', '屏東縣'],
+        regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣'],
         types: ['美食', '購物', '景點', '交通', '住宿', '娛樂']
       }
     },
@@ -69,6 +69,7 @@ export default {
         background: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%);
         height: 80px;
         display: flex;
+
         justify-content: flex-start;
         flex-grow: 3;
     }
@@ -76,7 +77,7 @@ export default {
     .btns {
         flex-grow: 5;
         display: flex;
-        flex-wrap:nowrap;
+        flex-wrap:wrap;
         align-items: center;
         justify-content: flex-end;
 

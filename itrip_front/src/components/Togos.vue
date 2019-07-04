@@ -9,10 +9,6 @@
         <p class="pTripDate  mx-0 my-0 px-0 py-0">開始日期</p>
         <input class="inputTripDate" type="date">
       </div>
-      <div class="tripDate">
-        <p class="pTripDate  mx-0 my-0 px-0 py-0">結束日期</p>
-        <input class="inputTripDate" type="date">
-      </div>
     </div>
     <div>
       <b-tabs content-class="mt-3">
