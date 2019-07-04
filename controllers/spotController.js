@@ -1,6 +1,8 @@
 const Spot = require('../models/spot');
 const NilChecker = require('../utils/nilChecker');
 const FieldChecker = require('../utils/fieldChecker');
+const Response = require('../utils/responseHandler');
+const errorHandler = require('../utils/errorHandler');
 
 
 const getSpots = async(req, res, next) => {
@@ -8,23 +10,23 @@ const getSpots = async(req, res, next) => {
     let category = req.query.category;
     let name = req.query.name;
     let sortBy = req.query.sortBy;
-    if(NilChecker(req.query, 4, ['category', 'name', 'sortBy'])) {
-        res.json({status: 400, msg: 'BAD REQUEST'})
+    if(NilChecker(req.query, 4, ['category', 'name'])) {
+        Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
         return;
     }
     
     let spots = await Spot.getSpots(place, category, name, sortBy);
-    res.json({status: 200, msg: 'success', data: spots});
+    Response(null, spots, res);
 }
 
 const getNearbySpots = async(req, res, next) => {
     // get spot's address from req and get region name
     let _id = req.query.id;
     let distance = req.query.distance;
-    let spot = (await Spot.get(_id))[0];
+    let spot = (await Spot.get(_id));
     let region = FieldChecker(spot.address, ['town', 'state_district', 'suburb']);
     if(region == null) {
-        res.json({status: 400, msg: 'BAD REQUEST'});
+        Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
         return;
     }
 
@@ -37,7 +39,7 @@ const getNearbySpots = async(req, res, next) => {
 
     //console.log(nearby);
     nearby.shift()
-    res.json({status: 200, msg: 'success', data: nearby});
+    Response(null, nearby, res);
 }
 
 module.exports = {

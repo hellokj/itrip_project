@@ -46,7 +46,7 @@ spotSchema.statics.getSpots = function(place, category, name, sortBy) {
 
 // get spot info by its id
 spotSchema.statics.get = function(_id) {
-    let spot = this.find({_id:_id});
+    let spot = this.findOne({_id:_id});
     return spot;
 }
 

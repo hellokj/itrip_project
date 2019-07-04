@@ -4,17 +4,19 @@ const NilChecker = (body, num, params) => {
         return true;
     }
     i = 0
-    for(let n in a_list) {
-        if(!params.includes(a_list[n])){
+    for(let j=0;j<a_list.length;j++) {
+        if(!params.includes(a_list[j])){
             i++;
         }
     }
+    
     if(i == num - params.length) {
         return false;
     }
     else {
         return true;
     }
+    
 }
 
 module.exports = NilChecker
