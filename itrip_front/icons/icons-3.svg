@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="45" height="61.902" viewBox="0 0 45 61.902">
+  <g id="icons" transform="translate(-12.208 -6.956)">
+    <g id="Group_60" data-name="Group 60">
+      <g id="Layer_3" data-name="Layer 3" transform="translate(12.208 6.956)">
+        <path id="Path_36" data-name="Path 36" d="M24.028,9.414a19.585,19.585,0,0,0-9.384,9.511,23.124,23.124,0,0,0,2.087,24.068L34.755,68.858,52.761,42.993A22.38,22.38,0,0,0,57.208,29.47C57.208,13.57,40.872,1.591,24.028,9.414ZM35.064,37a8.186,8.186,0,1,1,8.168-8.186A8.186,8.186,0,0,1,35.064,37Z" transform="translate(-12.208 -6.956)" fill="#e87f7e"/>
+      </g>
+      <circle id="Ellipse_10" data-name="Ellipse 10" cx="17.5" cy="17.5" r="17.5" transform="translate(17.208 10.754)" fill="#fff"/>
+      <text id="_3" data-name="3" transform="translate(29.208 34.754)" fill="#565656" font-size="20" font-family="SegoeUI, Segoe UI"><tspan x="0" y="0">3</tspan></text>
+    </g>
+  </g>
+</svg>
