@@ -1,8 +1,8 @@
-const config = require('../config');
+// const config = require('../config');
 
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
-// // const User = require('../models/user');
+// const User = require('../models/user');
 
 // const getToken = (req, res) => {
 //     URLSearchParams.findOne({name: req.body.name}, (err, user) => {

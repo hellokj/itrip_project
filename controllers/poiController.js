@@ -14,7 +14,7 @@ const getSpots = async(req, res, next) => {
     }
     
     let spots = await Spot.getSpots(place, category, name, sortBy);
-    res.json({status: -1, msg: 'success', data: spots});
+    res.json({status: 200, msg: 'success', data: spots});
 }
 
 const getNearbySpots = async(req, res, next) => {
@@ -37,7 +37,7 @@ const getNearbySpots = async(req, res, next) => {
 
     //console.log(nearby);
     nearby.shift()
-    res.json({status: -1, msg: 'success', data: nearby});
+    res.json({status: 200, msg: 'success', data: nearby});
 }
 
 module.exports = {
