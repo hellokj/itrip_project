@@ -84,10 +84,32 @@ export default {
   watch: {
     region: function(newVal, oldVal) {
       console.log('Prop hanged: ', newVal, '| was: ', oldVal);
-      axios.get('http://35.194.247.229:3000/api/poi/get?place='+ newVal +'&sortBy=checkins')
-      // axios.get('https://jsonplaceholder.typicode.com/todos')
-      .then(res => this.spots = res.data.data)
-      .catch(err => console.log(err));
+      //place, category, name, sortBy, page, limit, order
+      // axios.get('http://35.194.247.229:3000/api/poi/get?place='+ newVal +'&sortBy=checkins')
+      // .then(res => this.spots = res.data.data)
+      // .catch(err => console.log(err));
+
+      axios.get('http://35.194.247.229:3000/api/poi/get', {
+        params: {
+          place: newVal,
+          category: "gourmet",
+          sortBy: "checkins",
+          page: 1,
+          limit: 10,
+          order: -1
+        }
+      })
+      .then(function (res) {
+        this.spots = res.data.data
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+
     }
   }
 }
