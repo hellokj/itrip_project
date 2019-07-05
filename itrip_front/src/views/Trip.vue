@@ -1,6 +1,6 @@
 <template>
   <div  class="trip">
-    <Togos v-bind:togos="togos" v-on:del-togo="deleteTogo" />
+    <Togos v-bind:togos="togos" v-bind:page="page" v-on:del-togo="deleteTogo" v-on:change-page="changePage" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
@@ -29,7 +29,8 @@ export default {
       Region: '',
       Type: '',
       Open: '>',
-      Close: '<'
+      Close: '<',
+      page: 0
     }
   },
   methods: {
@@ -37,11 +38,38 @@ export default {
       this.togos = this.togos.filter(togo => togo._id !== _id);
     },
     AddFakeSpot(){
-      let s = {name: 'text1', location:{coordinates:[1.001, 2.002]}};
+      let s = {name: 'text1'};
       this.spots.push(s);
     },
     addSpotToTrip(spot) {
-      this.togos = [...this.togos, spot];
+      // this.togos = [...this.togos, spot];
+      
+      if (this.togos[this.page] !== undefined){
+        this.togos[this.page].push(spot);
+      } else {
+
+        for (var i = 0; i <= this.page; i++){
+          if (this.togos[i] === undefined){
+            let arr = [];
+            this.togos.push(arr);
+          }
+        }
+        
+        this.togos[this.page].push(spot);
+      }
+
+      // let arr = [];
+      // arr.push(spot);
+      // alert(arr);
+      // this.togos.push(arr);
+      alert(this.togos[this.page]);
+
+
+
+    },
+    changePage(p) {
+      this.page = p;
+      alert("app.vue: page=" + p);
     }
   },
   created() {

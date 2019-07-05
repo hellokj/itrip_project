@@ -26,10 +26,20 @@ export default {
   },
   methods: {
     Search(t, r) {
-      this.region = r;
+      let r_length = r.length;
+      let _r = '';
+      if (r.charAt(0) === "台"){
+        _r = _r.concat("臺", r.slice(1, r_length));
+      } else {
+        _r = r;
+      }
+      this.region = _r;
       this.type = t;
       alert(this.region+", "+this.type);
     }
+  },
+  created() {
+    
   }
 }
 </script>

@@ -6,14 +6,14 @@
         <div class="btns">
             <!-- Select Type -->
             <div>
-                <b-form-input ref="type" @click="selectTypeText()" v-model="selected_type" @keyup.enter="$emit('search-click', selected_type, selected_region)" class="input_type" list="my-list-id1"></b-form-input>
+                <b-form-input ref="type" @click="selectTypeText()" v-model="selected_type" @keyup.enter="$emit('search-click', selected_type, selected_region)" class="input_type" placeholder="雙心石滬" list="my-list-id1"></b-form-input>
                 <datalist id="my-list-id1">
                     <!-- Change types -->
                     <option v-bind:key="type" v-for="type in types">{{ type }}</option>
                 </datalist>
             </div>
             <div>
-                <b-form-input ref="region" @click="selectRegionText()"  @keyup.enter="$emit('search-click', selected_type, selected_region)" v-model="selected_region" class="input_region" list="my-list-id2"></b-form-input>
+                <b-form-input ref="region" @click="selectRegionText()"  @keyup.enter="$emit('search-click', selected_type, selected_region)" v-model="selected_region" class="input_region" placeholder="台北市" list="my-list-id2"></b-form-input>
                 <datalist id="my-list-id2">
                     <option v-bind:key="region" v-for="region in regions">{{ region }}</option>
                 </datalist>
@@ -42,7 +42,7 @@ export default {
       return {
         selected_type: '',
         selected_region: '',
-        regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣'],
+        regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣', '澎湖縣'],
         types: ['美食', '購物', '景點', '交通', '住宿', '娛樂']
       }
     },
@@ -58,7 +58,7 @@ export default {
         selectTypeText() {
             this.$refs['type'].select();
         }
-    }
+    },
   }
 </script>
 
@@ -91,12 +91,13 @@ export default {
     }
 
     .input_type {
-        width: 133px;
+        width: 266px;
         height: 40px;
         border-radius: 20px 0 0 20px;
         border: none;
         font-size: 20px;
-        text-align: center;
+        text-align: left;
+        padding-left: 20px;
         margin-right: 2px;
         outline: none;
 
@@ -108,7 +109,7 @@ export default {
         border-radius: 0 20px 20px 0;
         border: none;
         font-size: 20px;
-        text-align: center;
+        text-align: left;
         margin-right: 0px;
         outline: none;
 
@@ -150,5 +151,10 @@ export default {
         margin-left: 50px;
     }
 
+
+    ::-ms-b-form-input-placeholder { /* Microsoft Edge */
+        color: red;
+    }
+    
 
 </style>

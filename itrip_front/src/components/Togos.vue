@@ -9,18 +9,29 @@
         <p class="pTripDate  mx-0 my-0 px-0 py-0">開始日期</p>
         <input class="inputTripDate" type="date">
       </div>
+      
     </div>
     <div>
-      <b-tabs content-class="mt-3">
+        <button class="btn-save" @click="saveTrip">儲存</button>
+    </div>
+    <div>
+      <b-tabs content-class="mt-3" @input="changePage()" v-model="page">
         <b-tab class="my-0 mx-0" title="第一天" active>
-          <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos" overflow:auto>
+          <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[page]" overflow:auto>
             <!-- TogoItem -->
             <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
           </div>
         </b-tab>
-        <b-tab title="第二天">
-          <p>I'm the second tab</p>
+
+        <!-- other days -->
+        <b-tab class="my-0 mx-0" title="第二天">
+          <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
+            <!-- TogoItem -->
+            <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
+          </div>
         </b-tab>
+
+
         <b-tab title="新增" disabled>
           <p>I'm a disabled tab!</p>
         </b-tab>
@@ -36,10 +47,31 @@ import TogoItem from './TogoItem';
 
 export default {
     name: "Togos",
+    data() {
+      return {
+        trips: [],
+        tabtitle: '',
+        page: 0,
+        tabactive
+      }
+    },
     components: {
         TogoItem
     },
-    props: ["togos"]
+    props: ["togos", "page"],
+    methods: {
+      saveTrip() {
+
+        for (var i = 0; i < this.togos.length; i++){
+          alert(i);
+        }
+          
+      },
+      changePage(){
+        alert(this.page);
+        this.$emit('change-page', this.page);
+      }
+    }
 }
 </script>
 
@@ -91,6 +123,12 @@ export default {
     font-size: 20px;
     border: none;
     background: #333555;
+  }
+
+  .btn-save {
+    border: none;
+    background: #515151;
+    color: white;
   }
 
 
