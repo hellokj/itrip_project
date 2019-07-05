@@ -6,7 +6,6 @@ const errorHandler = require('../utils/errorHandler');
 const save = (req, res, next) => {
     let memberId = req.decoded.memberId;
     let _id = new Date().getTime();
-    let userId = req.body.userId;
     let startDate = {
         year: req.body.year,
         month: req.body.month,
@@ -22,7 +21,7 @@ const save = (req, res, next) => {
  
     let itinerary = new Itinerary({
         _id: _id,
-        userId: userId,
+        memberId: memberId,
         start_date: startDate,
         name: name,
         dayNum: dayNum,

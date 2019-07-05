@@ -13,8 +13,10 @@
     "bootstrap-vue": "^2.0.0-rc.25",
     "core-js": "^2.6.5",
     "express": "^4.17.1",
+    "leaflet": "^1.5.1",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.3"
+    "vue-router": "^3.0.3",
+    "vue2-leaflet": "^2.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",

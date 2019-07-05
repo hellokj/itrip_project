@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 // itinerary schema
 const itinerarySchema = new Schema({
     _id: Number,
-    userId: Number,
+    memberId: Number,
     startDate: {
         year: Number,
         month: Number,
