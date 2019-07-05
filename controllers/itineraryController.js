@@ -1,8 +1,10 @@
 const Itinerary = require('../models/itinerary');
 const NilChecker = require('../utils/nilChecker');
+const Response = require('../utils/responseHandler');
+const errorHandler = require('../utils/errorHandler');
 
 const save = (req, res, next) => {
-    let userId = req.body.userId;
+    let memberId = req.decoded.memberId;
     let _id = new Date().getTime();
     let startDate = {
         year: req.body.year,
@@ -14,21 +16,19 @@ const save = (req, res, next) => {
     let itiList = req.body.list;
 
     if(NilChecker(req.body, 7, [])) {
-        res.json({status: 400, msg: 'BAD REQUEST'})
+        Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
     }
-
-    console.log(itiList);
  
     let itinerary = new Itinerary({
         _id: _id,
-        userId: userId,
+        memberId: memberId,
         start_date: startDate,
         name: name,
         dayNum: dayNum,
         list: itiList
     });
 
-    itinerary.save().then(() => res.json( {status: 200, data: itiList, msg: 'success'}));
+    itinerary.save().then(() => Response(null, itiList, res));
 } 
 
 module.exports = {

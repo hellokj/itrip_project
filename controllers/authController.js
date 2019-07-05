@@ -1,47 +1,127 @@
-// const config = require('../config');
+const config = require('../config');
+const jwt = require('jsonwebtoken');
+const Member = require('../models/member');
+const NilChecker = require('../utils/nilChecker');
+const Response = require('../utils/responseHandler');
+const errorHandler = require('../utils/errorHandler');
 
-// const jwt = require('jsonwebtoken');
+const signUp = async(req, res, next) => {
+    // Sign up date
+    let today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
 
-// const User = require('../models/user');
+    let name = req.body.name;
+    let url = req.body.url;
+    let email = req.body.email;
+    let password = req.body.password;
 
-// const getToken = (req, res) => {
-//     URLSearchParams.findOne({name: req.body.name}, (err, user) => {
-//         if(err) {
-//             response(err, null, res);
-//         }
-//         if(!user){
-//             response(errorHandler.INVALID_USERNAME, null, res);
-//             return;
-//         }
-//         // first param: value returned by user every request, second: salt, third: expireTime 
-//         var token = jwt.sign({userId: User._id}, config.jwtSalt, {
-//             expiresIn: 60*60*24});
-//         res.json({status: -1, token: token})
-//         response(null, token, res);
-//     })
-// }
+    let m = await Member.findMember(email, url)
+    if(m != null) {
+        Response(errorHandler.EMAIL_OR_URL_ALREADY_EXISTS, null, res);
+        return;
+    }
 
-// const checkToken = (req, res, next) => {
-//     let token = req.headers['x-access-token'];
-//     if(token) {
-//         jwt.verify(token, config.jwtSalt, (err, decoded) => {
-//             if(err){
-//                 Response(errorHandler.INVALID_ACCESS_TOKEN, null, res);
-//                 return;
-//             }
-//             else {
-//                 req.decoded = decoded;
-//                 next();
-//             }
-//         });
-//     }
-//     else {
-//         Response(errorHandler.PERMISSION_DENIED, null, res);
-//         return;
-//     }
-// }
+    if(NilChecker(req.body, 4, [])) {
+        Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
+        return;
+    }
 
-// module.exports = {
-//     getToken,
-//     checkToken
-// }
+    if(!is_valid_password(password)) {
+        Response(errorHandler.INVALID_PASSWORD, null, res);
+        return;
+    }
+
+    let member = new Member({
+        signUpDate: {
+            year: year,
+            month: month,
+            day: day
+        },
+        name: name,
+        url: url,
+        email: email,
+        password: password,
+    })
+
+    member.save().then(() => res.json( {status: 200, member: member, msg: 'success'}));    
+}
+
+const logIn = async(req, res, next) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    if(NilChecker(req.body, 2, [])) {
+        Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
+        return;
+    }
+
+    if(!is_valid_password(password)) {
+        Response(errorHandler.INVALID_PASSWORD, null, res);
+    }
+    let user = await Member.findMember(email, null, password);
+
+    if(user == null) {
+        Response(errorHandler.INVALID_EMAIL_OR_PASSWORD, null, res);
+        return;
+    }
+    // login success!
+    getToken(req, res);
+}
+
+const is_valid_password = (password) => {
+    if(password.length < 6) {
+        return false;
+    }
+    for(let i=0;i<password.length;i++) {
+        if(password.charCodeAt(i) >= 65 && password.charCodeAt(i) <= 90) {
+            return true;
+        }
+    }
+    return false;
+}
+
+const getToken = (req, res, next) => {
+    Member.findOne({email:req.body.email, password:req.body.password}, (err, member) => {
+        if(err) {
+            Response(err, null, res);
+        }
+        if(!member){
+            Response(errorHandler.INVALID_EMAIL, null, res);
+            return;
+        }
+        // first param: value returned by user every request, second: salt(private key), third: expireTime 
+        let token = jwt.sign({memberId: Member._id}, config.jwtSalt, {
+            expiresIn: 60*60*24 //24 hrs
+        });
+        Response(null, token, res);
+        //res.json({status: -1, msg: 'success!', token: token});
+    });
+};
+
+const checkToken = (req, res, next) => {
+    let token = req.headers['x-access-token'];
+    if(token) {
+        jwt.verify(token, config.jwtSalt, (err, decoded) => {
+            if(err){
+                Response(errorHandler.INVALID_ACCESS_TOKEN, null, res);
+                return;
+            }
+            else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    }
+    else {
+        Response(errorHandler.PERMISSION_DENIED, null, res);
+        return;
+    }
+}
+
+module.exports = {
+    checkToken,
+    signUp,
+    logIn
+}

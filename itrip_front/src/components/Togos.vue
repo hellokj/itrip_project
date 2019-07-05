@@ -1,5 +1,5 @@
 <template>
-  <div class="MyTrip" >
+  <div class="MyTrip">
     <div class="tripData  mx-0 my-0 px-0 py-0">
       <div class="tripName">
         <p class="pTripName  mx-0 my-0 px-0 py-0">旅行名稱</p>

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 // itinerary schema
 const itinerarySchema = new Schema({
     _id: Number,
-    userId: Number,
+    memberId: Number,
     startDate: {
         year: Number,
         month: Number,
@@ -15,11 +15,5 @@ const itinerarySchema = new Schema({
     list: Array
 })
 
-// get itinerary
-const getItinerary = (userId, token) => {
-    // check token to see if the user is valid
-    //if(checkToken(token))
-    this.find
-}
 
 module.exports = mongoose.model('Itinerary', itinerarySchema);
