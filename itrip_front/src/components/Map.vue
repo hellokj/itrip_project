@@ -1,46 +1,75 @@
-<template>
-    <div class="row map">
-        <l-map :zoom="zoom" :center="center">
-            <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-            <l-marker 
-                :key="index"
-                v-for="(brew, index) in brews"
-                :lat-lng="latLng(brew.latitude, brew.longitude)">
-            </l-marker>
-        </l-map>
-    </div>
+<template lang="pug">
+#map(class="row map")
+  //- h1 here is map
+  //- h2 map {{$route.params}}
+  //- h3(v-if="findSpot") you enter by id {{findSpot}}
+  l-map(:zoom='zoom', :center='center', style='height: 90%'
+        ,@update:center="centerUpdate"
+        ,@update:zoom="zoomUpdate")
+    l-tile-layer(:url="url", :attribution="attribution", dragging="false")
 </template>
 
 <script>
-import L from 'leaflet'
-import * as Vue2Leaflet from 'vue2-leaflet'
-import Vue from 'vue';
-
-Vue.component('l-map', Vue2Leaflet.LMap)
-Vue.component('l-tile-layer', Vue2Leaflet.LTileLayer)
-Vue.component('l-marker', Vue2Leaflet.LMarker)
+import {LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import { latLng } from "leaflet";
+const marker = {
+  position: { lng: 121.219482, lat: 21.41322 },
+  visible: true,
+  draggable: true,
+}
+// import MarkerPopup from "./MarkerPopup";
 
 export default {
-    name: "Map",
-    data: function() {
-        return {
-            zoom:13,
-            center: L.latLng(47.413220, -1.219482),
-            url:'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-            attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-            marker: L.latLng(47.413220, -1.219482),
-        }
+  name: 'MyAwesomeMap',
+    components: {
+        LMap,
+        LTileLayer,
+        LMarker
     },
-    methods: {
-        latLng: function(lat, lng) {
-            return L.latLng(lat, lng);
-        }
+  props: [
+    "location"
+  ],
+  methods: {
+    zoomUpdate(zoom) {
+      this.currentZoom = zoom;
+    },
+    centerUpdate(center) {
+      this.currentCenter = center;
+    },
+  },
+  data() {
+    return {
+      spots: [
+        { id: 1, name: '安平古堡'},
+        { id: 2, name: '摸乳巷'}
+      ],
+      zoom: 13,
+      center: latLng(47.41322, -1.219482),
+      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     }
+  },
+  watch: {
+    location: function(newValue, oldValue){
+      console.log(newValue[1] + 'map' + newValue[0]);
+      // this.center = latLng(newValue[1], newValue[0]);
+      console.log(this.center);
+    }
+  },
+  computed: {
+    findSpot(){
+      return this.spots.find(spot=>spot.id==this.$route.params.num);
+    }
+  },
 }
 </script>
-<style scoped>
-    .map {
-        height: 70vh;
-        width: 70vh
-    }
+
+<style scope lang="sass">
+.map
+    height: 50vh
+    width: 50vh
+  
+  
+
 </style>
