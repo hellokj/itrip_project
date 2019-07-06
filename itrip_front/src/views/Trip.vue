@@ -27,7 +27,7 @@ export default {
     return {
       togos: [],
       spots: [],
-      showSpots: tue,
+      showSpots: true,
       // unused params
       Region: '',
       Type: '',
