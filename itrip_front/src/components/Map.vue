@@ -4,14 +4,28 @@
   //- h2 map {{$route.params}}
   //- h3(v-if="findSpot") you enter by id {{findSpot}}
   l-map(:zoom='zoom', :center='center', style='height: 90%'
-        ,@update:center="centerUpdate"
-        ,@update:zoom="zoomUpdate")
+    ,@update:center="centerUpdate"
+    ,@update:zoom="zoomUpdate")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
-        :icon="icons[index]"
-        :key="index"
-        v-for="(spot, index) in spots"
-        :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])")
+      :icon="icons[index]"
+      :key="index"
+      v-for="(spot, index) in spots"
+      :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+    )
+    l-marker(
+    :icon="togoIcon"
+    :key="index"
+    v-for="(togo, index) in togos"
+    :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+    )
+    //- l-marker(
+    //-   v-for="(spot, index) in spots"
+    //-   :key="index"
+    //-   v-if="togos[0].includes(spot)"
+    //-   :icon="togoIcon"
+    //-   :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+    //- )
 
   //- div(v-for="spot in spots") 
   //-   h1 {{ spot }}
@@ -33,23 +47,18 @@ export default {
         LIcon
     },
   props: {
-    spots: Array
+    spots: Array,
+    togos: Array
   },
   mounted() {
     for( let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        iconSize: [38, 38],
+        iconSize: [45, 45],
       }));
     }
   },
   methods: {
-    getLIcon(index){
-      return L.icon({
-        iconUrl: require('../assets/leaflet_marker/marker'+ (+1) + '.png'),
-        iconSize: [38, 38]
-      })
-    },
     getLatLng: function(lat, lng) {
       return L.latLng(lat, lng);
     },
@@ -57,13 +66,14 @@ export default {
       this.currentZoom = zoom;
     },
     centerUpdate(center) {
+      console.log(this.togos)
       this.currentCenter = center;
     },
   },
   data() {
     return {
-      zoom: 13,
-      center: L.latLng(21.41322, 121.219482),
+      zoom: 8,
+      center: L.latLng(23.583234, 121.2825975),
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -72,11 +82,11 @@ export default {
       //   visible: true,
       //   draggable: false
       // }
-      defaultIcon: L.icon({
-        iconUrl: require('./logo.png'),
-        iconSize: [38, 38],
-      }),
       icons: [],
+      togoIcon: L.icon({
+        iconUrl: require('../assets/logo.png'),
+        iconSize: [45, 45]
+      })
     }
   },
   watch: {
@@ -96,6 +106,6 @@ export default {
 
 <style scope lang="sass">
 .map
-    height: 200vh
-    width: 200vh
+    height: 100vh
+    width: 100vh
 </style>
