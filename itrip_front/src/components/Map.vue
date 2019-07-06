@@ -22,6 +22,7 @@
 import {LMap, LTileLayer, LMarker, LIcon } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
 import L from "leaflet";
+
 // import MarkerPopup from "./MarkerPopup";
 
 export default {
@@ -33,23 +34,18 @@ export default {
         LIcon
     },
   props: {
-    spots: Array
+    spots: Array,
+    togos: Array
   },
   mounted() {
     for( let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        iconSize: [38, 38],
+        iconSize: [45, 45],
       }));
     }
   },
   methods: {
-    getLIcon(index){
-      return L.icon({
-        iconUrl: require('../assets/leaflet_marker/marker'+ (+1) + '.png'),
-        iconSize: [38, 38]
-      })
-    },
     getLatLng: function(lat, lng) {
       return L.latLng(lat, lng);
     },
@@ -58,6 +54,7 @@ export default {
     },
     centerUpdate(center) {
       this.currentCenter = center;
+      console.log(this.togos);
     },
   },
   data() {
@@ -72,10 +69,6 @@ export default {
       //   visible: true,
       //   draggable: false
       // }
-      defaultIcon: L.icon({
-        iconUrl: require('./logo.png'),
-        iconSize: [38, 38],
-      }),
       icons: [],
     }
   },

@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map :spots="spots"/>
+    <Map :spots="spots" :togos="togos"/>
   </div>
 </template>
 
@@ -61,26 +61,58 @@ export default {
         
         this.togos[this.page].push(spot);
       }
-
+      this.calcRoutes();
+    
       // let arr = [];
       // arr.push(spot);
       // alert(arr);
       // this.togos.push(arr);
       alert(this.togos[this.page]);
-
-
-
     },
     changePage(p) {
       this.page = p;
       alert("app.vue: page=" + p);
-    }
-  },
-  created() {
+    },
+    calcRoutes() {
+      if(this.togos[this.page].length > 1) {
+        for(let i=0;i<this.togos[this.page].length-1;i++) {
+          let start = {
+            lat: this.togos[this.page][i].location.coordinates[1],
+            lon: this.togos[this.page][i].location.coordinates[0]
+          }
+          let dest = {
+            lat: this.togos[this.page][i + 1].location.coordinates[1],
+            lon: this.togos[this.page][i + 1].location.coordinates[0]
+          }
+          this.getRoutes('driving-car', start, dest);
+        }
+      }
+    },
+    getRoutes(mode, start, dest) {
+        axios.get('https://api.openrouteservice.org/v2/directions/' + mode + '?', {
+            params: {
+              api_key: '5b3ce3597851110001cf62484bf40f6f8cf544db962ab558c4f364c7',
+              start: (start.lon).toString() + ',' + (start.lat).toString(),
+              end: (dest.lon).toString() + ',' + (dest.lat).toString()
+            }
+          })
+          .then(function (res) {
+            console.log(res);
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+            console.log('!');
+          });
+    },
+    created() {
 
-  },
-  updated: function(){
+    },
+    updated: function(){
 
+    },
   },
   watch: {
     region: function(newVal, oldVal) {
@@ -110,8 +142,7 @@ export default {
       })
       .then(function () {
         // always executed
-      });
-
+        });
     }
   }
 }
@@ -154,5 +185,4 @@ export default {
     justify-content: flex-start;
     align-items: flex-start;
   }
-
 </style>
