@@ -36,6 +36,7 @@
 import {LMap, LTileLayer, LMarker, LIcon } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
 import L from "leaflet";
+
 // import MarkerPopup from "./MarkerPopup";
 
 export default {
@@ -68,6 +69,7 @@ export default {
     centerUpdate(center) {
       console.log(this.togos)
       this.currentCenter = center;
+      console.log(this.togos);
     },
   },
   data() {
