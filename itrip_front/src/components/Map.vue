@@ -3,12 +3,12 @@
   //- h1 here is map
   //- h2 map {{$route.params}}
   //- h3(v-if="findSpot") you enter by id {{findSpot}}
-  button(type="button" @click="printSpots(spots)") 觸發
   l-map(:zoom='zoom', :center='center', style='height: 90%'
         ,@update:center="centerUpdate"
         ,@update:zoom="zoomUpdate")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
+        :icon="icons[index]"
         :key="index"
         v-for="(spot, index) in spots"
         :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])")
@@ -20,6 +20,7 @@
 
 <script>
 import {LMap, LTileLayer, LMarker, LIcon } from 'vue2-leaflet';
+import { Icon }  from 'leaflet'
 import L from "leaflet";
 // import MarkerPopup from "./MarkerPopup";
 
@@ -34,12 +35,23 @@ export default {
   props: {
     spots: Array
   },
+  mounted() {
+    for( let i = 0; i < 10; i++){
+      this.icons.push(L.icon({
+        iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
+        iconSize: [38, 38],
+      }));
+    }
+  },
   methods: {
-    printSpots: function(spots){
-      console.log(spots);
+    getLIcon(index){
+      return L.icon({
+        iconUrl: require('../assets/leaflet_marker/marker'+ (+1) + '.png'),
+        iconSize: [38, 38]
+      })
     },
     getLatLng: function(lat, lng) {
-          return L.latLng(lat, lng);
+      return L.latLng(lat, lng);
     },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
@@ -55,11 +67,16 @@ export default {
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      marker: {
-        position: { lng: 121.219482, lat: 21.41322 },
-        visible: true,
-        draggable: false
-      }
+      // marker: {
+      //   position: { lng: 121.219482, lat: 21.41322 },
+      //   visible: true,
+      //   draggable: false
+      // }
+      defaultIcon: L.icon({
+        iconUrl: require('./logo.png'),
+        iconSize: [38, 38],
+      }),
+      icons: [],
     }
   },
   watch: {
@@ -81,7 +98,4 @@ export default {
 .map
     height: 200vh
     width: 200vh
-  
-  
-
 </style>

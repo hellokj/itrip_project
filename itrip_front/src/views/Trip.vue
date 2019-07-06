@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map/>
+    <Map :spots="spots"/>
   </div>
 </template>
 
@@ -13,7 +13,7 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
   name: 'trip',
@@ -41,6 +41,7 @@ export default {
       this.togos = this.togos.filter(togo => togo._id !== _id);
     },
     AddFakeSpot(){
+      console.log(this.spots);
       let s = {name: 'text1'};
       this.spots.push(s);
     },
