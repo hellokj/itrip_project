@@ -5,7 +5,7 @@
       <p>搜尋結果</p>
     </div>
     
-    <div  v-bind:key="spot.id" v-for="spot in spots" overflow:auto>
+    <div v-bind:key="spot.id" v-for="spot in spots" overflow:auto>
       <!-- SpotItem -->
       <SpotItem v-bind:spot="spot" v-on:add-spot="$emit('add-spot', spot)" />
     </div>
