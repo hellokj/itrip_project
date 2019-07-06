@@ -27,7 +27,7 @@ export default {
     return {
       togos: [],
       spots: [],
-      showSpots: true,
+      showSpots: tue,
       // unused params
       Region: '',
       Type: '',
@@ -84,12 +84,13 @@ export default {
   watch: {
     region: function(newVal, oldVal) {
       console.log('Prop hanged: ', newVal, '| was: ', oldVal);
+      let self = this;
       //place, category, name, sortBy, page, limit, order
       // axios.get('http://35.194.247.229:3000/api/poi/get?place='+ newVal +'&sortBy=checkins')
       // .then(res => this.spots = res.data.data)
       // .catch(err => console.log(err));
 
-      axios.get('http://35.194.247.229:3000/api/poi/get', {
+      axios.get('http://35.194.247.229:3000/api/spot/get', {
         params: {
           place: newVal,
           category: "gourmet",
@@ -100,8 +101,8 @@ export default {
         }
       })
       .then(function (res) {
-        this.spots = res.data.data
-        console.log(res);
+        //console.log(res.data.data.resultList);
+        self.spots = res.data.data.resultList;
       })
       .catch(function (error) {
         console.log(error);
