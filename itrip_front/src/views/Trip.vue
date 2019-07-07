@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map :spots="spots" :togos="togos[page]"/>
+    <Map :spots="spots" :togos="togos[page]" :routes="routes"/>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
     return {
       togos: [],
       spots: [],
+      routes: [],
       showSpots: true,
       // unused params
       Region: '',
@@ -64,7 +65,6 @@ export default {
     },
     changePage(p) {
       this.page = p;
-      //alert("app.vue: page=" + p);
     },
     created() {
 

@@ -3,9 +3,14 @@
   //- h1 here is map
   //- h2 map {{$route.params}}
   //- h3(v-if="findSpot") you enter by id {{findSpot}}
+  //- h5(v-model="getRoutesData") {{ routes[0].coordinates }}
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
+    l-polyline(
+      v-for="(route, index) in routes"
+      :lat-lngs="routes[index].coordinates"
+      :color="color")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
       :icon="icons[index]"
@@ -19,25 +24,13 @@
     v-for="(togo, index) in togos"
     :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
     )
-    //- l-marker(
-    //-   v-for="(spot, index) in spots"
-    //-   :key="index"
-    //-   v-if="togos[0].includes(spot)"
-    //-   :icon="togoIcon"
-    //-   :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-    //- )
-
-  //- div(v-for="spot in spots") 
-  //-   h1 {{ spot }}
 
 </template>
 
 <script>
-import {LMap, LTileLayer, LMarker, LIcon } from 'vue2-leaflet';
+import {LMap, LTileLayer, LMarker, LIcon, LPolyline } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
 import L from "leaflet";
-
-// import MarkerPopup from "./MarkerPopup";
 
 export default {
   name: 'Map',
@@ -45,13 +38,16 @@ export default {
         LMap,
         LTileLayer,
         LMarker,
-        LIcon
+        LIcon,
+        LPolyline
     },
   props: {
     spots: Array,
-    togos: Array
+    togos: Array,
+    routes: Array
   },
   mounted() {
+    console.log(this.routes);
     for( let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
@@ -73,15 +69,10 @@ export default {
   data() {
     return {
       zoom: 8,
-      center: L.latLng(23.583234, 121.2825975),
+      center: L.latLng(23.583234, 121.2825975), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      // marker: {
-      //   position: { lng: 121.219482, lat: 21.41322 },
-      //   visible: true,
-      //   draggable: false
-      // }
       icons: [],
       togoIcon: L.icon({
         iconUrl: require('../assets/itineraryMarker.png'),
@@ -98,7 +89,7 @@ export default {
   computed: {
     findSpot(){
       return this.spots.find(spot=>spot.id==this.$route.params.num);
-    }
+    },
   },
 }
 </script>
