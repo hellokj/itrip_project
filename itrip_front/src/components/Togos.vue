@@ -20,6 +20,7 @@
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[page]" overflow:auto>
             <!-- TogoItem -->
             <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
+            
           </div>
         </b-tab>
 
