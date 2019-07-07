@@ -4,6 +4,8 @@
   //- h2 map {{$route.params}}
   //- h3(v-if="findSpot") you enter by id {{findSpot}}
   //- h5(v-model="getRoutesData") {{ routes[0].coordinates }}
+  h4 {{ currentCenter }}
+  h4 {{ currentZoom }}
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
@@ -17,6 +19,7 @@
       :key="index"
       v-for="(spot, index) in spots"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+      @click="showSpot(index)"
     )
     l-marker(
     :icon="togoIcon"
@@ -30,7 +33,7 @@
 <script>
 import {LMap, LTileLayer, LMarker, LIcon, LPolyline } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
-import L from "leaflet";
+import L from "leaflet"
 
 export default {
   name: 'Map',
@@ -47,7 +50,6 @@ export default {
     routes: Array
   },
   mounted() {
-    console.log(this.routes);
     for( let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
@@ -65,10 +67,35 @@ export default {
     centerUpdate(center) {
       this.currentCenter = center;
     },
+    showSpot: function(spotIndex) {
+      alert(this.spots[spotIndex].name);
+    },
+    getDistance: function(point1, point2){ // 兩座標點求實際距離
+
+    },
+    calculateCenterPoin: function(spots){
+      let lng = 0.0;
+      let lat = 0.0;
+      for( let i = 0; i < spots.length; i++){
+        lng = lng + parseFloat(spots[i][0]);
+        lat = lat + parseFloat(spots[i][1]);
+      }
+      lng = lng / spots.length;
+      lat = lat / spots.length;
+      return [lng, lat];
+    },
+    calculateZoom: function(){
+
+    },
+    setZoom: function(){
+      
+    }
   },
   data() {
     return {
       zoom: 8,
+      currentZoom: 8,
+      currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
@@ -78,43 +105,48 @@ export default {
         iconUrl: require('../assets/logo.png'),
         iconSize: [45, 45]
       }),
-      // routes: [ // for each route
-      //   { // first test route
-      //     latlngs: [
-      //       [47.2263299, -1.6222],
-      //       [47.21024000000001, -1.6270065],
-      //       [47.1969447, -1.6136169],
-      //       [47.18527929999999, -1.6143036],
-      //       [47.1794457, -1.6098404],
-      //       [47.1775788, -1.5985107],
-      //       [47.1676598, -1.5753365],
-      //       [47.1593731, -1.5521622],
-      //       [47.1593731, -1.5319061],
-      //       [47.1722111, -1.5143967],
-      //       [47.1960115, -1.4841843],
-      //       [47.2095404, -1.4848709],
-      //       [47.2291277, -1.4683914],
-      //       [47.2533687, -1.5116501],
-      //       [47.2577961, -1.5531921],
-      //       [47.26828069, -1.5621185],
-      //       [47.2657179, -1.589241],
-      //       [47.2589612, -1.6204834],
-      //       [47.237287, -1.6266632],
-      //       [47.2263299, -1.6222]
-      //     ],
-      //     color: "#ff00ff"
-      //   }
-      // ],
-      color: "#ff00ff",
+      color: "#FF0000",
     }
   },
   watch: {
-    getRoutesData: function(){
-      console.log("there are routes.")
-      if (this.routes.length > 0){
-        return true;
+    spots: function(){
+      // 計算搜尋出的景點中心點位置
+      let lng = 0.0;
+      let lat = 0.0;
+      // 用以計算地圖縮放 確保每一景點都會呈現在地圖中
+      let maxLng = 0.0;
+      let maxLat = 0.0;
+      let minLng = 0.0;
+      let minLat = 0.0;
+      for( let i = 0; i < this.spots.length; i++){
+        let currentLng = parseFloat(this.spots[i].location.coordinates[0]);
+        let currentLat = parseFloat(this.spots[i].location.coordinates[1]);
+        if (currentLng > maxLng){
+          maxLng = currentLng;
+        }
+        if (currentLat > maxLat){
+          maxLat = currentLat;
+        }
+        if (currentLng < minLng){
+          minLng = currentLng;
+        }
+        if (currentLat < minLat){
+          minLat = currentLat;
+        }
+        lng = lng + currentLng;
+        lat = lat + currentLat;
       }
-      return false;
+      lng = lng / this.spots.length;
+      lat = lat / this.spots.length;
+      this.center = L.latLng(lat, lng);
+      // this.zoom = 14;
+      // var featureGroup = new L.FeatureGroup([
+      //   new L.Marker([0,-45]),
+      //   new L.Marker([0,45])
+      // ]);
+      // var zoom = L.Map.getBoundsZoom(featureGroup.getBounds());
+      // this.zoom = zoom;
+
     }
   },
   computed: {
