@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map :spots="spots" :togos="togos[page]"/>
+    <Map :spots="spots" :togos="togos[page]" :routes="routes"/>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
     return {
       togos: [],
       spots: [],
+      routes: [],
       showSpots: true,
       // unused params
       Region: '',
@@ -89,6 +90,7 @@ export default {
       }
     },
     getRoutes(mode, start, dest) {
+      let self = this;
         axios.get('https://api.openrouteservice.org/v2/directions/' + mode + '?', {
             params: {
               api_key: '5b3ce3597851110001cf62484bf40f6f8cf544db962ab558c4f364c7',
@@ -97,7 +99,20 @@ export default {
             }
           })
           .then(function (res) {
-            console.log(res);
+            // reverse the coordinates for leaflet
+            let tmpCoordinates = res.data.features[0].geometry;
+
+            for (let i = 0; i < res.data.features[0].geometry.length; i++){
+              tmpCoordinates = res.data.features[0].geometry[i];
+            }
+
+            for (let i = 0; i < tmpCoordinates.coordinates.length; i++){
+              let temp = tmpCoordinates.coordinates[i][1];
+              tmpCoordinates.coordinates[i][1] = tmpCoordinates.coordinates[i][0];
+              tmpCoordinates.coordinates[i][0] = temp;
+            }
+            self.routes.push(tmpCoordinates);
+            console.log(tmpCoordinates);
           })
           .catch(function (error) {
             console.log(error);
