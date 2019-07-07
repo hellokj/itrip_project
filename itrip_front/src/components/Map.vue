@@ -67,9 +67,7 @@ export default {
       this.currentZoom = zoom;
     },
     centerUpdate(center) {
-      console.log(this.togos)
       this.currentCenter = center;
-      console.log(this.togos);
     },
   },
   data() {
@@ -86,8 +84,8 @@ export default {
       // }
       icons: [],
       togoIcon: L.icon({
-        iconUrl: require('../assets/logo.png'),
-        iconSize: [45, 45]
+        iconUrl: require('../assets/itineraryMarker.png'),
+        iconSize: [80, 80]
       })
     }
   },
@@ -95,7 +93,6 @@ export default {
     location: function(newValue, oldValue){
       console.log(newValue[1] + 'map' + newValue[0]);
       // this.center = latLng(newValue[1], newValue[0]);
-      console.log(this.center);
     }
   },
   computed: {
