@@ -11,7 +11,7 @@
     ,@update:zoom="zoomUpdate")
     l-polyline(
       v-for="(route, index) in routes"
-      :lat-lngs="routes[index].coordinates"
+      :lat-lngs="routes[index]"
       :color="color")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
@@ -62,6 +62,7 @@ export default {
       return L.latLng(lat, lng);
     },
     zoomUpdate(zoom) {
+      console.log(this.routes);
       this.currentZoom = zoom;
     },
     centerUpdate(center) {
@@ -102,8 +103,8 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icons: [],
       togoIcon: L.icon({
-        iconUrl: require('../assets/logo.png'),
-        iconSize: [45, 45]
+        iconUrl: require('../assets/itineraryMarker.png'),
+        iconSize: [80, 80]
       }),
       color: "#FF0000",
     }
@@ -139,6 +140,7 @@ export default {
       lng = lng / this.spots.length;
       lat = lat / this.spots.length;
       this.center = L.latLng(lat, lng);
+      // 計算 zoom-in
       // this.zoom = 14;
       // var featureGroup = new L.FeatureGroup([
       //   new L.Marker([0,-45]),

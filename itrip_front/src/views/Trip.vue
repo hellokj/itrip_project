@@ -101,6 +101,7 @@ export default {
       });;
     },
     togos: function() {
+      let self = this;
       let length = this.togos[this.page].length;
       let coordinates = [];
       if(length > 1) {
@@ -116,6 +117,14 @@ export default {
       apiGetRoutes(data, 'driving-car')
       .then(function (res) {
         console.log(res);
+        let tmpCoordinates = res.data.features[0].geometry.coordinates;
+        for (let i = 0; i < tmpCoordinates.length; i++) {
+          // 反轉經緯度 for leaflet
+          let tmp = tmpCoordinates[i][1];
+          tmpCoordinates[i][1] = tmpCoordinates[i][0];
+          tmpCoordinates[i][0] = tmp;
+        }
+        self.routes.push(tmpCoordinates);
       })
       .catch(function (error) {
         console.log(error);
