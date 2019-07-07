@@ -13,7 +13,7 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
-import axios from 'axios'
+import {apiGetSpots, apiGetRoutes} from '../api.js'
 
 export default {
   name: 'trip',
@@ -62,65 +62,9 @@ export default {
         
         this.togos[this.page].push(spot);
       }
-      this.calcRoutes();
-    
-      // let arr = [];
-      // arr.push(spot);
-      // alert(arr);
-      // this.togos.push(arr);
-      alert(this.togos[this.page]);
     },
     changePage(p) {
       this.page = p;
-      alert("app.vue: page=" + p);
-    },
-    calcRoutes() {
-      if(this.togos[this.page].length > 1) {
-        for(let i=0;i<this.togos[this.page].length-1;i++) {
-          let start = {
-            lat: this.togos[this.page][i].location.coordinates[1],
-            lon: this.togos[this.page][i].location.coordinates[0]
-          }
-          let dest = {
-            lat: this.togos[this.page][i + 1].location.coordinates[1],
-            lon: this.togos[this.page][i + 1].location.coordinates[0]
-          }
-          this.getRoutes('driving-car', start, dest);
-        }
-      }
-    },
-    getRoutes(mode, start, dest) {
-      let self = this;
-        axios.get('https://api.openrouteservice.org/v2/directions/' + mode + '?', {
-            params: {
-              api_key: '5b3ce3597851110001cf62484bf40f6f8cf544db962ab558c4f364c7',
-              start: (start.lon).toString() + ',' + (start.lat).toString(),
-              end: (dest.lon).toString() + ',' + (dest.lat).toString()
-            }
-          })
-          .then(function (res) {
-            // reverse the coordinates for leaflet
-            let tmpCoordinates = res.data.features[0].geometry;
-
-            for (let i = 0; i < res.data.features[0].geometry.length; i++){
-              tmpCoordinates = res.data.features[0].geometry[i];
-            }
-
-            for (let i = 0; i < tmpCoordinates.coordinates.length; i++){
-              let temp = tmpCoordinates.coordinates[i][1];
-              tmpCoordinates.coordinates[i][1] = tmpCoordinates.coordinates[i][0];
-              tmpCoordinates.coordinates[i][0] = temp;
-            }
-            self.routes.push(tmpCoordinates);
-            console.log(tmpCoordinates);
-          })
-          .catch(function (error) {
-            console.log(error);
-          })
-          .then(function () {
-            // always executed
-            console.log('!');
-          });
     },
     created() {
 
@@ -134,12 +78,8 @@ export default {
       console.log('Prop hanged: ', newVal, '| was: ', oldVal);
       let self = this;
       //place, category, name, sortBy, page, limit, order
-      // axios.get('http://35.194.247.229:3000/api/poi/get?place='+ newVal +'&sortBy=checkins')
-      // .then(res => this.spots = res.data.data)
-      // .catch(err => console.log(err));
-
-      axios.get('http://35.194.247.229:3000/api/spot/get', {
-        params: {
+      let params = 
+        {
           place: newVal,
           category: "gourmet",
           sortBy: "checkins",
@@ -147,9 +87,10 @@ export default {
           limit: 10,
           order: -1
         }
-      })
+
+      // call get spots api
+      apiGetSpots(params)
       .then(function (res) {
-        //console.log(res.data.data.resultList);
         self.spots = res.data.data.resultList;
       })
       .catch(function (error) {
@@ -157,7 +98,31 @@ export default {
       })
       .then(function () {
         // always executed
-        });
+      });;
+    },
+    togos: function() {
+      let length = this.togos[this.page].length;
+      let coordinates = [];
+      if(length > 1) {
+        for(let i=0;i<length;i++) {
+          let tmp = [this.togos[this.page][i].location.coordinates[0], this.togos[this.page][i].location.coordinates[1]];
+          coordinates.push(tmp);
+        }
+      }
+      let data = {
+        'coordinates': coordinates 
+      }
+      // call get routes api
+      apiGetRoutes(data, 'driving-car')
+      .then(function (res) {
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
     }
   }
 }

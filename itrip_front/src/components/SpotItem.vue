@@ -15,11 +15,9 @@
                             <b-col ><img class="btn-add" v-on:click="$emit('add-spot', spot)"  src="./icons/add.svg" alt="ADD"></b-col>
                         </b-row>
                     </b-container>
-                    
                 </b-col>
             </b-row>
         </b-container>
-            
     </div>
 </template>
 

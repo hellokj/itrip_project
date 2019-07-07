@@ -20,6 +20,7 @@
     "pug-filters": "^3.1.1",
     "pug-loader": "^2.4.0",
     "pug-plain-loader": "^1.0.0",
+    "qs": "^6.7.0",
     "sass": "^1.22.2",
     "sass-loader": "^7.1.0",
     "vue": "^2.6.10",
