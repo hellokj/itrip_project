@@ -47,12 +47,9 @@ export default {
       this.spots.push(s);
     },
     addSpotToTrip(spot) {
-      // this.togos = [...this.togos, spot];
-      
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
       } else {
-
         for (var i = 0; i <= this.page; i++){
           if (this.togos[i] === undefined){
             let arr = [];
@@ -98,9 +95,10 @@ export default {
       })
       .then(function () {
         // always executed
-      });;
+      });
     },
     togos: function() {
+      let self = this;
       let length = this.togos[this.page].length;
       let coordinates = [];
       if(length > 1) {
@@ -121,7 +119,14 @@ export default {
       // call get routes api
       apiGetRoutes(data, 'driving-car')
       .then(function (res) {
-        console.log(res);
+        let tmpCoordinates = res.data.features[0].geometry.coordinates;
+        for (let i = 0; i < tmpCoordinates.length; i++) {
+          // 反轉經緯度 for leaflet
+          let tmp = tmpCoordinates[i][1];
+          tmpCoordinates[i][1] = tmpCoordinates[i][0];
+          tmpCoordinates[i][0] = tmp;
+        }
+        self.routes.push(tmpCoordinates);
       })
       .catch(function (error) {
         console.log(error);
