@@ -105,8 +105,14 @@ export default {
       let coordinates = [];
       if(length > 1) {
         for(let i=0;i<length;i++) {
-          let tmp = [this.togos[this.page][i].location.coordinates[0], this.togos[this.page][i].location.coordinates[1]];
+          let togo = this.togos[this.page][i];
+          
+          // get coordinates from togos
+          let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
           coordinates.push(tmp);
+
+          // set index for togo in togos
+          togo.index = i;
         }
       }
       let data = {

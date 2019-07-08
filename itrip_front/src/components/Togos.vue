@@ -17,9 +17,12 @@
     <div>
       <b-tabs content-class="mt-3" @input="changePage()" v-model="page">
         <b-tab class="my-0 mx-0" title="第一天" active>
-          <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[page]" overflow:auto>
+          <div class="togoContainer" :key="togo.id" v-for="togo in togos[page]" overflow:auto>
             <!-- TogoItem -->
-            <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
+            <TogoItem class="mx-0 my-0" :togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
+            <!-- Travel time -->
+            <TravelTimeItem class="mx-0 my-0" :togo="togo" v-if="isTravelTimeShown(togo.index)"/>
+          
           </div>
         </b-tab>
 
@@ -30,20 +33,17 @@
             <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
           </div>
         </b-tab>
-
-
         <b-tab title="新增" disabled>
           <p>I'm a disabled tab!</p>
         </b-tab>
       </b-tabs>
     </div>
-
-    
   </div>
 </template>
 
 <script>
 import TogoItem from './TogoItem';
+import TravelTimeItem from './TravelTimeItem';
 
 export default {
     name: "Togos",
@@ -56,12 +56,12 @@ export default {
       }
     },
     components: {
-        TogoItem
+        TogoItem,
+        TravelTimeItem
     },
     props: ["togos", "page"],
     methods: {
       saveTrip() {
-
         for (var i = 0; i < this.togos.length; i++){
           alert(i);
         }
@@ -70,6 +70,12 @@ export default {
       changePage(){
         alert(this.page);
         this.$emit('change-page', this.page);
+      },
+      isTravelTimeShown(index) {
+        if(index < this.togos[this.page].length-1) {
+          return true;
+        }
+        return false;
       }
     }
 }
@@ -130,6 +136,4 @@ export default {
     background: #515151;
     color: white;
   }
-
-
 </style>
