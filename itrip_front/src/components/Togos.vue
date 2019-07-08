@@ -52,13 +52,12 @@ export default {
         trips: [],
         tabtitle: '',
         page: 0,
-        tabactive
       }
     },
     components: {
         TogoItem
     },
-    props: ["togos", "page"],
+    props: ["togos"],
     methods: {
       saveTrip() {
 

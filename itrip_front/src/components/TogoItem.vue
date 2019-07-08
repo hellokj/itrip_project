@@ -3,8 +3,9 @@
         <p>
             <!-- <input type="checkbox" v-on:change="markComplete"> -->
             {{togo.name}}
-            {{togo.location.coordinates[0]}}
-            {{togo.location.coordinates[1]}}
+            {{togo.location[0]}}
+            {{togo.location[1]}}
+            {{togo.id}}
             <button @click="$emit('del-togo', togo._id)" class="del"><b>移除</b></button>
         </p>
     </div>

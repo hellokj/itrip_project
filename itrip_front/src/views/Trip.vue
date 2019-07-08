@@ -46,9 +46,14 @@ export default {
     },
     addSpotToTrip(spot) {
       // this.togos = [...this.togos, spot];
-      
+      let stop = {
+        id: spot._id,
+        name: spot.name,
+        location: spot.location.coordinates,
+        memo: "",
+      };
       if (this.togos[this.page] !== undefined){
-        this.togos[this.page].push(spot);
+        this.togos[this.page].push(stop);
       } else {
 
         for (var i = 0; i <= this.page; i++){
@@ -58,7 +63,7 @@ export default {
           }
         }
         
-        this.togos[this.page].push(spot);
+        this.togos[this.page].push(stop);
       }
 
       // let arr = [];
@@ -85,12 +90,15 @@ export default {
     region: function(newVal, oldVal) {
       console.log('Prop hanged: ', newVal, '| was: ', oldVal);
       //place, category, name, sortBy, page, limit, order
-      // axios.get('http://35.194.247.229:3000/api/poi/get?place='+ newVal +'&sortBy=checkins')
-      // .then(res => this.spots = res.data.data)
+      // axios.get('http://35.194.247.229:3000/api/spot/get?place=萬華區&sortBy=checkins&category=gourmet&page=1&limit=10&order=-1')
+      // .then(res => {
+      //   this.spots = res.data.data.resultList;
+      //   console.log(this.spots);
+      //   })
       // .catch(err => console.log(err));
-
-      axios.get('http://35.194.247.229:3000/api/poi/get', {
+      axios.get('http://35.194.247.229:3000/api/spot/get', {
         params: {
+          name: null,
           place: newVal,
           category: "gourmet",
           sortBy: "checkins",
@@ -99,17 +107,13 @@ export default {
           order: -1
         }
       })
-      .then(function (res) {
-        this.spots = res.data.data
-        console.log(res);
+      .then(res => {
+        this.spots = res.data.data.resultList;
+        console.log(this.spots);
       })
       .catch(function (error) {
         console.log(error);
       })
-      .then(function () {
-        // always executed
-      });
-
     }
   }
 }
