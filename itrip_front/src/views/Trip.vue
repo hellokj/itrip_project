@@ -1,6 +1,6 @@
 <template>
   <div  class="trip">
-    <Togos v-bind:togos="togos" v-bind:page="page" v-on:del-togo="deleteTogo" v-on:change-page="changePage" />
+    <Togos :togos="togos[page]" :travelTimes="travelTimes" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
@@ -28,6 +28,7 @@ export default {
       togos: [],
       spots: [],
       routes: [],
+      travelTimes: [],
       showSpots: true,
       // unused params
       Region: '',
@@ -38,8 +39,9 @@ export default {
     }
   },
   methods: {
-    deleteTogo(_id) {
-      this.togos = this.togos.filter(togo => togo._id !== _id);
+    deleteTogo(index) {
+      // this.togos = this.togos.filter(togo => togo._id !== _id);
+      this.togos[this.page].splice(index, 1);
     },
     AddFakeSpot(){
       console.log(this.spots);
@@ -49,14 +51,14 @@ export default {
     addSpotToTrip(spot) {
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
-      } else {
+      } 
+      else {
         for (var i = 0; i <= this.page; i++){
           if (this.togos[i] === undefined){
             let arr = [];
             this.togos.push(arr);
           }
         }
-        
         this.togos[this.page].push(spot);
       }
     },
@@ -75,15 +77,14 @@ export default {
       console.log('Prop hanged: ', newVal, '| was: ', oldVal);
       let self = this;
       //place, category, name, sortBy, page, limit, order
-      let params = 
-        {
+      let params = {
           place: newVal,
           category: "gourmet",
           sortBy: "checkins",
           page: 1,
           limit: 10,
           order: -1
-        }
+      }
 
       // call get spots api
       apiGetSpots(params)
@@ -101,39 +102,52 @@ export default {
       let self = this;
       let length = this.togos[this.page].length;
       let coordinates = [];
-      if(length > 1) {
-        for(let i=0;i<length;i++) {
-          let togo = this.togos[this.page][i];
-          
-          // get coordinates from togos
-          let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
-          coordinates.push(tmp);
+      
+      // Reset 
+      self.travelTimes = [];
+      for(let i=0;i<length;i++) {
+        let togo = this.togos[this.page][i];
+        
+        // get coordinates from togos
+        let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
+        coordinates.push(tmp);
 
-          // set index for togo in togos
-          togo.index = i;
-        }
+        // set index for togo in togos
+        togo.index = i;
       }
       let data = {
         'coordinates': coordinates 
       }
-      // call get routes api
-      apiGetRoutes(data, 'driving-car')
-      .then(function (res) {
-        let tmpCoordinates = res.data.features[0].geometry.coordinates;
-        for (let i = 0; i < tmpCoordinates.length; i++) {
-          // 反轉經緯度 for leaflet
-          let tmp = tmpCoordinates[i][1];
-          tmpCoordinates[i][1] = tmpCoordinates[i][0];
-          tmpCoordinates[i][0] = tmp;
-        }
-        self.routes.push(tmpCoordinates);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .then(function () {
-        // always executed
-      });
+      if(self.togos[this.page].length > 1) {
+        // call get routes api
+        apiGetRoutes(data, 'driving-car')
+        .then(function (res) {
+          let tmpCoordinates = res.data.features[0].geometry.coordinates;
+          for (let i = 0; i < tmpCoordinates.length; i++) {
+            // 反轉經緯度 for leaflet
+            let tmp = tmpCoordinates[i][1];
+            tmpCoordinates[i][1] = tmpCoordinates[i][0];
+            tmpCoordinates[i][0] = tmp;
+          }
+          self.routes.push(tmpCoordinates);
+          // Travel time
+          let tmp = res.data.features[0].properties.segments;
+          for(let i=0;i<tmp.length;i++) {
+            let timeTmp = {
+              distance: tmp[i].distance,
+              duration: tmp[i].duration
+            }
+            self.travelTimes.push(timeTmp);
+          }
+          //console.log(self.travelTimes);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .then(function () {
+          // always executed
+        });
+      }
     }
   }
 }

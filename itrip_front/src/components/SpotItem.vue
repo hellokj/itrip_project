@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import {Checker} from '../../utils/checker.js'
+
 export default {
     name: "SpotItem",
     props: ["spot", "index"],
@@ -32,11 +34,10 @@ export default {
             let suburb = "";
             let road = "";
             let number = "";
-            // let comp = this.spot.address.state === "臺灣省";
-            city = ((this.spot.address.state === "臺灣省") || (this.spot.address.state === undefined))? this.spot.address.county: this.spot.address.state;
-            suburb = (this.spot.address.town === undefined)? this.spot.address.suburb: this.spot.address.town;
-            road = (this.spot.address.road === undefined)? ((this.spot.address.pedestrian === undefined)? "": this.spot.address.pedestrian): this.spot.address.road;
-            number = (this.spot.address.house_number === undefined)? "": this.spot.address.house_number;
+            city = Checker(this.spot.address, ['state', 'city', 'city_state', 'county']);
+            suburb = Checker(this.spot.address, ['town', 'suburb', 'city_district', 'district']);
+            road = Checker(this.spot.address, ['road', 'pedestrian', 'city_district', 'district']);
+            number =  Checker(this.spot.address, ['house_number']);
             address = city.concat(suburb, road, number);
             
             return address;
@@ -49,7 +50,6 @@ export default {
 </script>
 
 <style scoped>
-
     .spot-item {
         margin-left: 4px;
         margin-top: 5px;

@@ -4,15 +4,15 @@
   //- h2 map {{$route.params}}
   //- h3(v-if="findSpot") you enter by id {{findSpot}}
   //- h5(v-model="getRoutesData") {{ routes[0].coordinates }}
-  h4 {{ currentCenter }}
-  h4 {{ currentZoom }}
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
     l-polyline(
       v-for="(route, index) in routes"
       :lat-lngs="routes[index]"
-      :color="color")
+      :color="color"
+      :opacity="opacity"
+      :weight="weight")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
       :icon="icons[index]"
@@ -44,6 +44,26 @@ export default {
         LIcon,
         LPolyline
     },
+  data() {
+    return {
+      zoom: 8,
+      currentZoom: 8,
+      currentCenter: L.latLng(23.583234, 121.2825975),
+      center: L.latLng(23.583234, 121.2825975), // taiwan center point
+      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      icons: [],
+      togoIcon: L.icon({
+        iconUrl: require('../assets/itineraryMarker.png'),
+        iconSize: [80, 80]
+      }),
+      // polyline options
+      color: "#FF0000",
+      opacity: 0.2,
+      weight: 8
+    }
+  },
   props: {
     spots: Array,
     togos: Array,
@@ -62,7 +82,6 @@ export default {
       return L.latLng(lat, lng);
     },
     zoomUpdate(zoom) {
-      console.log(this.routes);
       this.currentZoom = zoom;
     },
     centerUpdate(center) {
@@ -90,23 +109,6 @@ export default {
     },
     setZoom: function(){
       
-    }
-  },
-  data() {
-    return {
-      zoom: 8,
-      currentZoom: 8,
-      currentCenter: L.latLng(23.583234, 121.2825975),
-      center: L.latLng(23.583234, 121.2825975), // taiwan center point
-      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      icons: [],
-      togoIcon: L.icon({
-        iconUrl: require('../assets/itineraryMarker.png'),
-        iconSize: [80, 80]
-      }),
-      color: "#FF0000",
     }
   },
   watch: {
