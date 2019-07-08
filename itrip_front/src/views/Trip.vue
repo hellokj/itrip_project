@@ -49,6 +49,13 @@ export default {
       this.spots.push(s);
     },
     addSpotToTrip(spot) {
+      // this.togos = [...this.togos, spot];
+      let stop = {
+        id: spot._id,
+        name: spot.name,
+        location: spot.location.coordinates,
+        memo: "",
+      };
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
       } 
@@ -107,7 +114,6 @@ export default {
       self.travelTimes = [];
       for(let i=0;i<length;i++) {
         let togo = this.togos[this.page][i];
-        
         // get coordinates from togos
         let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
         coordinates.push(tmp);

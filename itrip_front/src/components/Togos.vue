@@ -50,7 +50,6 @@ export default {
       return {
         tabtitle: '',
         page: 0,
-        tabactive
       }
     },
     components: {
