@@ -107,7 +107,6 @@ export default {
         // always executed
       });
     },
-<<<<<<< HEAD
     // togos: function() {
     //   let self = this;
     //   let length = this.togos[this.page].length;
@@ -146,58 +145,6 @@ export default {
     //     // always executed
     //   });
     // }
-=======
-    togos: function() {
-      let self = this;
-      let length = this.togos[this.page].length;
-      let coordinates = [];
-      
-      // Reset 
-      self.travelTimes = [];
-      for(let i=0;i<length;i++) {
-        let togo = this.togos[this.page][i];
-        // get coordinates from togos
-        let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
-        coordinates.push(tmp);
-
-        // set index for togo in togos
-        togo.index = i;
-      }
-      let data = {
-        'coordinates': coordinates 
-      }
-      if(self.togos[this.page].length > 1) {
-        // call get routes api
-        apiGetRoutes(data, 'driving-car')
-        .then(function (res) {
-          let tmpCoordinates = res.data.features[0].geometry.coordinates;
-          for (let i = 0; i < tmpCoordinates.length; i++) {
-            // 反轉經緯度 for leaflet
-            let tmp = tmpCoordinates[i][1];
-            tmpCoordinates[i][1] = tmpCoordinates[i][0];
-            tmpCoordinates[i][0] = tmp;
-          }
-          self.routes.push(tmpCoordinates);
-          // Travel time
-          let tmp = res.data.features[0].properties.segments;
-          for(let i=0;i<tmp.length;i++) {
-            let timeTmp = {
-              distance: tmp[i].distance,
-              duration: tmp[i].duration
-            }
-            self.travelTimes.push(timeTmp);
-          }
-          //console.log(self.travelTimes);
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .then(function () {
-          // always executed
-        });
-      }
-    }
->>>>>>> 96ff262ce4a1aa730d2a38888949a1d22294d9a7
   }
 }
 </script>
