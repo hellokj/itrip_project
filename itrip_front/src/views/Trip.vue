@@ -47,8 +47,15 @@ export default {
       this.spots.push(s);
     },
     addSpotToTrip(spot) {
+      // this.togos = [...this.togos, spot];
+      let stop = {
+        id: spot._id,
+        name: spot.name,
+        location: spot.location.coordinates,
+        memo: "",
+      };
       if (this.togos[this.page] !== undefined){
-        this.togos[this.page].push(spot);
+        this.togos[this.page].push(stop);
       } else {
         for (var i = 0; i <= this.page; i++){
           if (this.togos[i] === undefined){
@@ -57,7 +64,7 @@ export default {
           }
         }
         
-        this.togos[this.page].push(spot);
+        this.togos[this.page].push(stop);
       }
     },
     changePage(p) {

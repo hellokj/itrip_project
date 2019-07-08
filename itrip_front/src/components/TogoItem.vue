@@ -1,7 +1,7 @@
 <template>
     <div class="togo-item">
         <!-- <p>
-            <!-- <input type="checkbox" v-on:change="markComplete"> -->
+             <input type="checkbox" v-on:change="markComplete"> -->
             <!-- {{togo.name}}
             {{togo.location.coordinates[0]}}
             {{togo.location.coordinates[1]}}
