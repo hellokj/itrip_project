@@ -14,6 +14,7 @@ import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
 import {apiGetSpots, apiGetRoutes} from '../api.js'
+import _ from 'lodash'
 
 export default {
   name: 'trip',
@@ -26,6 +27,7 @@ export default {
   data() {
     return {
       togos: [],
+      oldTogos: [],
       spots: [],
       routes: [],
       travelTimes: [],
@@ -35,7 +37,8 @@ export default {
       Type: '',
       Open: '>',
       Close: '<',
-      page: 0
+      page: 0,
+      changedElementValue: null
     }
   },
   methods: {
@@ -44,19 +47,11 @@ export default {
       this.togos[this.page].splice(index, 1);
     },
     AddFakeSpot(){
-      console.log(this.spots);
+      //console.log(this.spots);
       let s = {name: 'text1'};
       this.spots.push(s);
     },
     addSpotToTrip(spot) {
-      // this.togos = [...this.togos, spot];
-      let stop = {
-        id: spot._id,
-        name: spot.name,
-        location: spot.location.coordinates,
-        memo: "",
-        images: spot.images,
-      };
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
       } 
@@ -69,21 +64,29 @@ export default {
         }
         this.togos[this.page].push(spot);
       }
-        console.log(this.togos[this.page]);
     },
     changePage(p) {
       this.page = p;
     },
-    created() {
-
+    setValue: function() {
+      this.oldTogos = _.cloneDeep(this.togos);
+      console.log(this.oldTogos);
     },
-    updated: function(){
-
+    reverseCoordinates: function(tmpCoordinates) {
+      for (let i = 0; i < tmpCoordinates.length; i++) {
+            // 反轉經緯度 for leaflet
+            let tmp = tmpCoordinates[i][1];
+            tmpCoordinates[i][1] = tmpCoordinates[i][0];
+            tmpCoordinates[i][0] = tmp;
+      }
     },
+  },
+  mounted() {
+    this.setValue();
   },
   watch: {
     region: function(newVal, oldVal) {
-      console.log('Prop hanged: ', newVal, '| was: ', oldVal);
+      //console.log('Prop hanged: ', newVal, '| was: ', oldVal);
       let self = this;
       //place, category, name, sortBy, page, limit, order
       let params = {
@@ -107,10 +110,21 @@ export default {
         // always executed
       });
     },
-    togos: function() {
+    togos: function(newVal, oldVal) {
       let self = this;
       let length = this.togos[this.page].length;
       let coordinates = [];
+
+      // // get elements changed
+      // let changed = newVal.filter(function(p, idx) {
+      // return Object.keys(p).some(function(prop) {
+      //   return p[prop] !== self.oldTogos[idx][prop];
+      //   })
+      // });
+      console.log(self.oldTogos, self.newVal);
+      // Log it
+      self.setValue();
+      //console.log(changed);
       
       // Reset 
       self.travelTimes = [];
@@ -131,12 +145,7 @@ export default {
         apiGetRoutes(data, 'driving-car')
         .then(function (res) {
           let tmpCoordinates = res.data.features[0].geometry.coordinates;
-          for (let i = 0; i < tmpCoordinates.length; i++) {
-            // 反轉經緯度 for leaflet
-            let tmp = tmpCoordinates[i][1];
-            tmpCoordinates[i][1] = tmpCoordinates[i][0];
-            tmpCoordinates[i][0] = tmp;
-          }
+          self.reverseCoordinates(tmpCoordinates);
           self.routes.push(tmpCoordinates);
           // Travel time
           let tmp = res.data.features[0].properties.segments;

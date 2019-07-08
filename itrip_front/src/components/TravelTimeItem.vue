@@ -22,7 +22,7 @@ export default {
     name: "TravelTimeItem",
     props: {
         togo: Object,
-        travelTime: Object
+        travelTime: Number
     },
     data() {
         return {
