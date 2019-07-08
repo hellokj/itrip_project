@@ -1,6 +1,6 @@
 <template>
   <div  class="trip">
-    <Togos :togos="togos[page]" :travelTimes="travelTimes" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
+    <Togos :togos="togos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
@@ -13,7 +13,8 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
-import {apiGetSpots, apiGetRoutes} from '../api.js'
+import {TravelInfo} from '../../utils/dataClass'
+import {apiGetSpots, apiGetRoutes} from '../../utils/api'
 import _ from 'lodash'
 
 export default {
@@ -27,10 +28,8 @@ export default {
   data() {
     return {
       togos: [],
-      oldTogos: [],
       spots: [],
       routes: [],
-      travelTimes: [],
       showSpots: true,
       // unused params
       Region: '',
@@ -38,18 +37,15 @@ export default {
       Open: '>',
       Close: '<',
       page: 0,
-      changedElementValue: null
+      changedElementValue: null,
+      // travelTime format
+      // { start: , dest: ,duration: , time: , mode:}
+      travelInfos: [],
     }
   },
   methods: {
     deleteTogo(index) {
-      // this.togos = this.togos.filter(togo => togo._id !== _id);
       this.togos[this.page].splice(index, 1);
-    },
-    AddFakeSpot(){
-      //console.log(this.spots);
-      let s = {name: 'text1'};
-      this.spots.push(s);
     },
     addSpotToTrip(spot) {
       if (this.togos[this.page] !== undefined){
@@ -68,21 +64,42 @@ export default {
     changePage(p) {
       this.page = p;
     },
-    setValue: function() {
-      this.oldTogos = _.cloneDeep(this.togos);
-      console.log(this.oldTogos);
-    },
     reverseCoordinates: function(tmpCoordinates) {
       for (let i = 0; i < tmpCoordinates.length; i++) {
-            // 反轉經緯度 for leaflet
-            let tmp = tmpCoordinates[i][1];
-            tmpCoordinates[i][1] = tmpCoordinates[i][0];
-            tmpCoordinates[i][0] = tmp;
+        // 反轉經緯度 for leaflet
+        let tmp = tmpCoordinates[i][1];
+        tmpCoordinates[i][1] = tmpCoordinates[i][0];
+        tmpCoordinates[i][0] = tmp;
       }
     },
-  },
-  mounted() {
-    this.setValue();
+    indexChanged: function(oldVal, newVal) {
+      let result = [];
+      if(oldVal.length >= newVal.length) {
+        oldVal.map(function(element, index) {
+          if(newVal[index] !== undefined && element._id !== newVal[index]._id) {
+            result.push(index);
+          }
+          else if(newVal[index] === undefined) result.push(index);
+        });
+      }
+      else {
+        newVal.map(function(element, index) {
+          if(oldVal[index] !== undefined && element._id !== oldVal[index]._id) {
+            result.push(index);
+          }
+          else if(oldVal[index] === undefined) result.push(index);
+        });
+      }
+      return result;
+    },
+    resetRoutes: function() {
+      if(this.travelInfos.length > 0) {
+        this.routes = [];
+        for(let i=0;i<(this.travelInfos[this.page]).length;i++) {
+          this.routes.concat((this.travelInfos[this.page][i]).routes);
+        }
+      }
+    }
   },
   watch: {
     region: function(newVal, oldVal) {
@@ -112,58 +129,60 @@ export default {
     },
     togos: function(newVal, oldVal) {
       let self = this;
-      let length = this.togos[this.page].length;
-      let coordinates = [];
-
-      // // get elements changed
-      // let changed = newVal.filter(function(p, idx) {
-      // return Object.keys(p).some(function(prop) {
-      //   return p[prop] !== self.oldTogos[idx][prop];
-      //   })
-      // });
-      console.log(self.oldTogos, self.newVal);
-      // Log it
-      self.setValue();
-      //console.log(changed);
-      
-      // Reset 
-      self.travelTimes = [];
-      for(let i=0;i<length;i++) {
-        let togo = this.togos[this.page][i];
-        // get coordinates from togos
-        let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
-        coordinates.push(tmp);
-
-        // set index for togo in togos
-        togo.index = i;
-      }
-      let data = {
-        'coordinates': coordinates 
-      }
-      if(self.togos[this.page].length > 1) {
-        // call get routes api
-        apiGetRoutes(data, 'driving-car')
-        .then(function (res) {
-          let tmpCoordinates = res.data.features[0].geometry.coordinates;
-          self.reverseCoordinates(tmpCoordinates);
-          self.routes.push(tmpCoordinates);
-          // Travel time
-          let tmp = res.data.features[0].properties.segments;
-          for(let i=0;i<tmp.length;i++) {
-            let timeTmp = {
-              distance: tmp[i].distance,
-              duration: tmp[i].duration
+      let thisPage = this.togos[this.page];
+      let length = thisPage.length;
+      if(length > 1) {
+        for(let i=0;i<length-1;i++) {
+          let start = thisPage[i].name;
+          let dest = thisPage[i+1].name;
+          let travelInfo = self.travelInfos[self.page];
+          // check if travelInfo already exists
+          if(travelInfo !== undefined) {
+            let tmp = travelInfo[i];
+            if(tmp !== undefined) {
+              // skip if start and dest already exist
+            if(tmp.start === start && tmp.dest === dest || start === dest) continue;
+            else if(tmp.start === start) tmp.dest = dest;
+            else if(tmp.dest === dest) tmp.start = start;
             }
-            self.travelTimes.push(timeTmp);
           }
-          //console.log(self.travelTimes);
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .then(function () {
-          // always executed
-        });
+
+          let coordinates = [[thisPage[i].location.coordinates[0], thisPage[i].location.coordinates[1]],
+                             [thisPage[i+1].location.coordinates[0], thisPage[i+1].location.coordinates[1]]];
+          // default mode: driving-car
+          let mode = 'driving-car';
+          let data = {
+            'coordinates': coordinates 
+          }
+          let routes, duration, distance;
+          // call get routes api
+          apiGetRoutes(data, mode)
+          .then(function (res) {
+            let tmpCoordinates = res.data.features[0].geometry.coordinates;
+            // reverse coordinates because leaflet uses inverted coordinates
+            self.reverseCoordinates(tmpCoordinates);
+            // assign routes to draw polyLine
+            routes = tmpCoordinates;
+            // Travel time
+            let tmp = res.data.features[0].properties.segments[0];
+            duration = tmp.duration;
+            distance = tmp.distance;
+            // create new travelInfo instance
+            if(self.travelInfos[self.page] === undefined) {
+              self.travelInfos[self.page] = [];
+            }
+            self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });
+        }
+        // reset routes
+        self.resetRoutes();
+        console.log(self.routes);
       }
     }
   }

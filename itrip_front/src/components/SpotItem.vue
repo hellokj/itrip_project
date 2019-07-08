@@ -9,11 +9,8 @@
                 <b-col class="mx-0 my-0 px-0 py-0">
                     <p class="mx-0 my-0 px-0 py-0 p-name">{{index + 1}}. {{spot.name}}</p>
                     <p class="mx-0 my-0 px-0 py-0">{{ getAddress() }}</p>
- 
-                            <button><i src=""></i></button>
-                            <button><i src=""></i></button>
-                            
-    
+                    <button><i src=""></i></button>
+                    <button><i src=""></i></button>
                 </b-col>
             </b-row>
         </b-container>
@@ -60,17 +57,14 @@ export default {
         color: #000000;
 
     }
-
     .spot-picture{
         
         width: 100px;
         height: 100px;
     }
-
     .p-name {
         font-size:20px;
     }
-
     .btn-add {
         z-index: 10;
         position: absolute;
