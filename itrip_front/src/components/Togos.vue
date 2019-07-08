@@ -19,7 +19,7 @@
         <b-tab class="my-0 mx-0" title="第一天" active>
           <div class="togoContainer" :key="togo.id" v-for="togo in togos[page]" overflow:auto>
             <!-- TogoItem -->
-            <TogoItem class="mx-0 my-0" :togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
+            <TogoItem class="mx-0 my-0" :togo="togo" v-on:del-togo="$emit('del-togo', togo.id)"/>
             <!-- Travel time -->
             <TravelTimeItem class="mx-0 my-0" :togo="togo" v-if="isTravelTimeShown(togo.index)"/>
           

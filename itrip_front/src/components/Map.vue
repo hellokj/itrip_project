@@ -1,5 +1,5 @@
 <template lang="pug">
-#map(class="row map")
+#map(class=" map")
   //- h1 here is map
   //- h2 map {{$route.params}}
   //- h3(v-if="findSpot") you enter by id {{findSpot}}
@@ -160,7 +160,9 @@ export default {
 </script>
 
 <style scope lang="sass">
-.map
-    height: 100vh
-    width: 100vh
+.map 
+    width: calc(100vw - 730px)
+    height: calc(100vh - 85px)
+
+
 </style>
