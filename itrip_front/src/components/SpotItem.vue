@@ -1,5 +1,6 @@
 <template>
     <div class="spot-item px-0 py-0">
+        <img class="btn-add" v-on:click="$emit('add-spot', spot)"  src="./icons/add.svg" alt="ADD">
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
                 <b-col class="ml-0 my-0 pl-0 py-0" cols="4">
@@ -8,13 +9,11 @@
                 <b-col class="mx-0 my-0 px-0 py-0">
                     <p class="mx-0 my-0 px-0 py-0 p-name">{{index + 1}}. {{spot.name}}</p>
                     <p class="mx-0 my-0 px-0 py-0">{{ getAddress() }}</p>
-                    <b-container>
-                        <b-row>
-                            <b-col><button><i src=""></i></button></b-col>
-                            <b-col><button><i src=""></i></button></b-col>
-                            <b-col ><img class="btn-add" v-on:click="$emit('add-spot', spot)"  src="./icons/add.svg" alt="ADD"></b-col>
-                        </b-row>
-                    </b-container>
+ 
+                            <button><i src=""></i></button>
+                            <button><i src=""></i></button>
+                            
+    
                 </b-col>
             </b-row>
         </b-container>
@@ -73,6 +72,12 @@ export default {
     }
 
     .btn-add {
+        z-index: 10;
+        position: absolute;
+        margin-left: 330px;
+        margin-top: 10px;
         width: 20px;
+        height: 20px;
+        cursor: pointer;
     }
 </style>
