@@ -19,21 +19,28 @@
       :key="index"
       v-for="(spot, index) in spots"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-      @click="showSpot(index)"
     )
+      l-popup
+        MarkerPopover(
+          :name="spots[index].name"
+          :address="spots[index].address"
+          :images="spots[index].images"
+        )
     l-marker(
     :icon="togoIcon"
     :key="index"
     v-for="(togo, index) in togos"
     :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
     )
-
 </template>
 
 <script>
-import {LMap, LTileLayer, LMarker, LIcon, LPolyline } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
+import MarkerPopover from '../components/template/MarkerPopover'
+import Vue from 'vue'
 import L from "leaflet"
+
 
 export default {
   name: 'Map',
@@ -42,7 +49,9 @@ export default {
         LTileLayer,
         LMarker,
         LIcon,
-        LPolyline
+        LPolyline,
+        LPopup,
+        MarkerPopover
     },
   props: {
     spots: Array,
@@ -140,6 +149,7 @@ export default {
       lng = lng / this.spots.length;
       lat = lat / this.spots.length;
       this.center = L.latLng(lat, lng);
+      this.LMap = L.Map.fitBounds(this.spots);
       // 計算 zoom-in
       // this.zoom = 14;
       // var featureGroup = new L.FeatureGroup([
