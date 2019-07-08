@@ -1,18 +1,13 @@
 <template>
-    <div class="togo-item">
-        <!-- <p>
-             <input type="checkbox" v-on:change="markComplete"> -->
-            <!-- {{togo.name}}
-            {{togo.location.coordinates[0]}}
-            {{togo.location.coordinates[1]}}
-            <button @click="$emit('del-togo', togo._id)" class="del"><b>移除</b></button> -->
-        <!-- </p> -->
+    <div class="travelTime-item">
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
                 <b-col class="mx-0 my-0 px-0 py-0">
-                    <p class="mx-0 my-0 px-0 py-0 p-name">{{togo.name}}</p>
+                    <p class="mx-0 my-0 px-0 py-0 p-name">開車</p>
                 </b-col>
-                <button @click="$emit('del-togo', togo._id)" class="del"><b>移除</b></button>
+                <b-col class="mx-0 my-0 px-0 py-0">
+                    <p class="mx-0 my-0 px-0 py-0 p-name"></p>
+                </b-col>
             </b-row>
         </b-container>
     </div>
@@ -20,8 +15,10 @@
 
 <script>
 export default {
-    name: "TogoItem",
-    props: ["togo"],
+    name: "TravelTimeItem",
+    props: {
+        togo: Object
+    },
     methods: {
         
     }
@@ -29,8 +26,7 @@ export default {
 </script>
 
 <style scoped>
-
-  .togo-item {
+  /* .togo-item {
       width: 355px;
       background: #ffffff;
       padding: 10px;
@@ -46,5 +42,5 @@ export default {
       border-radius: 50%;
       cursor: pointer;
       float: right;
-  }
+  } */
 </style>

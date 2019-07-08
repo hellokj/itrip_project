@@ -6,7 +6,7 @@
                     <img class="ml-0 my-0 px-0 py-0 spot-picture" v-bind:src="spot.images[0]" alt="Picture">
                 </b-col>
                 <b-col class="mx-0 my-0 px-0 py-0">
-                    <p class="mx-0 my-0 px-0 py-0 p-name">{{spot.name}}</p>
+                    <p class="mx-0 my-0 px-0 py-0 p-name">{{index + 1}}. {{spot.name}}</p>
                     <p class="mx-0 my-0 px-0 py-0">{{ getAddress() }}</p>
                     <b-container>
                         <b-row>
@@ -15,18 +15,16 @@
                             <b-col ><img class="btn-add" v-on:click="$emit('add-spot', spot)"  src="./icons/add.svg" alt="ADD"></b-col>
                         </b-row>
                     </b-container>
-                    
                 </b-col>
             </b-row>
         </b-container>
-            
     </div>
 </template>
 
 <script>
 export default {
     name: "SpotItem",
-    props: ["spot"],
+    props: ["spot", "index"],
     methods: {
         getAddress: function(){
             let address = '';

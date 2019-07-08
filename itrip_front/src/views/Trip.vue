@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map/>
+    <Map :spots="spots" :togos="togos[page]" :routes="routes"/>
   </div>
 </template>
 
@@ -13,7 +13,7 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
-import axios from 'axios';
+import {apiGetSpots, apiGetRoutes} from '../api.js'
 
 export default {
   name: 'trip',
@@ -27,6 +27,7 @@ export default {
     return {
       togos: [],
       spots: [],
+      routes: [],
       showSpots: true,
       // unused params
       Region: '',
@@ -41,6 +42,7 @@ export default {
       this.togos = this.togos.filter(togo => togo._id !== _id);
     },
     AddFakeSpot(){
+      console.log(this.spots);
       let s = {name: 'text1'};
       this.spots.push(s);
     },
@@ -55,7 +57,6 @@ export default {
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(stop);
       } else {
-
         for (var i = 0; i <= this.page; i++){
           if (this.togos[i] === undefined){
             let arr = [];
@@ -65,40 +66,24 @@ export default {
         
         this.togos[this.page].push(stop);
       }
-
-      // let arr = [];
-      // arr.push(spot);
-      // alert(arr);
-      // this.togos.push(arr);
-      alert(this.togos[this.page]);
-
-
-
     },
     changePage(p) {
       this.page = p;
-      alert("app.vue: page=" + p);
-    }
-  },
-  created() {
+    },
+    created() {
 
-  },
-  updated: function(){
+    },
+    updated: function(){
 
+    },
   },
   watch: {
     region: function(newVal, oldVal) {
       console.log('Prop hanged: ', newVal, '| was: ', oldVal);
+      let self = this;
       //place, category, name, sortBy, page, limit, order
-      // axios.get('http://35.194.247.229:3000/api/spot/get?place=萬華區&sortBy=checkins&category=gourmet&page=1&limit=10&order=-1')
-      // .then(res => {
-      //   this.spots = res.data.data.resultList;
-      //   console.log(this.spots);
-      //   })
-      // .catch(err => console.log(err));
-      axios.get('http://35.194.247.229:3000/api/spot/get', {
-        params: {
-          name: null,
+      let params = 
+        {
           place: newVal,
           category: "gourmet",
           sortBy: "checkins",
@@ -106,14 +91,56 @@ export default {
           limit: 10,
           order: -1
         }
-      })
-      .then(res => {
-        this.spots = res.data.data.resultList;
-        console.log(this.spots);
+
+      // call get spots api
+      apiGetSpots(params)
+      .then(function (res) {
+        self.spots = res.data.data.resultList;
       })
       .catch(function (error) {
         console.log(error);
       })
+      .then(function () {
+        // always executed
+      });
+    },
+    togos: function() {
+      let self = this;
+      let length = this.togos[this.page].length;
+      let coordinates = [];
+      if(length > 1) {
+        for(let i=0;i<length;i++) {
+          let togo = this.togos[this.page][i];
+          
+          // get coordinates from togos
+          let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
+          coordinates.push(tmp);
+
+          // set index for togo in togos
+          togo.index = i;
+        }
+      }
+      let data = {
+        'coordinates': coordinates 
+      }
+      // call get routes api
+      apiGetRoutes(data, 'driving-car')
+      .then(function (res) {
+        let tmpCoordinates = res.data.features[0].geometry.coordinates;
+        for (let i = 0; i < tmpCoordinates.length; i++) {
+          // 反轉經緯度 for leaflet
+          let tmp = tmpCoordinates[i][1];
+          tmpCoordinates[i][1] = tmpCoordinates[i][0];
+          tmpCoordinates[i][0] = tmp;
+        }
+        self.routes.push(tmpCoordinates);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
     }
   }
 }
@@ -156,5 +183,4 @@ export default {
     justify-content: flex-start;
     align-items: flex-start;
   }
-
 </style>
