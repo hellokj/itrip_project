@@ -69,7 +69,7 @@ export default {
       }),
       // polyline options
       color: "#FF0000",
-      opacity: 0.2,
+      opacity: 0.4,
       weight: 8
     }
   },
