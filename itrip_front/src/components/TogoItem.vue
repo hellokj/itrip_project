@@ -28,7 +28,7 @@
                         <b-row>
                             <b-col><button><i src=""></i></button></b-col>
                             <b-col><button><i src=""></i></button></b-col>
-                            <button @click="$emit('del-togo', togo.id)" class="del"><b>移除</b></button>
+                            <button @click="$emit('deleteTogo', togo.index)" class="del"><b>移除</b></button>
                         </b-row>
                     </b-container>
                 </b-col>
