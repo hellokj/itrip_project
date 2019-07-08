@@ -3,8 +3,8 @@
     <Togos :togos="togos[page]" :travelTimes="travelTimes" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
-    <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map :spots="spots" :togos="togos[page]" :routes="routes"/>
+    <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
+    <!-- <Map :spots="spots" :togos="togos[page]" :routes="routes"/> -->
   </div>
 </template>
 
@@ -55,6 +55,7 @@ export default {
         name: spot.name,
         location: spot.location.coordinates,
         memo: "",
+        images: spot.images,
       };
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
@@ -68,6 +69,7 @@ export default {
         }
         this.togos[this.page].push(spot);
       }
+        console.log(this.togos[this.page]);
     },
     changePage(p) {
       this.page = p;
@@ -105,6 +107,46 @@ export default {
         // always executed
       });
     },
+<<<<<<< HEAD
+    // togos: function() {
+    //   let self = this;
+    //   let length = this.togos[this.page].length;
+    //   let coordinates = [];
+    //   if(length > 1) {
+    //     for(let i=0;i<length;i++) {
+    //       let togo = this.togos[this.page][i];
+          
+    //       // get coordinates from togos
+    //       let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
+    //       coordinates.push(tmp);
+
+    //       // set index for togo in togos
+    //       togo.index = i;
+    //     }
+    //   }
+    //   let data = {
+    //     'coordinates': coordinates 
+    //   }
+    //   // call get routes api
+    //   apiGetRoutes(data, 'driving-car')
+    //   .then(function (res) {
+    //     let tmpCoordinates = res.data.features[0].geometry.coordinates;
+    //     for (let i = 0; i < tmpCoordinates.length; i++) {
+    //       // 反轉經緯度 for leaflet
+    //       let tmp = tmpCoordinates[i][1];
+    //       tmpCoordinates[i][1] = tmpCoordinates[i][0];
+    //       tmpCoordinates[i][0] = tmp;
+    //     }
+    //     self.routes.push(tmpCoordinates);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   })
+    //   .then(function () {
+    //     // always executed
+    //   });
+    // }
+=======
     togos: function() {
       let self = this;
       let length = this.togos[this.page].length;
@@ -155,6 +197,7 @@ export default {
         });
       }
     }
+>>>>>>> 96ff262ce4a1aa730d2a38888949a1d22294d9a7
   }
 }
 </script>
@@ -177,6 +220,9 @@ export default {
     border-style: none;
     width: 30px;
     height: 60px;
+    margin-right: -30px;
+    z-index: 100;
+    font-size: 30px;
     margin-top: 30px;
     display: block;
     background:rgb(96, 94, 109);
@@ -191,9 +237,10 @@ export default {
 
   .trip {
     margin: 0 0 0 0;
-    height: 600px;
+    height: auto;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
   }
+  
 </style>

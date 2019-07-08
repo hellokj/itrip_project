@@ -29,13 +29,13 @@
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
-            <!-- TogoItem -->
+             TogoItem -->
             <!-- <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
           </div>
         </b-tab>
         <b-tab title="新增" disabled>
           <p>I'm a disabled tab!</p>
-       <!-- </b-tab> -->
+        </b-tab> -->
     </div>
   </div>
 </template>
