@@ -21,13 +21,13 @@ export default {
     components: {
       SpotItem
     },
-    props: ["spots"]
+    props: {
+     "spots": Array 
+    }
 }
 </script>
 
 <style scoped>
-
-
   .spotContainer {
     margin: 0px;
     padding: 0px;

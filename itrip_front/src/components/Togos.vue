@@ -17,26 +17,25 @@
     <div>
       <b-tabs content-class="mt-3" @input="changePage()" v-model="page">
         <b-tab class="my-0 mx-0" title="第一天" active>
-          <div class="togoContainer" :key="togo.id" v-for="togo in togos[page]" overflow:auto>
+          <div class="togoContainer" :key="index" v-for="(togo, index) in togos" overflow:auto>
             <!-- TogoItem -->
-            <TogoItem class="mx-0 my-0" :togo="togo" v-on:del-togo="$emit('del-togo', togo.id)"/>
+            <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', togo.index)"/>
             <!-- Travel time -->
-            <TravelTimeItem class="mx-0 my-0" :togo="togo" v-if="isTravelTimeShown(togo.index)"/>
-          
+            <TravelTimeItem class="mx-0 my-0" :travelTime="travelTimes[togo.index].duration" v-if="isTravelTimeShown(togo.index)"/>
           </div>
         </b-tab>
+      </b-tabs>
 
-        <!-- other days -->
+        <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
-            <!-- TogoItem -->
-            <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
+             TogoItem -->
+            <!-- <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
           </div>
         </b-tab>
         <b-tab title="新增" disabled>
           <p>I'm a disabled tab!</p>
-        </b-tab>
-      </b-tabs>
+        </b-tab> -->
     </div>
   </div>
 </template>
@@ -49,7 +48,6 @@ export default {
     name: "Togos",
     data() {
       return {
-        trips: [],
         tabtitle: '',
         page: 0,
       }
@@ -58,30 +56,33 @@ export default {
         TogoItem,
         TravelTimeItem
     },
-    props: ["togos"],
+    props: ["togos", "travelTimes", "page"],
     methods: {
       saveTrip() {
         for (var i = 0; i < this.togos.length; i++){
           alert(i);
         }
-          
       },
       changePage(){
         alert(this.page);
         this.$emit('change-page', this.page);
       },
       isTravelTimeShown(index) {
-        if(index < this.togos[this.page].length-1) {
+        if(index < (this.togos.length-1)) {
+          console.log(index);
           return true;
         }
         return false;
+      },
+      // child method
+      deleteTogo(){
+        this.$emit('deeleteTogo');
       }
-    }
+    },
 }
 </script>
 
 <style scoped>
-
   .MyTrip {
     margin: 0px;
     padding: 0px;

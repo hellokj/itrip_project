@@ -10,9 +10,9 @@
         <!-- <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
                 <b-col class="mx-0 my-0 px-0 py-0">
-                    <p class="mx-0 my-0 px-0 py-0 p-name">{{togo.name}}</p>
+                    <p class="mx-0 my-0 px-0 py-0 p-name">{{togo.index + 1}}. {{togo.name}}</p>
                 </b-col>
-                <button @click="$emit('del-togo', togo._id)" class="del"><b>移除</b></button>
+                <button @click="$emit('deleteTogo', togo.index)" class="del"><b>移除</b></button>
             </b-row>
         </b-container> -->
 
@@ -40,9 +40,16 @@
 <script>
 export default {
     name: "TogoItem",
-    props: ["togo", "index"],
+    props: {
+        togo: Object
+    },
     methods: {
-        
+        deleteTogo() {
+            this.$emit('deleteTogo');
+        }
+    },
+    mounted() {
+        //console.log(this.togo)
     }
 }
 </script>
