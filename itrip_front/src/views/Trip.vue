@@ -69,7 +69,7 @@ export default {
     addSpotToTrip(spot) {
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
-      } 
+      }
       else {
         this.togos.push([]);
         this.togos[this.page].push(spot);
@@ -116,7 +116,7 @@ export default {
         // push new travelInfo instance into travelInfos
         self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
         // reset routes
-        //self.resetRoutes();
+        self.resetRoutes();
       })
       .catch(function (error) {
         //console.log(error);
@@ -189,9 +189,9 @@ export default {
         // always executed
       });
     },
-    togos: function(newVal, oldVal) {
-      //console.log(this.togos);
-    }
+  togos: function(newVal, oldVal) {
+    //console.log(this.togos);
+  }
     //   let self = this;
     //   let thisPage = this.togos[this.page];
     //   let length = thisPage.length;

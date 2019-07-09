@@ -1,10 +1,5 @@
 <template lang="pug">
-<<<<<<< HEAD
 #map(class="map")
-  //- h6 {{ routes[page].routes }}
-=======
-#map(class=" map")
->>>>>>> 25a5c0163d3a4151854e2a35812048da51356a27
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
@@ -26,26 +21,11 @@
           :address="spots[index].address"
           :images="spots[index].images"
         )
-<<<<<<< HEAD
 
     l-marker(
       :icon="togoIcon"
       v-for="(togo, index) in togos"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
-=======
-    //- MyMarker
-    //- l-marker(
-    //-   :icon="chosenIcons[chosenIndex]"
-    //-   v-show="false"
-    //-   v-for="(spot, chosenIndex) in spots"
-    //-   :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-    //- )
-    l-marker(
-    :icon="togoIcon"
-    :key="index"
-    v-for="(togo, index) in togos"
-    :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
->>>>>>> 25a5c0163d3a4151854e2a35812048da51356a27
     )
 </template>
 
@@ -96,7 +76,7 @@ export default {
     spots: Array,
     togos: Array,
     routes: Object,
-    page: String
+    page: Number
   },
   mounted() {
     for(let i = 0; i < 10; i++){
