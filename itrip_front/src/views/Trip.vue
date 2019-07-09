@@ -1,6 +1,6 @@
 <template>
   <div  class="trip">
-    <Togos :togos="togos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
+    <Togos  :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
@@ -30,7 +30,10 @@ export default {
       update: 0,
       togos: [],
       spots: [],
-      // 3-d multi-dimensional array
+      // routes format: {
+      // "0" : {
+      //  "routes": // 2-d array
+      //  "color": }}
       routes: {},
       showSpots: true,
       // unused params
@@ -47,21 +50,83 @@ export default {
   },
   methods: {
     deleteTogo(index) {
+      //this.togos[this.page] = this.togos[this.page].filter(togo => togo.id !== id);
       this.togos[this.page].splice(index, 1);
+      this.fixTravelInfo(index);
+    },
+    fixTravelInfo(index) {
+      if(index == 0) {
+        this.travelInfos[this.page].shift();
+      }
+      else if(index == this.travelInfos[this.page].length - 1) {
+        this.travelInfos[this.page].pop();
+      }
+      else {
+        this.travelInfos[this.page][index - 1].dest = this.travelInfos[this.page][index].dest;
+        this.travelInfos[this.page].splice(index, 1);
+      }
     },
     addSpotToTrip(spot) {
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
       } 
       else {
-        for (var i = 0; i <= this.page; i++){
-          if (this.togos[i] === undefined){
-            let arr = [];
-            this.togos.push(arr);
-          }
-        }
+        this.togos.push([]);
         this.togos[this.page].push(spot);
       }
+      let length = this.togos[this.page].length;
+      // only need to get travelInfo if length > 2
+      if(length > 1) {
+        this.addTravelInfo(this.togos[this.page][length - 2], spot);
+      }
+      // add this to refresh component
+      this.update++;
+    },
+    addTravelInfo(startOb, destOb) {
+      let self = this;
+      // initialize travelInfos
+      if(this.travelInfos[this.page] === undefined) {
+        this.travelInfos[this.page] = [];
+      }
+
+      //console.log(start, dest);
+      let coordinates = [[startOb.location.coordinates[0], startOb.location.coordinates[1]],
+                        [destOb.location.coordinates[0], destOb.location.coordinates[1]]];
+      // default mode: driving-car
+      let mode = 'driving-car';
+      let data = {
+        'coordinates': coordinates 
+      }
+      let routes, duration, distance;
+      // call get routes api
+      apiGetRoutes(data, mode)
+      .then(function (res) {
+        let tmpCoordinates = res.data.features[0].geometry.coordinates;
+        // reverse coordinates because leaflet uses inverted coordinates
+        self.reverseCoordinates(tmpCoordinates);
+        // assign routes to draw polyLine
+        routes = tmpCoordinates;
+        
+        // Travel time
+        let tmp = res.data.features[0].properties.segments[0];
+        duration = tmp.duration;
+        distance = tmp.distance;
+        let start = startOb.name;
+        let dest = destOb.name;
+        // push new travelInfo instance into travelInfos
+        self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
+        // reset routes
+        //self.resetRoutes();
+      })
+      .catch(function (error) {
+        //console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+    },
+    updateTogos(arr){
+      this.togos[this.page] = arr;
     },
     changePage(p) {
       this.page = p;
@@ -74,25 +139,13 @@ export default {
         tmpCoordinates[i][0] = tmp;
       }
     },
-    indexChanged: function(oldVal, newVal) {
-      let result = [];
-      if(oldVal.length >= newVal.length) {
-        oldVal.map(function(element, index) {
-          if(newVal[index] !== undefined && element._id !== newVal[index]._id) {
-            result.push(index);
-          }
-          else if(newVal[index] === undefined) result.push(index);
-        });
+    travelInfoContains: function(start, dest) {
+      for(let i=0;i<this.travelInfos[this.page].length;i++) {
+        if(start === this.travelInfos[this.page][i].start && dest === this.travelInfos[this.page][i].dest) {
+          return true;
+        }
       }
-      else {
-        newVal.map(function(element, index) {
-          if(oldVal[index] !== undefined && element._id !== oldVal[index]._id) {
-            result.push(index);
-          }
-          else if(oldVal[index] === undefined) result.push(index);
-        });
-      }
-      return result;
+      return false;
     },
     resetRoutes: function() {
       //console.log(this.travelInfos[0]);
@@ -109,6 +162,7 @@ export default {
       }
     }
   },
+  
   watch: {
     region: function(newVal, oldVal) {
       //console.log('Prop hanged: ', newVal, '| was: ', oldVal);
@@ -136,63 +190,29 @@ export default {
       });
     },
     togos: function(newVal, oldVal) {
-      let self = this;
-      let thisPage = this.togos[this.page];
-      let length = thisPage.length;
-      if(length > 1) {
-        for(let i=0;i<length-1;i++) {
-          let start = thisPage[i].name;
-          let dest = thisPage[i+1].name;
-          let travelInfo = self.travelInfos[self.page];
-          // check if travelInfo already exists
-          if(travelInfo !== undefined) {
-            let tmp = travelInfo[i];
-            if(tmp !== undefined) {
-              // skip if start and dest already exist
-              if((tmp.start === start && tmp.dest === dest) || start === dest) continue;
-              else if(tmp.start === start) tmp.dest = dest;
-              else if(tmp.dest === dest) tmp.start = start;
-            }
-          }
-          //console.log(start, dest);
-          let coordinates = [[thisPage[i].location.coordinates[0], thisPage[i].location.coordinates[1]],
-                             [thisPage[i+1].location.coordinates[0], thisPage[i+1].location.coordinates[1]]];
-          // default mode: driving-car
-          let mode = 'driving-car';
-          let data = {
-            'coordinates': coordinates 
-          }
-          let routes, duration, distance;
-          // call get routes api
-          apiGetRoutes(data, mode)
-          .then(function (res) {
-            let tmpCoordinates = res.data.features[0].geometry.coordinates;
-            // reverse coordinates because leaflet uses inverted coordinates
-            self.reverseCoordinates(tmpCoordinates);
-            // assign routes to draw polyLine
-            routes = tmpCoordinates;
-            // Travel time
-            let tmp = res.data.features[0].properties.segments[0];
-            duration = tmp.duration;
-            distance = tmp.distance;
-            // create new travelInfo instance
-            if(self.travelInfos[self.page] === undefined) {
-              self.travelInfos[self.page] = [];
-            }
-            self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
-            // reset routes
-            self.resetRoutes(self.page);
-          })
-          .catch(function (error) {
-            //console.log(error);
-          })
-          .then(function () {
-            // always executed
-          });
-        }
-        //console.log(self.travelInfos);
-      }
+      //console.log(this.togos);
     }
+    //   let self = this;
+    //   let thisPage = this.togos[this.page];
+    //   let length = thisPage.length;
+    //   if(length > 1) {
+    //     for(let i=0;i<length-1;i++) {
+    //       let start = thisPage[i].name;
+    //       let dest = thisPage[i+1].name;
+    //       let travelInfo = self.travelInfos[self.page];
+    //       // check if travelInfo already exists
+    //       if(travelInfo !== undefined) {
+    //         let tmp = travelInfo[i];
+    //         if(tmp !== undefined) {
+    //           // skip if start and dest already exist
+    //           if((tmp.start === start && tmp.dest === dest) || start === dest) continue;
+    //           else if(tmp.start === start) tmp.dest = dest;
+    //           else if(tmp.dest === dest) tmp.start = start;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 </script>
@@ -214,15 +234,17 @@ export default {
   .btn-showSpots {
     border-style: none;
     width: 30px;
-    height: 60px;
-    margin-right: -30px;
+    height: 40px;
+    margin-right: 0px;
+    margin-left: -30px;
     z-index: 100;
     font-size: 30px;
-    margin-top: 30px;
+    margin-top: 10px;
     display: block;
     background:rgb(96, 94, 109);
     color: #FFFFFF;
     outline: none;
+    justify-content: center;
   }
 
   body {
@@ -238,5 +260,4 @@ export default {
     align-items: flex-start;
 
   }
-  
 </style>

@@ -1,6 +1,10 @@
 <template lang="pug">
+<<<<<<< HEAD
 #map(class="map")
   //- h6 {{ routes[page].routes }}
+=======
+#map(class=" map")
+>>>>>>> 25a5c0163d3a4151854e2a35812048da51356a27
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
@@ -22,11 +26,26 @@
           :address="spots[index].address"
           :images="spots[index].images"
         )
+<<<<<<< HEAD
 
     l-marker(
       :icon="togoIcon"
       v-for="(togo, index) in togos"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+=======
+    //- MyMarker
+    //- l-marker(
+    //-   :icon="chosenIcons[chosenIndex]"
+    //-   v-show="false"
+    //-   v-for="(spot, chosenIndex) in spots"
+    //-   :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+    //- )
+    l-marker(
+    :icon="togoIcon"
+    :key="index"
+    v-for="(togo, index) in togos"
+    :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+>>>>>>> 25a5c0163d3a4151854e2a35812048da51356a27
     )
 </template>
 
@@ -54,6 +73,7 @@ export default {
       
       zoom: 8,
       currentZoom: 8,
+      visible: false,
       currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
@@ -66,7 +86,7 @@ export default {
         iconUrl: require('../assets/itineraryMarker.png'),
         iconSize: [80, 80]
       }),
-      // polyline options
+       // polyline options
       color: "#FF0000",
       opacity: 0.4,
       weight: 8
@@ -79,7 +99,7 @@ export default {
     page: String
   },
   mounted() {
-    for( let i = 0; i < 10; i++){
+    for(let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
         iconSize: [50, 50],

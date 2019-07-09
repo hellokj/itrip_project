@@ -17,14 +17,23 @@
     <div>
       <b-tabs content-class="mt-3" @input="changePage()" v-model="page">
         <b-tab class="my-0 mx-0" title="第一天" active>
-          <div class="togoContainer" :key="index" v-for="(togo, index) in togos" overflow:auto>
-            <!-- TogoItem -->
-            <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', togo.index)"/>
-            <!-- Travel time -->
-            <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(togo.index)" :travelTime="travelTimes[togo.index].duration"/>
-          </div>
+          <draggable v-model="togos" ghost-class="ghost" @end="onEnd">
+            <transition-group type="transition" name="flip-list">
+              <div class="togoContainer sortable" :key="index" v-for="(togo, index) in togos" overflow:auto>
+                <!-- TogoItem -->
+                <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
+                <!-- Travel time -->
+                <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(togo.index)" :travelTime="travelTimes[togo.index].duration"/>
+              </div>
+            </transition-group>
+          </draggable>
         </b-tab>
+        
       </b-tabs>
+      <button>Add day</button>
+      <p>{{oldIndex}}</p>
+      <p>{{newIndex}}</p>
+
 
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
@@ -43,19 +52,24 @@
 <script>
 import TogoItem from './TogoItem';
 import TravelTimeItem from './TravelTimeItem';
+import draggable from 'vuedraggable'
 
 export default {
     name: "Togos",
     data() {
       return {
         tabtitle: '',
+        togos: [],
+        oldIndex: '',
+        newIndex: '',
       }
     },
     components: {
         TogoItem,
-        TravelTimeItem
+        TravelTimeItem,
+        draggable
     },
-    props: ["togos", "travelTimes", "page"],
+    props: ["togos_prop", "travelTimes", "page"],
     methods: {
       saveTrip() {
         for (var i = 0; i < this.togos.length; i++){
@@ -75,12 +89,24 @@ export default {
       // child method
       deleteTogo(){
         this.$emit('deeleteTogo');
-      }
+      },
+      onEnd: function(evt) {
+      console.log(evt)
+      this.oldIndex = evt.oldIndex;
+      this.newIndex = evt.newIndex;
+      this.$emit('togos-changeOrder', this.togos)
+      },
     },
+    watch: {
+      togos_prop: function(){
+        this.togos = this.togos_prop;
+      }
+    }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
   .MyTrip {
     margin: 0px;
     padding: 0px;
@@ -133,5 +159,31 @@ export default {
     border: none;
     background: #515151;
     color: white;
+  }
+
+  .MyTrip .sortable-drag {
+    opacity: 0;
+  }
+
+
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+  .ghost {
+    border-left: 6px solid rgb(0, 183, 255);
+    box-shadow: 10px 10px 5px -1px rgba(0,0,0,0.14);
+    opacity: .7;
+
+    &::before {
+      content: " ";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin-left: -50px;
+      // background-image: url('../assets/drag.svg')
+    }
   }
 </style>
