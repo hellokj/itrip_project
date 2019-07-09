@@ -1,19 +1,20 @@
 <template lang="pug">
-#map(class="row map")
-  l-map(:zoom='zoom', :center='center', style='height: 90%',
+#map(class=" map")
+  h6 {{routes}} 
+  l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
     l-polyline(
-      v-for="(route, index) in routes",
-      :lat-lngs="route",
-      :color="color")
+      v-for="(route, index) in routes"
+      :lat-lngs="routes[index]"
+      :color="color"
+      :opacity="opacity"
+      :weight="weight")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
-      :icon="icons[spotIndex]",
-      v-for="(spot, spotIndex) in spots",
-      :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])",
-      @mouseover="isShow[spotIndex]=true",
-      @mouseout="isShow[spotIndex]=false",
+      :icon="icons[index]"
+      v-for="(spot, index) in spots"
+      :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
     )
       l-tooltip
         MarkerPopover(
@@ -63,10 +64,30 @@ export default {
         LTooltip,
         MarkerPopover
     },
+  data() {
+    return {
+      zoom: 8,
+      currentZoom: 8,
+      currentCenter: L.latLng(23.583234, 121.2825975),
+      center: L.latLng(23.583234, 121.2825975), // taiwan center point
+      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      icons: [],
+      togoIcon: L.icon({
+        iconUrl: require('../assets/itineraryMarker.png'),
+        iconSize: [80, 80]
+      }),
+      // polyline options
+      color: "#FF0000",
+      opacity: 0.4,
+      weight: 8
+    }
+  },
   props: {
     spots: Array,
     togos: Array,
-    routes: Array
+    routes: Object
   },
   mounted() {
     for( let i = 0; i < 10; i++){
@@ -188,7 +209,7 @@ export default {
 </script>
 
 <style scope lang="sass">
-.map
-    height: 100vh
-    width: 100vh
+.map 
+    width: calc(100vw - 730px)
+    height: calc(100vh - 85px)
 </style>

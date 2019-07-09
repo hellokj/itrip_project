@@ -1,10 +1,10 @@
 <template>
   <div  class="trip">
-    <Togos v-bind:togos="togos" v-bind:page="page" v-on:del-togo="deleteTogo" v-on:change-page="changePage" />
+    <Togos :togos="togos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
-    <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button>
-    <Map :spots="spots" :togos="togos[page]" :routes="routes"/>
+    <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
+    <Map :key="update" :spots="spots" :togos="togos[page]" :routes="routes"/>
   </div>
 </template>
 
@@ -13,7 +13,9 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
-import {apiGetSpots, apiGetRoutes} from '../api.js'
+import {TravelInfo} from '../../utils/dataClass'
+import {apiGetSpots, apiGetRoutes} from '../../utils/api'
+import _ from 'lodash'
 
 export default {
   name: 'trip',
@@ -25,72 +27,101 @@ export default {
   props: ["region", "type"],
   data() {
     return {
+      update: 0,
       togos: [],
       spots: [],
-      routes: [],
+      // 3-d multi-dimensional array
+      routes: {},
       showSpots: true,
       // unused params
       Region: '',
       Type: '',
       Open: '>',
       Close: '<',
-      page: 0
+      page: 0,
+      changedElementValue: null,
+      // travelTime format
+      // { start: , dest: ,duration: , time: , mode:}
+      travelInfos: [],
     }
   },
   methods: {
-    deleteTogo(_id) {
-      this.togos = this.togos.filter(togo => togo._id !== _id);
-    },
-    AddFakeSpot(){
-      console.log(this.spots);
-      let s = {name: 'text1'};
-      this.spots.push(s);
+    deleteTogo(index) {
+      this.togos[this.page].splice(index, 1);
     },
     addSpotToTrip(spot) {
-      // this.togos = [...this.togos, spot];
-      let stop = {
-        id: spot._id,
-        name: spot.name,
-        location: spot.location.coordinates,
-        memo: "",
-      };
       if (this.togos[this.page] !== undefined){
-        this.togos[this.page].push(stop);
-      } else {
+        this.togos[this.page].push(spot);
+      } 
+      else {
         for (var i = 0; i <= this.page; i++){
           if (this.togos[i] === undefined){
             let arr = [];
             this.togos.push(arr);
           }
         }
-        
-        this.togos[this.page].push(stop);
+        this.togos[this.page].push(spot);
       }
     },
     changePage(p) {
       this.page = p;
     },
-    created() {
-
+    reverseCoordinates: function(tmpCoordinates) {
+      for (let i = 0; i < tmpCoordinates.length; i++) {
+        // 反轉經緯度 for leaflet
+        let tmp = tmpCoordinates[i][1];
+        tmpCoordinates[i][1] = tmpCoordinates[i][0];
+        tmpCoordinates[i][0] = tmp;
+      }
     },
-    updated: function(){
-
+    indexChanged: function(oldVal, newVal) {
+      let result = [];
+      if(oldVal.length >= newVal.length) {
+        oldVal.map(function(element, index) {
+          if(newVal[index] !== undefined && element._id !== newVal[index]._id) {
+            result.push(index);
+          }
+          else if(newVal[index] === undefined) result.push(index);
+        });
+      }
+      else {
+        newVal.map(function(element, index) {
+          if(oldVal[index] !== undefined && element._id !== oldVal[index]._id) {
+            result.push(index);
+          }
+          else if(oldVal[index] === undefined) result.push(index);
+        });
+      }
+      return result;
     },
+    resetRoutes: function() {
+      //console.log(this.travelInfos[0]);
+      if(this.travelInfos.length > 0) {
+        let tmp = [];
+        for(let i=0;i<this.travelInfos[this.page].length;i++) {
+          tmp = tmp.concat((this.travelInfos[this.page][i]).routes);
+        };
+        this.routes[this.page] = {
+          routes: tmp,
+          color: "#FF0000"
+        };
+        this.update++;
+      }
+    }
   },
   watch: {
     region: function(newVal, oldVal) {
-      console.log('Prop hanged: ', newVal, '| was: ', oldVal);
+      //console.log('Prop hanged: ', newVal, '| was: ', oldVal);
       let self = this;
       //place, category, name, sortBy, page, limit, order
-      let params = 
-        {
+      let params = {
           place: newVal,
           category: "gourmet",
           sortBy: "checkins",
           page: 1,
           limit: 10,
           order: -1
-        }
+      }
 
       // call get spots api
       apiGetSpots(params)
@@ -104,42 +135,63 @@ export default {
         // always executed
       });
     },
-    togos: function() {
+    togos: function(newVal, oldVal) {
       let self = this;
-      let length = this.togos[this.page].length;
-      let coordinates = [];
+      let thisPage = this.togos[this.page];
+      let length = thisPage.length;
       if(length > 1) {
-        for(let i=0;i<length;i++) {
-          let togo = this.togos[this.page][i];
-          // get coordinates from togos
-          let tmp = [togo.location[0], togo.location[1]];
-          coordinates.push(tmp);
-
-          // set index for togo in togos
-          togo.index = i;
+        for(let i=0;i<length-1;i++) {
+          let start = thisPage[i].name;
+          let dest = thisPage[i+1].name;
+          let travelInfo = self.travelInfos[self.page];
+          // check if travelInfo already exists
+          if(travelInfo !== undefined) {
+            let tmp = travelInfo[i];
+            if(tmp !== undefined) {
+              // skip if start and dest already exist
+              if((tmp.start === start && tmp.dest === dest) || start === dest) continue;
+              else if(tmp.start === start) tmp.dest = dest;
+              else if(tmp.dest === dest) tmp.start = start;
+            }
+          }
+          //console.log(start, dest);
+          let coordinates = [[thisPage[i].location.coordinates[0], thisPage[i].location.coordinates[1]],
+                             [thisPage[i+1].location.coordinates[0], thisPage[i+1].location.coordinates[1]]];
+          // default mode: driving-car
+          let mode = 'driving-car';
+          let data = {
+            'coordinates': coordinates 
+          }
+          let routes, duration, distance;
+          // call get routes api
+          apiGetRoutes(data, mode)
+          .then(function (res) {
+            let tmpCoordinates = res.data.features[0].geometry.coordinates;
+            // reverse coordinates because leaflet uses inverted coordinates
+            self.reverseCoordinates(tmpCoordinates);
+            // assign routes to draw polyLine
+            routes = tmpCoordinates;
+            // Travel time
+            let tmp = res.data.features[0].properties.segments[0];
+            duration = tmp.duration;
+            distance = tmp.distance;
+            // create new travelInfo instance
+            if(self.travelInfos[self.page] === undefined) {
+              self.travelInfos[self.page] = [];
+            }
+            self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
+            // reset routes
+            self.resetRoutes(self.page);
+          })
+          .catch(function (error) {
+            //console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });
         }
+        //console.log(self.travelInfos);
       }
-      let data = {
-        'coordinates': coordinates 
-      }
-      // call get routes api
-      apiGetRoutes(data, 'driving-car')
-      .then(function (res) {
-        let tmpCoordinates = res.data.features[0].geometry.coordinates;
-        for (let i = 0; i < tmpCoordinates.length; i++) {
-          // 反轉經緯度 for leaflet
-          let tmp = tmpCoordinates[i][1];
-          tmpCoordinates[i][1] = tmpCoordinates[i][0];
-          tmpCoordinates[i][0] = tmp;
-        }
-        self.routes.push(tmpCoordinates);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .then(function () {
-        // always executed
-      });
     }
   }
 }
@@ -163,6 +215,9 @@ export default {
     border-style: none;
     width: 30px;
     height: 60px;
+    margin-right: -30px;
+    z-index: 100;
+    font-size: 30px;
     margin-top: 30px;
     display: block;
     background:rgb(96, 94, 109);
@@ -177,9 +232,11 @@ export default {
 
   .trip {
     margin: 0 0 0 0;
-    height: 600px;
+    height: auto;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
+
   }
+  
 </style>
