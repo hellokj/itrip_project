@@ -30,7 +30,12 @@ export default {
       update: 0,
       togos: [],
       spots: [],
-      // 3-d multi-dimensional array
+      // routes format: {
+      // "0" : {
+      //  "routes": // 2-d array
+      //  "color": 
+      // }
+      //}
       routes: {},
       showSpots: true,
       // unused params
@@ -73,26 +78,6 @@ export default {
         tmpCoordinates[i][1] = tmpCoordinates[i][0];
         tmpCoordinates[i][0] = tmp;
       }
-    },
-    indexChanged: function(oldVal, newVal) {
-      let result = [];
-      if(oldVal.length >= newVal.length) {
-        oldVal.map(function(element, index) {
-          if(newVal[index] !== undefined && element._id !== newVal[index]._id) {
-            result.push(index);
-          }
-          else if(newVal[index] === undefined) result.push(index);
-        });
-      }
-      else {
-        newVal.map(function(element, index) {
-          if(oldVal[index] !== undefined && element._id !== oldVal[index]._id) {
-            result.push(index);
-          }
-          else if(oldVal[index] === undefined) result.push(index);
-        });
-      }
-      return result;
     },
     resetRoutes: function() {
       //console.log(this.travelInfos[0]);
