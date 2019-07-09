@@ -23,18 +23,14 @@
                 <!-- TogoItem -->
                 <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
                 <!-- Travel time -->
-                <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(togo.index)" :travelTime="travelTimes[togo.index].duration"/>
+                <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
               </div>
             </transition-group>
           </draggable>
         </b-tab>
-        
       </b-tabs>
-      <button>Add day</button>
       <p>{{oldIndex}}</p>
       <p>{{newIndex}}</p>
-
-
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
@@ -62,6 +58,7 @@ export default {
         togos: [],
         oldIndex: '',
         newIndex: '',
+        travelInfos: this.travelInfo
       }
     },
     components: {
@@ -69,9 +66,10 @@ export default {
         TravelTimeItem,
         draggable
     },
-    props: ["togos_prop", "travelTimes", "page"],
+    props: ["togos_prop", "travelInfo", "page"],
     methods: {
       saveTrip() {
+        console.log(this.travelInfo);
         for (var i = 0; i < this.togos.length; i++){
           alert(i);
         }
@@ -81,7 +79,7 @@ export default {
         this.$emit('change-page', this.page);
       },
       isTravelTimeShown(index) {
-        if(index < (this.togos.length-1)) {
+        if(index < (this.togos_prop.length-1)) {
           return true;
         }
         return false;
@@ -91,17 +89,25 @@ export default {
         this.$emit('deeleteTogo');
       },
       onEnd: function(evt) {
-      console.log(evt)
+      //console.log(evt)
       this.oldIndex = evt.oldIndex;
       this.newIndex = evt.newIndex;
       this.$emit('togos-changeOrder', this.togos)
       },
     },
+    computed: {
+      travelTime(index) {
+        
+      }
+    },
     watch: {
       togos_prop: function(){
         this.togos = this.togos_prop;
+      },
+      travelInfo: function() {
+        this.travelInfos = this.travelInfo;
       }
-    }
+    },
 }
 </script>
 

@@ -1,5 +1,6 @@
 <template lang="pug">
 #map(class="map")
+  h6 {{ routes[page] }}
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
