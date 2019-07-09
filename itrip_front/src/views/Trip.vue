@@ -108,6 +108,7 @@ export default {
       }
     }
   },
+  
   watch: {
     region: function(newVal, oldVal) {
       //console.log('Prop hanged: ', newVal, '| was: ', oldVal);
@@ -213,15 +214,17 @@ export default {
   .btn-showSpots {
     border-style: none;
     width: 30px;
-    height: 60px;
-    margin-right: -30px;
+    height: 40px;
+    margin-right: 0px;
+    margin-left: -30px;
     z-index: 100;
     font-size: 30px;
-    margin-top: 30px;
+    margin-top: 10px;
     display: block;
     background:rgb(96, 94, 109);
     color: #FFFFFF;
     outline: none;
+    justify-content: center;
   }
 
   body {

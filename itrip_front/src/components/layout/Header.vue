@@ -1,7 +1,7 @@
 <template>
     <header class="header">
         <div class="logo">
-            <img src="./logo.png" alt="iTripLogo">
+            <img src="./Logo.svg" alt="iTripLogo">
         </div>
         <div class="btns">
             <!-- Select Type -->
@@ -19,7 +19,8 @@
                 </datalist>
             <!-- Select Region -->
             </div>
-            <img class="icon_search" src="../icons/search.svg" @click="$emit('search-click',selected_type, selected_region)">
+
+            <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} class="icon_search" src="../icons/search.svg" @click="$emit('search-click',selected_type, selected_region)">
 
             <div class="div_trip">
                 <router-link to="/trip">旅遊</router-link>
@@ -42,8 +43,9 @@ export default {
       return {
         selected_type: '',
         selected_region: '',
-        regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'新竹市', '苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣', '澎湖縣'],
-        types: ['美食', '購物', '景點', '交通', '住宿', '娛樂']
+        regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'新竹市', '苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣', '澎湖縣', '金門縣'],
+        types: ['美食', '購物', '景點', '交通', '住宿', '娛樂'],
+        hover: true
       }
     },
     methods: {
@@ -116,8 +118,8 @@ export default {
     }
 
     .icon_search {
-        position: relative;
-        margin-left: -30px;
+        position: absolute;
+        margin-right: 300px;
         cursor: pointer;
     }
 
@@ -146,7 +148,8 @@ export default {
 
     }
 
-    .logo {
+    .logo img {
+        width: 100px;
         margin-top:10px;
         margin-left: 50px;
     }
@@ -156,5 +159,9 @@ export default {
         color: red;
     }
     
+    .active {
+        transform: translate(0px, -5px);
+
+    }
 
 </style>

@@ -24,7 +24,10 @@
             <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfo[index].duration"/>
           </div>
         </b-tab>
+        
       </b-tabs>
+      <button>Add day</button>
+
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
