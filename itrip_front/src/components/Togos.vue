@@ -19,7 +19,7 @@
         <b-tab class="my-0 mx-0" title="第一天" active>
           <draggable v-model="togos" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
-              <div class="togoContainer" :key="index" v-for="(togo, index) in togos" overflow:auto>
+              <div class="togoContainer sortable" :key="index" v-for="(togo, index) in togos" overflow:auto>
                 <!-- TogoItem -->
                 <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
                 <!-- Travel time -->
@@ -105,7 +105,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
   .MyTrip {
     margin: 0px;
     padding: 0px;
@@ -158,5 +159,31 @@ export default {
     border: none;
     background: #515151;
     color: white;
+  }
+
+  .MyTrip .sortable-drag {
+    opacity: 0;
+  }
+
+
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+  .ghost {
+    border-left: 6px solid rgb(0, 183, 255);
+    box-shadow: 10px 10px 5px -1px rgba(0,0,0,0.14);
+    opacity: .7;
+
+    &::before {
+      content: " ";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin-left: -50px;
+      // background-image: url('../assets/drag.svg')
+    }
   }
 </style>
