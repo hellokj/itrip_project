@@ -16,27 +16,41 @@
       v-for="(spot, index) in spots"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
     )
-      l-popup
+      l-tooltip
         MarkerPopover(
-          :name="spots[index].name"
-          :address="spots[index].address"
-          :images="spots[index].images"
+          :name="spots[spotIndex].name"
+          :address="spots[spotIndex].address"
+          :images="spots[spotIndex].images"
         )
+    l-marker(
+      :icon="chosenIcons[spotIndex]"
+      v-for="(spot, spotIndex) in spots"
+      v-if="isShow[spotIndex]"
+      :isShow="isShow[spotIndex]"
+      :class="{display: none}"
+      :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+    )
+    //- MyMarker
+    //- l-marker(
+    //-   :icon="chosenIcons[chosenIndex]"
+    //-   v-show="false"
+    //-   v-for="(spot, chosenIndex) in spots"
+    //-   :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+    //- )
     l-marker(
     :icon="togoIcon"
     :key="index"
     v-for="(togo, index) in togos"
-    :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+    :lat-lng="getLatLng(togo.location[1], togo.location[0])"
     )
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
 import MarkerPopover from '../components/template/MarkerPopover'
 import Vue from 'vue'
 import L from "leaflet"
-
 
 export default {
   name: 'Map',
@@ -47,6 +61,7 @@ export default {
         LIcon,
         LPolyline,
         LPopup,
+        LTooltip,
         MarkerPopover
     },
   data() {
@@ -78,11 +93,19 @@ export default {
     for( let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        iconSize: [45, 45],
+        iconSize: [50, 50],
       }));
+      this.chosenIcons.push(L.icon({
+        iconUrl: require('../assets/leaflet_marker/chosen'+ (i+1) + '.png'),
+        iconSize: [45, 45],
+      }))
+      this.isShow.push(false);
     }
   },
   methods: {
+    visbleUpdate(visible){
+      this.visible = visible;
+    },
     getLatLng: function(lat, lng) {
       return L.latLng(lat, lng);
     },
@@ -116,6 +139,26 @@ export default {
       
     }
   },
+  data() {
+    return {
+      zoom: 8,
+      currentZoom: 8,
+      visible: false,
+      currentCenter: L.latLng(23.583234, 121.2825975),
+      center: L.latLng(23.583234, 121.2825975), // taiwan center point
+      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      icons: [],
+      chosenIcons: [],
+      isShow: [],
+      togoIcon: L.icon({
+        iconUrl: require('../assets/itineraryMarker.png'),
+        iconSize: [80, 80]
+      }),
+      color: "#FF0000",
+    }
+  },
   watch: {
     spots: function(){
       // 計算搜尋出的景點中心點位置
@@ -147,7 +190,6 @@ export default {
       lng = lng / this.spots.length;
       lat = lat / this.spots.length;
       this.center = L.latLng(lat, lng);
-      this.LMap = L.Map.fitBounds(this.spots);
       // 計算 zoom-in
       // this.zoom = 14;
       // var featureGroup = new L.FeatureGroup([
@@ -156,7 +198,6 @@ export default {
       // ]);
       // var zoom = L.Map.getBoundsZoom(featureGroup.getBounds());
       // this.zoom = zoom;
-
     }
   },
   computed: {
