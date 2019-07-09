@@ -1,6 +1,6 @@
 <template>
   <div  class="trip">
-    <Togos :key="update" :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
+    <Togos  :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
@@ -71,7 +71,7 @@ export default {
         this.togos[this.page].push(spot);
       } 
       else {
-        this.togos[this.page] = [];
+        this.togos.push([]);
         this.togos[this.page].push(spot);
       }
     },
