@@ -1,6 +1,5 @@
 <template lang="pug">
 #map(class=" map")
-  h6 {{routes}} 
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
@@ -18,18 +17,10 @@
     )
       l-tooltip
         MarkerPopover(
-          :name="spots[spotIndex].name"
-          :address="spots[spotIndex].address"
-          :images="spots[spotIndex].images"
+          :name="spots[index].name"
+          :address="spots[index].address"
+          :images="spots[index].images"
         )
-    l-marker(
-      :icon="chosenIcons[spotIndex]"
-      v-for="(spot, spotIndex) in spots"
-      v-if="isShow[spotIndex]"
-      :isShow="isShow[spotIndex]"
-      :class="{display: none}"
-      :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-    )
     //- MyMarker
     //- l-marker(
     //-   :icon="chosenIcons[chosenIndex]"
@@ -41,7 +32,7 @@
     :icon="togoIcon"
     :key="index"
     v-for="(togo, index) in togos"
-    :lat-lng="getLatLng(togo.location[1], togo.location[0])"
+    :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
     )
 </template>
 
@@ -68,17 +59,20 @@ export default {
     return {
       zoom: 8,
       currentZoom: 8,
+      visible: false,
       currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icons: [],
+      chosenIcons: [],
+      isShow: [],
       togoIcon: L.icon({
         iconUrl: require('../assets/itineraryMarker.png'),
         iconSize: [80, 80]
       }),
-      // polyline options
+       // polyline options
       color: "#FF0000",
       opacity: 0.4,
       weight: 8
@@ -90,7 +84,7 @@ export default {
     routes: Object
   },
   mounted() {
-    for( let i = 0; i < 10; i++){
+    for(let i = 0; i < 10; i++){
       this.icons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
         iconSize: [50, 50],
@@ -137,26 +131,6 @@ export default {
     },
     setZoom: function(){
       
-    }
-  },
-  data() {
-    return {
-      zoom: 8,
-      currentZoom: 8,
-      visible: false,
-      currentCenter: L.latLng(23.583234, 121.2825975),
-      center: L.latLng(23.583234, 121.2825975), // taiwan center point
-      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      icons: [],
-      chosenIcons: [],
-      isShow: [],
-      togoIcon: L.icon({
-        iconUrl: require('../assets/itineraryMarker.png'),
-        iconSize: [80, 80]
-      }),
-      color: "#FF0000",
     }
   },
   watch: {
