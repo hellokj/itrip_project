@@ -111,9 +111,8 @@ export default {
       if(length > 1) {
         for(let i=0;i<length;i++) {
           let togo = this.togos[this.page][i];
-          
           // get coordinates from togos
-          let tmp = [togo.location.coordinates[0], togo.location.coordinates[1]];
+          let tmp = [togo.location[0], togo.location[1]];
           coordinates.push(tmp);
 
           // set index for togo in togos
