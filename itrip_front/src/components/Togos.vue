@@ -21,11 +21,10 @@
             <!-- TogoItem -->
             <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', togo.index)"/>
             <!-- Travel time -->
-            <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(togo.index)" :travelTime="travelTimes[togo.index].duration"/>
+            <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfo[index].duration"/>
           </div>
         </b-tab>
       </b-tabs>
-
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
@@ -55,7 +54,7 @@ export default {
         TogoItem,
         TravelTimeItem
     },
-    props: ["togos", "travelTimes", "page"],
+    props: ["togos", "travelInfo", "page"],
     methods: {
       saveTrip() {
         for (var i = 0; i < this.togos.length; i++){
