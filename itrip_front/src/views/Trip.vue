@@ -84,8 +84,6 @@ export default {
       if(length > 1) {
         this.addTravelInfo(this.togos[this.page][length - 2], spot);
       }
-      // // add this to refresh component
-      // this.togoUpdate++;
     },
     addTravelInfo(startOb, destOb) {
       // initialize travelInfos
@@ -94,9 +92,6 @@ export default {
       }
       // call get routes api
       this.callGetRoutesApi(this.travelInfos[this.page].length, startOb, destOb, 'driving-car');
-      
-      // reset routes
-      this.resetRoutes();
     },
     callGetRoutesApi(index, startOb, destOb, mode) {
       let self = this;
@@ -114,15 +109,16 @@ export default {
         self.reverseCoordinates(tmpCoordinates);
         // assign routes to draw polyLine
         let routes = tmpCoordinates;
-        
         // Travel time
         let tmp = res.data.features[0].properties.segments[0];
         let duration = tmp.duration;
         let distance = tmp.distance;
         let start = startOb.name;
         let dest = destOb.name;
-        let travelInfo = new TravelInfo(start, dest, mode, duration, distance, routes)
-        self.travelInfos[self.page].splice(index, 1, travelInfo);
+        let travelInfo = new TravelInfo(start, dest, mode, duration, distance, routes);
+        self.$set(self.travelInfos[self.page], index, travelInfo);
+        // reset routes
+        self.resetRoutes();
       })
       .catch(function (error) {
         //console.log(error);
@@ -146,17 +142,18 @@ export default {
       }
     },
     resetRoutes: function() {
-      //console.log(this.travelInfos[0]);
-      if(this.travelInfos.length > 0) {
+      // reset routes
+      this.$set(this.routes, this.page, {});
+      let length = this.travelInfos[this.page].length;
+      if(length > 0) {
         let tmp = [];
-        for(let i=0;i<this.travelInfos[this.page].length;i++) {
+        for(let i=0;i<length;i++) {
           tmp = tmp.concat((this.travelInfos[this.page][i]).routes);
         };
-        this.routes[this.page] = {
+        this.$set(this.routes, this.page, {
           routes: tmp,
           color: "#FF0000"
-        };
-        this.mapUpdate++;
+        });
       }
     }
   },
@@ -188,7 +185,7 @@ export default {
     },
     togo: function(){
       this.togoUpdate++;
-    }
+    },
   }
 }
 </script>

@@ -89,10 +89,10 @@ export default {
         this.$emit('deleteTogo');
       },
       onEnd: function(evt) {
-      //console.log(evt)
-      this.oldIndex = evt.oldIndex;
-      this.newIndex = evt.newIndex;
-      this.$emit('togos-changeOrder', this.togos)
+        console.log(evt)
+        this.oldIndex = evt.oldIndex;
+        this.newIndex = evt.newIndex;
+        this.$emit('togos-changeOrder', this.togos)
       },
     },
     watch: {
