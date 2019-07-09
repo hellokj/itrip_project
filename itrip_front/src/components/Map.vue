@@ -1,15 +1,16 @@
 <template lang="pug">
-#map(class=" map")
+#map(class="map")
+  h6 {{ routes[page] }}
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
-    l-polyline(
-      v-for="(route, index) in routes"
-      :lat-lngs="routes[index]"
-      :color="color"
-      :opacity="opacity"
-      :weight="weight")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
+    l-polyline(
+    v-for="(route, index) in (routes[page])"
+    :lat-lngs="route"
+    :color="color"
+    :opacity="opacity"
+    :weight="weight")
     l-marker(
       :icon="icons[index]"
       v-for="(spot, index) in spots"
@@ -21,18 +22,11 @@
           :address="spots[index].address"
           :images="spots[index].images"
         )
-    //- MyMarker
-    //- l-marker(
-    //-   :icon="chosenIcons[chosenIndex]"
-    //-   v-show="false"
-    //-   v-for="(spot, chosenIndex) in spots"
-    //-   :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-    //- )
+
     l-marker(
-    :icon="togoIcon"
-    :key="index"
-    v-for="(togo, index) in togos"
-    :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+      :icon="togoIcon"
+      v-for="(togo, index) in togos"
+      :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
     )
 </template>
 
@@ -57,6 +51,7 @@ export default {
     },
   data() {
     return {
+      
       zoom: 8,
       currentZoom: 8,
       visible: false,
@@ -81,7 +76,8 @@ export default {
   props: {
     spots: Array,
     togos: Array,
-    routes: Object
+    routes: Object,
+    page: Number
   },
   mounted() {
     for(let i = 0; i < 10; i++){
@@ -184,6 +180,6 @@ export default {
 
 <style scope lang="sass">
 .map 
-    width: calc(100vw - 730px)
-    height: calc(100vh - 85px)
+  width: calc(100vw - 730px)
+  height: calc(100vh - 85px)
 </style>

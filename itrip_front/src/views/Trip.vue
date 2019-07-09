@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :key="mapUpdate" :spots="spots" :togos="togos[page]" :routes="routes"/>
+    <Map :key="mapUpdate" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
   </div>
 </template>
 
@@ -51,12 +51,8 @@ export default {
   },
   methods: {
     deleteTogo(index) {
-      //this.togos[this.page] = this.togos[this.page].filter(togo => togo.id !== id);
       this.fixTravelInfo(index);
       this.togos[this.page].splice(index, 1);
-      //console.log(this.togos, this.travelInfos[this.page]);
-      console.log(this.travelInfos);
-      
     },
     fixTravelInfo(index) {
       if(index == 0) {
@@ -78,7 +74,7 @@ export default {
     addSpotToTrip(spot) {
       if (this.togos[this.page] !== undefined){
         this.togos[this.page].push(spot);
-      } 
+      }
       else {
         this.togos.push([]);
         this.togos[this.page].push(spot);
