@@ -4,7 +4,7 @@
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :spots="spots" :togos="togos[page]" :routes="routes"/>
+    <Map :key="update" :spots="spots" :togos="togos[page]" :routes="routes"/>
   </div>
 </template>
 
@@ -27,9 +27,11 @@ export default {
   props: ["region", "type"],
   data() {
     return {
+      update: 0,
       togos: [],
       spots: [],
-      routes: [],
+      // 3-d multi-dimensional array
+      routes: {},
       showSpots: true,
       // unused params
       Region: '',
@@ -93,11 +95,17 @@ export default {
       return result;
     },
     resetRoutes: function() {
+      //console.log(this.travelInfos[0]);
       if(this.travelInfos.length > 0) {
-        this.routes = [];
-        for(let i=0;i<(this.travelInfos[this.page]).length;i++) {
-          this.routes.concat((this.travelInfos[this.page][i]).routes);
-        }
+        let tmp = [];
+        for(let i=0;i<this.travelInfos[this.page].length;i++) {
+          tmp = tmp.concat((this.travelInfos[this.page][i]).routes);
+        };
+        this.routes[this.page] = {
+          routes: tmp,
+          color: "#FF0000"
+        };
+        this.update++;
       }
     }
   },
@@ -141,12 +149,12 @@ export default {
             let tmp = travelInfo[i];
             if(tmp !== undefined) {
               // skip if start and dest already exist
-            if(tmp.start === start && tmp.dest === dest || start === dest) continue;
-            else if(tmp.start === start) tmp.dest = dest;
-            else if(tmp.dest === dest) tmp.start = start;
+              if((tmp.start === start && tmp.dest === dest) || start === dest) continue;
+              else if(tmp.start === start) tmp.dest = dest;
+              else if(tmp.dest === dest) tmp.start = start;
             }
           }
-
+          //console.log(start, dest);
           let coordinates = [[thisPage[i].location.coordinates[0], thisPage[i].location.coordinates[1]],
                              [thisPage[i+1].location.coordinates[0], thisPage[i+1].location.coordinates[1]]];
           // default mode: driving-car
@@ -172,17 +180,17 @@ export default {
               self.travelInfos[self.page] = [];
             }
             self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
+            // reset routes
+            self.resetRoutes(self.page);
           })
           .catch(function (error) {
-            console.log(error);
+            //console.log(error);
           })
           .then(function () {
             // always executed
           });
         }
-        // reset routes
-        self.resetRoutes();
-        console.log(self.routes);
+        //console.log(self.travelInfos);
       }
     }
   }

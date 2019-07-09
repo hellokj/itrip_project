@@ -1,9 +1,6 @@
 <template lang="pug">
 #map(class=" map")
-  //- h1 here is map
-  //- h2 map {{$route.params}}
-  //- h3(v-if="findSpot") you enter by id {{findSpot}}
-  //- h5(v-model="getRoutesData") {{ routes[0].coordinates }}
+  h6 {{routes}} 
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
@@ -16,7 +13,6 @@
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-marker(
       :icon="icons[index]"
-      :key="index"
       v-for="(spot, index) in spots"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
     )
@@ -76,7 +72,7 @@ export default {
   props: {
     spots: Array,
     togos: Array,
-    routes: Array
+    routes: Object
   },
   mounted() {
     for( let i = 0; i < 10; i++){
@@ -175,6 +171,4 @@ export default {
 .map 
     width: calc(100vw - 730px)
     height: calc(100vh - 85px)
-
-
 </style>
