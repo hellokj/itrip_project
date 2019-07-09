@@ -19,7 +19,7 @@
         <b-tab class="my-0 mx-0" title="第一天" active>
           <draggable v-model="togos" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
-              <div class="togoContainer sortable" :key="index" v-for="(togo, index) in togos" overflow:auto>
+              <div class="togoContainer sortable" :key="togo._id" v-for="(togo,index) in togos" overflow:auto>
                 <!-- TogoItem -->
                 <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
                 <!-- Travel time -->
@@ -29,8 +29,8 @@
           </draggable>
         </b-tab>
       </b-tabs>
-      <p>{{oldIndex}}</p>
-      <p>{{newIndex}}</p>
+      <!-- <p>{{oldIndex}}</p>
+      <p>{{newIndex}}</p> -->
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
           <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
@@ -86,7 +86,7 @@ export default {
       },
       // child method
       deleteTogo(){
-        this.$emit('deeleteTogo');
+        this.$emit('deleteTogo');
       },
       onEnd: function(evt) {
       //console.log(evt)
@@ -95,18 +95,16 @@ export default {
       this.$emit('togos-changeOrder', this.togos)
       },
     },
-    computed: {
-      travelTime(index) {
-        
-      }
-    },
     watch: {
       togos_prop: function(){
         this.togos = this.togos_prop;
       },
-      travelInfo: function() {
-        this.travelInfos = this.travelInfo;
-      }
+      travelInfo: {
+        handler: function() {
+          this.travelInfos = this.travelInfo;
+        },
+        immediate: true,
+  },
     },
 }
 </script>
