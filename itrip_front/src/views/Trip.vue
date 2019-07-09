@@ -1,10 +1,10 @@
 <template>
-  <div  class="trip">
-    <Togos  :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
-    <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
+  <div class="trip">
+    <Togos :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
+    <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :key="update" :spots="spots" :togos="togos[page]" :routes="routes"/>
+    <Map :key="mapUpdate" :spots="spots" :togos="togos[page]" :routes="routes"/>
   </div>
 </template>
 
@@ -27,7 +27,8 @@ export default {
   props: ["region", "type"],
   data() {
     return {
-      update: 0,
+      togoUpdate: 100,
+      mapUpdate: 200,
       togos: [],
       spots: [],
       // routes format: {
@@ -80,7 +81,7 @@ export default {
         this.addTravelInfo(this.togos[this.page][length - 2], spot);
       }
       // add this to refresh component
-      this.update++;
+      this.togoUpdate++;
     },
     addTravelInfo(startOb, destOb) {
       let self = this;
@@ -139,14 +140,6 @@ export default {
         tmpCoordinates[i][0] = tmp;
       }
     },
-    travelInfoContains: function(start, dest) {
-      for(let i=0;i<this.travelInfos[this.page].length;i++) {
-        if(start === this.travelInfos[this.page][i].start && dest === this.travelInfos[this.page][i].dest) {
-          return true;
-        }
-      }
-      return false;
-    },
     resetRoutes: function() {
       //console.log(this.travelInfos[0]);
       if(this.travelInfos.length > 0) {
@@ -158,7 +151,7 @@ export default {
           routes: tmp,
           color: "#FF0000"
         };
-        this.update++;
+        this.mapUpdate++;
       }
     }
   },
@@ -189,9 +182,6 @@ export default {
         // always executed
       });
     },
-    togos: function(newVal, oldVal) {
-      //console.log(this.togos);
-    }
     //   let self = this;
     //   let thisPage = this.togos[this.page];
     //   let length = thisPage.length;
