@@ -1,6 +1,6 @@
 <template>
   <div  class="trip">
-    <Togos :togos="togos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" />
+    <Togos :togos_prop="togos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
     <Spots v-if="showSpots" v-bind:spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     deleteTogo(index) {
+      //this.togos[this.page] = this.togos[this.page].filter(togo => togo.id !== id);
       this.togos[this.page].splice(index, 1);
     },
     addSpotToTrip(spot) {
@@ -67,6 +68,9 @@ export default {
         }
         this.togos[this.page].push(spot);
       }
+    },
+    updateTogos(arr){
+      this.togos[this.page] = arr;
     },
     changePage(p) {
       this.page = p;

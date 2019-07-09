@@ -21,7 +21,8 @@ export default {
     return {
       togos: [],
       region: '',
-      type: ''
+      type: '',
+      param: {}
     }
   },
   methods: {

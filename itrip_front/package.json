@@ -27,7 +27,8 @@
     "underscore": "^1.9.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
-    "vue2-leaflet": "^2.1.1"
+    "vue2-leaflet": "^2.1.1",
+    "vuedraggable": "^2.23.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",
