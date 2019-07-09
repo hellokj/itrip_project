@@ -74,6 +74,56 @@ export default {
         this.togos[this.page] = [];
         this.togos[this.page].push(spot);
       }
+      let length = this.togos[this.page].length;
+      // only need to get travelInfo if length > 2
+      if(length > 1) {
+        this.addTravelInfo(this.togos[this.page][length - 2], spot);
+      }
+      // add this to refresh component
+      this.update++;
+    },
+    addTravelInfo(startOb, destOb) {
+      let self = this;
+      // initialize travelInfos
+      if(this.travelInfos[this.page] === undefined) {
+        this.travelInfos[this.page] = [];
+      }
+
+      //console.log(start, dest);
+      let coordinates = [[startOb.location.coordinates[0], startOb.location.coordinates[1]],
+                        [destOb.location.coordinates[0], destOb.location.coordinates[1]]];
+      // default mode: driving-car
+      let mode = 'driving-car';
+      let data = {
+        'coordinates': coordinates 
+      }
+      let routes, duration, distance;
+      // call get routes api
+      apiGetRoutes(data, mode)
+      .then(function (res) {
+        let tmpCoordinates = res.data.features[0].geometry.coordinates;
+        // reverse coordinates because leaflet uses inverted coordinates
+        self.reverseCoordinates(tmpCoordinates);
+        // assign routes to draw polyLine
+        routes = tmpCoordinates;
+        
+        // Travel time
+        let tmp = res.data.features[0].properties.segments[0];
+        duration = tmp.duration;
+        distance = tmp.distance;
+        let start = startOb.name;
+        let dest = destOb.name;
+        // push new travelInfo instance into travelInfos
+        self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
+        // reset routes
+        //self.resetRoutes();
+      })
+      .catch(function (error) {
+        //console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
     },
     updateTogos(arr){
       this.togos[this.page] = arr;
@@ -140,63 +190,29 @@ export default {
       });
     },
     togos: function(newVal, oldVal) {
-      // let self = this;
-      // let thisPage = this.togos[this.page];
-      // let length = thisPage.length;
-      // if(length > 1) {
-      //   for(let i=0;i<length-1;i++) {
-      //     let start = thisPage[i].name;
-      //     let dest = thisPage[i+1].name;
-      //     let travelInfo = self.travelInfos[self.page];
-      //     // check if travelInfo already exists
-      //     if(travelInfo !== undefined) {
-      //       let tmp = travelInfo[i];
-      //       if(tmp !== undefined) {
-      //         // skip if start and dest already exist
-      //         if((tmp.start === start && tmp.dest === dest) || start === dest) continue;
-      //         else if(tmp.start === start) tmp.dest = dest;
-      //         else if(tmp.dest === dest) tmp.start = start;
-      //       }
-      //     }
-      //     //console.log(start, dest);
-      //     let coordinates = [[thisPage[i].location.coordinates[0], thisPage[i].location.coordinates[1]],
-      //                        [thisPage[i+1].location.coordinates[0], thisPage[i+1].location.coordinates[1]]];
-      //     // default mode: driving-car
-      //     let mode = 'driving-car';
-      //     let data = {
-      //       'coordinates': coordinates 
-      //     }
-      //     let routes, duration, distance;
-      //     // call get routes api
-      //     apiGetRoutes(data, mode)
-      //     .then(function (res) {
-      //       let tmpCoordinates = res.data.features[0].geometry.coordinates;
-      //       // reverse coordinates because leaflet uses inverted coordinates
-      //       self.reverseCoordinates(tmpCoordinates);
-      //       // assign routes to draw polyLine
-      //       routes = tmpCoordinates;
-      //       // Travel time
-      //       let tmp = res.data.features[0].properties.segments[0];
-      //       duration = tmp.duration;
-      //       distance = tmp.distance;
-      //       // create new travelInfo instance
-      //       if(self.travelInfos[self.page] === undefined) {
-      //         self.travelInfos[self.page] = [];
-      //       }
-      //       self.travelInfos[self.page].push(new TravelInfo(start, dest, mode, duration, distance, routes));
-      //       // reset routes
-      //       self.resetRoutes(self.page);
-      //     })
-      //     .catch(function (error) {
-      //       //console.log(error);
-      //     })
-      //     .then(function () {
-      //       // always executed
-      //     });
-      //   }
-      //   console.log(self.travelInfos);
-      // }
+      //console.log(this.togos);
     }
+    //   let self = this;
+    //   let thisPage = this.togos[this.page];
+    //   let length = thisPage.length;
+    //   if(length > 1) {
+    //     for(let i=0;i<length-1;i++) {
+    //       let start = thisPage[i].name;
+    //       let dest = thisPage[i+1].name;
+    //       let travelInfo = self.travelInfos[self.page];
+    //       // check if travelInfo already exists
+    //       if(travelInfo !== undefined) {
+    //         let tmp = travelInfo[i];
+    //         if(tmp !== undefined) {
+    //           // skip if start and dest already exist
+    //           if((tmp.start === start && tmp.dest === dest) || start === dest) continue;
+    //           else if(tmp.start === start) tmp.dest = dest;
+    //           else if(tmp.dest === dest) tmp.start = start;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 </script>
@@ -244,5 +260,4 @@ export default {
     align-items: flex-start;
 
   }
-  
 </style>

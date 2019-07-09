@@ -118,8 +118,8 @@ export default {
     }
 
     .icon_search {
-        position: absolute;
-        margin-right: 300px;
+        position: relative;
+        margin-left: 5px;
         cursor: pointer;
     }
 
