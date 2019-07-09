@@ -21,7 +21,7 @@
             <!-- TogoItem -->
             <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', togo.index)"/>
             <!-- Travel time -->
-            <TravelTimeItem class="mx-0 my-0" :travelTime="travelTimes[togo.index].duration" v-if="isTravelTimeShown(togo.index)"/>
+            <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(togo.index)" :travelTime="travelTimes[togo.index].duration"/>
           </div>
         </b-tab>
         
@@ -51,7 +51,6 @@ export default {
     data() {
       return {
         tabtitle: '',
-        page: 0,
       }
     },
     components: {
@@ -71,7 +70,6 @@ export default {
       },
       isTravelTimeShown(index) {
         if(index < (this.togos.length-1)) {
-          console.log(index);
           return true;
         }
         return false;

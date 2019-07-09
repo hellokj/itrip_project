@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {SERVER_IP, ORS_API_KEY} from './config/config';
+import {SERVER_IP, ORS_API_KEY} from '../src/config/config';
 
 // spot相關的 api
 const spotRequest = axios.create({
