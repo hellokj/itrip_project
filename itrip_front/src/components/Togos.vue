@@ -24,7 +24,9 @@
             <TravelTimeItem class="mx-0 my-0" :travelTime="travelTimes[togo.index].duration" v-if="isTravelTimeShown(togo.index)"/>
           </div>
         </b-tab>
+        
       </b-tabs>
+      <button>Add day</button>
 
         <!-- other days
         <b-tab class="my-0 mx-0" title="第二天">
