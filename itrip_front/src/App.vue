@@ -1,28 +1,33 @@
 <template>
   <div id="app">
-    <Header v-on:search-click="Search"/>
+    <Header v-on:search-click="Search" v-on:login-click="Login"/>
     <div id="nav">
-
     </div>
     <router-view v-bind:region="region" v-bind:type="type"/>
+      <Modal name="login" :width="300" :height="300">
+        <Auth :isLogin="isLogin"></Auth>
+      </Modal>
+    
   </div>
 </template>
 
 <script>
 import Header from './components/layout/Header'
-
+import Auth from './components/Auth'
 
 export default {
   name:'app',
   components: {
-    Header
+    Header,
+    Auth,
   },
   data() {
     return {
       togos: [],
       region: '',
       type: '',
-      param: {}
+      param: {},
+      isLogin: false, // 確認狀態是否登入
     }
   },
   methods: {
@@ -37,7 +42,10 @@ export default {
       this.region = _r;
       this.type = t;
       alert(this.region+", "+this.type);
-    }
+    },
+    Login() {
+      this.$modal.show('login');
+    },
   },
   created() {
     

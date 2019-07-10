@@ -3,7 +3,7 @@ const response = (errorHandler, data, res) => {
         res.json({status: errorHandler.code, msg: errorHandler.message});
         return;
     }
-    
+    res.json({status: -1, data: data, msg: 'success!'});
 }
 
 module.exports = response;
