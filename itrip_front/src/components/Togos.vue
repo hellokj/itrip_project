@@ -169,9 +169,7 @@ export default {
   .flip-list-move {
     transition: transform 0.5s;
   }
-  .flip-list-move {
-    transition: transform 0.5s;
-  }
+  
   .ghost {
     border-left: 6px solid rgb(0, 183, 255);
     box-shadow: 10px 10px 5px -1px rgba(0,0,0,0.14);
