@@ -3,7 +3,7 @@
     <Header v-on:search-click="Search" v-on:login-click="Login"/>
     <div id="nav">
     </div>
-    <router-view v-bind:region="region" v-bind:type="type"/>
+    <router-view v-bind:param="param" v-bind:type="type"/>
       <Modal name="login" :width="300" :height="300">
         <Auth :isLogin="isLogin"></Auth>
       </Modal>
@@ -31,25 +31,13 @@ export default {
     }
   },
   methods: {
-    Search(t, r) {
-      let r_length = r.length;
-      let _r = '';
-      if (r.charAt(0) === "台"){
-        _r = _r.concat("臺", r.slice(1, r_length));
-      } else {
-        _r = r;
-      }
-      this.region = _r;
-      this.type = t;
-      alert(this.region+", "+this.type);
+    Search(para) {
+      this.param = para;
     },
     Login() {
       this.$modal.show('login');
     },
   },
-  created() {
-    
-  }
 }
 </script>
 <style>

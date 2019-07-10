@@ -26,7 +26,9 @@ export default {
       Spots,
       Map,
   },
-  props: ["region", "type"],
+  props: {
+    param: Object,
+  },
   data() {
     return {
       togos: [],
@@ -193,20 +195,11 @@ export default {
   },
   
   watch: {
-    region: function(newVal, oldVal) {
-      //console.log('Prop hanged: ', newVal, '| was: ', oldVal);
+    param: function(newVal, oldVal) {
+      console.log(newVal);
       let self = this;
-      //place, category, name, sortBy, page, limit, order
-      let params = {
-          place: newVal,
-          category: "gourmet",
-          sortBy: "checkins",
-          page: 1,
-          limit: 10,
-          order: -1
-      }
       // call get spots api
-      apiGetSpots(params)
+      apiGetSpots(newVal)
       .then(function (res) {
         self.spots = res.data.data.resultList;
       })
