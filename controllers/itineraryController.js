@@ -13,9 +13,10 @@ const save = (req, res, next) => {
     };
     let name = req.body.name;
     let dayNum = req.body.dayNum;
-    let itiList = req.body.list;
+    let togos = req.body.togos;
+    let travelInfos = req.body.travelInfos;
 
-    if(NilChecker(req.body, 7, [])) {
+    if(NilChecker(req.body, 8, [])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
     }
  
@@ -25,7 +26,8 @@ const save = (req, res, next) => {
         start_date: startDate,
         name: name,
         dayNum: dayNum,
-        list: itiList
+        togos: togos,
+        travelInfos: travelInfos
     });
 
     itinerary.save().then(() => Response(null, itiList, res));

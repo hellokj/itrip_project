@@ -15,32 +15,25 @@
         <button class="btn-save" @click="saveTrip">儲存</button>
     </div>
     <div>
-      <b-tabs content-class="mt-3" @input="changePage()" v-model="page">
-        <b-tab class="my-0 mx-0" title="第一天" active>
-          <draggable v-model="togos" ghost-class="ghost" @end="onEnd">
+      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage">
+        <!-- <b-tab class="my-0 mx-0" title="第一天" active>
+        </b-tab> -->
+        <b-tab v-for="i in tabs" :key="'tab' + i" :title="'Day' + (i+1)">
+          <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
-              <div class="togoContainer sortable" :key="togo._id" v-for="(togo,index) in togos" overflow:auto>
+              <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
                 <!-- TogoItem -->
                 <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
                 <!-- Travel time -->
-                <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+                <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
               </div>
             </transition-group>
           </draggable>
         </b-tab>
+        <template slot="tabs">
+          <b-nav-item @click.prevent="newTab" href="#"><b>+</b></b-nav-item>
+        </template>
       </b-tabs>
-      <!-- <p>{{oldIndex}}</p>
-      <p>{{newIndex}}</p> -->
-        <!-- other days
-        <b-tab class="my-0 mx-0" title="第二天">
-          <div class="togoContainer" v-bind:key="togo.id" v-for="togo in togos[1]" overflow:auto>
-             TogoItem -->
-            <!-- <TogoItem class="mx-0 my-0" v-bind:togo="togo" v-on:del-togo="$emit('del-togo', togo._id)"/>
-          </div>
-        </b-tab>
-        <b-tab title="新增" disabled>
-          <p>I'm a disabled tab!</p>
-        </b-tab> -->
     </div>
   </div>
 </template>
@@ -55,10 +48,12 @@ export default {
     data() {
       return {
         tabtitle: '',
-        togos: [],
         oldIndex: '',
         newIndex: '',
-        travelInfos: this.travelInfo
+        travelInfos: this.travelInfo,
+        tabCounter: 0,
+        tabs: [0],
+        currentPage: 0
       }
     },
     components: {
@@ -66,20 +61,22 @@ export default {
         TravelTimeItem,
         draggable
     },
-    props: ["togos_prop", "travelInfo", "page"],
+    props: {
+      togos_prop: Array,
+      travelInfo: Array,
+      page: Number,
+    },
     methods: {
       saveTrip() {
-        console.log(this.travelInfo);
-        for (var i = 0; i < this.togos.length; i++){
-          alert(i);
-        }
+        this.$emit('saveTrip');
+        console.log('child called!!');
       },
       changePage(){
-        alert(this.page);
-        this.$emit('change-page', this.page);
+        this.$emit('change-page', this.currentPage);
+        this.$emit('resetRoutes');
       },
       isTravelTimeShown(index) {
-        if(index < (this.togos_prop.length-1)) {
+        if(index < (this.togos_prop.length-1) && this.travelInfos[index] != undefined) {
           return true;
         }
         return false;
@@ -89,28 +86,30 @@ export default {
         this.$emit('deleteTogo');
       },
       onEnd: function(evt) {
-        console.log(evt)
+        //console.log(evt)
         this.oldIndex = evt.oldIndex;
         this.newIndex = evt.newIndex;
-        this.$emit('togos-changeOrder', this.togos)
+        this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
+      newTab: function() {
+        this.tabs.push(++this.tabCounter);
+      }
     },
     watch: {
-      togos_prop: function(){
-        this.togos = this.togos_prop;
-      },
       travelInfo: {
         handler: function() {
           this.travelInfos = this.travelInfo;
         },
         immediate: true,
-  },
+      },
+      page: function(){
+        this.currentPage = this.page;
+      }
     },
 }
 </script>
 
 <style lang="scss" scoped>
-
   .MyTrip {
     margin: 0px;
     padding: 0px;

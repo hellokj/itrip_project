@@ -1,11 +1,12 @@
 <template>
   <div class="trip">
-    <!-- <login v-model="isPopup" v-if="isPopup" style="popupPosition"></login> -->
-    <Togos :key="togoUpdate" :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
-    <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" />
-    <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
+    <Togos :togos_prop="togos[page]" :travelInfo="travelInfos[page]" 
+    :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
+    v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes"/>
+    <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
+    <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :key="mapUpdate" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
+    <Map :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
   </div>
 </template>
 
@@ -28,8 +29,6 @@ export default {
   props: ["region", "type"],
   data() {
     return {
-      togoUpdate: 0,
-      mapUpdate: 200,
       togos: [],
       spots: [],
       // routes format: {
@@ -45,12 +44,18 @@ export default {
       Close: '<',
       page: 0,
       changedElementValue: null,
-      // travelTime format
+      // travelTime format:
       // { start: , dest: ,duration: , time: , mode:}
       travelInfos: [],
     }
   },
   methods: {
+    saveTrip() {
+        // itinerary format:
+        //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
+        console.log(this.travelInfos);
+        this.$emit('saveTrip');
+    },
     deleteTogo(index) {
       this.fixTravelInfo(index);
       this.togos[this.page].splice(index, 1);
@@ -128,8 +133,27 @@ export default {
         // always executed
       });
     },
-    updateTogos(arr){
+    changeMode(index, mode) {
+      this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
+    },
+    updateTogos(arr, oldIndex, newIndex){
       this.togos[this.page] = arr;
+      //console.log(oldIndex, newIndex);
+      let length = this.togos[this.page].length;
+      //update old
+      for(let i=newIndex-1;i<=newIndex;i++) {
+        if(i < 0 || i == length) continue;
+        let startOb = this.togos[this.page][i];
+        let destOb = this.togos[this.page][i + 1];
+        this.callGetRoutesApi(i, startOb, destOb, this.travelInfos[this.page][i].mode);
+      }
+      //update new
+      for(let i=oldIndex-1;i<=oldIndex;i++) {
+        if(i == newIndex || i < 0 || i == length) continue;
+        let startOb = this.togos[this.page][i];
+        let destOb = this.togos[this.page][i + 1];
+        this.callGetRoutesApi(i, startOb, destOb, this.travelInfos[this.page][i].mode);
+      }
     },
     changePage(p) {
       this.page = p;
@@ -143,18 +167,18 @@ export default {
       }
     },
     resetRoutes: function() {
-      // reset routes
-      this.$set(this.routes, this.page, {});
-      let length = this.travelInfos[this.page].length;
-      if(length > 0) {
-        let tmp = [];
-        for(let i=0;i<length;i++) {
-          tmp = tmp.concat((this.travelInfos[this.page][i]).routes);
-        };
-        this.$set(this.routes, this.page, {
-          routes: tmp,
-          color: "#FF0000"
-        });
+      if(this.travelInfos[this.page] !== undefined) {
+        let length = this.travelInfos[this.page].length;
+        if(length > 0) {
+          let tmp = [];
+          for(let i=0;i<length;i++) {
+            tmp = tmp.concat((this.travelInfos[this.page][i]).routes);
+          };
+          this.$set(this.routes, this.page, {
+            routes: tmp,
+            color: "#FF0000"
+          });
+        }
       }
     }
   },
@@ -184,15 +208,7 @@ export default {
         // always executed
       });
     },
-    togo: function(){
-      this.togoUpdate++;
-    },
-  },
-  computed: {
-    popupPosition(){
-      return `margin-left:${this.position}`;
-    },
-  },
+  }
 }
 </script>
 

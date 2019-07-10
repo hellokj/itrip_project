@@ -1,16 +1,16 @@
 <template lang="pug">
 #map(class="map")
-  //- h6 {{ routes[page] }}
+  //v-for="(route, index) in (routesArr)"
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-polyline(
-      v-for="(route, index) in (routes[page])"
-      :lat-lngs="route"
-      :color="color"
-      :opacity="opacity"
-      :weight="weight")
+    v-if="isRouteArr"
+    :lat-lngs="routesArr"
+    :color="color"
+    :opacity="opacity"
+    :weight="weight")
     l-marker(
       :icon="icons[index]"
       v-for="(spot, index) in spots"
@@ -68,8 +68,10 @@ export default {
       }),
        // polyline options
       color: "#FF0000",
-      opacity: 0.4,
-      weight: 8
+      opacity: 0.6,
+      weight: 7,
+      routesArr: [],
+      currentPage: 0
     }
   },
   props: {
@@ -126,9 +128,23 @@ export default {
     },
     setZoom: function(){
       
+    },
+    resetRoutesArr: function(){
+      if(this.routes[this.currentPage] === undefined) {
+        this.routesArr = [];
+        return;
+      }
+      this.routesArr = this.routes[this.currentPage].routes;
     }
   },
+  // updated() {
+  //   //this.routesArr = this.routes[this.page].routes;
+  // },
   watch: {
+    page: function(){
+      this.currentPage = this.page;
+      this.resetRoutesArr();
+    },
     spots: function(){
       // 計算搜尋出的景點中心點位置
       let lng = 0.0;
@@ -168,12 +184,24 @@ export default {
       // ]);
       // var zoom = L.Map.getBoundsZoom(featureGroup.getBounds());
       // this.zoom = zoom;
+    },
+    routes: {
+      handler() {
+        this.resetRoutesArr();
+      },
+      deep: true
     }
   },
   computed: {
     findSpot(){
       return this.spots.find(spot=>spot.id==this.$route.params.num);
     },
+    isRouteArr() {
+      if(this.routesArr.length == 0) return false;
+      else {
+        return true;
+      }
+    }
   },
 }
 </script>
