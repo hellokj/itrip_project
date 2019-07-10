@@ -48,9 +48,6 @@ export default {
             this.$emit('deleteTogo');
         }
     },
-    mounted() {
-        //console.log(this.togo)
-    }
 }
 </script>
 

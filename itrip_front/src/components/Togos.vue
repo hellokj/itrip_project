@@ -17,13 +17,13 @@
     <div>
       <b-tabs content-class="mt-3" @input="changePage()" v-model="page">
         <b-tab class="my-0 mx-0" title="第一天" active>
-          <draggable v-model="togos" ghost-class="ghost" @end="onEnd">
+          <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
-              <div class="togoContainer sortable" :key="togo._id" v-for="(togo,index) in togos" overflow:auto>
+              <div class="togoContainer sortable" :key="togo._id" v-for="(togo,index) in togos_prop" overflow:auto>
                 <!-- TogoItem -->
                 <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
                 <!-- Travel time -->
-                <TravelTimeItem class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+                <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
               </div>
             </transition-group>
           </draggable>
@@ -55,7 +55,6 @@ export default {
     data() {
       return {
         tabtitle: '',
-        togos: [],
         oldIndex: '',
         newIndex: '',
         travelInfos: this.travelInfo
@@ -70,7 +69,7 @@ export default {
     methods: {
       saveTrip() {
         console.log(this.travelInfo);
-        for (var i = 0; i < this.togos.length; i++){
+        for (var i = 0; i < this.togos_prop.length; i++){
           alert(i);
         }
       },
@@ -79,7 +78,7 @@ export default {
         this.$emit('change-page', this.page);
       },
       isTravelTimeShown(index) {
-        if(index < (this.togos_prop.length-1)) {
+        if(index < (this.togos_prop.length-1) && this.travelInfos[index] != undefined) {
           return true;
         }
         return false;
@@ -89,16 +88,13 @@ export default {
         this.$emit('deleteTogo');
       },
       onEnd: function(evt) {
-        console.log(evt)
+        //console.log(evt)
         this.oldIndex = evt.oldIndex;
         this.newIndex = evt.newIndex;
-        this.$emit('togos-changeOrder', this.togos)
+        this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
     },
     watch: {
-      togos_prop: function(){
-        this.togos = this.togos_prop;
-      },
       travelInfo: {
         handler: function() {
           this.travelInfos = this.travelInfo;
@@ -110,7 +106,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
   .MyTrip {
     margin: 0px;
     padding: 0px;

@@ -1,10 +1,10 @@
 <template>
   <div class="trip">
-    <Togos :key="togoUpdate" :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
+    <Togos :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" @changeMode="changeMode"/>
     <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
-    <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
+    <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :key="mapUpdate" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
+    <Map :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
   </div>
 </template>
 
@@ -27,8 +27,6 @@ export default {
   props: ["region", "type"],
   data() {
     return {
-      togoUpdate: 0,
-      mapUpdate: 200,
       togos: [],
       spots: [],
       // routes format: {
@@ -127,8 +125,27 @@ export default {
         // always executed
       });
     },
-    updateTogos(arr){
+    changeMode(index, mode) {
+      this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
+    },
+    updateTogos(arr, oldIndex, newIndex){
       this.togos[this.page] = arr;
+      //console.log(oldIndex, newIndex);
+      let length = this.togos[this.page].length;
+      //update old
+      for(let i=newIndex-1;i<=newIndex;i++) {
+        if(i < 0 || i == length) continue;
+        let startOb = this.togos[this.page][i];
+        let destOb = this.togos[this.page][i + 1];
+        this.callGetRoutesApi(i, startOb, destOb, this.travelInfos[this.page][i].mode);
+      }
+      //update new
+      for(let i=oldIndex-1;i<=oldIndex;i++) {
+        if(i == newIndex || i < 0 || i == length) continue;
+        let startOb = this.togos[this.page][i];
+        let destOb = this.togos[this.page][i + 1];
+        this.callGetRoutesApi(i, startOb, destOb, this.travelInfos[this.page][i].mode);
+      }
     },
     changePage(p) {
       this.page = p;
@@ -182,9 +199,6 @@ export default {
       .then(function () {
         // always executed
       });
-    },
-    togo: function(){
-      this.togoUpdate++;
     },
   }
 }

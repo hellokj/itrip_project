@@ -22,21 +22,22 @@ export default {
     name: "TravelTimeItem",
     props: {
         togo: Object,
-        travelTime: Number
+        travelTime: Number,
+        index: Number
     },
     data() {
         return {
             modes: [
-                {value: 0, text: '開車'},
-                {value: 1, text: '步行'},
-                {value: 2, text: '自行車'} 
+                {value: 0, text: '開車', apiName: 'driving-car'},
+                {value: 1, text: '自行車', apiName: 'cycling-regular'},
+                {value: 2, text: '步行', apiName: 'foot-walking'} 
             ],
             current: 0
         }
     },
     methods: {
         onModesChange() {
-            console.log(this.modes[this.current].text)
+            this.$emit('changeMode', this.index, this.modes[this.current].apiName);
         },
         carryTimeUnit(time) {
             return Math.floor(time / 60);
@@ -47,7 +48,7 @@ export default {
             let remainingSec = Math.floor(sec % mins);
 
             if(mins >= 60) {
-                let hours = mins / 60;
+                let hours = Math.floor(mins / 60);
                 let remainingMins = Math.floor(mins % hours);
                 return hours + '小時 ' + remainingMins + '分 ' + remainingSec + '秒';  
             }
