@@ -24,7 +24,7 @@ export default {
   components: {
       Togos,
       Spots,
-      Map
+      Map,
   },
   props: ["region", "type"],
   data() {
