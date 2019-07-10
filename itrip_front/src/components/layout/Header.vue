@@ -28,9 +28,8 @@
             <div class="div_home">
                 <router-link to="/">首頁</router-link> 
             </div>
-            <div class="div_login">
-                <router-link to="/about">登入</router-link>
-            </div>
+            <button class="div_login" @click="$emit('login-click')"> 登入
+            </button>
         </div>
       
     </header>
@@ -49,8 +48,7 @@ export default {
       }
     },
     methods: {
-        setRegion(e, val){
-            
+        setRegion(e, val){  
             this.region = val;
         },
         selectRegionText() {

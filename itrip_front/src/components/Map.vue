@@ -6,11 +6,11 @@
     ,@update:zoom="zoomUpdate")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")
     l-polyline(
-    v-for="(route, index) in (routes[page])"
-    :lat-lngs="route"
-    :color="color"
-    :opacity="opacity"
-    :weight="weight")
+      v-for="(route, index) in (routes[page])"
+      :lat-lngs="route"
+      :color="color"
+      :opacity="opacity"
+      :weight="weight")
     l-marker(
       :icon="icons[index]"
       v-for="(spot, index) in spots"
@@ -40,14 +40,14 @@ import L from "leaflet"
 export default {
   name: 'Map',
     components: {
-        LMap,
-        LTileLayer,
-        LMarker,
-        LIcon,
-        LPolyline,
-        LPopup,
-        LTooltip,
-        MarkerPopover
+      LMap,
+      LTileLayer,
+      LMarker,
+      LIcon,
+      LPolyline,
+      LPopup,
+      LTooltip,
+      MarkerPopover
     },
   data() {
     return {
@@ -159,6 +159,7 @@ export default {
       lng = lng / this.spots.length;
       lat = lat / this.spots.length;
       this.center = L.latLng(lat, lng);
+      this.zoom = 13;
       // 計算 zoom-in
       // this.zoom = 14;
       // var featureGroup = new L.FeatureGroup([

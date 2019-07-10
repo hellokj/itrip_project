@@ -1,7 +1,8 @@
 <template>
   <div class="trip">
+    <!-- <login v-model="isPopup" v-if="isPopup" style="popupPosition"></login> -->
     <Togos :key="togoUpdate" :togos_prop="togos[page]" :travelInfo="travelInfos[page]" :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" v-on:togos-changeOrder="updateTogos" />
-    <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
+    <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" />
     <button class="btn-showSpots" @click=" showSpots = !showSpots "> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
     <Map :key="mapUpdate" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
@@ -22,7 +23,7 @@ export default {
   components: {
       Togos,
       Spots,
-      Map
+      Map,
   },
   props: ["region", "type"],
   data() {
@@ -186,7 +187,12 @@ export default {
     togo: function(){
       this.togoUpdate++;
     },
-  }
+  },
+  computed: {
+    popupPosition(){
+      return `margin-left:${this.position}`;
+    },
+  },
 }
 </script>
 
