@@ -70,7 +70,8 @@ export default {
       color: "#FF0000",
       opacity: 0.6,
       weight: 7,
-      routesArr: []
+      routesArr: [],
+      currentPage: 0
     }
   },
   props: {
@@ -127,12 +128,23 @@ export default {
     },
     setZoom: function(){
       
+    },
+    resetRoutesArr: function(){
+      if(this.routes[this.currentPage] === undefined) {
+        this.routesArr = [];
+        return;
+      }
+      this.routesArr = this.routes[this.currentPage].routes;
     }
   },
   // updated() {
   //   //this.routesArr = this.routes[this.page].routes;
   // },
   watch: {
+    page: function(){
+      this.currentPage = this.page;
+      this.resetRoutesArr();
+    },
     spots: function(){
       // 計算搜尋出的景點中心點位置
       let lng = 0.0;
@@ -174,7 +186,7 @@ export default {
     },
     routes: {
       handler() {
-        this.routesArr = this.routes[this.page].routes;
+        this.resetRoutesArr();
       },
       deep: true
     }

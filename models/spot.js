@@ -20,7 +20,8 @@ const spotSchema = new Schema({
     address: Object,
     is_permanently_closed: Boolean,
     images: Array
-    },{ collection: 'Places_from_fb'});
+    },
+    { collection: 'Places_from_fb'});
 
 // plug in pagination module to schema
 spotSchema.plugin(mongoosePaginate);
