@@ -12,6 +12,8 @@
     :opacity="opacity"
     :weight="weight")
     l-marker(
+      @mouseover="mouseOver"
+      @mouseout="mouseOut"
       :icon="icons[index]"
       v-for="(spot, index) in spots"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
@@ -33,6 +35,7 @@
 <script>
 import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip } from 'vue2-leaflet';
 import { Icon }  from 'leaflet'
+import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover'
 import Vue from 'vue'
 import L from "leaflet"
@@ -82,10 +85,15 @@ export default {
   },
   mounted() {
     for(let i = 0; i < 10; i++){
-      this.icons.push(L.icon({
-        iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        iconSize: [50, 50],
-      }));
+      this.icons.push(L.AwesomeMarkers.icon({
+        icon: '',
+        markerColor: 'darkblue',
+        prefix: 'fa',
+        html: (i+1)
+      })
+        // iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
+        // iconSize: [50, 50],
+      );
       this.chosenIcons.push(L.icon({
         iconUrl: require('../assets/leaflet_marker/chosen'+ (i+1) + '.png'),
         iconSize: [45, 45],
@@ -94,6 +102,12 @@ export default {
     }
   },
   methods: {
+    mouseOver(evt) {
+      this.$set(evt.target.options.icon.options, 'markerColor', 'red');
+    },
+    mouseOut(evt) {
+      this.$set(evt.target.options.icon.options, 'markerColor', 'darkblue');
+    },
     visbleUpdate(visible){
       this.visible = visible;
     },

@@ -77,8 +77,9 @@ const getTypes = () => {
     return types;
 }
 
-const makeParams = (_place = null, _category, _sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
-
+const makeParams = (city = null, region = null, _category = null, _sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
+    if(city == "") city = null;
+    if(region == "") region = null;
     // search for type or name
     let _tmpcategory = null;
     let _name = null;
@@ -90,17 +91,18 @@ const makeParams = (_place = null, _category, _sortBy = "checkins", _page = 1, _
     }
 
     // place string adjustment
-    let placeLength = _place.length;
-    let _tmpplace = '';
-    if (_place.charAt(0) === "台"){
-        _tmpplace = _tmpplace.concat("臺", _place.slice(1, placeLength));
+    let cityLength = city.length;
+    let tmpCity = '';
+    if (city.charAt(0) === "台"){
+        tmpCity = tmpCity.concat("臺", city.slice(1, cityLength));
     } else {
-        _tmpplace = _place;
+        tmpCity = city;
     }
 
     return {
         name: _name,
-        place: _tmpplace,
+        city: tmpCity,
+        region: region,
         category: _tmpcategory,
         sortBy: _sortBy,
         page: _page,

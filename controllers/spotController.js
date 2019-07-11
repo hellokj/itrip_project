@@ -6,7 +6,8 @@ const errorHandler = require('../utils/errorHandler');
 
 
 const getSpots = async(req, res, next) => {
-    let place = req.query.place;
+    let city = req.query.city;
+    let region = req.query.region;
     let category = req.query.category;
     let name = req.query.name;
     let sortBy = req.query.sortBy;
@@ -14,9 +15,9 @@ const getSpots = async(req, res, next) => {
     let limit = req.query.limit;
     let page = req.query.page;
 
-    console.log(place, category, name, sortBy, order, limit, page);
+    console.log(city, region, category, name, sortBy, order, limit, page);
 
-    if(NilChecker(req.query, 7, ['place', 'category', 'name', 'order'])) {
+    if(NilChecker(req.query, 8, ['city', 'region','category', 'name', 'order'])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
         return;
     }
@@ -24,7 +25,7 @@ const getSpots = async(req, res, next) => {
         order = -1;
     }
     //place, category, name, sortBy, page, limit, order
-    let spots = await Spot.getSpots(place, category, name, sortBy, page, limit, order);
+    let spots = await Spot.getSpots(city, region, category, name, sortBy, page, limit, order);
 
     res.json({status: -1, msg:'success', data: spots});
     //Response(null, spots, res);

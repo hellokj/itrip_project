@@ -19,7 +19,7 @@
         <!-- <b-tab class="my-0 mx-0" title="第一天" active>
         </b-tab> -->
         <b-tab v-for="i in tabs" :key="'tab' + i" :title="'Day' + (i+1)">
-          <draggable :value="togos_prop" ghost-class="ghost" @end="onEnd">
+          <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
               <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
                 <!-- TogoItem -->
@@ -57,7 +57,8 @@ export default {
         tripName: '',
         tripDate: {
           date: ''
-        }
+        },
+        togos_prop: this.togos
       }
     },
     components: {
@@ -79,7 +80,7 @@ export default {
         this.$emit('resetRoutes');
       },
       isTravelTimeShown(index) {
-        if(index < (this.togos_prop.length-1) && this.travelInfos[index] != undefined) {
+        if(index < (this.togos.length-1) && this.travelInfos[index] != undefined) {
           return true;
         }
         return false;
@@ -89,7 +90,6 @@ export default {
         this.$emit('deleteTogo');
       },
       onEnd: function(evt) {
-        //console.log(evt)
         this.oldIndex = evt.oldIndex;
         this.newIndex = evt.newIndex;
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
@@ -107,13 +107,11 @@ export default {
       },
       page: function(){
         this.currentPage = this.page;
-      }
+      },
+      togos: function() {
+        this.togos_prop = this.togos;
+      },
     },
-    computed: {
-      togos_prop() {
-        return this.togos;
-      }
-    }
 }
 </script>
 
