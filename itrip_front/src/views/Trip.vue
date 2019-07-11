@@ -196,13 +196,11 @@ export default {
   
   watch: {
     param: function(newVal, oldVal) {
-      console.log(newVal);
       let self = this;
       // call get spots api
       apiGetSpots(newVal)
       .then(function (res) {
         self.spots = res.data.data.resultList;
-        console.log(self.spots);
       })
       .catch(function (error) {
         console.log(error);

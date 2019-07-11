@@ -3,14 +3,16 @@
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
                 <b-col class="mx-0 my-0 px-0 py-0">
-                    <select v-model="current" v-on:change="onModesChange">
-                        <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
-                            {{mode.text}}
-                        </option>
-                    </select>
+                    <div class="select">
+                        <select v-model="current" v-on:change="onModesChange">
+                            <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
+                                {{mode.text}}
+                            </option>
+                        </select>
+                    </div>
                 </b-col>
                 <b-col class="mx-0 my-0 px-0 py-0">
-                    <p class="mx-0 my-0 px-0 py-0">{{formatTime(travelTime)}}</p>
+                    <p class="mx-0 my-0 px-0 py-0">約 {{formatTime(travelTime)}}</p>
                 </b-col>
             </b-row>
         </b-container>
@@ -28,9 +30,9 @@ export default {
     data() {
         return {
             modes: [
-                {value: 0, text: '開車', apiName: 'driving-car'},
-                {value: 1, text: '自行車', apiName: 'cycling-regular'},
-                {value: 2, text: '步行', apiName: 'foot-walking'} 
+                {value: 0, class: 'fas fa-car-alt', text: '\uf5de', apiName: 'driving-car'},
+                {value: 1, class: 'fas fa-biking', text: '\uf84a', apiName: 'cycling-regular'},
+                {value: 2, class: 'fas fa-walking', text: '\uf554', apiName: 'foot-walking'} 
             ],
             current: 0
         }
@@ -63,22 +65,13 @@ export default {
 }
 </script>
 
-<style scoped>
-  /* .togo-item {
-      width: 355px;
-      background: #ffffff;
-      padding: 10px;
-      border-bottom: 1p #ccc dotted;
-      color: #000000;
-  }
+<style scoped lang="sass">
+select 
+  option 
+    font-family: 'Font Awesome\ 5 Free', monospace
+    font-weight: 900
+  font-family: 'Font Awesome\ 5 Free', monospace
+  font-weight: 900
+    
 
-  .del {
-      background: #ffffff;
-      color: #515151;
-      border: none;
-      padding: 5px 9px;
-      border-radius: 50%;
-      cursor: pointer;
-      float: right;
-  } */
 </style>

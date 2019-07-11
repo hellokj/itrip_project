@@ -26,6 +26,8 @@
                         <!-- <option v-bind:key="region" v-for="region in regions">{{ region }}</option> -->
                     </datalist>
             <!-- Select Region -->
+            <!-- <input-tag v-model="tags"></input-tag> -->
+            
             </div>
 
             <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
@@ -47,6 +49,7 @@
 
 <script>
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
+import InputTag from 'vue-input-tag'
 
 export default {
     name: "Header",
@@ -58,7 +61,11 @@ export default {
         types: Object.keys(getTypes()),
         params: {},
         hover: true,
+        tags: []
       }
+    },
+    components: {
+      InputTag
     },
     methods: {
         setRegion(e, val){  
@@ -72,7 +79,6 @@ export default {
         },
         searchClicked() {
             this.params = makeParams(this.selected_region, null, this.selected_type);
-            console.log(this.params);
             this.$emit("search-click", this.params);
         }
     },

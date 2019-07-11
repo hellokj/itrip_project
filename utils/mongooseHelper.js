@@ -32,6 +32,7 @@ const Options = (sortBy, page, limit, order) => {
 
 // query for place search => shortening
 const Place_query = (schema, city, region, category, name, sortBy, page, limit, order) => {
+    console.log(city, region, category, name, sortBy, page, limit, order);
     if(name != null) {
         return schema.paginate({$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]}, Options(sortBy, page, limit, order),
          function(err, result) {
@@ -47,8 +48,7 @@ const Place_query = (schema, city, region, category, name, sortBy, page, limit, 
                     return result;
             });   
         }
-        return schema.paginate(
-            {$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}], category: category}, 
+        return schema.paginate({$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}], category: category}, 
             Options(sortBy, page, limit, order), 
             function(err, result) {
                 return result;

@@ -42,7 +42,7 @@ import L from "leaflet"
 
 export default {
   name: 'Map',
-    components: {
+  components: {
       LMap,
       LTileLayer,
       LMarker,
@@ -51,7 +51,7 @@ export default {
       LPopup,
       LTooltip,
       MarkerPopover
-    },
+  },
   data() {
     return {
       zoom: 8,
@@ -64,7 +64,7 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icons: [],
       togoIcons: [],
-      
+      spotsPerPage: 10,
        // polyline options
       color: "#FF0000",
       opacity: 0.6,
@@ -81,7 +81,8 @@ export default {
     page: Number,
   },
   mounted() {
-    for(let i = 0; i < 10; i++){
+    setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 250);
+    for(let i = 0; i < this.spotsPerPage; i++){
       this.icons.push(L.AwesomeMarkers.icon({
         icon: '',
         markerColor: 'darkblue',
@@ -225,4 +226,10 @@ export default {
 .map 
   width: calc(100vw - 730px)
   height: calc(100vh - 85px)
+.icon::before 
+  display: inline-block
+  font-style: normal
+  font-variant: normal
+  text-rendering: auto
+  -webkit-font-smoothing: antialiased
 </style>
