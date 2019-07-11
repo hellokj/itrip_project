@@ -202,6 +202,7 @@ export default {
       apiGetSpots(newVal)
       .then(function (res) {
         self.spots = res.data.data.resultList;
+        console.log(self.spots);
       })
       .catch(function (error) {
         console.log(error);

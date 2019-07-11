@@ -32,11 +32,7 @@ spotSchema.indexes({location: '2dsphere'});
 
 // sortBy => checkins, ig_post_num
 spotSchema.statics.getSpots = function(city, region, category, name, sortBy, page, limit, order) {
-    if(name != undefined) {
-        return this.find({$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]}).sort({checkins: -1}).limit(10);
-    }
-    return Place_query_shortener(this, city, region, category, sortBy, page, limit, order);
-    
+    return Place_query_shortener(this, city, region, category, name, sortBy, page, limit, order);
 }
 
 // get spot info by its id

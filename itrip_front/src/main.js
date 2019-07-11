@@ -8,6 +8,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
+import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import Vuetify from 'vuetify'
 

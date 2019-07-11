@@ -31,7 +31,13 @@ const Options = (sortBy, page, limit, order) => {
   }
 
 // query for place search => shortening
-const Place_query = (schema, city, region, category, sortBy, page, limit, order) => {
+const Place_query = (schema, city, region, category, name, sortBy, page, limit, order) => {
+    if(name != null) {
+        return schema.paginate({$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]}, Options(sortBy, page, limit, order),
+         function(err, result) {
+             return result;
+         });
+    }
     if(region === undefined) {
         if(category == undefined) {
             return schema.paginate(

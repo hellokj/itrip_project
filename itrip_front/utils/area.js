@@ -77,38 +77,41 @@ const getTypes = () => {
     return types;
 }
 
-const makeParams = (city = null, region = null, _category = null, _sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
-    if(city == "") city = null;
+const paramsHelper = (params, values) => {
+    let result = {};
+    for(let i=0;i<params.length;i++) {
+        if(values[i] != null) {
+            result[params[i]] = values[i]
+        }
+    }
+    return result;
+}
+
+const makeParams = (city = null, region = null, _category = null,_sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
     if(region == "") region = null;
+    let name = null;
     // search for type or name
     let _tmpcategory = null;
-    let _name = null;
     if(types[_category] != undefined) {
         _tmpcategory = types[_category];
     } else {
         _tmpcategory = null;
-        _name = _category;
+        name = _category
     }
 
     // place string adjustment
-    let cityLength = city.length;
-    let tmpCity = '';
-    if (city.charAt(0) === "台"){
-        tmpCity = tmpCity.concat("臺", city.slice(1, cityLength));
-    } else {
-        tmpCity = city;
+    let cityLength, tmpCity = null;
+    if(city == "") city = null;
+    else {
+        cityLength = city.length;
+        if (city.charAt(0) === "台"){
+            tmpCity = tmpCity.concat("臺", city.slice(1, cityLength));
+        } else {
+            tmpCity = city;
+        }
     }
-
-    return {
-        name: _name,
-        city: tmpCity,
-        region: region,
-        category: _tmpcategory,
-        sortBy: _sortBy,
-        page: _page,
-        limit: _limit,
-        order: _order
-    }
+    return paramsHelper(['city', 'region', 'category', 'name', 'sortBy', 'page', 'limit', 'order'],
+                        [city, region, _tmpcategory, name, _sortBy, _page, _limit, _order]);
 }
 
 export {

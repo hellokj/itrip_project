@@ -26,15 +26,15 @@
         )
 
     l-marker(
-      :icon="togoIcon"
       v-for="(togo, index) in togos"
+      :icon="togoIcons[index]"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
     )
 </template>
 
 <script>
 import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip } from 'vue2-leaflet';
-import { Icon }  from 'leaflet'
+import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover'
 import Vue from 'vue'
@@ -63,25 +63,22 @@ export default {
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icons: [],
-      chosenIcons: [],
-      isShow: [],
-      togoIcon: L.icon({
-        iconUrl: require('../assets/itineraryMarker.png'),
-        iconSize: [80, 80]
-      }),
+      togoIcons: [],
+      
        // polyline options
       color: "#FF0000",
       opacity: 0.6,
       weight: 7,
       routesArr: [],
-      currentPage: 0
+      currentPage: 0,
+      currentTogoNum: 0
     }
   },
   props: {
     spots: Array,
     togos: Array,
     routes: Object,
-    page: Number
+    page: Number,
   },
   mounted() {
     for(let i = 0; i < 10; i++){
@@ -94,11 +91,6 @@ export default {
         // iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
         // iconSize: [50, 50],
       );
-      this.chosenIcons.push(L.icon({
-        iconUrl: require('../assets/leaflet_marker/chosen'+ (i+1) + '.png'),
-        iconSize: [45, 45],
-      }))
-      this.isShow.push(false);
     }
   },
   methods: {
@@ -155,6 +147,15 @@ export default {
   //   //this.routesArr = this.routes[this.page].routes;
   // },
   watch: {
+    togos: function() {
+      let togoIcon = L.AwesomeMarkers.icon({
+        icon: '',
+        markerColor: 'red',
+        prefix: 'fa',
+        html: this.togos.length
+      });
+      this.togoIcons.push(togoIcon);
+    },
     page: function(){
       this.currentPage = this.page;
       this.resetRoutesArr();

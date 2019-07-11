@@ -71,7 +71,7 @@ export default {
             this.$refs['type'].select();
         },
         searchClicked() {
-            this.params = makeParams(this.selected_region, this.selected_type);
+            this.params = makeParams(this.selected_region, null, this.selected_type);
             console.log(this.params);
             this.$emit("search-click", this.params);
         }
