@@ -40,19 +40,25 @@
             <div class="div_home">
                 <router-link to="/">首頁</router-link> 
             </div>
-            <button class="div_login" @click="$emit('login-click')"> 登入
-            </button>
+            <ProfileButton v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
         </div>
       
     </header>
 </template>
 
 <script>
+import Vue from 'vue'
+import ProfileButton from '../ProfileButton'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 import InputTag from 'vue-input-tag'
 
+Vue.component('ProfileButton', ProfileButton);
+
 export default {
     name: "Header",
+    components: {
+        ProfileButton
+    },
     data() {
       return {
         selected_type: '',
@@ -77,10 +83,20 @@ export default {
         selectTypeText() {
             this.$refs['type'].select();
         },
-        searchClicked() {
+        checkState(){
+            if (this.$store.state.isAuthorized){
+                this.$emit('logOut-click');
+            }else {
+                this.$emit('logIn-click');
+            }
+        },
+        searchClicked(){
             this.params = makeParams(this.selected_region, null, this.selected_type);
             this.$emit("search-click", this.params);
         }
+    },
+    computed: {
+        
     },
   }
 </script>
@@ -147,7 +163,7 @@ export default {
     p {
         color: #ffffff;
     }
-    .div_login {
+    .div_logIn{
         width: 125px;
         height: 40px;
         border: 2px solid #ffffff;

@@ -9,6 +9,11 @@ const spotRequest = axios.create({
 const routingRequest = axios.create({
   baseURL: 'https://api.openrouteservice.org/v2/'
 });
+// logIn signUp相關的 api
+const AuthRequest = axios.create({
+  baseURL: SERVER_IP + '/api/auth/'
+});
+
 // itinerary api
 const itineraryRequest = axios.create({
   baseURL: SERVER_IP + '/api/itinerary/'
@@ -49,8 +54,18 @@ const apiSaveTrip = (memberId, startDate, name, dayNum, togos, travelInfos) => {
   return itineraryRequest.post('/save', data);
 };
 
+const apiLogIn = (authData) => {
+  return AuthRequest.post('logIn/', authData);
+}
+
+const apiSignUp = (user) => {
+  return AuthRequest.post('signUp/', user);
+}
+
 export {
     apiGetSpots,
     apiGetRoutes,
+    apiLogIn,
+    apiSignUp,
     apiSaveTrip
 }

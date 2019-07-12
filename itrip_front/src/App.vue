@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <Header v-on:search-click="Search" v-on:login-click="Login"/>
+    <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
     <div id="nav">
     </div>
-    <router-view v-bind:param="param" v-bind:type="type"/>
-      <Modal name="login" :width="300" :height="300">
-        <Auth :isLogin="isLogin"></Auth>
-      </Modal>
+    <router-view v-bind:region="region" v-bind:type="type"/>
+    <Modal name="auth" width="300px" height="auto" :scrollable="true" class=".vue-modal-resizer">
+      <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
+    </Modal>
     
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   name:'app',
   components: {
     Header,
-    Auth,
+    Auth
   },
   data() {
     return {
@@ -27,16 +27,31 @@ export default {
       region: '',
       type: '',
       param: {},
-      isLogin: false, // 確認狀態是否登入
+      // isAuthorized: false, // 確認狀態是否登入
     }
   },
   methods: {
     Search(para) {
       this.param = para;
     },
-    Login() {
-      this.$modal.show('login');
+    LogIn() {
+      this.$modal.show('auth');
     },
+    Authorize(){
+      // this.isAuthorized = true;
+      this.$store.dispatch('updateAuthorized', true);
+      alert("success");
+      this.$modal.hide('auth');
+    },
+    LogOut() {
+      // this.isAuthorized = false;
+      this.$store.dispatch('updateAuthorized', false);
+    }
+  },
+  computed: {
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    }
   },
 }
 </script>
