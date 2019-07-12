@@ -56,11 +56,16 @@ export default {
 }
 </script>
 <style>
+@font-face {
+  font-family: logoFont;
+  src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
+}
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: logoFont;
   }
 
   .btn {

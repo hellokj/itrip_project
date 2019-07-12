@@ -79,6 +79,7 @@ export default {
         this.dataCount = this.paginator.spotCount;
       },
       currentPage: function(newVal) {
+        //console.log(this.paginator);
         this.$emit('get-spot', null, newVal);
       }
     }

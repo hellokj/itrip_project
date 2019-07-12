@@ -98,8 +98,6 @@ export default {
           prefix: 'fa',
           html: ((i+1) + ((this.spotPage-1) *  this.perPage))
         })
-        // iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        // iconSize: [50, 50],
       );
     }
     },
@@ -169,7 +167,7 @@ export default {
     spots: function(){
       let spot = this.spots[0];
       this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
-      this.zoom = 11;
+      this.zoom = 15;
 
     },
     routes: {

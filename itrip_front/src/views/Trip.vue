@@ -154,7 +154,7 @@ export default {
     callGetSpotApi: async function(data=null, page=1) {
       let self = this;
       if(data == null) data=this.param;
-      if(page != 1) data.page = page;
+      data.page = page;
       self.spotPage = page;
       
       // call get spots api
