@@ -3,10 +3,12 @@
     <Togos :togos="togos[page]" :travelInfo="travelInfos[page]" 
     :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
     v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
-    <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
+    <Spots v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
+    @add-spot="addSpotToTrip"
+    @get-spot="callGetSpotApi" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map class="ml-3" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
+    <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" :page="page" :perPage="perPage" :spotPage="spotPage"/>
   </div>
 </template>
 
@@ -17,7 +19,6 @@ import Spots from '../components/Spots'
 import Map from '../components/Map'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
-import _ from 'lodash'
 
 export default {
   name: 'trip',
@@ -45,10 +46,13 @@ export default {
       Open: '>',
       Close: '<',
       page: 0,
+      spotPage: 1,
+      perPage: 10,
       changedElementValue: null,
       // travelTime format:
       // { start: , dest: ,duration: , time: , mode:}
       travelInfos: [],
+      paginator: {}
     }
   },
   methods: {
@@ -144,6 +148,25 @@ export default {
         // always executed
       });
     },
+    callGetSpotApi: async function(data=null, page=1) {
+      let self = this;
+      if(data == null) data=this.param;
+      if(page != 1) data.page = page;
+      self.spotPage = page;
+      
+      // call get spots api
+      apiGetSpots(data)
+      .then(function (res) {
+        self.spots = res.data.data.resultList;
+        self.paginator = res.data.data.paginator;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+    },
     changeMode(index, mode) {
       this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
     },
@@ -196,18 +219,7 @@ export default {
   
   watch: {
     param: function(newVal, oldVal) {
-      let self = this;
-      // call get spots api
-      apiGetSpots(newVal)
-      .then(function (res) {
-        self.spots = res.data.data.resultList;
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .then(function () {
-        // always executed
-      });
+      this.callGetSpotApi(newVal);
     },
   }
 }
@@ -257,5 +269,8 @@ export default {
 
   }
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> 399d14b74d35a688f841d1dd2b65e9d41cb15862
 </style>

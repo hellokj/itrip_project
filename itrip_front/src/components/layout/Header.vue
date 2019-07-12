@@ -48,23 +48,28 @@
             <div class="div_home">
                 <router-link to="/">首頁</router-link> 
             </div>
-            <button class="div_login" @click="$emit('login-click')"> 登入
-            </button>
-            <!-- <p>{{ input_name + selected_type + selected_city + selected_region }}</p> -->
+            <ProfileButton v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
         </div>
       
     </header>
 </template>
 
 <script>
+import Vue from 'vue'
+import ProfileButton from '../ProfileButton'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 // import InputTag from 'vue-input-tag'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 
+Vue.component('ProfileButton', ProfileButton);
+
 export default {
     name: "Header",
+    components: {
+        ProfileButton
+    },
     data() {
       return {
         input_name: '',
@@ -97,11 +102,21 @@ export default {
         },
         searchClicked() {
             this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
-            this.$emit("search-click", this.params);
         },
+        checkState(){
+            if (this.$store.state.isAuthorized){
+                this.$emit('logOut-click');
+            }else {
+                this.$emit('logIn-click');
+            }
+        },
+        
         setCity(node) {
                 this.selected_city = node.parentId;
         },
+    },
+    computed: {
+        
     },
   }
 </script>
@@ -187,7 +202,7 @@ export default {
     p {
         color: #ffffff;
     }
-    .div_login {
+    .div_logIn{
         width: 125px;
         height: 40px;
         border: 2px solid #ffffff;

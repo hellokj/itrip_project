@@ -1,7 +1,9 @@
 import Vue from 'vue'
+import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import { Icon }  from 'leaflet'
+
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -11,8 +13,11 @@ import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
 import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import Vuetify from 'vuetify'
+import store from './store'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify);
+
+Vue.use(Vuex);
 
 Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
@@ -31,5 +36,6 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

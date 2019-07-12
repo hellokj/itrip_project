@@ -93,10 +93,11 @@ const getTypes = () => {
 const paramsHelper = (params, values) => {
     let result = {};
     for(let i=0;i<params.length;i++) {
-        if(values[i] != null) {
+        if(values[i] != null && values[i] != "") {
             result[params[i]] = values[i]
         }
     }
+    console.log(result);
     return result;
 }
 
