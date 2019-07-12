@@ -15,8 +15,6 @@ const getSpots = async(req, res, next) => {
     let limit = req.query.limit;
     let page = req.query.page;
 
-    console.log(city, region, category, name, sortBy, order, limit, page);
-
     if(NilChecker(req.query, 8, ['city', 'region','category', 'name', 'order'])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
         return;
