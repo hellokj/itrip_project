@@ -80,15 +80,15 @@ const getTypes = () => {
 const paramsHelper = (params, values) => {
     let result = {};
     for(let i=0;i<params.length;i++) {
-        if(values[i] != null) {
+        if(values[i] != null && values[i] != "") {
             result[params[i]] = values[i]
         }
     }
+    console.log(result);
     return result;
 }
 
 const makeParams = (city = null, region = null, _category = null,_sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
-    if(region == "") region = null;
     let name = null;
     // search for type or name
     let _tmpcategory = null;

@@ -4,11 +4,18 @@
     <div class="Result">
       <p>搜尋結果</p>
     </div>
+
+    <virtual-list :size="100" :remain="8">
+      <SpotItem :key="spot._id" v-for="(spot, index) in spots" :spot="spot" :index="index" v-on:add-spot="$emit('add-spot', spot)" />
+    </virtual-list>
     
-    <div :key="spot.id" v-for="(spot, index) in spots" overflow:auto>
+    <!-- <div :key="spot.id" v-for="(spot, index) in spots" overflow:auto>
       <!-- SpotItem -->
-      <SpotItem :spot="spot" :index="index" v-on:add-spot="$emit('add-spot', spot)" />
-    </div>
+      
+    <!-- <v-pagination v-model="currentPage"
+                  :page-count="totalPages"
+                  :classes="bootstrapPaginationClasses"
+                  :labels="paginationAnchorTexts"></v-pagination> -->
     <!-- <h1>hello</h1> -->
 
   </div>
@@ -16,10 +23,34 @@
 
 <script>
 import SpotItem from './SpotItem'
+import virtualList from 'vue-virtual-scroll-list'
+import vPagination from 'vue-plain-pagination'
+
 export default {
     name: "Spots",
     components: {
-      SpotItem
+      SpotItem,
+      'virtual-list': virtualList,
+      vPagination
+    },
+    data() {
+      return {
+        currentPage: 1,
+        totalPages: 30,
+        bootstrapPaginationClasses: {
+          ul: 'pagination',
+          li: 'page-item',
+          liActive: 'active',
+          liDisable: 'disabled',
+          button: 'page-link'  
+        },
+        paginationAnchorTexts: {
+        first: '<<',
+        prev: '<',
+        next: '>',
+        last: '>>'
+      }
+      }
     },
     props: {
      "spots": Array 
