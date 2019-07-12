@@ -70,11 +70,24 @@ const areas = {
 const types = {'美食':'gourmet', '購物':'shopping', '景點':'scenic spot', '交通':'transportation', '住宿':'lodging', '娛樂':'entertainment'};
 
 const getAreas = () => {
-    return areas;
+    let areaArr = Object.keys(areas);
+    return areaArr.map((v)=>({
+        id: v,
+        label: v,
+        children: areas[v].map((v_child) => ({
+            id: v.concat('-',v_child),
+            parentId: v,
+            label: v_child
+        }))
+    }));
 }
 
 const getTypes = () => {
-    return types;
+    let typeArr = Object.keys(types);
+    return typeArr.map((v, i) => ({
+        id: types[v],
+        label: v
+    }));
 }
 
 const paramsHelper = (params, values) => {
@@ -88,30 +101,31 @@ const paramsHelper = (params, values) => {
     return result;
 }
 
-const makeParams = (city = null, region = null, _category = null,_sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
-    let name = null;
+const makeParams = (city = null, region = null, _category = null, _name = null, _sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
+    let _region = region;
+    let _city = city;
+    if (region.length >= 4) {
+        _region = _region.slice(4, region.length);
+    }
+    else {
+        _city = region;
+        _region = null;
+    }
+    console.log(_category);
+
     // search for type or name
+    let name = null;
     let _tmpcategory = null;
-    if(types[_category] != undefined) {
-        _tmpcategory = types[_category];
+    let typeValues = Object.values(types);
+    if(typeValues.indexOf(_category) != -1) {
+        _tmpcategory = _category;
     } else {
         _tmpcategory = null;
         name = _category
-    }
-
-    // place string adjustment
-    let cityLength, tmpCity = null;
-    if(city == "") city = null;
-    else {
-        cityLength = city.length;
-        if (city.charAt(0) === "台"){
-            tmpCity = tmpCity.concat("臺", city.slice(1, cityLength));
-        } else {
-            tmpCity = city;
-        }
-    }
+    }        
+    
     return paramsHelper(['city', 'region', 'category', 'name', 'sortBy', 'page', 'limit', 'order'],
-                        [city, region, _tmpcategory, name, _sortBy, _page, _limit, _order]);
+                        [_city, _region, _tmpcategory, _name, _sortBy, _page, _limit, _order]);
 }
 
 export {

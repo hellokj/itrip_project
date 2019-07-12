@@ -52,9 +52,9 @@ export default {
         tabCounter: 0,
         tabs: [0],
         currentPage: 0,
-        tripName: '',
+        tripName: '我的旅行',
         tripDate: {
-          date: ''
+          date: ""
         },
         togos_prop: this.togos
       }
@@ -71,7 +71,19 @@ export default {
     },
     methods: {
       saveTrip() {
-        this.$emit('saveTrip', this.tripName, this.tripDate);
+        if (this.$store.state.isAuthorized == false){
+          this.$modal.show('auth');
+        }else{
+          if (this.tripDate.date == ""){
+            // 預設今天日期
+            let date = new Date();
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            this.tripDate = year + "-" + month + "-" + day;
+          }
+          this.$emit('saveTrip', this.tripName, this.tripDate);
+        }
       },
       changePage(){
         this.$emit('change-page', this.currentPage);

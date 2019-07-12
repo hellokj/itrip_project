@@ -69,10 +69,10 @@ export default {
       apiSaveTrip(123, date, name, this.togos.length, this.togos, this.travelInfos)
       .then((function (res) {
         console.log(res);
-      })
+      }))
       .catch(function (error) {
         console.log(error);
-      }));
+      });
     },
     deleteTogo(index) {
       this.fixTravelInfo(index);
@@ -160,6 +160,7 @@ export default {
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
+        console.log(res);
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
       })

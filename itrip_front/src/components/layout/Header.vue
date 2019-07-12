@@ -4,30 +4,38 @@
             <img src="./Logo.svg" alt="iTripLogo">
         </div>
         <div class="btns">
+            <div>
+                <input  
+                class="input_name"
+                type="text"
+                placeholder="景點名稱"
+                v-model="input_name" />
+            </div>
             <!-- Select Type -->
             <div>
-                <b-form-input ref="type" @click="selectTypeText()" v-model="selected_type" 
-                @keyup.enter="searchClicked" 
-                class="input_type" placeholder="雙心石滬" list="my-list-id1"></b-form-input>
-                    <datalist id="my-list-id1">
-                        <!-- Change types -->
-                        <option v-bind:key="type" v-for="type in types">{{ type }}</option>
-                    </datalist>
+                <treeselect
+                class="input_type"
+                :multiple="false"
+                :options="types"
+                :flat="true"
+                :sort-value-by="sortValueBy"
+                :default-expand-level="0"
+                v-model="selected_type"
+                placeholder="種類"
+                />
             </div>
             <div>
-                <b-form-input ref="region" @click="selectRegionText()" 
-                @keyup.enter="searchClicked" 
-                v-model="selected_region" class="input_region" placeholder="臺北市" 
-                list="my-list-id2"></b-form-input>
-                    <datalist id="my-list-id2">
-                        <datalist v-bind:key="region" v-for="(suburbs, region) in regions" id="my-list-id3">
-                            <option v-bind:key="suburb" v-for="suburb in suburbs">{{ suburb }}</option>
-                        </datalist>
-                        <!-- <option v-bind:key="region" v-for="region in regions">{{ region }}</option> -->
-                    </datalist>
-            <!-- Select Region -->
-            <!-- <input-tag v-model="tags"></input-tag> -->
-            
+                <treeselect
+                class="input_region"
+                :multiple="false"
+                :options="regions"
+                :flat="true"
+                :sort-value-by="sortValueBy"
+                :default-expand-level="0"
+                v-model="selected_region"
+                @select="setCity"
+                placeholder="地區"
+                />
             </div>
 
             <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
@@ -50,7 +58,10 @@
 import Vue from 'vue'
 import ProfileButton from '../ProfileButton'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
-import InputTag from 'vue-input-tag'
+// import InputTag from 'vue-input-tag'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 
 Vue.component('ProfileButton', ProfileButton);
 
@@ -61,17 +72,23 @@ export default {
     },
     data() {
       return {
+        input_name: '',
         selected_type: '',
         selected_region: '',
+        selected_city: '',
         regions: getAreas(),
-        types: Object.keys(getTypes()),
+        types: getTypes(),
         params: {},
         hover: true,
-        tags: []
+        tags: [],
+        options: getAreas(),
+        sortValueBy: 'ORDER_SELECTED',
+        val: ''
       }
     },
     components: {
-      InputTag
+    //   InputTag,
+      Treeselect
     },
     methods: {
         setRegion(e, val){  
@@ -83,6 +100,9 @@ export default {
         selectTypeText() {
             this.$refs['type'].select();
         },
+        searchClicked() {
+            this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
+        },
         checkState(){
             if (this.$store.state.isAuthorized){
                 this.$emit('logOut-click');
@@ -90,10 +110,10 @@ export default {
                 this.$emit('logIn-click');
             }
         },
-        searchClicked(){
-            this.params = makeParams(this.selected_region, null, this.selected_type);
-            this.$emit("search-click", this.params);
-        }
+        
+        setCity(node) {
+                this.selected_city = node.parentId;
+        },
     },
     computed: {
         
@@ -102,13 +122,19 @@ export default {
 </script>
 
 <style scoped>
+
+
+@font-face {
+  font-family: logoFont;
+  src: url(../../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
+}
     .header {
         margin: 0px;
         background: rgb(255,208,129);
         background: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%);
         height: 80px;
         display: flex;
-
+        font-family: logoFont;
         justify-content: flex-start;
         flex-grow: 3;
     }
@@ -128,22 +154,35 @@ export default {
         text-decoration: none   ;
 
     }
-
-    .input_type {
+    .input_name {
         width: 266px;
+        height: 36px;
+        border-radius: 18px 1px 1px 18px;
+        border: none;
+        font-size: 20px;
+        text-align: left;
+        padding-left: 20px;
+        margin-right: -20px;
+        margin-bottom: 4px;
+        outline: none;
+        border: 1px solid rgb(224, 224, 224);
+    }
+    .input_type {
+        width: 150px;
         height: 40px;
         border-radius: 20px 0 0 20px;
         border: none;
         font-size: 20px;
         text-align: left;
         padding-left: 20px;
-        margin-right: 2px;
+        margin-right: 0px;
         outline: none;
 
     }
 
     .input_region {
-        width: 133px;
+
+        width: 266px;
         height: 40px;
         border-radius: 0 20px 20px 0;
         border: none;
@@ -189,6 +228,7 @@ export default {
         width: 100px;
         margin-top:10px;
         margin-left: 50px;
+                font-family: logoFont;
     }
 
 
@@ -200,5 +240,6 @@ export default {
         transform: translate(0px, -5px);
 
     }
+
 
 </style>

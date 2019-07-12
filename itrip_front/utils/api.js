@@ -38,7 +38,7 @@ const apiGetRoutes = (data, mode) => {
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
 const apiSaveTrip = (memberId, startDate, name, dayNum, togos, travelInfos) => {
-  let date = startDate.split('-');
+  let date = startDate.split("-");
   let data = {
     memberId: memberId,
     startDate: {
