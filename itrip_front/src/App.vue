@@ -3,7 +3,7 @@
     <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
     <div id="nav">
     </div>
-    <router-view v-bind:region="region" v-bind:type="type" v-bind:param="param"/>
+    <router-view :param="param" :region="region" :type="type"/>
     <Modal name="auth" width="300px" height="auto" :scrollable="true" class=".vue-modal-resizer">
       <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
     </Modal>
@@ -32,6 +32,7 @@ export default {
   methods: {
     Search(para) {
       this.param = para;
+      //console.log(this.param);
     },
     LogIn() {
       this.$modal.show('auth');

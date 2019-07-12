@@ -11,13 +11,11 @@
       </div>
       
     </div>
-    <div>
-        <button class="btn-save" @click="saveTrip">儲存</button>
-    </div>
+    <b-container class="save-div" fluid>
+      <i class="fas fa-save" @click="saveTrip"> 儲存行程</i>  
+    </b-container> 
     <div>
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage">
-        <!-- <b-tab class="my-0 mx-0" title="第一天" active>
-        </b-tab> -->
         <b-tab v-for="i in tabs" :key="'tab' + i" :title="'Day' + (i+1)">
           <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
@@ -31,7 +29,7 @@
           </draggable>
         </b-tab>
         <template slot="tabs">
-          <b-nav-item @click.prevent="newTab" href="#"><b>+</b></b-nav-item>
+          <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
         </template>
       </b-tabs>
     </div>
@@ -128,6 +126,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .save-div {
+    text-align: right;
+  }
+
   .MyTrip {
     margin: 0px;
     padding: 0px;
@@ -161,7 +163,6 @@ export default {
     height: 20px;
     border: none;
     border-bottom: 1px solid #707070;
-
     text-align: center;
     outline: none;
     background: #F1F0F0;
@@ -176,10 +177,10 @@ export default {
     background: #333555;
   }
 
-  .btn-save {
-    border: none;
-    background: #515151;
-    color: white;
+  .fa-save {
+    border:darkgray;
+    color:darkred;
+    cursor: pointer;
   }
 
   .MyTrip .sortable-drag {
