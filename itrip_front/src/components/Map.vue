@@ -1,7 +1,7 @@
 <template lang="pug">
 #map(:class="{'map-big' : bigMap, 'map-small' : !bigMap}")
   //v-for="(route, index) in (routesArr)"
-  l-map(:zoom='zoom', :center='center', style='height: 90%'
+  l-map(:zoom='zoom', :center='center'
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
     l-tile-layer(:url="url", :attribution="attribution", dragging="false")

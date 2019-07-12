@@ -3,6 +3,14 @@
     <clipPath id="clip-path">
       <rect width="123.075" height="70.61" fill="none"/>
     </clipPath>
+    <style type="text/css">
+      <![CDATA[
+        @font-face {
+            font-family: myFont;
+            src: url('../../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf');
+        }
+      ]]>
+    </style>
   </defs>
   <g id="Logo" transform="translate(0)" clip-path="url(#clip-path)">
     <g id="Ellipse_2" data-name="Ellipse 2" fill="#e7717d" stroke="#707070" stroke-width="3">
@@ -14,7 +22,7 @@
       <rect x="1.5" y="1.5" width="10.101" height="50.901" rx="5.05" fill="none"/>
     </g>
     <rect id="Rectangle_36" data-name="Rectangle 36" width="1.709" height="5.126" rx="0.854" transform="translate(2.848 22.579)" fill="#fff"/>
-    <text id="自遊" transform="translate(21.075 56.266)" fill="#3b0c0c" font-size="51" font-family="FZYTK--GBK1-0, FZYaoTi"><tspan x="0" y="0">自遊</tspan></text>
+    <text id="自遊" transform="translate(21.075 56.266)" fill="#3b0c0c" font-size="51" font-family="myFont"><tspan x="0" y="0">自遊</tspan></text>
     <rect id="Rectangle_37" data-name="Rectangle 37" width="1.709" height="14.24" rx="0.854" transform="translate(2.848 28.275)" fill="#fff"/>
     <rect id="Rectangle_38" data-name="Rectangle 38" width="1.709" height="5.126" rx="0.854" transform="translate(2.848 43.085)" fill="#fff"/>
   </g>
