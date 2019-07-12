@@ -17,7 +17,6 @@ import Spots from '../components/Spots'
 import Map from '../components/Map'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes} from '../../utils/api'
-import _ from 'lodash'
 
 export default {
   name: 'trip',

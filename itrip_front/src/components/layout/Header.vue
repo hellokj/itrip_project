@@ -28,24 +28,35 @@
             <div class="div_home">
                 <router-link to="/">首頁</router-link> 
             </div>
-            <button class="div_login" @click="$emit('login-click')"> 登入
-            </button>
+            <ProfileButton v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
         </div>
       
     </header>
 </template>
 
 <script>
+import ProfileButton from '../ProfileButton'
+
 export default {
     name: "Header",
+    components: {
+        ProfileButton
+    },
     data() {
       return {
         selected_type: '',
         selected_region: '',
         regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'新竹市', '苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣', '澎湖縣', '金門縣'],
         types: ['美食', '購物', '景點', '交通', '住宿', '娛樂'],
-        hover: true
+        hover: true,
+        update: 0,
       }
+    },
+    watch: {
+        
+    },
+    props: {
+        // isAuthorized: Boolean
     },
     methods: {
         setRegion(e, val){  
@@ -57,7 +68,17 @@ export default {
         },
         selectTypeText() {
             this.$refs['type'].select();
+        },
+        checkState(){
+            if (this.$store.state.isAuthorized){
+                this.$emit('logOut-click');
+            }else {
+                this.$emit('logIn-click');
+            }
         }
+    },
+    computed: {
+        
     },
   }
 </script>
@@ -124,7 +145,7 @@ export default {
     p {
         color: #ffffff;
     }
-    .div_login {
+    .div_logIn{
         width: 125px;
         height: 40px;
         border: 2px solid #ffffff;

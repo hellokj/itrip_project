@@ -9,6 +9,10 @@ const spotRequest = axios.create({
 const routingRequest = axios.create({
   baseURL: 'https://api.openrouteservice.org/v2/'
 });
+// logIn signUp相關的 api
+const AuthRequest = axios.create({
+  baseURL: SERVER_IP + '/api/auth/'
+});
 
 
 // spot相關的 api
@@ -27,7 +31,17 @@ const apiGetRoutes = (data, mode) => {
     return routingRequest.post('/directions/' + mode + '/geojson', data, { headers: headers});
 }
 
+const apiLogIn = (authData) => {
+  return AuthRequest.post('logIn/', authData);
+}
+
+const apiSignUp = (user) => {
+  return AuthRequest.post('signUp/', user);
+}
+
 export {
     apiGetSpots,
-    apiGetRoutes
+    apiGetRoutes,
+    apiLogIn,
+    apiSignUp
 }

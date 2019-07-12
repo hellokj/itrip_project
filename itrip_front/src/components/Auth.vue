@@ -1,53 +1,85 @@
 <template lang="pug">
-.login
-  h2 welcome
-  form(method='post', name='login')
-    .form-group
-      .input-group
-        input(:account="account" type='text', required='required' placeholder="帳號")
-        label.control-label(for='account')
-          //- | account
-        i.bar
-      i.bar
-    i.bar
-    .form-group
-      .input-group
-        input(:password="password" type='password', required='required' placeholder="密碼")
-        label.control-label(for='password')
-          //- | password
-        i.bar
-      i.bar
-    i.bar
-      .d-flex.align--center.justify--space-between
-        button.btn.btn-primary(type='submit') 登入
-        button.btn.btn-primary(type='submit') 註冊
+  SignUp(v-model="isSignUp" v-if="isSignUp && !isLogIn" v-on:backToLogIn="backToLogIn" v-on:signUp="signUp" v-bind:resMsg="resMsg")
+  LogIn(v-model="isLogIn" v-else="!isSignUp && isLogIn" v-on:backToSignUp="backToSignUp" v-on:logIn="logIn" v-bind:resMsg="resMsg")
 </template>
 
 <script>
+import LogIn from './template/LogIn'
+import SignUp from './template/SignUp'
+import { apiLogIn, apiSignUp } from '../../utils/api'
+
 export default {
-  name: "Login",
+  name: "Auth",
+  components: {
+    LogIn,
+    SignUp
+  },
   props: {
-    isLogin: Boolean,
+    // isAuthorized: Boolean,
   },
   methods: {
-    login: function(account, password){
-      
+    logIn: function(email, password){
+      // 接收到子元件傳來的 account password
+      let self = this;
+      let data = {
+        email: email,
+        password: password
+      };
+      // 傳送資料去api取得response
+      apiLogIn(data)
+      .then(function(res) {
+        self.resMsg = res.data.msg;
+        if (res.data.status == -1){
+          self.$emit("logIn-ok");
+          self.resMsg = "";
+        }
+      })
+      .catch(function(err){
+        console.log(err);
+      });
+      // 根據回傳值status 做事
     },
-    register: function(){
-      // 顯示註冊元件
-    }
+    signUp: function(user){
+      let self = this;
+      // 通過SignUp元件的審核，傳至此的user
+      apiSignUp(user)
+      .then(function(res) {
+        // 傳送資料去api取得response
+        self.resMsg = res.data.msg;
+        if (res.data.status == 200){
+          // self.$emit("signUp-ok");
+          self.backToLogIn();
+          self.resMsg = "註冊成功，重新登入";
+        }
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+      // 根據回傳值status 做事
+    },
+    backToLogIn: function(){
+      this.isSignUp = false;
+      this.isLogIn = true;
+    },
+    backToSignUp: function(){
+      this.isSignUp = true;
+      this.isLogIn = false;
+    },
   },
   data() {
     return {
-      
+      isSignUp: false,
+      isLogIn: true,
+      resMsg: "",
+      update: 0,
     }
+  },
+  computed: {
+    
   },
 }
 </script>
 
 <style lang="sass" scoped>
-.login 
-  width: 100%
-  padding: 2rem
 
 </style>
