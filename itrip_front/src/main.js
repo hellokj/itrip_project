@@ -3,18 +3,19 @@ import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import { Icon }  from 'leaflet'
-import VueLodash from 'vue-lodash'
-import loadash from 'lodash'
+
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
+import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
+import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import Vuetify from 'vuetify'
 import store from './store'
 
 Vue.use(Vuetify);
-Vue.use(VueLodash ,loadash);
 
 Vue.use(Vuex);
 

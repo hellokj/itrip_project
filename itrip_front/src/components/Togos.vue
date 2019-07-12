@@ -3,11 +3,11 @@
     <div class="tripData  mx-0 my-0 px-0 py-0">
       <div class="tripName">
         <p class="pTripName  mx-0 my-0 px-0 py-0">旅行名稱</p>
-        <input class="inputTripName" type="text" placeholder="我的旅行">
+        <input type="text" v-model="tripName" :placeholder="'我的旅行'">
       </div>
       <div class="tripDate">
         <p class="pTripDate  mx-0 my-0 px-0 py-0">開始日期</p>
-        <input class="inputTripDate" type="date">
+        <input type="date" v-model="tripDate">
       </div>
       
     </div>
@@ -53,7 +53,12 @@ export default {
         travelInfos: this.travelInfo,
         tabCounter: 0,
         tabs: [0],
-        currentPage: 0
+        currentPage: 0,
+        tripName: '',
+        tripDate: {
+          date: ''
+        },
+        togos_prop: this.togos
       }
     },
     components: {
@@ -62,21 +67,20 @@ export default {
         draggable
     },
     props: {
-      togos_prop: Array,
+      togos: Array,
       travelInfo: Array,
       page: Number,
     },
     methods: {
       saveTrip() {
-        this.$emit('saveTrip');
-        console.log('child called!!');
+        this.$emit('saveTrip', this.tripName, this.tripDate);
       },
       changePage(){
         this.$emit('change-page', this.currentPage);
         this.$emit('resetRoutes');
       },
       isTravelTimeShown(index) {
-        if(index < (this.togos_prop.length-1) && this.travelInfos[index] != undefined) {
+        if(index < (this.togos.length-1) && this.travelInfos[index] != undefined) {
           return true;
         }
         return false;
@@ -86,7 +90,6 @@ export default {
         this.$emit('deleteTogo');
       },
       onEnd: function(evt) {
-        //console.log(evt)
         this.oldIndex = evt.oldIndex;
         this.newIndex = evt.newIndex;
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
@@ -104,7 +107,10 @@ export default {
       },
       page: function(){
         this.currentPage = this.page;
-      }
+      },
+      togos: function() {
+        this.togos_prop = this.togos;
+      },
     },
 }
 </script>
@@ -172,9 +178,7 @@ export default {
   .flip-list-move {
     transition: transform 0.5s;
   }
-  .flip-list-move {
-    transition: transform 0.5s;
-  }
+  
   .ghost {
     border-left: 6px solid rgb(0, 183, 255);
     box-shadow: 10px 10px 5px -1px rgba(0,0,0,0.14);

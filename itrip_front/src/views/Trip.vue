@@ -1,12 +1,12 @@
 <template>
   <div class="trip">
-    <Togos :togos_prop="togos[page]" :travelInfo="travelInfos[page]" 
+    <Togos :togos="togos[page]" :travelInfo="travelInfos[page]" 
     :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
-    v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes"/>
+    v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
     <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
+    <Map :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
 
 export default {
   name: 'trip',
@@ -25,7 +25,9 @@ export default {
       Spots,
       Map,
   },
-  props: ["region", "type"],
+  props: {
+    param: Object,
+  },
   data() {
     return {
       togos: [],
@@ -49,11 +51,20 @@ export default {
     }
   },
   methods: {
-    saveTrip() {
-        // itinerary format:
-        //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-        console.log(this.travelInfos);
-        this.$emit('saveTrip');
+    saveTrip(name, date) {
+      // itinerary format:
+      //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
+      //memberId, startDate, name, dayNum, togos, travelInfos
+      console.log(this.togos);
+      console.log(this.travelInfos);
+      console.log(name, date);
+      apiSaveTrip(123, date, name, this.togos.length, this.togos, this.travelInfos)
+      .then((function (res) {
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      }));
     },
     deleteTogo(index) {
       this.fixTravelInfo(index);
@@ -98,7 +109,7 @@ export default {
       // call get routes api
       this.callGetRoutesApi(this.travelInfos[this.page].length, startOb, destOb, 'driving-car');
     },
-    callGetRoutesApi(index, startOb, destOb, mode) {
+    callGetRoutesApi: async function(index, startOb, destOb, mode) {
       let self = this;
       //console.log(start, dest);
       let coordinates = [[startOb.location.coordinates[0], startOb.location.coordinates[1]],
@@ -107,7 +118,7 @@ export default {
         'coordinates': coordinates 
       };
       // call get routes api
-      apiGetRoutes(data, mode)
+      await apiGetRoutes(data, mode)
       .then(function (res) {
         let tmpCoordinates = res.data.features[0].geometry.coordinates;
         // reverse coordinates because leaflet uses inverted coordinates
@@ -183,20 +194,10 @@ export default {
   },
   
   watch: {
-    region: function(newVal, oldVal) {
-      //console.log('Prop hanged: ', newVal, '| was: ', oldVal);
+    param: function(newVal, oldVal) {
       let self = this;
-      //place, category, name, sortBy, page, limit, order
-      let params = {
-          place: newVal,
-          category: "gourmet",
-          sortBy: "checkins",
-          page: 1,
-          limit: 10,
-          order: -1
-      }
       // call get spots api
-      apiGetSpots(params)
+      apiGetSpots(newVal)
       .then(function (res) {
         self.spots = res.data.data.resultList;
       })

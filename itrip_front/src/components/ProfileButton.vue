@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "ProfileButton",
+  name: 'ProfileButton',
   props: {
     // isAuthorized: Boolean
   },

@@ -31,9 +31,50 @@ const Options = (sortBy, page, limit, order) => {
   }
 
 // query for place search => shortening
-const Place_query = (place) => {
-    return [{"address.city": place}, {"address.state": place}, 
-    {"address.county": place}, {"address.suburb": place}, {"address.town": place}, {"address.state_district": place}];
+const Place_query = (schema, city, region, category, name, sortBy, page, limit, order) => {
+    console.log(city, region, category, name, sortBy, page, limit, order);
+    if(name != null) {
+        return schema.paginate({$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]}, Options(sortBy, page, limit, order),
+         function(err, result) {
+             return result;
+         });
+    }
+    if(region === undefined) {
+        if(category == undefined) {
+            return schema.paginate(
+                {$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}]}, 
+                Options(sortBy, page, limit, order), 
+                function(err, result) {
+                    return result;
+            });   
+        }
+        return schema.paginate({$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}], category: category}, 
+            Options(sortBy, page, limit, order), 
+            function(err, result) {
+                return result;
+        });   
+    }
+    else {
+        if(category == undefined) {
+            return schema.paginate(
+                {$and:[
+                    {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
+                    {$or: [{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]}]},
+                    Options(sortBy, page, limit, order), 
+                    function(err, result) {
+                        return result;
+                });    
+        }
+        return schema.paginate(
+        {$and:[
+            {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
+            {$or: [{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]}], 
+                category: category},
+                Options(sortBy, page, limit, order), 
+            function(err, result) {
+                return result;
+        });     
+    }
 }
 
 module.exports = {

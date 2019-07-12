@@ -5,11 +5,7 @@ const Schema = mongoose.Schema;
 const itinerarySchema = new Schema({
     _id: Number,
     memberId: Number,
-    startDate: {
-        year: Number,
-        month: Number,
-        day: Number
-    },
+    startDate: Object,
     name: String,
     dayNum: Number,
     togos: Array,

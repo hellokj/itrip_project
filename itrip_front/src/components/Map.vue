@@ -1,5 +1,5 @@
 <template lang="pug">
-#map(class="map")
+#map(:class="{'map-big' : bigMap, 'map-small' : !bigMap}")
   //v-for="(route, index) in (routesArr)"
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
@@ -12,6 +12,8 @@
     :opacity="opacity"
     :weight="weight")
     l-marker(
+      @mouseover="mouseOver"
+      @mouseout="mouseOut"
       :icon="icons[index]"
       v-for="(spot, index) in spots"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
@@ -24,22 +26,23 @@
         )
 
     l-marker(
-      :icon="togoIcon"
       v-for="(togo, index) in togos"
+      :icon="togoIcons[index]"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
     )
 </template>
 
 <script>
 import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip } from 'vue2-leaflet';
-import { Icon }  from 'leaflet'
+import { Icon, divIcon }  from 'leaflet'
+import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover'
 import Vue from 'vue'
 import L from "leaflet"
 
 export default {
   name: 'Map',
-    components: {
+  components: {
       LMap,
       LTileLayer,
       LMarker,
@@ -48,7 +51,7 @@ export default {
       LPopup,
       LTooltip,
       MarkerPopover
-    },
+  },
   data() {
     return {
       zoom: 8,
@@ -60,40 +63,45 @@ export default {
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icons: [],
-      chosenIcons: [],
-      isShow: [],
-      togoIcon: L.icon({
-        iconUrl: require('../assets/itineraryMarker.png'),
-        iconSize: [80, 80]
-      }),
+      togoIcons: [],
+      spotsPerPage: 10,
        // polyline options
       color: "#FF0000",
       opacity: 0.6,
       weight: 7,
       routesArr: [],
-      currentPage: 0
+      currentPage: 0,
+      currentTogoNum: 0
     }
   },
   props: {
     spots: Array,
     togos: Array,
     routes: Object,
-    page: Number
+    page: Number,
+    bigMap: Boolean
   },
   mounted() {
-    for(let i = 0; i < 10; i++){
-      this.icons.push(L.icon({
-        iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        iconSize: [50, 50],
-      }));
-      this.chosenIcons.push(L.icon({
-        iconUrl: require('../assets/leaflet_marker/chosen'+ (i+1) + '.png'),
-        iconSize: [45, 45],
-      }))
-      this.isShow.push(false);
+    setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 250);
+    for(let i = 0; i < this.spotsPerPage; i++){
+      this.icons.push(L.AwesomeMarkers.icon({
+        icon: '',
+        markerColor: 'darkblue',
+        prefix: 'fa',
+        html: (i+1)
+      })
+        // iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
+        // iconSize: [50, 50],
+      );
     }
   },
   methods: {
+    mouseOver(evt) {
+      this.$set(evt.target.options.icon.options, 'markerColor', 'red');
+    },
+    mouseOut(evt) {
+      this.$set(evt.target.options.icon.options, 'markerColor', 'darkblue');
+    },
     visbleUpdate(visible){
       this.visible = visible;
     },
@@ -141,6 +149,15 @@ export default {
   //   //this.routesArr = this.routes[this.page].routes;
   // },
   watch: {
+    togos: function() {
+      let togoIcon = L.AwesomeMarkers.icon({
+        icon: '',
+        markerColor: 'red',
+        prefix: 'fa',
+        html: this.togos.length
+      });
+      this.togoIcons.push(togoIcon);
+    },
     page: function(){
       this.currentPage = this.page;
       this.resetRoutesArr();
@@ -207,7 +224,16 @@ export default {
 </script>
 
 <style scope lang="sass">
-.map 
+.map-big
+  width: calc(100vw - 365px)
+  height: calc(100vh - 85px)
+.map-small
   width: calc(100vw - 730px)
   height: calc(100vh - 85px)
+.icon::before 
+  display: inline-block
+  font-style: normal
+  font-variant: normal
+  text-rendering: auto
+  -webkit-font-smoothing: antialiased
 </style>

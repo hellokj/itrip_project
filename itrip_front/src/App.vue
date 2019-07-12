@@ -19,7 +19,7 @@ export default {
   name:'app',
   components: {
     Header,
-    Auth,
+    Auth
   },
   data() {
     return {
@@ -31,17 +31,8 @@ export default {
     }
   },
   methods: {
-    Search(t, r) {
-      let r_length = r.length;
-      let _r = '';
-      if (r.charAt(0) === "台"){
-        _r = _r.concat("臺", r.slice(1, r_length));
-      } else {
-        _r = r;
-      }
-      this.region = _r;
-      this.type = t;
-      alert(this.region+", "+this.type);
+    Search(para) {
+      this.param = para;
     },
     LogIn() {
       this.$modal.show('auth');

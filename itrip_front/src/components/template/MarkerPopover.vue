@@ -38,9 +38,11 @@
         suburb = (this.address.town === undefined)? this.address.suburb: this.address.town;
         road = (this.address.road === undefined)? ((this.address.pedestrian === undefined)? "": this.address.pedestrian): this.address.road;
         number = (this.address.house_number === undefined)? "": this.address.house_number;
-        address = city.concat(suburb, road, number);
-        return address;
-        },
+        if(city !== undefined) {
+          address = city.concat(suburb, road, number);
+          return address;
+        }
+      },
     },
   }
 </script>

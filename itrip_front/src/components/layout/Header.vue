@@ -6,21 +6,33 @@
         <div class="btns">
             <!-- Select Type -->
             <div>
-                <b-form-input ref="type" @click="selectTypeText()" v-model="selected_type" @keyup.enter="$emit('search-click', selected_type, selected_region)" class="input_type" placeholder="雙心石滬" list="my-list-id1"></b-form-input>
-                <datalist id="my-list-id1">
-                    <!-- Change types -->
-                    <option v-bind:key="type" v-for="type in types">{{ type }}</option>
-                </datalist>
+                <b-form-input ref="type" @click="selectTypeText()" v-model="selected_type" 
+                @keyup.enter="searchClicked" 
+                class="input_type" placeholder="雙心石滬" list="my-list-id1"></b-form-input>
+                    <datalist id="my-list-id1">
+                        <!-- Change types -->
+                        <option v-bind:key="type" v-for="type in types">{{ type }}</option>
+                    </datalist>
             </div>
             <div>
-                <b-form-input ref="region" @click="selectRegionText()"  @keyup.enter="$emit('search-click', selected_type, selected_region)" v-model="selected_region" class="input_region" placeholder="臺北市" list="my-list-id2"></b-form-input>
-                <datalist id="my-list-id2">
-                    <option v-bind:key="region" v-for="region in regions">{{ region }}</option>
-                </datalist>
+                <b-form-input ref="region" @click="selectRegionText()" 
+                @keyup.enter="searchClicked" 
+                v-model="selected_region" class="input_region" placeholder="臺北市" 
+                list="my-list-id2"></b-form-input>
+                    <datalist id="my-list-id2">
+                        <datalist v-bind:key="region" v-for="(suburbs, region) in regions" id="my-list-id3">
+                            <option v-bind:key="suburb" v-for="suburb in suburbs">{{ suburb }}</option>
+                        </datalist>
+                        <!-- <option v-bind:key="region" v-for="region in regions">{{ region }}</option> -->
+                    </datalist>
             <!-- Select Region -->
+            <!-- <input-tag v-model="tags"></input-tag> -->
+            
             </div>
 
-            <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} class="icon_search" src="../icons/search.svg" @click="$emit('search-click',selected_type, selected_region)">
+            <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
+            class="icon_search" src="../icons/search.svg" 
+            @click="searchClicked">
 
             <div class="div_trip">
                 <router-link to="/trip">旅遊</router-link>
@@ -35,7 +47,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import ProfileButton from '../ProfileButton'
+import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
+import InputTag from 'vue-input-tag'
+
+Vue.component('ProfileButton', ProfileButton);
 
 export default {
     name: "Header",
@@ -46,17 +63,15 @@ export default {
       return {
         selected_type: '',
         selected_region: '',
-        regions: ['臺北市', '新北市', '基隆市', '宜蘭縣', '花蓮縣', '臺東縣', '桃園市', '新竹縣' ,'新竹市', '苗栗縣', '臺中市', '彰化縣', '南投縣', '雲林縣', '嘉義縣', '臺南市', '高雄市', '屏東縣', '澎湖縣', '金門縣'],
-        types: ['美食', '購物', '景點', '交通', '住宿', '娛樂'],
+        regions: getAreas(),
+        types: Object.keys(getTypes()),
+        params: {},
         hover: true,
-        update: 0,
+        tags: []
       }
     },
-    watch: {
-        
-    },
-    props: {
-        // isAuthorized: Boolean
+    components: {
+      InputTag
     },
     methods: {
         setRegion(e, val){  
@@ -64,7 +79,6 @@ export default {
         },
         selectRegionText() {
             this.$refs['region'].select();
-            
         },
         selectTypeText() {
             this.$refs['type'].select();
@@ -75,6 +89,10 @@ export default {
             }else {
                 this.$emit('logIn-click');
             }
+        },
+        searchClicked(){
+            this.params = makeParams(this.selected_region, null, this.selected_type);
+            this.$emit("search-click", this.params);
         }
     },
     computed: {
