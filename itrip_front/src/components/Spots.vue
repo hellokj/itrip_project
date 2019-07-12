@@ -8,7 +8,8 @@
     <virtual-list :size="150" :remain="10">
       <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
       :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
-      @add-spot="$emit('add-spot', spot)" />
+      @add-spot="$emit('add-spot', spot)" 
+      @mouseOver="$emit('hoverSpotItem', index, spot)"/>
       <b-row class="ml-0 my-0 px-0 py-0">
         <b-col cols="2" class="ml-0 my-0 pl-0 py-0">
           <div class="space"></div>

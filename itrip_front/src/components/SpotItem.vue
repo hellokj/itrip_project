@@ -1,5 +1,5 @@
 <template>
-    <div class="spot-item px-0 py-0">
+    <div class="spot-item px-0 py-0" @mouseover="$emit('mouseOver', spot)">
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
                 <b-col class="ml-0 my-0 pl-0 py-0" cols="3.8">
@@ -8,8 +8,8 @@
                 <b-col cols="8" class="mx-0 my-0 px-0 py-0">
                     <p class="mx-0 my-0 px-0 py-0 p-name">{{spotIndex}}. {{spot.name}}</p>
                     <p class="mx-0 my-0 px-0 py-0">{{ getAddress() }}</p>
-                    <button><i src=""></i></button>
-                    <button><i src=""></i></button>
+                    <!-- <button><i src=""></i></button>
+                    <button><i src=""></i></button> -->
                 </b-col>
                 <b-col class="mx-0 my-0 px-0 py-0">
                     <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
@@ -47,7 +47,7 @@ export default {
         },
         Clicked: function(){
             console.log('clicked');
-        }
+        },
     },
     computed: {
         spotIndex: function() {
@@ -58,6 +58,9 @@ export default {
 </script>
 
 <style scoped>
+    .container {
+        align-self: center;
+    }
     .spot-item {
         margin-left: 10px;
         margin-top: 5px;
@@ -70,8 +73,9 @@ export default {
 
     }
     .spot-picture{
-        width: 120px;
-        height: 120px;
+        width: 110px;
+        height: 110px;
+        margin-right: 10px;
     }
     .p-name {
         font-size:20px;
