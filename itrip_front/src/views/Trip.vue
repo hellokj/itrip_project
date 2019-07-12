@@ -6,7 +6,7 @@
     <Spots v-if="showSpots" :spots="spots" v-on:add-spot="addSpotToTrip" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
+    <Map :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" :page="page"/>
   </div>
 </template>
 

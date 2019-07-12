@@ -1,5 +1,5 @@
 <template lang="pug">
-#map(class="map")
+#map(:class="{'map-big' : bigMap, 'map-small' : !bigMap}")
   //v-for="(route, index) in (routesArr)"
   l-map(:zoom='zoom', :center='center', style='height: 90%'
     ,@update:center="centerUpdate"
@@ -79,6 +79,7 @@ export default {
     togos: Array,
     routes: Object,
     page: Number,
+    bigMap: Boolean
   },
   mounted() {
     setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 250);
@@ -223,7 +224,10 @@ export default {
 </script>
 
 <style scope lang="sass">
-.map 
+.map-big
+  width: calc(100vw - 365px)
+  height: calc(100vh - 85px)
+.map-small
   width: calc(100vw - 730px)
   height: calc(100vh - 85px)
 .icon::before 
