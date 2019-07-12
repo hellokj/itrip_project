@@ -27,7 +27,6 @@ export default {
       region: '',
       type: '',
       param: {},
-      // isAuthorized: false, // 確認狀態是否登入
     }
   },
   methods: {

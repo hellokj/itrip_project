@@ -102,6 +102,7 @@ export default {
         },
         searchClicked() {
             this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
+            this.$emit('search-click', this.params);
         },
         checkState(){
             if (this.$store.state.isAuthorized){
@@ -112,7 +113,7 @@ export default {
         },
         
         setCity(node) {
-                this.selected_city = node.parentId;
+            this.selected_city = node.parentId;
         },
     },
     computed: {
