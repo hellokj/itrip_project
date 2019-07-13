@@ -82,7 +82,7 @@ export default {
         //console.log(this.paginator);
         this.$emit('get-spot', null, newVal);
       }
-    }
+    },
 }
 </script>
 

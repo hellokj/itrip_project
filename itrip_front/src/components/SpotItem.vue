@@ -3,12 +3,14 @@
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
                 <b-col class="ml-0 my-0 pl-0 py-0" cols="3.8">
-                    <img class="ml-0 my-1 px-0 py-0 spot-picture" :src="spot.images[0]" alt="Picture">
+                    <div class="pic">
+                         <img ref="image" class="ml-0 my-1 px-0 py-0 spot-picture" :src="srcFunc" @error="error">
+                    </div>
                 </b-col>
                 <b-col cols="7" class="mx-0 my-0 px-0 py-0">
                     <p class="mx-0 my-0 px-0 py-0 p-name">{{spotIndex}}. {{spot.name}}</p>
                     <p class="mx-0 my-1 px-0 py-0">{{ getAddress() }}</p>
-                    <b-row class="mx-0 my-4 px-0 py-0">
+                    <b-row class="mx-2 my-4 px-0 py-0">
                         <i class="mx-0 my-0 px-0 py-0 fas fa-blog"></i>
                         <i class="mx-3 my-0 px-0 py-0 fab fa-facebook-square"></i>
                         <img class="mx-1 my-0 px-0 py-0 instagram" src="../assets/instagram.png">
@@ -29,11 +31,16 @@ import {Checker} from '../../utils/checker.js'
 
 export default {
     name: "SpotItem",
+    data() {
+        return {
+            notFound: require('../assets/picNotFound.jpg')
+        }
+    },
     props: {
         spot: Object,
         index: Number,
         perPage: Number,
-        currentPage: Number
+        currentPage: Number,
     },
     methods: {
         getAddress: function(){
@@ -49,14 +56,25 @@ export default {
             address = city.concat(suburb, road, number);
             return address;
         },
-        Clicked: function(){
-            console.log('clicked');
+        error: function(){
+            console.log(this.$refs.image)
+            this.$refs.image.src = this.notFound
         },
     },
     computed: {
         spotIndex: function() {
             return (this.index + 1) + (this.perPage * (this.currentPage - 1));
-        }
+        },
+        srcFunc: function() {
+            let src;
+            if(!Object.keys(this.spot).includes('images') || this.spot.images.length == 0) {
+                src = this.notFound
+            }
+            else {
+                src = this.spot.images[0]
+            }
+            return src  
+        },
     }
 }
 </script>
@@ -81,6 +99,10 @@ export default {
         width: 120px;
         height: 120px;
         margin-right: 10px;
+    }
+    .pic {
+        width: 120px;
+        height: 120px;
     }
     .p-name {
         font-size:20px;
