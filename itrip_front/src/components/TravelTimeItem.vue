@@ -2,7 +2,7 @@
     <div class="travelTime-item">
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
-                <b-col class="mx-0 my-0 px-0 py-0">
+                <b-col cols="3" class="mx-3 my-2 px-0 py-0">
                     <div class="select">
                         <select v-model="current" v-on:change="onModesChange">
                             <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
@@ -11,8 +11,8 @@
                         </select>
                     </div>
                 </b-col>
-                <b-col class="mx-0 my-0 px-0 py-0">
-                    <p class="mx-0 my-0 px-0 py-0">約 {{formatTime(travelTime)}}</p>
+                <b-col class="mr-0 my-0 px-0 py-0">
+                     <p class="mr-0 my-2 px-0 py-0" style="font-size: 18px;">約 {{formatTime(travelTime)}}</p>
                 </b-col>
             </b-row>
         </b-container>
@@ -67,11 +67,10 @@ export default {
 
 <style scoped lang="sass">
 select 
-  option 
+  option
     font-family: 'Font Awesome\ 5 Free', monospace
     font-weight: 900
   font-family: 'Font Awesome\ 5 Free', monospace
   font-weight: 900
-    
-
+  font-size: 25px
 </style>

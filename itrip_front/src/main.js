@@ -4,6 +4,11 @@ import App from './App.vue'
 import router from './router'
 import { Icon }  from 'leaflet'
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import lang from 'element-ui/lib/locale/lang/en'
+import locale from 'element-ui/lib/locale'
+
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -16,7 +21,9 @@ import Vuetify from 'vuetify'
 import store from './store'
 
 Vue.use(Vuetify);
-
+Vue.use(ElementUI);
+// configure language
+locale.use(lang)
 Vue.use(Vuex);
 
 Vue.use(VModal);
