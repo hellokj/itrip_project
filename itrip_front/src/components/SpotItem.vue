@@ -12,9 +12,10 @@
                         <i class="mx-0 my-0 px-0 py-0 fas fa-blog"></i>
                         <i class="mx-3 my-0 px-0 py-0 fab fa-facebook-square"></i>
                         <img class="mx-1 my-0 px-0 py-0 instagram" src="../assets/instagram.png">
+                        <img class="mx-3 my-0 px-0 py-0 wiki" src="../assets/wiki.png">
                     </b-row>
                 </b-col>
-                <b-col class="ml-4 my-0 px-0 py-0">
+                <b-col class="ml-3 my-0 px-0 py-0">
                     <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
                 </b-col>
             </b-row>
@@ -102,7 +103,7 @@ export default {
         cursor: pointer;
     }
     .fa-plus-square {
-        font-size: 25px;
+        font-size: 35px;
         color:darkgray;
         cursor: pointer;
     }
@@ -112,6 +113,11 @@ export default {
         cursor: pointer;
     }
     .instagram {
+        width:30px;
+        height:30px;
+        cursor: pointer;
+    }
+    .wiki {
         width:30px;
         height:30px;
         cursor: pointer;
