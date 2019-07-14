@@ -2,7 +2,7 @@
     <div class="travelTime-item">
         <b-container>
             <b-row class="ml-0 my-0 px-0 py-0">
-                <b-col cols="3" class="mx-3 my-2 px-0 py-0">
+                <b-col cols="2" class="ml-5 my-2 px-0 py-0">
                     <div class="select">
                         <select v-model="current" v-on:change="onModesChange">
                             <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
@@ -11,7 +11,7 @@
                         </select>
                     </div>
                 </b-col>
-                <b-col class="mr-0 my-0 px-0 py-0">
+                <b-col class="ml-2 my-0 px-0 py-0">
                      <p class="mr-0 my-2 px-0 py-0" style="font-size: 18px;">約 {{formatTime(travelTime)}}</p>
                 </b-col>
             </b-row>
