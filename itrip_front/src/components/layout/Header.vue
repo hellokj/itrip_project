@@ -62,7 +62,6 @@ import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-
 Vue.component('ProfileButton', ProfileButton);
 
 export default {
@@ -113,10 +112,7 @@ export default {
             this.selected_city = node.parentId;
         },
     },
-    computed: {
-        
-    },
-  }
+}
 </script>
 
 <style scoped>
