@@ -6,7 +6,8 @@
     <Spots v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
     @hoverSpotItem="hoverSpotItem"
     @add-spot="addSpotToTrip"
-    @get-spot="callGetSpotApi" /> 
+    @get-spot="callGetSpotApi"
+    @sort-spot="callGetSpotApi" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
     <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
@@ -151,10 +152,11 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: async function(data=null, page=1) {
+    callGetSpotApi: async function(data=null, page=1, sort='checkins') {
       let self = this;
       if(data == null) data=this.param;
       data.page = page;
+      data.sortBy = sort;
       self.spotPage = page;
       
       // call get spots api
@@ -226,7 +228,7 @@ export default {
   },
   
   watch: {
-    param: function(newVal, oldVal) {
+    param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
   }

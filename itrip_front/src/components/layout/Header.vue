@@ -73,8 +73,8 @@ export default {
     data() {
       return {
         input_name: '',
-        selected_type: '',
-        selected_region: '',
+        selected_type: null,
+        selected_region: null,
         selected_city: '',
         regions: getAreas(),
         types: getTypes(),
