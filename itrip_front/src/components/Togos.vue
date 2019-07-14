@@ -2,22 +2,42 @@
   <div class="MyTrip">
     <div class="tripData  mx-0 my-0 px-0 py-0">
       <div class="tripName">
-        <p class="pTripName  mx-0 my-0 px-0 py-0">旅行名稱</p>
+        <p class="pTripName  mx-2 my-0 px-0 py-0">旅行名稱</p>
         <input type="text" v-model="tripName" :placeholder="'我的旅行'">
       </div>
       <div class="tripDate">
-        <p class="pTripDate  mx-0 my-0 px-0 py-0">開始日期</p>
+        <p class="pTripDate  mx-2 my-0 px-0 py-0">開始日期</p>
         <input type="date" v-model="tripDate">
       </div>
       
     </div>
-    <div>
-        <button class="btn-save" @click="saveTrip">儲存</button>
-    </div>
+    <b-container class="save-div" fluid>
+      <i class="fas fa-save" @click="saveTrip"> 儲存行程</i>  
+    </b-container> 
     <div>
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage">
-        <!-- <b-tab class="my-0 mx-0" title="第一天" active>
-        </b-tab> -->
+        <b-container>
+          <b-row>
+            <b-col cols="9" class="mx-2 my-1 px-0 py-0">
+              <p class="mx-2 my-0 px-0 py-0" style="text-align:right;"> 出發時間:</p>
+            </b-col>
+            <b-col cols="1" class="mx-1 my-0 px-0 py-0">
+              <el-time-picker
+              class="el-time-picker"
+              v-model="value"
+              :picker-options="{
+                start: '08:00',
+                step: '00:15',
+                end: '00:00'
+              }"
+              :align="'center'"
+              :size="'small'"
+              placeholder="請輸入時間"
+              style="width: 130px;">
+            </el-time-picker>
+            </b-col>
+          </b-row>
+        </b-container>
         <b-tab v-for="i in tabs" :key="'tab' + i" :title="'Day' + (i+1)">
           <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
@@ -31,9 +51,10 @@
           </draggable>
         </b-tab>
         <template slot="tabs">
-          <b-nav-item @click.prevent="newTab" href="#"><b>+</b></b-nav-item>
+          <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
         </template>
       </b-tabs>
+      
     </div>
   </div>
 </template>
@@ -54,17 +75,18 @@ export default {
         tabCounter: 0,
         tabs: [0],
         currentPage: 0,
-        tripName: '',
+        tripName: '我的旅行',
         tripDate: {
-          date: ''
+          date: ""
         },
-        togos_prop: this.togos
+        togos_prop: this.togos,
+        value: new Date(2016, 9, 10, 8, 0),
       }
     },
     components: {
         TogoItem,
         TravelTimeItem,
-        draggable
+        draggable,
     },
     props: {
       togos: Array,
@@ -73,7 +95,19 @@ export default {
     },
     methods: {
       saveTrip() {
-        this.$emit('saveTrip', this.tripName, this.tripDate);
+        if (this.$store.state.isAuthorized == false){
+          this.$modal.show('auth');
+        }else{
+          if (this.tripDate.date == ""){
+            // 預設今天日期
+            let date = new Date();
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            this.tripDate = year + "-" + month + "-" + day;
+          }
+          this.$emit('saveTrip', this.tripName, this.tripDate);
+        }
       },
       changePage(){
         this.$emit('change-page', this.currentPage);
@@ -116,6 +150,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .save-div {
+    text-align: right;
+  }
+
+  .el-time-picker {
+    margin-bottom: 5px;
+  }
+
   .MyTrip {
     margin: 0px;
     padding: 0px;
@@ -149,7 +191,6 @@ export default {
     height: 20px;
     border: none;
     border-bottom: 1px solid #707070;
-
     text-align: center;
     outline: none;
     background: #F1F0F0;
@@ -164,10 +205,10 @@ export default {
     background: #333555;
   }
 
-  .btn-save {
-    border: none;
-    background: #515151;
-    color: white;
+  .fa-save {
+    border:darkgray;
+    color:darkred;
+    cursor: pointer;
   }
 
   .MyTrip .sortable-drag {

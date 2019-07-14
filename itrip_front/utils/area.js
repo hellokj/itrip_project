@@ -104,7 +104,7 @@ const paramsHelper = (params, values) => {
 const makeParams = (city = null, region = null, _category = null, _name = null, _sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
     let _region = region;
     let _city = city;
-    if (region.length >= 4) {
+    if (region != null && region.length >= 4) {
         _region = _region.slice(4, region.length);
     }
     else {

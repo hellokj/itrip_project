@@ -1,4 +1,5 @@
 <template lang="pug">
+.profileButton
   button(v-model="$store.state.isAuthorized" @click="$emit('button-click')") {{ logInLogOut() }}
 </template>
 
@@ -25,7 +26,7 @@ export default {
 </script>
 
 <style lang="sass" scope>
-button
+.profileButton button
   width: 125px
   height: 40px
   border: 2px solid #ffffff

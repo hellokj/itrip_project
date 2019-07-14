@@ -113,7 +113,7 @@ export default {
         },
         
         setCity(node) {
-                this.selected_city = node.parentId;
+            this.selected_city = node.parentId;
         },
     },
     computed: {

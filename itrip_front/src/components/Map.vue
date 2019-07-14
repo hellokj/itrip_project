@@ -81,7 +81,8 @@ export default {
     page: Number,
     bigMap: Boolean,
     perPage: Number,
-    spotPage: Number
+    spotPage: Number,
+    centerSpot: Object
   },
   mounted() {
     setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 250);
@@ -89,15 +90,14 @@ export default {
   },
   methods: {
     updateMarkers() {
+      this.icons = [];
       for(let i = 0; i < this.spotsPerPage; i++){
-      this.icons.push(L.AwesomeMarkers.icon({
-        icon: '',
-        markerColor: 'darkblue',
-        prefix: 'fa',
-        html: ((i+1) + ((this.spotPage-1) *  this.perPage))
-      })
-        // iconUrl: require('../assets/leaflet_marker/marker'+ (i+1) + '.png'),
-        // iconSize: [50, 50],
+        this.icons.push(L.AwesomeMarkers.icon({
+          icon: '',
+          markerColor: 'darkblue',
+          prefix: 'fa',
+          html: ((i+1) + ((this.spotPage-1) *  this.perPage))
+        })
       );
     }
     },
@@ -167,7 +167,7 @@ export default {
     spots: function(){
       let spot = this.spots[0];
       this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
-      this.zoom *= 1.2;
+      this.zoom = 15;
 
     },
     routes: {
@@ -178,6 +178,16 @@ export default {
     },
     spotPage: function() {
       this.updateMarkers();
+    },
+    centerSpot: function(newVal, oldVal) {
+      let oldIndex = oldVal.index;
+      let newIndex = this.centerSpot.index;
+      let location = this.centerSpot.location
+      this.center =  L.latLng(location.coordinates[1], location.coordinates[0]);
+      // reset old index color
+      this.$set(this.icons[oldIndex].options, 'markerColor', 'darkblue');
+      // change new index color
+      this.$set(this.icons[newIndex].options, 'markerColor', 'red');
     }
   },
   computed: {

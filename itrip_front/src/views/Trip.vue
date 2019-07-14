@@ -4,11 +4,13 @@
     :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
     v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
     <Spots v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
+    @hoverSpotItem="hoverSpotItem"
     @add-spot="addSpotToTrip"
     @get-spot="callGetSpotApi" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" :page="page" :perPage="perPage" :spotPage="spotPage"/>
+    <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+    :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
   </div>
 </template>
 
@@ -52,7 +54,8 @@ export default {
       // travelTime format:
       // { start: , dest: ,duration: , time: , mode:}
       travelInfos: [],
-      paginator: {}
+      paginator: {},
+      centerSpot: {}
     }
   },
   methods: {
@@ -66,10 +69,10 @@ export default {
       apiSaveTrip(123, date, name, this.togos.length, this.togos, this.travelInfos)
       .then((function (res) {
         console.log(res);
-      })
+      }))
       .catch(function (error) {
         console.log(error);
-      }));
+      });
     },
     deleteTogo(index) {
       this.fixTravelInfo(index);
@@ -151,12 +154,13 @@ export default {
     callGetSpotApi: async function(data=null, page=1) {
       let self = this;
       if(data == null) data=this.param;
-      if(page != 1) data.page = page;
+      data.page = page;
       self.spotPage = page;
       
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
+        console.log(res);
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
       })
@@ -214,6 +218,10 @@ export default {
           });
         }
       }
+    },
+    hoverSpotItem: function(index, spot) {
+      this.centerSpot = spot;
+      this.$set(this.centerSpot, 'index', index);
     }
   },
   
