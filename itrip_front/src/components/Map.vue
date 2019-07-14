@@ -1,11 +1,11 @@
 <template lang="pug">
 #map(:class="{'map-big' : bigMap, 'map-small' : !bigMap}")
   //v-for="(route, index) in (routesArr)"
-  l-map(:zoom='zoom', :center='center', style='height: 100%', :position="controlPosition"
+  l-map(:zoom='zoom', :center='center', style='height: 100%', :options="{zoomControl: false}"
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
-    l-tile-layer(:url="url", :attribution="attribution", dragging="false" )
-      l-control(:position="controlPosition")
+    l-tile-layer(:url="url", :attribution="attribution", dragging="false")
+    l-control-zoom(:position="zoomControlPosition")
     l-polyline(
     v-if="isRouteArr"
     :lat-lngs="routesArr"
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControl } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom } from 'vue2-leaflet';
 import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover'
@@ -50,13 +50,14 @@ export default {
       LPolyline,
       LPopup,
       LTooltip,
-      LControl,
+      LControlZoom,
       MarkerPopover
   },
   data() {
     return {
       zoom: 8,
       currentZoom: 8,
+      zoomControlPosition: "topright",
       visible: false,
       currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
@@ -72,8 +73,7 @@ export default {
       weight: 7,
       routesArr: [],
       currentPage: 0,
-      currentTogoNum: 0,
-      controlPosition: "topright"
+      currentTogoNum: 0
     }
   },
   props: {
