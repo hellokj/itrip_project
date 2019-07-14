@@ -68,7 +68,7 @@ Vue.component('ProfileButton', ProfileButton);
 export default {
     name: "Header",
     components: {
-        ProfileButton
+        ProfileButton,
     },
     data() {
       return {
