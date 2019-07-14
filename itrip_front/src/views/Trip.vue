@@ -76,11 +76,14 @@ export default {
       });
     },
     deleteTogo(index) {
-      this.fixTravelInfo(index);
+      if(this.travelInfos[this.page] != undefined) {
+        this.fixTravelInfo(index);
+      }
       this.togos[this.page].splice(index, 1);
     },
     fixTravelInfo(index) {
       if(index == 0) {
+        console.log(this.travelInfos)
         this.travelInfos[this.page].shift();
       }
       else if(index == this.togos[this.page].length - 1) {
@@ -97,13 +100,15 @@ export default {
       }
     },
     addSpotToTrip(spot) {
-      if (this.togos[this.page] !== undefined){
-        this.togos[this.page].push(spot);
-      }
-      else {
+      if (this.togos[this.page] === undefined){
         this.togos.push([]);
-        this.togos[this.page].push(spot);
+        
       }
+      spot.stopTime = {
+        hrs: 1,
+        mins: 0
+      }
+      this.togos[this.page].push(spot);
       let length = this.togos[this.page].length;
       // only need to get travelInfo if length > 2
       if(length > 1) {
@@ -162,7 +167,7 @@ export default {
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
-        console.log(res);
+
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
       })
@@ -276,7 +281,6 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-
   }
 
 </style>

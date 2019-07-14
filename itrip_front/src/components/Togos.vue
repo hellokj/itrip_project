@@ -2,12 +2,20 @@
   <div class="MyTrip">
     <div class="tripData  mx-0 my-0 px-0 py-0">
       <div class="tripName">
-        <p class="pTripName  mx-2 my-0 px-0 py-0">旅行名稱</p>
-        <input type="text" v-model="tripName" :placeholder="'我的旅行'">
+        <p class="pTripName  mx-2 my-2 px-0 py-0">旅行名稱</p>
+        <!-- <input type="text" v-model="tripName" :placeholder="'我的旅行'"> -->
+        <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
       </div>
       <div class="tripDate">
-        <p class="pTripDate  mx-2 my-0 px-0 py-0">開始日期</p>
-        <input type="date" v-model="tripDate">
+        <p class="pTripDate  mx-2 my-2 px-0 py-0" >開始日期</p>
+        <!-- <input type="date" v-model="tripDate"> -->
+        <el-date-picker
+          class="iDatePicker"
+          v-model="tripDate"
+          type="date"
+          placeholder="選擇日期"
+          style="width:200px;">
+        </el-date-picker>
       </div>
       
     </div>
@@ -18,23 +26,22 @@
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage">
         <b-container>
           <b-row>
-            <b-col cols="9" class="mx-2 my-1 px-0 py-0">
-              <p class="mx-2 my-0 px-0 py-0" style="text-align:right;"> 出發時間:</p>
+            <b-col cols="6" class="mx-2 my-1 px-0 py-0">
+              <p class="ml-5 my-0 px-0 py-0" style="text-align:right;width:200px;"> 出發時間:</p>
             </b-col>
-            <b-col cols="1" class="mx-1 my-0 px-0 py-0">
-              <el-time-picker
-              class="el-time-picker"
-              v-model="value"
+            <b-col cols="1" class="mx-5 my-0 px-0 py-0">
+              <el-time-select
+              v-model="startTime"
               :picker-options="{
-                start: '08:00',
+                start: '00:00',
                 step: '00:15',
-                end: '00:00'
+                end: '23:45'
               }"
               :align="'center'"
               :size="'small'"
               placeholder="請輸入時間"
               style="width: 130px;">
-            </el-time-picker>
+              </el-time-select>
             </b-col>
           </b-row>
         </b-container>
@@ -43,7 +50,16 @@
             <transition-group type="transition" name="flip-list">
               <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
                 <!-- TogoItem -->
-                <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
+                <b-row class="mx-0 my-0 px-0 py-0">
+                  <b-col cols="1" class="mx-1 my-0 px-0 py-0">
+                    <div class="order">
+                      <div class="circleNum"><b>{{index + 1}}</b></div>
+                    </div>
+                  </b-col>
+                  <b-col cols="9" class="ml-0 my-0 px-0 py-0">
+                    <TogoItem class="mx-0 my-0" :togo="togo" v-on:deleteTogo="$emit('deleteTogo', index)"/>
+                  </b-col>
+                </b-row>
                 <!-- Travel time -->
                 <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="mx-0 my-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
               </div>
@@ -54,7 +70,6 @@
           <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
         </template>
       </b-tabs>
-      
     </div>
   </div>
 </template>
@@ -80,7 +95,7 @@ export default {
           date: ""
         },
         togos_prop: this.togos,
-        value: new Date(2016, 9, 10, 8, 0),
+        startTime: '08:00',
       }
     },
     components: {
@@ -136,6 +151,7 @@ export default {
       travelInfo: {
         handler: function() {
           this.travelInfos = this.travelInfo;
+          console.log(this.travelInfos);
         },
         immediate: true,
       },
@@ -157,11 +173,34 @@ export default {
   .el-time-picker {
     margin-bottom: 5px;
   }
+  .order {
+    margin: 10px;
+  }
+  .order div{
+    font-size: 20px;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
+
+  .circleNum {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 2px;
+    background: #fff;
+    border: 2px solid #666;
+    color: #666;
+    text-align: center;
+  }
 
   .MyTrip {
     margin: 0px;
     padding: 0px;
-    width: 365px;
+    width: 550px;
     border: none;
     /* background: #F1F0F0; */
     background: #F1F0F0;
@@ -181,22 +220,12 @@ export default {
     margin-top: 4px;
     display: flex;
     flex-direction: row;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 16px;
-    
   }
-  .inputTripName, .inputTripDate {
-    margin: 0;
-    width: 200px;
-    height: 20px;
-    border: none;
-    border-bottom: 1px solid #707070;
-    text-align: center;
-    outline: none;
-    background: #F1F0F0;
-    
+  .iTripName {
+     width:200px;
+     text-align: center;
   }
-
 
   b-tabs {
     color: #707070;

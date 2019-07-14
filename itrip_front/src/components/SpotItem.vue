@@ -7,9 +7,9 @@
                          <img ref="image" class="ml-0 my-1 px-0 py-0 spot-picture" :src="srcFunc" @error="error">
                     </div>
                 </b-col>
-                <b-col cols="7" class="mx-0 my-0 px-0 py-0">
-                    <p class="mx-0 my-0 px-0 py-0 p-name">{{spotIndex}}. {{spot.name}}</p>
-                    <p class="mx-0 my-1 px-0 py-0">{{ getAddress() }}</p>
+                <b-col cols="6" class="ml-2 my-0 px-0 py-0">
+                    <p class="mx-1 my-0 px-0 py-0 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
+                    <p class="mx-1 my-1 px-0 py-0">{{ getAddress() }}</p>
                     <b-row class="mx-2 my-4 px-0 py-0">
                         <i class="mx-0 my-0 px-0 py-0 fas fa-blog"></i>
                         <i class="mx-3 my-0 px-0 py-0 fab fa-facebook-square"></i>
@@ -17,7 +17,7 @@
                         <img class="mx-3 my-0 px-0 py-0 wiki" src="../assets/wiki.png">
                     </b-row>
                 </b-col>
-                <b-col class="ml-3 my-0 px-0 py-0">
+                <b-col cols="1" class="ml-5 my-0 pl-0 py-0">
                     <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
                 </b-col>
             </b-row>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {Checker} from '../../utils/checker.js'
+import {getAddress} from '../../utils/checker.js'
 
 export default {
     name: "SpotItem",
@@ -44,20 +44,9 @@ export default {
     },
     methods: {
         getAddress: function(){
-            let address = '';
-            let city = "";
-            let suburb = "";
-            let road = "";
-            let number = "";
-            city = Checker(this.spot.address, ['state', 'city', 'city_state', 'county']);
-            suburb = Checker(this.spot.address, ['town', 'suburb', 'city_district', 'district']);
-            road = Checker(this.spot.address, ['road', 'pedestrian', 'city_district', 'district']);
-            number =  Checker(this.spot.address, ['house_number']);
-            address = city.concat(suburb, road, number);
-            return address;
+           return getAddress(this.spot.address)
         },
         error: function(){
-            console.log(this.$refs.image)
             this.$refs.image.src = this.notFound
         },
     },
@@ -98,7 +87,6 @@ export default {
     .spot-picture{
         width: 120px;
         height: 120px;
-        margin-right: 10px;
     }
     .pic {
         width: 120px;
@@ -125,7 +113,7 @@ export default {
         cursor: pointer;
     }
     .fa-plus-square {
-        font-size: 35px;
+        font-size: 30px;
         color:darkgray;
         cursor: pointer;
     }
