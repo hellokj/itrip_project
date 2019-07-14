@@ -9,7 +9,8 @@ const itinerarySchema = new Schema({
     name: String,
     dayNum: Number,
     togos: Array,
-    travelInfos: Array
+    travelInfos: Array,
+    popularity: Number,
 })
 
 

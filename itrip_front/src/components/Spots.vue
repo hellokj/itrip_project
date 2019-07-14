@@ -90,7 +90,7 @@ export default {
   .spotContainer {
     margin: 0px;
     padding: 0px;
-    width: 480px;
+    width: 550px;
     height: calc(100vh - 80px);
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;

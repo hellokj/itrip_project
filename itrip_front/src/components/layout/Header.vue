@@ -20,8 +20,8 @@
                 :flat="true"
                 :sort-value-by="sortValueBy"
                 :default-expand-level="0"
-                v-model="selected_type"
                 placeholder="種類"
+                v-model="selected_type"
                 />
             </div>
             <div>
@@ -32,9 +32,9 @@
                 :flat="true"
                 :sort-value-by="sortValueBy"
                 :default-expand-level="0"
+                placeholder="地區"
                 v-model="selected_region"
                 @select="setCity"
-                placeholder="地區"
                 />
             </div>
 
@@ -73,9 +73,9 @@ export default {
     data() {
       return {
         input_name: '',
-        selected_type: '',
-        selected_region: '',
-        selected_city: '',
+        selected_type: undefined,
+        selected_region: undefined,
+        selected_city: undefined,
         regions: getAreas(),
         types: getTypes(),
         params: {},
