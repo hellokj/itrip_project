@@ -1,6 +1,6 @@
 <template lang="pug">
   SignUp(v-model="isSignUp" v-if="isSignUp && !isLogIn" v-on:backToLogIn="backToLogIn" v-on:signUp="signUp" v-bind:resMsg="resMsg")
-  LogIn(v-model="isLogIn" v-else="!isSignUp && isLogIn" v-on:backToSignUp="backToSignUp" v-on:logIn="logIn" v-bind:resMsg="resMsg")
+  LogIn(v-model="isLogIn" v-else="!isSignUp && isLogIn" v-on:backToSignUp="backToSignUp" v-on:logIn="logIn" v-on:fbLogIn="fbLogIn" v-bind:resMsg="resMsg")
 </template>
 
 <script>
@@ -12,7 +12,7 @@ export default {
   name: "Auth",
   components: {
     LogIn,
-    SignUp
+    SignUp,
   },
   props: {
     // isAuthorized: Boolean,
@@ -65,6 +65,9 @@ export default {
       this.isSignUp = true;
       this.isLogIn = false;
     },
+    fbLogIn: function(){
+      this.$emit('fbLogIn');
+    }
   },
   data() {
     return {
