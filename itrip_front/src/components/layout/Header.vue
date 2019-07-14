@@ -69,6 +69,7 @@ export default {
     name: "Header",
     components: {
         ProfileButton,
+        Treeselect
     },
     data() {
       return {
@@ -85,10 +86,6 @@ export default {
         sortValueBy: 'ORDER_SELECTED',
         val: ''
       }
-    },
-    components: {
-    //   InputTag,
-      Treeselect
     },
     methods: {
         setRegion(e, val){  

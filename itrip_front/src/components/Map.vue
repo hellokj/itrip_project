@@ -1,10 +1,11 @@
 <template lang="pug">
 #map(:class="{'map-big' : bigMap, 'map-small' : !bigMap}")
   //v-for="(route, index) in (routesArr)"
-  l-map(:zoom='zoom', :center='center', style='height: 100%'
+  l-map(:zoom='zoom', :center='center', style='height: 100%', :position="controlPosition"
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
-    l-tile-layer(:url="url", :attribution="attribution", dragging="false")
+    l-tile-layer(:url="url", :attribution="attribution", dragging="false" )
+      l-control(:position="controlPosition")
     l-polyline(
     v-if="isRouteArr"
     :lat-lngs="routesArr"
@@ -24,7 +25,6 @@
           :address="spots[index].address"
           :images="spots[index].images"
         )
-
     l-marker(
       v-for="(togo, index) in togos"
       :icon="togoIcons[index]"
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControl } from 'vue2-leaflet';
 import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover'
@@ -50,6 +50,7 @@ export default {
       LPolyline,
       LPopup,
       LTooltip,
+      LControl,
       MarkerPopover
   },
   data() {
@@ -71,7 +72,8 @@ export default {
       weight: 7,
       routesArr: [],
       currentPage: 0,
-      currentTogoNum: 0
+      currentTogoNum: 0,
+      controlPosition: "topright"
     }
   },
   props: {
