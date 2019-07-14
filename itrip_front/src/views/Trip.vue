@@ -6,7 +6,8 @@
     <Spots v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
     @hoverSpotItem="hoverSpotItem"
     @add-spot="addSpotToTrip"
-    @get-spot="callGetSpotApi" /> 
+    @get-spot="callGetSpotApi"
+    @sort-spot="callGetSpotApi" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
     <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
     <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
@@ -75,11 +76,14 @@ export default {
       });
     },
     deleteTogo(index) {
-      this.fixTravelInfo(index);
+      if(this.travelInfos[this.page] != undefined) {
+        this.fixTravelInfo(index);
+      }
       this.togos[this.page].splice(index, 1);
     },
     fixTravelInfo(index) {
       if(index == 0) {
+        console.log(this.travelInfos)
         this.travelInfos[this.page].shift();
       }
       else if(index == this.togos[this.page].length - 1) {
@@ -96,13 +100,15 @@ export default {
       }
     },
     addSpotToTrip(spot) {
-      if (this.togos[this.page] !== undefined){
-        this.togos[this.page].push(spot);
-      }
-      else {
+      if (this.togos[this.page] === undefined){
         this.togos.push([]);
-        this.togos[this.page].push(spot);
+        
       }
+      spot.stopTime = {
+        hrs: 1,
+        mins: 0
+      }
+      this.togos[this.page].push(spot);
       let length = this.togos[this.page].length;
       // only need to get travelInfo if length > 2
       if(length > 1) {
@@ -151,16 +157,17 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: async function(data=null, page=1) {
+    callGetSpotApi: async function(data=null, page=1, sort='checkins') {
       let self = this;
       if(data == null) data=this.param;
       data.page = page;
+      data.sortBy = sort;
       self.spotPage = page;
       
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
-        console.log(res);
+
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
       })
@@ -226,7 +233,7 @@ export default {
   },
   
   watch: {
-    param: function(newVal, oldVal) {
+    param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
   }
@@ -274,7 +281,6 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-
   }
 
 </style>

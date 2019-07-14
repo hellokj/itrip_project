@@ -52,13 +52,13 @@ export default {
             if(mins >= 60) {
                 let hours = Math.floor(mins / 60);
                 let remainingMins = Math.floor(mins % hours);
-                return hours + '小時 ' + remainingMins + '分 ' + remainingSec + '秒';  
+                return hours + '小時 ' + remainingMins + '分 ';  
             }
             else if(mins == 0) {
                 return sec + '秒';
             }
             else {
-                return mins + '分 ' + remainingSec + '秒';
+                return mins + '分 ';
             }
         }
     },

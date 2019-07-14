@@ -2,7 +2,13 @@
   
   <div class="spotContainer">
     <div class="Result">
-      <p>搜尋結果</p>
+      <p>搜尋結果 排序:</p>
+      <b-dropdown size="sm" class="m-2" v-model="sortBy">
+        <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
+        <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
+        <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
+        <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
+      </b-dropdown>
     </div>
 
     <virtual-list :size="150" :remain="10">
@@ -57,7 +63,9 @@ export default {
           prev: '<',
           next: '>',
         },
-        isScrollbarShown: false
+        isScrollbarShown: false,
+        sortBy: '',
+        sortString: '臉書打卡王'
       }
     },
     props: {
@@ -81,7 +89,13 @@ export default {
       currentPage: function(newVal) {
         //console.log(this.paginator);
         this.$emit('get-spot', null, newVal);
-      }
+      },
+      sortBy: function(newVal) {
+        alert(this.sortBy)
+        let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度','government_data':'政府推薦'}
+        this.sortString = choices[newVal];
+        this.$emit('sort-spot', null, 1, newVal);
+      },
     },
 }
 </script>
@@ -90,7 +104,7 @@ export default {
   .spotContainer {
     margin: 0px;
     padding: 0px;
-    width: 480px;
+    width: 550px;
     height: calc(100vh - 80px);
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;
@@ -110,5 +124,9 @@ export default {
   .spotResults {
     font-size: 15px;
     margin-left: 80px;
+  }
+
+  p, b-dropdown {
+    display: inline-block;
   }
 </style>
