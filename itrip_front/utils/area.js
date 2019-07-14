@@ -84,7 +84,7 @@ const getAreas = () => {
 
 const getTypes = () => {
     let typeArr = Object.keys(types);
-    return typeArr.map((v, i) => ({
+    return typeArr.map((v) => ({
         id: types[v],
         label: v
     }));
@@ -111,7 +111,6 @@ const makeParams = (city = null, region = null, _category = null, _name = null, 
         _city = region;
         _region = null;
     }
-    console.log(_category);
 
     // search for type or name
     let name = null;

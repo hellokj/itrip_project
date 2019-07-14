@@ -8,8 +8,8 @@
                 <b-col cols="8" class="mx-0 my-0 px-0 py-0">
                     <p class="mx-0 my-0 px-0 py-0 p-name">{{spotIndex}}. {{spot.name}}</p>
                     <p class="mx-0 my-0 px-0 py-0">{{ getAddress() }}</p>
-                    <button><i src=""></i></button>
-                    <button><i src=""></i></button>
+                    <!-- <button><i src=""></i></button>
+                    <button><i src=""></i></button> -->
                 </b-col>
                 <b-col class="mx-0 my-0 px-0 py-0">
                     <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
