@@ -23,11 +23,16 @@
       .d-flex.align--center.justify--space-between
         button.btn.btn-primary(type='submit' @click="$emit('logIn', email, password)") 登入
   button.btn.btn-primary(@click="$emit('backToSignUp')") 註冊
+  v-facebook-login(app-id="2353529008088124" @click="fbLogIn")
 </template>
 
 <script>
+import VFacebookLogin from 'vue-facebook-login-component'
 export default {
   name: "LogIn",
+  components: {
+    VFacebookLogin
+  },
   props: {
     isLogIn: Boolean,
     resMsg: String
@@ -38,7 +43,16 @@ export default {
       password: "",
     }
   },
+  methods: {
+    fbLogIn() {
+      this.$emit('fbLogIn');
+    }
+  },
+  mounted() {
+    
+  }
 }
+
 </script>
 
 <style lang="sass" scope>
