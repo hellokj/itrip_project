@@ -17,7 +17,7 @@
                         <img class="mx-3 my-0 px-0 py-0 wiki" src="../assets/wiki.png">
                     </b-row>
                 </b-col>
-                <b-col cols="1" class="ml-5 my-0 pl-0 py-0">
+                <b-col cols="1" class="ml-5 my-0 pl-2 py-0">
                     <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
                 </b-col>
             </b-row>

@@ -62,13 +62,13 @@ import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-
 Vue.component('ProfileButton', ProfileButton);
 
 export default {
     name: "Header",
     components: {
         ProfileButton,
+        Treeselect
     },
     data() {
       return {
@@ -85,10 +85,6 @@ export default {
         sortValueBy: 'ORDER_SELECTED',
         val: ''
       }
-    },
-    components: {
-    //   InputTag,
-      Treeselect
     },
     methods: {
         setRegion(e, val){  
@@ -116,10 +112,7 @@ export default {
             this.selected_city = node.parentId;
         },
     },
-    computed: {
-        
-    },
-  }
+}
 </script>
 
 <style scoped>

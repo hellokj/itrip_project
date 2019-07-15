@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import VFacebookLogin from 'vue-facebook-login-component'
 import Header from './components/layout/Header'
 import Auth from './components/Auth'
 
@@ -20,7 +19,6 @@ export default {
   components: {
     Header,
     Auth,
-    VFacebookLogin
   },
   data() {
     return {
@@ -43,14 +41,16 @@ export default {
       this.$store.dispatch('updateAuthorized', true);
       alert("success");
       this.$modal.hide('auth');
+      window.localStorage.setItem('isAuthorized', this.$store.state.isAuthorized);
     },
     LogOut() {
       // this.isAuthorized = false;
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserInfo', "");
       FB.logout(function (response) {
-        console.log('res when logout', response)
+        console.log('res when logout', response);
       });
+      window.localStorage.setItem('isAuthorized', this.$store.state.isAuthorized);
     },
     getProfile() {
         let vm = this;
@@ -60,6 +60,7 @@ export default {
       },
     statusChangeCallback(response) {
       let vm = this;
+      console.log('status', response.status);
       if (response.status === "connected") {
         vm.Authorize();
         vm.getProfile();
@@ -82,31 +83,41 @@ export default {
         }
       );
       vm.$modal.hide('auth');
-    }
+    },
   },
   computed: {
     isAuthorized() {
       return this.$store.state.isAuthorized;
     }
   },
+  created() {
+    let status = window.localStorage.getItem('isAuthorized');
+    if (status){
+      this.$store.dispatch('updateAuthorized', true);
+    }else{
+      this.$store.dispatch('updateAuthorized', false);
+    }
+  },
   mounted() {
     let vm = this;
     window.fbAsyncInit = function () {
-      FB.init({
-        appId: "2353529008088124",
-        xfbml: true,
-        status: true,
-        cookie: true,
-        autoLogAppEvents: true,
-        version: "v3.3"
-      });
+        FB.init({
+          appId: "2353529008088124",
+          xfbml: true,
+          status: true,
+          cookie: true,
+          autoLogAppEvents: true,
+          version: "v3.3"
+        });
+      };
+    if (!vm.$store.state.isAuthorized){
       //login
       FB.AppEvents.logPageView();
       //Get FB Login Status
       FB.getLoginStatus(response => {
         vm.statusChangeCallback(response);
       });
-    };
+    }
   },
 }
 </script>
