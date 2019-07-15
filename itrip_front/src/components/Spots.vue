@@ -91,7 +91,7 @@ export default {
         this.$emit('get-spot', null, newVal);
       },
       sortBy: function(newVal) {
-        alert(this.sortBy)
+        // alert(this.sortBy)
         let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度','government_data':'政府推薦'}
         this.sortString = choices[newVal];
         this.$emit('sort-spot', null, 1, newVal);
