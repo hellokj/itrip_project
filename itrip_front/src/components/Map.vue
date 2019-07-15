@@ -206,17 +206,28 @@ export default {
 }
 </script>
 
-<style scope lang="sass">
-.map-big
-  width: calc(100vw - 365px)
-  height: calc(100vh - 85px)
-.map-small
-  width: calc(100vw - 730px)
-  height: calc(100vh - 85px)
-.icon::before 
-  display: inline-block
-  font-style: normal
-  font-variant: normal
-  text-rendering: auto
-  -webkit-font-smoothing: antialiased
+<style scope >
+.map-big{
+  width: calc(100vw - 365px);
+  height: calc(100vh - 85px);
+}
+.map-small{
+  width: calc(100vw - 730px);
+  height: calc(100vh - 85px);
+}
+.icon::before {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+  @media only screen and (max-width: 780px) {
+
+
+    #map {
+      display: none;
+    }
+  }
 </style>
