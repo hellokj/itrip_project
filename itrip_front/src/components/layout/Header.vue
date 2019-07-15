@@ -50,6 +50,7 @@
             </div>
             <ProfileButton v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
         </div>
+        <button class="test">hello</button>
       
     </header>
 </template>
@@ -122,6 +123,9 @@ export default {
   font-family: logoFont;
   src: url(../../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
 }
+
+  
+
     .header {
         margin: 0px;
         background: rgb(255,208,129);
@@ -236,4 +240,7 @@ export default {
     }
 
 
+
+
+  }
 </style>
