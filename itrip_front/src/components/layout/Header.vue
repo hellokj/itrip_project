@@ -5,39 +5,46 @@
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
-                    <a href="#">旅遊</a>
-                    <a href="#">首頁</a>
+                    <router-link to="/trip">旅遊</router-link>
+                    <router-link to="/">首頁</router-link> 
                     <a href="#">登入</a>
                 </div>
             </div>
         </div>
         <div class="searchbar">
-            <input  
-            class="input_name"
-            type="text"
-            placeholder="景點名稱"
-            v-model="input_name" />
-            <!-- Select Type -->
-            <treeselect
-            class="input_type"
-            :multiple="false"
-            :options="types"
-            :flat="true"
-            :sort-value-by="sortValueBy"
-            :default-expand-level="0"
-            placeholder="種類"
-            v-model="selected_type"/>
-            <treeselect
-            class="input_region"
-            :multiple="false"
-            :options="regions"
-            :flat="true"
-            :sort-value-by="sortValueBy"
-            :default-expand-level="0"
-            placeholder="地區"
-            v-model="selected_region"
-            @select="setCity"
-            />
+            <div class="inner-addon right-addon">
+                <i class="fas fa-search"></i>
+                <input  
+                class="input_name"
+                type="text"
+                placeholder="景點名稱"
+                v-model="input_name" />
+            </div>
+            <div class="trees">
+                <!-- Select Type -->
+                <treeselect
+                class="input_type"
+                :multiple="false"
+                :options="types"
+                :flat="true"
+                :sort-value-by="sortValueBy"
+                :default-expand-level="0"
+                placeholder="種類"
+                v-model="selected_type"/>
+                
+                <treeselect
+                class="input_region"
+                :multiple="false"
+                :options="regions"
+                :flat="true"
+                :sort-value-by="sortValueBy"
+                :default-expand-level="0"
+                placeholder="地區"
+                v-model="selected_region"
+                @select="setCity"
+                />  
+            </div>
+           
             <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
             class="icon_search" src="../icons/search.svg" 
             @click="searchClicked">
@@ -50,10 +57,7 @@
                 <router-link to="/">首頁</router-link> 
             </div>
             <ProfileButton class="profileButton" v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
-        </div>
-        
-        
-        
+        </div> 
     </header>
 </template>
 
@@ -125,10 +129,10 @@ export default {
         },
         clickOutSide(event) {
             if (!event.target.matches('.fa-bars')) {
-                var dropdowns = document.getElementsByClassName("dropdown-content");
-                var i;
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                let i;
                 for (i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
+                    let openDropdown = dropdowns[i];
                     if (openDropdown.classList.contains('show')) {
                         openDropdown.classList.remove('show');
                     }
@@ -161,10 +165,9 @@ export default {
     .btns {
         /* flex-grow: 3; */
         display: flex;
-        flex-wrap:wrap;
         align-items: center;
         justify-content: flex-end;
-        flex: 1 0 auto;
+        flex: 0 1 auto;
 
     }
     .searchbar {
@@ -172,6 +175,7 @@ export default {
         display: flex;
         flex-wrap:wrap;
         align-items: center;
+        justify-content: center;
         flex: 1 0 auto;
     }
 
@@ -181,8 +185,8 @@ export default {
         text-decoration: none;
     }
     .input_name {
-        width: 220px;
-        flex: 1 1 auto;
+        width: 300px;
+        flex: 0 1 auto;
         height: 36px;
         border-radius: 18px 1px 1px 18px;
         border: none;
@@ -194,9 +198,13 @@ export default {
         outline: none;
         border: 1px solid rgb(224, 224, 224);
     }
+    .trees {
+        display: flex;
+        flex-direction: row;
+    }
     .input_type {
-        width: 110px;
-        flex: 1 1 auto;
+        width: 130px;
+        flex: 0 1 auto;
         height: 40px;
         border-radius: 20px 0 0 20px;
         border: none;
@@ -208,8 +216,8 @@ export default {
     }
 
     .input_region {
-        width: 110px;
-        flex: 1 1 auto;
+        width: 130px;
+        flex: 0 1 auto;
         height: 40px;
         border-radius: 0 20px 20px 0;
         border: none;
@@ -217,7 +225,6 @@ export default {
         text-align: left;
         margin-right: 0px;
         outline: none;
-
     }
 
     .icon_search {
@@ -267,18 +274,25 @@ export default {
 
     }
 
-    .spotName {
-        position: relative;
+        /* enable absolute positioning */
+    .inner-addon { 
+        position: relative; 
     }
 
-    .spotName:before {
+    /* style icon */
+    .inner-addon .fa-search {
         position: absolute;
-        left: 180px;
         top: 50%;
+        left: 95%;
         transform: translateY(-50%);
-        font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f002";
-        color:darkgray
+        pointer-events: none;
     }
+
+    /* align icon */
+    .right-addon .fa-search { right: 0px;}
+
+    /* add padding  */
+    .right-addon input { padding-right: 30px; }
 
     .input_region {
         position: relative;
@@ -286,8 +300,8 @@ export default {
 
     .input_region:before {
         position: absolute;
-        left: 110px;
-        top: 45%;
+        top: 50%;
+        left: 70%;
         transform: translateY(-50%);
         font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f3c5";
         color:darkgray
@@ -334,10 +348,11 @@ export default {
     @media only screen and (max-width: 780px) {
     .header {
         flex-direction: column;
+        height: 120px;
     }
     .icon_search {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
     .logo img {
         margin: 0px;
@@ -362,26 +377,21 @@ export default {
         display: none;
     }
     .input_name {
-        height: 28px;
-        width: 200px;
+        width: 220px;
+        height: 35px;
         border-radius: 18px 18px 18px 18px;
-        margin-right: 5px;
         font-size: 15px;
-        
+        flex: 0 1 auto;
     }
     .searchbar {
         width: 100%;
-        height: 30px;
-        flex: 1 1 auto;
+        height: 80px;
+        flex: 0 1 auto;
         flex-direction: row;
         align-self: flex-end;
-        justify-self: flex-start;
-    }
-    .input_region {
-        display: none;
-    }
-    .input_type {
-        display: none;
+        justify-content: center;
+        margin-left: 25px;
+        padding: 0px;
     }
     .dropdown {
         display: inline-block;
@@ -389,6 +399,9 @@ export default {
         align-self: center;
     }
     .btns {
+        display: none;
+    }
+    .fa-search {
         display: none;
     }
   }

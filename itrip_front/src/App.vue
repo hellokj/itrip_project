@@ -22,8 +22,8 @@ export default {
   components: {
     Header,
     Auth,
-    MobileHeader
-    FbSignUp
+    MobileHeader,
+    FbSignUp,
   },
   data() {
     return {

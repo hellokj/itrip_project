@@ -329,4 +329,10 @@ export default {
     background:dimgray;
     border: none;
   }
+
+  @media only screen and (max-width: 780px) {
+    .MyTrip {
+      display: none;
+    }
+  }
 </style>

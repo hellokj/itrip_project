@@ -128,4 +128,10 @@ export default {
   p, b-dropdown {
     display: inline-block;
   }
+
+  @media only screen and (max-width: 780px) {
+    .spotContainer {
+      display: none;
+    }
+  }
 </style>
