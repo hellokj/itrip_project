@@ -52,13 +52,13 @@
                 <!-- TogoItem -->
                 <b-row class="mx-0 my-0 px-0 py-0">
                   <b-col cols="1" class="mx-2 my-0 px-0 py-0">
-                      <div class="startTime">{{getStartTime(index)}}</div>
-                      <div class="mx-0 my-0 pt-4 py-0 order">
-                        <div class="circleNum"><b>{{index + 1}}</b></div>
-                      </div>
-                      <div class="mx-0 my-0 pt-5 py-0 endTime">{{getEndTime(index)}}</div>
+                    <div class="startTime">{{getStartTime(index)}}</div>
+                    <div class="mx-0 my-0 pt-4 py-0 order">
+                      <div class="circleNum"><b>{{index + 1}}</b></div>
+                    </div>
+                    <div class="mx-0 my-0 pt-5 py-0 endTime">{{getEndTime(index)}}</div>
                   </b-col>
-                  <b-col class="ml-1 my-0 pl-5 py-0">
+                  <b-col cols="9" class="ml-0 my-0 px-0 py-0">
                     <TogoItem class="mx-0 my-0" :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
                   </b-col>
                 </b-row>
@@ -70,7 +70,7 @@
                     </div>
                   </b-col>
                   <b-col class="ml-0 my-0 px-0 py-0">
-                     <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="ml-0 pt-1 px-0 py-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+                    <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="ml-0 pt-1 px-0 py-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
                   </b-col>
                 </b-row>
               </div>

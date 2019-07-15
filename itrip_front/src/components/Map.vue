@@ -222,7 +222,6 @@ export default {
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
 }
-
   @media only screen and (max-width: 780px) {
     #map {
       display: none;
