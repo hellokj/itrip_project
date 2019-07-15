@@ -7,7 +7,7 @@
                 </b-col>
                 <b-col class="ml-0 my-0 px-0 py-0">
                     <b-row class="ml-3 my-0 px-0 py-0" align-h="start">
-                        <b-col cols="9" class="ml-0 my-0 px-0 py-0">
+                        <b-col cols="11" class="ml-0 my-0 px-0 py-0">
                             <p class="mx-0 my-0 px-0 py-0 p-name"><b>{{togo.name}}</b></p>
                         </b-col>
                         <b-col cols="1" class="ml-4 my-2 pt-0 mb-3 mr-0 pl-0 pr-0">
@@ -112,7 +112,7 @@ export default {
     .togo-item {
         margin-left: 4px;
         margin-top: 5px;
-        width: 380px;
+        width: 400px;
         height: 120px;
         background: #ffffff;
         padding: 10px;

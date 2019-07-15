@@ -1,5 +1,6 @@
 <template>
   <div class="trip">
+    <MobileHeader/>
     <Togos :togos="togos[page]" :travelInfo="travelInfos[page]" 
     :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
     v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
@@ -9,7 +10,6 @@
     @get-spot="callGetSpotApi"
     @sort-spot="callGetSpotApi" /> 
     <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
-    <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
     <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
     :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
   </div>
@@ -20,6 +20,7 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
+import MobileHeader from '../components/layout/MobileHeader'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
 
@@ -29,6 +30,7 @@ export default {
       Togos,
       Spots,
       Map,
+      MobileHeader
   },
   props: {
     param: Object,
