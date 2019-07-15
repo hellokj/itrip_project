@@ -208,11 +208,11 @@ export default {
 
 <style scope >
 .map-big{
-  width: calc(100vw - 600px);
+  width: calc(100vw - 365px);
   height: calc(100vh - 85px);
 }
 .map-small{
-  width: calc(100vw - 1150px);
+  width: calc(100vw - 730px);
   height: calc(100vh - 85px);
 }
 .icon::before {
@@ -222,7 +222,6 @@ export default {
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
 }
-
   @media only screen and (max-width: 780px) {
 
 

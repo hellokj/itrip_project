@@ -276,7 +276,11 @@ export default {
   }
 
   .trip {
-    display: inline-block;
+    margin: 0 0 0 0;
+    height: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 
 </style>
