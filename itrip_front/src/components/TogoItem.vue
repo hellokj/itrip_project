@@ -110,9 +110,9 @@ export default {
   }
 
     .togo-item {
-        margin-left: 4px;
-        margin-top: 5px;
-        width: 380px;
+
+  
+        width: 330px;
         height: 120px;
         background: #ffffff;
         padding: 10px;

@@ -240,10 +240,7 @@ export default {
 }
 </script>
 
-<style scoped>
-
-
-
+<style>
   * {
     box-sizing: border-box;
     padding: 0;
@@ -279,11 +276,7 @@ export default {
   }
 
   .trip {
-    margin: 0 0 0 0;
-    height: auto;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    display: inline-block;
   }
 
 </style>

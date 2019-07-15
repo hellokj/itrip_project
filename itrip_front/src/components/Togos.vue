@@ -219,6 +219,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+  .togoContainer {
+    border: 1px solid black;
+  }
+
   .save-div {
     text-align: right;
   }
@@ -254,11 +259,12 @@ export default {
     margin: 0px;
     padding: 0px;
     width: 600px;
+    height: calc(100vh - 80px);
     border: none;
     /* background: #F1F0F0; */
     background: #F1F0F0;
     color: #515151;
-    display: flex;
+    display: inline-block;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
