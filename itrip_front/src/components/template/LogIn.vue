@@ -20,27 +20,31 @@
         i.bar
       i.bar
     i.bar
-      .d-flex.align--center.justify--space-between
-        button.btn.btn-primary(type='submit' @click="$emit('logIn', email, password)") 登入
-  button.btn.btn-primary(@click="$emit('backToSignUp')") 註冊
-  v-facebook-login(app-id="2353529008088124" @click="fbLogIn")
+  .buttonLayout
+    .d-flex.align--center.justify--space-between
+      button.btn.btn-primary(type='submit' @click="$emit('logIn', email, password)") 登入
+    button.btn.btn-primary(@click="$emit('backToSignUp')") 註冊
+  VFBLoginScope(v-if="!isFbSignUp" app-id="2353529008088124" @click="fbLogIn" class="test")
+    button(slot-scope="scope")
 </template>
 
 <script>
-import VFacebookLogin from 'vue-facebook-login-component'
+import VFBLoginScope from 'vue-facebook-login-component'
 export default {
   name: "LogIn",
   components: {
-    VFacebookLogin
+    VFBLoginScope
   },
   props: {
     isLogIn: Boolean,
+    isFbSignUp: Boolean,
     resMsg: String
   },
   data() {
     return {
       email: "",
       password: "",
+      
     }
   },
   methods: {
@@ -55,8 +59,22 @@ export default {
 
 </script>
 
-<style lang="sass" scope>
+<style lang="sass" scoped>
 .logIn 
   width: 100%
   padding: 2rem
+
+.buttonLayout
+  display: flex
+
+.test
+  width: 100%
+  min-width: 0rem
+  box-sizing: border-box
+  margin: 0 // Normalize Flex-box
+  display: flex
+  align-items: center
+  border-radius: 0.5rem
+  justify-content: center
+  background-color: coral
 </style>

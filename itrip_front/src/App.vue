@@ -4,8 +4,8 @@
     <div id="nav">
     </div>
     <router-view :param="param" :region="region" :type="type"/>
-    <Modal name="auth" width="300px" height="auto" :scrollable="true" class=".vue-modal-resizer">
-      <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize" v-on:fbLogIn="fbLogIn"></Auth>
+    <Modal name="auth" width="25%" height="auto" :scrollable="true" class=".vue-modal-resizer">
+      <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
     </Modal>
   </div>
 </template>
@@ -13,12 +13,14 @@
 <script>
 import Header from './components/layout/Header'
 import Auth from './components/Auth'
+import FbSignUp from './components/template/FbSignUp'
 
 export default {
   name:'app',
   components: {
     Header,
     Auth,
+    FbSignUp
   },
   data() {
     return {
@@ -36,53 +38,19 @@ export default {
     LogIn() {
       this.$modal.show('auth');
     },
+    LogOut() {
+      // this.isAuthorized = false;
+      this.$store.dispatch('updateAuthorized', false);
+      this.$store.dispatch('updateUserInfo', {});
+      FB.logout(function (response) {
+        console.log('res when logout', response);
+      });
+    },
     Authorize(){
       // this.isAuthorized = true;
       this.$store.dispatch('updateAuthorized', true);
       alert("success");
       this.$modal.hide('auth');
-      window.localStorage.setItem('isAuthorized', this.$store.state.isAuthorized);
-    },
-    LogOut() {
-      // this.isAuthorized = false;
-      this.$store.dispatch('updateAuthorized', false);
-      this.$store.dispatch('updateUserInfo', "");
-      FB.logout(function (response) {
-        console.log('res when logout', response);
-      });
-      window.localStorage.setItem('isAuthorized', this.$store.state.isAuthorized);
-    },
-    getProfile() {
-        let vm = this;
-        FB.api("/me", function (response) {
-          vm.$store.dispatch('updateUserInfo', response.id);
-        });
-      },
-    statusChangeCallback(response) {
-      let vm = this;
-      console.log('status', response.status);
-      if (response.status === "connected") {
-        vm.Authorize();
-        vm.getProfile();
-      } else if (response.status === "not_authorized") {
-        vm.$store.dispatch('updateAuthorized', false);
-      } else if (response.status === "unknown") {
-        vm.$store.dispatch('updateAuthorized', false);
-      } else {
-        vm.$store.dispatch('updateAuthorized', false);
-      }
-    },
-    fbLogIn() {
-      let vm = this;
-      FB.login(
-        function (response) {
-          vm.statusChangeCallback(response);
-        }, {
-          scope: "email, public_profile",
-          return_scopes: true
-        }
-      );
-      vm.$modal.hide('auth');
     },
   },
   computed: {
@@ -91,8 +59,9 @@ export default {
     }
   },
   created() {
+    // 啟動時，先查看localStorage的資料
     let status = window.localStorage.getItem('isAuthorized');
-    if (status){
+    if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
     }else{
       this.$store.dispatch('updateAuthorized', false);

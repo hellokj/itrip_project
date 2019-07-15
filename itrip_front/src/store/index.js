@@ -8,29 +8,44 @@ const localStoragePlugin = store => {
     if (mutation.type === "AUTHORIZE") {
       window.localStorage.setItem("isAuthorized", JSON.stringify(store.isAuthorized));
     }
+    if (mutation.type === "TOKEN") {
+      window.localStorage.setItem("userToken", JSON.stringify(store.userToken));
+    }
   });
 };
 
 export default new Vuex.Store({
   state: {
     isAuthorized: false,
-    userId: ""
+    user: {
+      id: "",
+      name: "",
+      email: "",
+      url: ""
+    },
+    userToken: ""
   },
   plugins: [localStoragePlugin],
   actions: {
     updateAuthorized(context, status) {
       context.commit('AUTHORIZE', status);
     },
-    updateUserInfo(context, userId){
-      context.commit('LOGIN', userId);
+    updateUserInfo(context, user){
+      context.commit('LOGIN', user);
+    },
+    updateUserToken(context, userToken){
+      context.commit('TOKEN', userToken);
     }
   },
   mutations: {
     AUTHORIZE(state, status) {
       state.isAuthorized = status;
     },
-    LOGIN(state, userId){
-      state.userId = userId;
+    LOGIN(state, user){
+      state.user = user;
     },
+    TOKEN(state, userToken){
+      state.userToken = userToken;
+    }
   }
 });

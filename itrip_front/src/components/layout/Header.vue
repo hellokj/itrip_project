@@ -145,7 +145,7 @@ export default {
     .header a {
         color: #fff;
         padding-right: 5px;
-        text-decoration: none   ;
+        text-decoration: none;
 
     }
     .input_name {
