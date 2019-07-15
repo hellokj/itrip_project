@@ -70,7 +70,7 @@
                     </div>
                   </b-col>
                   <b-col class="ml-0 my-0 px-0 py-0">
-                     <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="ml-0 pt-1 px-0 py-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+                    <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="ml-0 pt-1 px-0 py-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
                   </b-col>
                 </b-row>
               </div>

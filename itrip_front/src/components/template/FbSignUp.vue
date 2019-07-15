@@ -32,7 +32,7 @@
   .buttonLayout
     .d-flex.align--center.justify--space-between
       button.btn.btn-primary(type='submit' @click="checkSignUpData") 確認
-  button.btn.btn-primary(@click="backToLogIn") 回到登入 
+  button.btn.btn-primary(@click="backToLogIn") 回到登入
 </template>
 
 <script>

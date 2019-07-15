@@ -9,7 +9,7 @@ const localStoragePlugin = store => {
       window.localStorage.setItem("isAuthorized", JSON.stringify(store.isAuthorized));
     }
     if (mutation.type === "TOKEN") {
-      window.localStorage.setItem("userToken", JSON.stringify(store.userToken));
+      window.localStorage.setItem("userToken", String(store.userToken));
     }
   });
 };
