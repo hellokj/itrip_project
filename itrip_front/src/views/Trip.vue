@@ -1,6 +1,5 @@
 <template>
   <div class="trip">
-    <MobileHeader/>
     <Togos :togos="togos[page]" :travelInfo="travelInfos[page]" 
     :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
     v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
@@ -243,9 +242,6 @@ export default {
 </script>
 
 <style scoped>
-
-
-
   * {
     box-sizing: border-box;
     padding: 0;
@@ -286,6 +282,12 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
+  }
+
+  @media only screen and (max-width: 780px) {
+    .btn-showSpots {
+      display: none;
+    }
   }
 
 </style>

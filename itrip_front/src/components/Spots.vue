@@ -1,5 +1,4 @@
 <template>
-  
   <div class="spotContainer">
     <div class="Result">
       <p>搜尋結果 排序:</p>

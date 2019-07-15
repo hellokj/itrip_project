@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
+    <MobileHeader v-if="mobileMode"/>
     <div id="nav">
     </div>
     <router-view :param="param" :region="region" :type="type"/>
@@ -13,12 +14,14 @@
 <script>
 import Header from './components/layout/Header'
 import Auth from './components/Auth'
+import MobileHeader from './components/layout/MobileHeader'
 
 export default {
   name:'app',
   components: {
     Header,
     Auth,
+    MobileHeader
   },
   data() {
     return {
@@ -26,7 +29,12 @@ export default {
       region: '',
       type: '',
       param: {},
+      mobileMode: false,
+      windowWidth: 0,
     }
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     Search(para) {
@@ -84,6 +92,9 @@ export default {
       );
       vm.$modal.hide('auth');
     },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    }
   },
   computed: {
     isAuthorized() {
@@ -91,6 +102,9 @@ export default {
     }
   },
   created() {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize();
+
     let status = window.localStorage.getItem('isAuthorized');
     if (status){
       this.$store.dispatch('updateAuthorized', true);
@@ -119,9 +133,19 @@ export default {
       });
     }
   },
+  watch: {
+    windowWidth: function(newVal) {
+      if(newVal <= 780) {
+        this.mobileMode = true;
+      }
+      else {
+        this.mobileMode = false;
+      }
+    }
+  }
 }
 </script>
-<style>
+<style scoped>
 @font-face {
   font-family: logoFont;
   src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);

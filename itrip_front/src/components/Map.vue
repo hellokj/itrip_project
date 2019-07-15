@@ -224,8 +224,6 @@ export default {
 }
 
   @media only screen and (max-width: 780px) {
-
-
     #map {
       display: none;
     }
