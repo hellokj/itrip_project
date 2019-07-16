@@ -9,28 +9,22 @@
         <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
     </div>
-
-    <virtual-list :size="150" :remain="10">
-      <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-      :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
-      @add-spot="$emit('add-spot', spot)" 
-      @mouseOver="$emit('hoverSpotItem', index, spot)"/>
-      <b-row class="ml-0 my-0 px-0 py-0">
-        <b-col cols="2" class="ml-0 my-0 pl-0 py-0">
-          <div class="space"></div>
-        </b-col>
-        <b-col class="mx-0 my-0 px-0 py-0">
-          <v-pagination 
-                  v-if="isScrollbarShown"
-                  v-model="currentPage"
-                  :page-count="totalPages"
-                  :classes="bootstrapPaginationClasses"
-                  :labels="paginationAnchorTexts"></v-pagination>
-          <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
-        </b-col>
-      </b-row>
-      
-    </virtual-list>
+    <div class="virtualList">
+      <virtual-list :size="150" :remain="10">
+        <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
+        :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
+        @add-spot="$emit('add-spot', spot)" 
+        @mouseOver="$emit('hoverSpotItem', index, spot)"/>
+        <v-pagination 
+                v-if="isScrollbarShown"
+                v-model="currentPage"
+                :page-count="totalPages"
+                :classes="bootstrapPaginationClasses"
+                :labels="paginationAnchorTexts"></v-pagination>
+        <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
+      </virtual-list>
+    </div>
+    
   </div>
 </template>
 
@@ -103,7 +97,7 @@ export default {
   .spotContainer {
     margin: 0px;
     padding: 0px;
-    width: 100%;
+    width: 800px;
     height: calc(100vh - 80px);
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;
@@ -127,6 +121,10 @@ export default {
 
   p, b-dropdown {
     display: inline-block;
+  }
+
+  .virtualList {
+    width: 100%;
   }
 
   @media only screen and (max-width: 780px) {

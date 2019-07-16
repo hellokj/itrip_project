@@ -37,6 +37,7 @@ import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControl
 import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover'
+import { userLocator } from '../../utils/userLocator' 
 import Vue from 'vue'
 import L from "leaflet"
 
@@ -87,8 +88,17 @@ export default {
     centerSpot: Object
   },
   mounted() {
-    setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 250);
     this.updateMarkers();
+    this.$getLocation({
+    enableHighAccuracy: Boolean, //defaults to false
+    timeout: Infinity, //defaults to Infinity
+    maximumAge: 0 //defaults to 0
+    
+})
+    .then(coordinates => {
+      console.log(coordinates);
+    });
+    
   },
   methods: {
     updateMarkers() {
@@ -208,11 +218,11 @@ export default {
 
 <style scope >
 .map-big{
-  width: calc(100vw - 365px);
+  width: 200px;
   height: calc(100vh - 85px);
 }
 .map-small{
-  width: calc(100vw - 730px);
+  width: 200px;
   height: calc(100vh - 85px);
 }
 .icon::before {

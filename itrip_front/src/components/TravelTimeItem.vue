@@ -1,21 +1,13 @@
 <template>
     <div class="travelTime-item">
-        <b-container>
-            <b-row class="ml-0 my-0 px-0 py-0">
-                <b-col cols="2" class="ml-5 my-2 px-0 py-0">
-                    <div class="select">
-                        <select v-model="current" v-on:change="onModesChange">
-                            <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
-                                {{mode.text}}
-                            </option>
-                        </select>
-                    </div>
-                </b-col>
-                <b-col class="ml-2 my-0 px-0 py-0">
-                     <p class="mr-0 my-2 px-0 py-0" style="font-size: 18px;">約 {{formatTime(travelTime)}}</p>
-                </b-col>
-            </b-row>
-        </b-container>
+        <div class="select">
+            <select v-model="current" v-on:change="onModesChange">
+                <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
+                    {{mode.text}}
+                </option>
+            </select>
+        </div>
+        <p style="font-size: 18px; padding-left: 20px; padding-top: 10px;">約 {{formatTime(travelTime)}}</p>
     </div>
 </template>
 
@@ -66,11 +58,19 @@ export default {
 </script>
 
 <style scoped lang="sass">
-select 
-  option
-    font-family: 'Font Awesome\ 5 Free', monospace
-    font-weight: 900
-  font-family: 'Font Awesome\ 5 Free', monospace
-  font-weight: 900
-  font-size: 25px
+    .travelTime-item
+        width: 100%
+        display: flex
+        flex-direction: row
+    select 
+        option
+            font-family: 'Font Awesome\ 5 Free', monospace
+            font-weight: 900
+        font-family: 'Font Awesome\ 5 Free', monospace
+        font-weight: 900
+        font-size: 25px
+        margin-top: 10px
+    
+    
+
 </style>

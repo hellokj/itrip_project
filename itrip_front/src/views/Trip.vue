@@ -317,30 +317,38 @@ export default {
     margin: 0 0 0 0;
     height: auto;
     display: flex;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
   }
 
-  @media only screen and (max-width: 780px) {
+  @media screen and (max-width: 780px) {
     .btn-showSpots {
       display: none;
     }
-
     .trip {
       justify-content: center;
     }
-
     .togos {
       display: none;
     }
-
     .spots {
       display: none;
     }
-
-
     .map {
       display: none;
+    }
+  }
+
+  @media (min-width: 780px) {
+    .togos {
+      display: block;
+    }
+    .spots {
+      display: block;
+    }
+    .map {
+      display: block;
     }
   }
 

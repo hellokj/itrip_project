@@ -22,64 +22,77 @@
     <b-container class="save-div" fluid>
       <el-button><i class="fas fa-save" @click="saveTrip"> 儲存行程</i></el-button> 
     </b-container> 
-    <div>
-      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage">
-        <b-container>
-          <b-row class="mx-0 my-0 px-0 py-0"> 
-            <b-col cols="5" class="ml-5 mb-2 pl-2 pt-1">
-              <p class="ml-0 my-0 px-0 py-0" style="text-align:right;width:200px;">出發時間:</p>
-            </b-col>
-            <b-col cols="1" class="ml-5 mb-2 pl-2 py-0">
-              <el-time-select
-              v-model="startTime"
-              :picker-options="{
-                start: '00:00',
-                step: '00:15',
-                end: '23:45'
-              }"
-              :align="'center'"
-              :size="'small'"
-              placeholder="請輸入時間"
-              style="width: 130px;">
-              </el-time-select>
-            </b-col>
-          </b-row>
-        </b-container>
-        <b-tab v-for="i in tabs" :key="'tab' + i" :title="'Day' + (i+1)">
+    <div style="width: 100%;">
+      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;">
+        <template slot="tabs">
+            <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
+        </template>
+        <div class="startTimePicker" style="width: 100%;">
+          <p class="ml-0 my-0 px-0 py-0" style="text-align:right;margin-right:10px;">出發時間:</p>
+          <el-time-select
+          v-model="startTime"
+          :picker-options="{
+            start: '00:00',
+            step: '00:15',
+            end: '23:45'
+          }"
+          :align="'center'"
+          :size="'small'"
+          placeholder="請輸入時間"
+          style="width: 130px;padding-bottom:10px;"/>
+        </div> 
+        <b-tab v-for="i in tabs" :key="'tab' + i">
+          <template slot="title"> 
+              {{ 'Day' + (i+1) }}<i class="fas fa-times" @click="closeTab(i)"></i>
+          </template>
           <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
             <transition-group type="transition" name="flip-list">
-              <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
+              <div class="container" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
+                <div class="togoContainer sortable" >
+                <div class="tripTime">
+                  <div class="startTime">{{getStartTime(index)}}</div>
+                  <div class="circleNum"><b>{{index + 1}}</b></div>
+                  <div class="endTime">{{getEndTime(index)}}</div>
+                </div>
+                <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
+               </div>
+               <div class="travelTimeDiv">
+                 <hr v-if="isTravelTimeShown(index)" class="vertical"/>
+                 <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+               </div>
+               
+              </div>
+             </transition-group>
+           </draggable>
+         </b-tab>
+              
+              
+
                 <!-- TogoItem -->
-                <b-row class="mx-0 my-0 px-0 py-0">
+                <!-- <b-row class="mx-0 my-0 px-0 py-0">
                   <b-col cols="1" class="mx-2 my-0 px-0 py-0">
-                    <div class="startTime">{{getStartTime(index)}}</div>
-                    <div class="mx-0 my-0 pt-4 py-0 order">
-                      <div class="circleNum"><b>{{index + 1}}</b></div>
+                    
                     </div>
                     <div class="mx-0 my-0 pt-5 py-0 endTime">{{getEndTime(index)}}</div>
                   </b-col>
                   <b-col cols="9" class="ml-0 my-0 px-0 py-0">
-                    <TogoItem class="mx-0 my-0" :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
+                    
                   </b-col>
-                </b-row>
+                </b-row> -->
                 <!-- Travel time -->
-                <b-row class="ml-0 my-0 px-0 py-0">
+                <!-- <b-row class="ml-0 my-0 px-0 py-0">
                   <b-col cols="1" class="ml-0 my-0 px-0 py-0">
                     <div v-if="isTravelTimeShown(index)" class="ml-3 mb-0 px-1 pb-0 lineContainer">
                       <hr class="mt-0 mb-0 ml-2 px-0 pb-0 vertical"/>
                     </div>
                   </b-col>
                   <b-col class="ml-0 my-0 px-0 py-0">
-                    <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="ml-0 pt-1 px-0 py-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+                   
                   </b-col>
                 </b-row>
-              </div>
-            </transition-group>
-          </draggable>
-        </b-tab>
-        <template slot="tabs">
-          <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
-        </template>
+              </div> -->
+            
+        
       </b-tabs>
     </div>
   </div>
@@ -111,7 +124,8 @@ export default {
         startTimeOb: {
           hr: 8,
           min: 0
-        }
+        },
+        isScrollbarShown: false,
       }
     },
     components: {
@@ -193,7 +207,15 @@ export default {
         }
         hr += this.togos[index].stopTime.hrs;
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
-      }
+      },
+       closeTab: function(x) {
+        for (let i = 0; i < this.tabs.length; i++) {
+          if (x > 0 && this.tabs[i] === x) {
+            this.tabs.splice(i, 1)
+            this.tabCounter--;
+          }
+        }
+      },
     },
     watch: {
       travelInfo: {
@@ -213,12 +235,17 @@ export default {
         let tmp = this.startTime.split(':')
         this.startTimeOb.hr = parseInt(tmp[0])
         this.startTimeOb.min = parseInt(tmp[1])
-      }
+      },
+     
     },
 }
 </script>
 
 <style lang="scss" scoped>
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
   .save-div {
     text-align: right;
   }
@@ -226,17 +253,12 @@ export default {
   .el-time-picker {
     margin-bottom: 5px;
   }
-  .order {
-    margin: 10px;
-  }
-  .order div{
-    font-size: 20px;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%)
+
+  .travelTimeDiv {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
   }
 
   .circleNum {
@@ -253,7 +275,7 @@ export default {
   .MyTrip {
     margin: 0px;
     padding: 0px;
-    width: 100%;
+    width: 600px;
     border: none;
     /* background: #F1F0F0; */
     background: #F1F0F0;
@@ -293,11 +315,15 @@ export default {
     cursor: pointer;
     font-size: 15px;
   }
-
+  .sortable {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
   .MyTrip .sortable-drag {
     opacity: 0;
-  }
 
+  }
 
   .flip-list-move {
     transition: transform 0.5s;
@@ -328,11 +354,36 @@ export default {
     height: 50px; /* or height in PX */
     background:dimgray;
     border: none;
+    margin: 0px;
+    margin-left: 20px;
+    margin-right: 30px;
   }
 
-  // @media only screen and (max-width: 780px) {
-  //   .MyTrip {
-  //     display: none;
-  //   }
-  // }
+  .fa-times {
+    padding-left: 20px;
+    color: #DCDCDC;
+  }
+
+  .fa-times:hover { 
+    color:#696969;
+  }
+
+  .startTimePicker {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .tripTime {
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+    justify-content: space-evenly;
+  }
+
+  @media only screen and (max-width: 780px) {
+    .container {
+      padding: 0px;
+    }
+  }
 </style>
