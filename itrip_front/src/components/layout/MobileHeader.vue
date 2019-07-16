@@ -1,8 +1,8 @@
 <template>
     <div class="MobileHeader">
-        <el-button>行程表</el-button>
-        <el-button>列表模式</el-button>
-        <el-button>地圖模式</el-button>
+        <el-button @click="toggle('togos')">行程表</el-button>
+        <el-button @click="toggle('spots')">列表模式</el-button>
+        <el-button @click="toggle('map')">地圖模式</el-button>
     </div>
     
 </template>
@@ -17,7 +17,9 @@ export default {
       }
     },
     methods: {
-       
+       toggle: function(id) {
+           this.$bus.$emit('toggle', {id: id});
+       }
     },
 }
 </script>
@@ -25,7 +27,7 @@ export default {
 <style scoped>
     .MobileHeader {
         display: flex;
-        flex-wrap:wrap;
+        flex-wrap: wrap;
         justify-content: center;
         margin-top: 5px;
     }

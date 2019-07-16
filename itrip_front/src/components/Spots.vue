@@ -129,9 +129,9 @@ export default {
     display: inline-block;
   }
 
-  @media only screen and (max-width: 780px) {
+  /* @media only screen and (max-width: 780px) {
     .spotContainer {
       display: none;
     }
-  }
+  } */
 </style>

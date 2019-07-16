@@ -1,10 +1,13 @@
 <template>
   <div id="app">
     <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
-    <MobileHeader v-if="mobileMode"/>
+    <MobileHeader 
+    class="mobileHeader"/>
     <div id="nav">
     </div>
-    <router-view :param="param" :region="region" :type="type"/>
+    <router-view :param="param" :region="region" :type="type"
+    @toggle="toggle"
+    />
     <Modal name="auth" width="25%" height="auto" :scrollable="true" class=".vue-modal-resizer">
       <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
     </Modal>
@@ -14,16 +17,16 @@
 <script>
 import Header from './components/layout/Header'
 import Auth from './components/Auth'
-import MobileHeader from './components/layout/MobileHeader'
 import FbSignUp from './components/template/FbSignUp'
+import MobileHeader from '../src/components/layout/MobileHeader'
 
 export default {
   name:'app',
   components: {
     Header,
     Auth,
-    MobileHeader,
     FbSignUp,
+    MobileHeader
   },
   data() {
     return {
@@ -62,7 +65,7 @@ export default {
     },
     handleResize() {
       this.windowWidth = window.innerWidth;
-    }
+    },
   },
   computed: {
     isAuthorized() {
@@ -139,6 +142,18 @@ export default {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.4;
   }
+
+  .mobileHeader {
+      display: none;
+    }
+
+  @media only screen and (max-width: 780px) {
+    .mobileHeader {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
 
 
 </style>

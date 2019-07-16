@@ -19,6 +19,8 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import store from './store'
 
+import eventBus from '../utils/eventBus.js'
+
 Vue.use(ElementUI);
 // configure language
 locale.use(lang)
@@ -51,6 +53,11 @@ Icon.Default.mergeOptions({
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 new Vue({
+  data() {
+    return {
+      bus: eventBus
+    }
+  },
   router,
   store,
   render: h => h(App)

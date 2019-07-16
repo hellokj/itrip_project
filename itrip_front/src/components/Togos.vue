@@ -330,9 +330,9 @@ export default {
     border: none;
   }
 
-  @media only screen and (max-width: 780px) {
-    .MyTrip {
-      display: none;
-    }
-  }
+  // @media only screen and (max-width: 780px) {
+  //   .MyTrip {
+  //     display: none;
+  //   }
+  // }
 </style>

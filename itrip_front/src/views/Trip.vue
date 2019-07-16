@@ -1,16 +1,29 @@
 <template>
   <div class="trip">
-    <Togos :togos="togos[page]" :travelInfo="travelInfos[page]" 
+    <Togos
+    id="togos"
+    class="togos" 
+    :togos="togos[page]" :travelInfo="travelInfos[page]" 
     :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
     v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
-    <Spots v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
+    
+    <Spots
+    id="spots"
+    class="spots"
+     v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
     @hoverSpotItem="hoverSpotItem"
     @add-spot="addSpotToTrip"
     @get-spot="callGetSpotApi"
     @sort-spot="callGetSpotApi" /> 
-    <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
-    <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+
+    <button 
+    class="btn-showSpots" 
+    @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
+    
+    <Map 
+    id="map"
+    class="map"
+    bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
     :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
   </div>
 </template>
@@ -20,6 +33,7 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
+import MobileHeader from '../components/layout/MobileHeader'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
 
@@ -29,6 +43,7 @@ export default {
       Togos,
       Spots,
       Map,
+      MobileHeader
   },
   props: {
     param: Object,
@@ -229,6 +244,19 @@ export default {
     hoverSpotItem: function(index, spot) {
       this.centerSpot = spot;
       this.$set(this.centerSpot, 'index', index);
+    },
+    toggle: function(toggle) {
+      let components = ['togos', 'spots', 'map'];
+      for(let i=0;i<components.length;i++) {
+        if(toggle == components[i]) {
+          document.getElementById(components[i]).style.display = 'block';
+        }
+        else {
+          document.getElementById(components[i]).style.display = 'none';
+        }
+      }
+      
+
     }
   },
   
@@ -236,6 +264,16 @@ export default {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
+  },
+  created () {
+    // [註冊監聽事件]
+    this.$bus.$on('toggle', event => {
+        this.toggle(event.id)
+    });
+ },
+  beforeDestroy: function() {
+    // [銷毀監聽事件]
+    this.$bus.$off('toggle');
   }
 }
 </script>
@@ -285,6 +323,23 @@ export default {
 
   @media only screen and (max-width: 780px) {
     .btn-showSpots {
+      display: none;
+    }
+
+    .trip {
+      justify-content: center;
+    }
+
+    .togos {
+      display: none;
+    }
+
+    .spots {
+      display: none;
+    }
+
+
+    .map {
       display: none;
     }
   }
