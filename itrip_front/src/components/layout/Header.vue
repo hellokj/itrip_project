@@ -230,6 +230,7 @@ export default {
 
     .icon_search {
         position: relative;
+        width: 40px;
         margin-left: 5px;
         cursor: pointer;
     }
@@ -266,9 +267,6 @@ export default {
         font-family: logoFont;
     }
 
-    ::-ms-b-form-input-placeholder { /* Microsoft Edge */
-        color: red;
-    }
     
     .active {
         transform: translate(0px, -5px);

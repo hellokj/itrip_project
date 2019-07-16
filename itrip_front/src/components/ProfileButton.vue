@@ -35,4 +35,5 @@ export default {
   align-items: center
   justify-content: center
   margin-right: 50px
+  background: #FFFFFF
 </style>
