@@ -1,5 +1,4 @@
 <template>
-  
   <div class="spotContainer">
     <div class="Result">
       <p>搜尋結果 排序:</p>
@@ -128,5 +127,11 @@ export default {
 
   p, b-dropdown {
     display: inline-block;
+  }
+
+  @media only screen and (max-width: 780px) {
+    .spotContainer {
+      display: none;
+    }
   }
 </style>

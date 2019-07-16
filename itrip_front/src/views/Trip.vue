@@ -240,7 +240,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   * {
     box-sizing: border-box;
     padding: 0;
@@ -281,6 +281,12 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
+  }
+
+  @media only screen and (max-width: 780px) {
+    .btn-showSpots {
+      display: none;
+    }
   }
 
 </style>
