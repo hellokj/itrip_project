@@ -12,7 +12,7 @@ const memberRoutes = require('./memberRoute');
 const authController = require('../controllers/authController');
 
 router.use('/spot', spotRoutes);
-router.use('/auth', authRoutes)
+router.use('/auth', authRoutes);
 router.use('/itinerary', itiRoutes);
 
 // 上面 => 不用驗證 

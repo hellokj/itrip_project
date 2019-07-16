@@ -4,8 +4,9 @@
     <div id="nav">
     </div>
     <router-view :param="param" :region="region" :type="type"/>
-    <Modal name="auth" width="25%" height="auto" :scrollable="true" class=".vue-modal-resizer">
+    <Modal name="auth" :scrollable="true" :class="modal">
       <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
+      <!-- <BForm></BForm> -->
     </Modal>
   </div>
 </template>
@@ -14,13 +15,15 @@
 import Header from './components/layout/Header'
 import Auth from './components/Auth'
 import FbSignUp from './components/template/FbSignUp'
+import BForm from './components/template/BForm'
 
 export default {
   name:'app',
   components: {
     Header,
     Auth,
-    FbSignUp
+    FbSignUp,
+    BForm
   },
   data() {
     return {
@@ -115,6 +118,12 @@ export default {
   body {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.4;
+  }
+
+  .modal {
+    width: 40%;
+    height: auto;
+    text-align: center;
   }
 
 

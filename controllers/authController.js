@@ -92,7 +92,7 @@ const getToken = (req, res, next) => {
             return;
         }
         // first param: value returned by user every request, second: salt(private key), third: expireTime 
-        let token = jwt.sign({memberId: Member._id}, config.jwtSalt, {
+        let token = jwt.sign({memberId: String(member._id)}, config.jwtSalt, {
             expiresIn: 60*60*24 //24 hrs
         });
         Response(null, token, res);
