@@ -1,12 +1,10 @@
 <template lang="pug">
-#home
-  BForm
+#member
 </template>
 
 <script>
-import BForm from "../components/template/BForm"
 export default {
-  name: 'home',
+  name: 'member',
   components: {
     BForm
   },
@@ -22,6 +20,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-#home
+#member
   width: 100%
 </style>
