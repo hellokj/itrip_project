@@ -1,16 +1,16 @@
 <template>
-  <div class="spotContainer">
-    <div class="Result">
-      <p>搜尋結果 排序:</p>
+  <b-container class="px-0 mx-0 spotContainer">
+    <b-row align-v="center">
+      <p class="mr-2 pt-3">搜尋結果 排序:</p>
       <b-dropdown size="sm" class="m-2" v-model="sortBy">
         <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
         <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
         <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
         <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
-    </div>
-    <div class="virtualList">
-      <virtual-list :size="150" :remain="10">
+    </b-row>
+    <b-container class="px-0" fluid>
+      <virtual-list :size="150" :remain="5">
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
         :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
         @add-spot="$emit('add-spot', spot)" 
@@ -23,9 +23,8 @@
                 :labels="paginationAnchorTexts"></v-pagination>
         <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
       </virtual-list>
-    </div>
-    
-  </div>
+    </b-container>
+  </b-container>
 </template>
 
 <script>
@@ -37,8 +36,8 @@ export default {
     name: "Spots",
     components: {
       SpotItem,
-      'virtual-list': virtualList,
-      vPagination
+      vPagination,
+      'virtual-list': virtualList
     },
     data() {
       return {
@@ -58,7 +57,7 @@ export default {
         },
         isScrollbarShown: false,
         sortBy: '',
-        sortString: '臉書打卡王'
+        sortString: '臉書打卡王',
       }
     },
     props: {
@@ -95,21 +94,12 @@ export default {
 
 <style scoped>
   .spotContainer {
-    margin: 0px;
-    padding: 0px;
-    width: 800px;
-    height: calc(100vh - 80px);
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;
     color: #515151;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
   }
-  .Result {
+  /* .Result {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    size: 16px; /*This line does not work in chrome*/
     color: #515151;
     margin-left: 11px;
     margin-top: 4px;
@@ -131,5 +121,5 @@ export default {
     .spotContainer {
       border: none;
     }
-  }
+  } */
 </style>

@@ -1,20 +1,38 @@
 <template>
-    <div class="spot-item" @mouseover="$emit('mouseOver', spot)">
-        <img ref="image" class="spot-picture" :src="srcFunc" @error="error">
+    <b-container class="px-0 mb-2 spot-item" @mouseover="$emit('mouseOver', spot)">
+        <b-row>
+            <b-col xs="3" sm="3" md="4" lg="4" xl="4">
+                <img ref="image" class="spot-picture" :src="srcFunc" @error="error" style="width:120px; height:120px;">
+            </b-col>
+            <b-col>
+                <b-row align-h="between">
+                    <p class="p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
+                    <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+                </b-row>
+                <p>{{ getAddress() }}</p>
+                <b-row align-h="around" fluid>
+                    <i class="fas fa-blog"></i>
+                    <i class="fab fa-facebook-square"></i>
+                    <img class="instagram" src="../assets/instagram.png">
+                    <img class="wiki" src="../assets/wiki.png">
+                </b-row>
+            </b-col>
+        </b-row>
+
+    </b-container>
+    <!-- <div >
+        
         <div class="infoCol">
             <div class="nameRow">
-                <p class="p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
-                <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+                
+                
             </div>
-             <p>{{ getAddress() }}</p>
+             
              <div class="iconRow">
-                <i class="fas fa-blog"></i>
-                <i class="fab fa-facebook-square"></i>
-                <img class="instagram" src="../assets/instagram.png">
-                <img class="wiki" src="../assets/wiki.png">
+                
              </div>
         </div>
-    </div>
+    </div> -->
 </template>
 
 <script>
@@ -60,41 +78,11 @@ export default {
 </script>
 
 <style scoped>
-    .container {
-        align-self: center;
-        height: 130px;
-    }
     .spot-item {
-        width: 95%;
-        height: 130px;
         background: #ffffff;
         border-bottom: 1p #ccc dotted;
         color: #000000;
-        display: flex;
-        flex: 1 1 auto;
-        justify-content: center;
-        margin-bottom: 10px;
     }
-    .spot-picture{
-        width: 120px;
-        height: 120px;
-    }
-    .p-name {
-        font-size:20px;
-        display: flex;
-        flex: 1 1 auto;
-    }
-
-    p {
-        width: 200px;
-        overflow:hidden;
-        white-space:nowrap;
-        text-overflow:ellipsis;
-        height:1.5em;
-    }
-    /* p:hover {
-        overflow:visible;
-    } */
     .fa-blog {
         font-size: 25px;
         color:darkorange;
@@ -120,6 +108,32 @@ export default {
         height:30px;
         cursor: pointer;
     }
+    /* .container {
+        align-self: center;
+        height: 130px;
+    }
+    
+    .spot-picture{
+        width: 120px;
+        height: 120px;
+    }
+    .p-name {
+        font-size:20px;
+        display: flex;
+        flex: 1 1 auto;
+    }
+
+    p {
+        width: 200px;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        height:1.5em;
+    }
+    p:hover {
+        overflow:visible;
+    }
+    
     .nameRow {
         width: 100%;
         display: flex;
@@ -189,5 +203,5 @@ export default {
         padding-right: 10px;
         padding-left: 10px;
     }
-  }
+  } */
 </style>

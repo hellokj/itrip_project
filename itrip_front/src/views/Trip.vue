@@ -1,31 +1,37 @@
 <template>
-  <div class="trip">
-    <Togos
-    id="togos"
-    class="togos" 
-    :togos="togos[page]" :travelInfo="travelInfos[page]" 
-    :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
-    v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
+  <b-container class="trip" fluid>
+    <b-row> 
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+        <Togos
+        id="togos"
+        class="togos" 
+        :togos="togos[page]" :travelInfo="travelInfos[page]" 
+        :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
+        v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
+      </b-col>
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4" >
+         <Spots
+        id="spots"
+        class="spots"
+        v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
+        @hoverSpotItem="hoverSpotItem"
+        @add-spot="addSpotToTrip"
+        @get-spot="callGetSpotApi"
+        @sort-spot="callGetSpotApi"/> 
+      </b-col>
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4">
+        <Map 
+        id="map"
+        class="map"
+        bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+        :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
+      </b-col>
+    </b-row>
     
-    <Spots
-    id="spots"
-    class="spots"
-     v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
-    @hoverSpotItem="hoverSpotItem"
-    @add-spot="addSpotToTrip"
-    @get-spot="callGetSpotApi"
-    @sort-spot="callGetSpotApi" /> 
-
-    <button 
+    <!-- <button 
     class="btn-showSpots" 
-    @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
-    
-    <Map 
-    id="map"
-    class="map"
-    bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
-    :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
-  </div>
+    @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button> -->
+  </b-container>
 </template>
 
 <script>
@@ -279,7 +285,7 @@ export default {
 </script>
 
 <style scoped>
-  * {
+  /* * {
     box-sizing: border-box;
     padding: 0;
   }
@@ -320,15 +326,12 @@ export default {
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
-  }
+  } */
 
-  @media screen and (max-width: 780px) {
+  /* @media screen and (max-width: 780px) {
     .btn-showSpots {
       display: none;
     }
-    .trip {
-      justify-content: center;
-    }
     .togos {
       display: none;
     }
@@ -338,18 +341,5 @@ export default {
     .map {
       display: none;
     }
-  }
-
-  @media (min-width: 780px) {
-    .togos {
-      display: block;
-    }
-    .spots {
-      display: block;
-    }
-    .map {
-      display: block;
-    }
-  }
-
+  } */
 </style>

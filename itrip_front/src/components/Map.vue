@@ -217,7 +217,7 @@ export default {
 </script>
 
 <style scope >
-.map-big{
+/* .map-big{
   width: 200px;
   height: calc(100vh - 85px);
 }
@@ -236,5 +236,5 @@ export default {
     #map {
       width: 100%
     }
-  }
+  } */
 </style>
