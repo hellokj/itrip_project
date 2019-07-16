@@ -1,13 +1,13 @@
 <template>
     <b-container class="px-0 mb-2 spot-item" @mouseover="$emit('mouseOver', spot)">
-        <b-row>
-            <b-col xs="3" sm="3" md="4" lg="4" xl="4">
+        <b-row align-h="start">
+            <b-col xs="3" sm="3" md="4" lg="4" xl="3" class="mr-1 pr-0">
                 <img ref="image" class="spot-picture" :src="srcFunc" @error="error" style="width:120px; height:120px;">
             </b-col>
-            <b-col>
-                <b-row align-h="between">
-                    <p class="p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
-                    <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+            <b-col class="pl-1">
+                <b-row align-h="between" fluid>
+                    <p class="p-name">{{spotIndex}}. <b>{{spot.name}}</b></p>
+                    <i class="pr-4 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
                 </b-row>
                 <p>{{ getAddress() }}</p>
                 <b-row align-h="around" fluid>
@@ -20,19 +20,6 @@
         </b-row>
 
     </b-container>
-    <!-- <div >
-        
-        <div class="infoCol">
-            <div class="nameRow">
-                
-                
-            </div>
-             
-             <div class="iconRow">
-                
-             </div>
-        </div>
-    </div> -->
 </template>
 
 <script>
@@ -108,6 +95,16 @@ export default {
         height:30px;
         cursor: pointer;
     }
+    p {
+        width:200px;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        height:1.5em;
+    }
+    p:hover {
+        overflow:visible;
+    }
     /* .container {
         align-self: center;
         height: 130px;
@@ -123,16 +120,7 @@ export default {
         flex: 1 1 auto;
     }
 
-    p {
-        width: 200px;
-        overflow:hidden;
-        white-space:nowrap;
-        text-overflow:ellipsis;
-        height:1.5em;
-    }
-    p:hover {
-        overflow:visible;
-    }
+    
     
     .nameRow {
         width: 100%;

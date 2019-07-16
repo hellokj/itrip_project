@@ -9,8 +9,8 @@
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </b-col>
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4" >
-         <Spots
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+        <Spots
         id="spots"
         class="spots"
         v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
