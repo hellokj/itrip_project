@@ -103,7 +103,7 @@ export default {
   .spotContainer {
     margin: 0px;
     padding: 0px;
-    width: 550px;
+    width: 100%;
     height: calc(100vh - 80px);
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;
@@ -129,9 +129,9 @@ export default {
     display: inline-block;
   }
 
-  /* @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 780px) {
     .spotContainer {
-      display: none;
+      border: none;
     }
-  } */
+  }
 </style>

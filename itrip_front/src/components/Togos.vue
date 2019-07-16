@@ -253,7 +253,7 @@ export default {
   .MyTrip {
     margin: 0px;
     padding: 0px;
-    width: 600px;
+    width: 100%;
     border: none;
     /* background: #F1F0F0; */
     background: #F1F0F0;
