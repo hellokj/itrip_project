@@ -16,6 +16,11 @@ const localStoragePlugin = store => {
 
 export default new Vuex.Store({
   state: {
+    formState: {
+      isLogIn: false,
+      isSignUp: false,
+      isFbSignUp: false
+    },
     isAuthorized: false,
     user: {
       id: "",
@@ -23,7 +28,7 @@ export default new Vuex.Store({
       email: "",
       url: ""
     },
-    userToken: ""
+    userToken: "",
   },
   plugins: [localStoragePlugin],
   actions: {
@@ -35,6 +40,9 @@ export default new Vuex.Store({
     },
     updateUserToken(context, userToken){
       context.commit('TOKEN', userToken);
+    },
+    updateFormState(context, formState){
+      context.commit('FORM_STATE', formState);
     }
   },
   mutations: {
@@ -46,6 +54,9 @@ export default new Vuex.Store({
     },
     TOKEN(state, userToken){
       state.userToken = userToken;
+    },
+    FORM_STATE(state, formState){
+      state.formState = formState;
     }
   }
 });

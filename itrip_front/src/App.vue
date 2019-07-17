@@ -5,27 +5,18 @@
     <div id="nav">
     </div>
     <router-view :param="param" :region="region" :type="type"/>
-    <Modal name="auth" :scrollable="true" :class="modal">
-      <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
-      <!-- <BForm></BForm> -->
-    </Modal>
   </div>
 </template>
 
 <script>
 import Header from './components/layout/Header'
-import Auth from './components/Auth'
 import MobileHeader from './components/layout/MobileHeader'
-import FbSignUp from './components/template/FbSignUp'
-import BForm from './components/template/BForm'
 
 export default {
   name:'app',
   components: {
     Header,
-    Auth,
     MobileHeader,
-    FbSignUp,
   },
   data() {
     return {
