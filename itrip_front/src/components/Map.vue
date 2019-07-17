@@ -89,16 +89,6 @@ export default {
   },
   mounted() {
     this.updateMarkers();
-    this.$getLocation({
-    enableHighAccuracy: Boolean, //defaults to false
-    timeout: Infinity, //defaults to Infinity
-    maximumAge: 0 //defaults to 0
-    
-})
-    .then(coordinates => {
-      console.log(coordinates);
-    });
-    
   },
   methods: {
     updateMarkers() {
@@ -217,24 +207,24 @@ export default {
 </script>
 
 <style scope >
-/* .map-big{
-  width: 200px;
-  height: calc(100vh - 85px);
-}
-.map-small{
-  width: 200px;
-  height: calc(100vh - 85px);
-}
-.icon::before {
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-}
+  .map-big{
+    width: 100%;
+    height: calc(100vh - 85px);
+  }
+  .map-small{
+    width: 100%;
+    height: calc(100vh - 85px);
+  }
+  .icon::before {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+  }
   @media only screen and (max-width: 780px) {
     #map {
       width: 100%
     }
-  } */
+  }
 </style>

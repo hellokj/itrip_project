@@ -1,16 +1,22 @@
 <template>
     <b-container class="px-0 mb-2 spot-item" @mouseover="$emit('mouseOver', spot)">
-        <b-row align-h="start">
-            <b-col xs="3" sm="3" md="4" lg="4" xl="3" class="mr-1 pr-0">
-                <img ref="image" class="spot-picture" :src="srcFunc" @error="error" style="width:120px; height:120px;">
+        <b-row align-h="stretch" flex-wrap="wrap">
+            <b-col cols="4" sm="3" md="3" lg="4" xl="4" class="mr-1">
+                <img ref="image" class="spot-picture" :src="srcFunc" @error="error" style="width:100%;height:100%;max-height:120px;max-width:120px;">
             </b-col>
-            <b-col class="pl-1">
+            <b-col cols="7" sm="8" md="7" lg="7" xl="7" class="pl-1">
                 <b-row align-h="between" fluid>
-                    <p class="p-name">{{spotIndex}}. <b>{{spot.name}}</b></p>
-                    <i class="pr-4 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+                    <b-col class="pl-0 pr-0" cols="8" sm="9" md="4" lg="4" xl="9">
+                        <p class="p-name" style="font-size:18px;">{{spotIndex}}. <b>{{spot.name}}</b></p>
+                    </b-col>
+                    <b-col class="pl-0" cols="2" sm="1" offset-sm="2" md="2" lg="3" xl="1">
+                        <i class="pr-1 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+                    </b-col>
+                    <b-col class="px-0">
+                        <p style="font-size:12px;">{{ getAddress() }}</p>
+                    </b-col>
                 </b-row>
-                <p>{{ getAddress() }}</p>
-                <b-row align-h="around" fluid>
+                <b-row align-h="around">
                     <i class="fas fa-blog"></i>
                     <i class="fab fa-facebook-square"></i>
                     <img class="instagram" src="../assets/instagram.png">
@@ -69,6 +75,7 @@ export default {
         background: #ffffff;
         border-bottom: 1p #ccc dotted;
         color: #000000;
+        height: 110px;
     }
     .fa-blog {
         font-size: 25px;
@@ -96,7 +103,7 @@ export default {
         cursor: pointer;
     }
     p {
-        width:200px;
+        width:150px;
         overflow:hidden;
         white-space:nowrap;
         text-overflow:ellipsis;
@@ -192,4 +199,9 @@ export default {
         padding-left: 10px;
     }
   } */
+  @media only screen and (max-width: 768px) and (min-width: 576px){
+    p {
+        width: 300px;
+   } 
+}
 </style>

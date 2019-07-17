@@ -1,12 +1,12 @@
 <template>
-  <b-container class="text-center MyTrip" fluid>
-      <b-row >
-        <b-col xs="3" sm="3" md="4" lg="4" xl="3"><p class="mb-0 pt-2 mr-3 TripName">旅行名稱</p></b-col>
-        <b-col xs="4" offset-xs="3" sm="4" md="4" lg="7" xl="7"><el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input></b-col>
+  <b-container class="text-center MyTrip" style="height:100%;" fluid>
+      <b-row class="px-0">
+        <p class="px-0 mx-0 mb-0 pt-2 ml-1 mr-2 TripName">旅行名稱</p>
+        <b-col cols="4" offset-xs="3" sm="4" md="4" lg="7" xl="7"><el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input></b-col>
       </b-row>
       <b-row>
-        <b-col xs="3" sm="3" md="4" lg="4" xl="3"><p class="pt-2 mb-0 mr-3 pTripDate">開始日期</p></b-col>
-        <b-col  xs="3" sm="3" md="3" lg="4" xl="3">
+        <p class="px-0 mx-0 mb-0 pt-2 ml-1 mr-2 pTripDate">開始日期</p>
+        <b-col  cols="3" sm="3" md="3" lg="4" xl="6">
           <el-date-picker
           class="ml-0 iDatePicker"
           v-model="tripDate"
@@ -42,57 +42,40 @@
             <template slot="title"> 
                 {{ 'Day' + (i+1) }}<i class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-            <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
-              <transition-group type="transition" name="flip-list">
-                <div class="container" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
-                  <div class="togoContainer sortable" >
-                  <div class="tripTime">
-                    <div class="startTime">{{getStartTime(index)}}</div>
-                    <div class="circleNum"><b>{{index + 1}}</b></div>
-                    <div class="endTime">{{getEndTime(index)}}</div>
-                  </div>
-                  <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
-                </div>
-                <div class="travelTimeDiv">
-                  <hr v-if="isTravelTimeShown(index)" class="vertical"/>
-                  <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
-                </div>
-                </div>
-              </transition-group>
-            </draggable>
+            
+              <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
+                 <virtual-list :size="150" :remain="4">
+                  <transition-group type="transition" name="flip-list">
+                      <b-container class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
+                        <b-row>
+                          <div class="px-0 tripTime" style="display:flex;flex-direction:column;justify-content:space-between;">
+                            <p class="my-0 startTime">{{getStartTime(index)}}</p>
+                            <div class="circleNum"><b>{{index + 1}}</b></div>
+                            <p class="my-0 endTime">{{getEndTime(index)}}</p>
+                          </div>
+                          <b-col class="px-0">
+                            <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
+                          </b-col>
+                          
+                        </b-row>
+                        <b-row style="height: 100%;">
+                          <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
+                          v-if="isTravelTimeShown(index)"/>
+                        </b-row>
+                      </b-container>
+                  </transition-group>
+                </virtual-list>
+              </draggable> 
           </b-tab>
-          
-          
-
         </b-tabs>
       </b-row>
-
-
-      
-      <!--</div>
-      <div >
-        
-        </el-date-picker>
-      </div>
-      
-    </div>
-    <b-container class="save-div" fluid>
-      
-    </b-container> 
-    <div style="width: 100%;">
-      
-        <div class="startTimePicker" style="width: 100%;">
-          
-        </div> 
-        
-      
-    </div>-->
   </b-container>
 </template>
 
 <script>
 import TogoItem from './TogoItem';
 import TravelTimeItem from './TravelTimeItem';
+import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 
 export default {
@@ -124,6 +107,7 @@ export default {
         TogoItem,
         TravelTimeItem,
         draggable,
+        'virtual-list': virtualList
     },
     props: {
       togos: Array,
@@ -240,6 +224,23 @@ export default {
     background: #F1F0F0;
     color: #515151;
   }
+  .fa-times {
+    padding-left: 20px;
+    color: #DCDCDC;
+  }
+  .fa-times:hover { 
+    color:#696969;
+  }
+  .circleNum {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 2px;
+    background: #fff;
+    border: 2px solid #666;
+    color: #666;
+    text-align: center;
+  }
 
   // .container {
   //   display: flex;
@@ -260,16 +261,7 @@ export default {
   //   justify-content: flex-start;
   // }
 
-  // .circleNum {
-  //   border-radius: 50%;
-  //   width: 36px;
-  //   height: 36px;
-  //   padding: 2px;
-  //   background: #fff;
-  //   border: 2px solid #666;
-  //   color: #666;
-  //   text-align: center;
-  // }
+ 
 
   // .tripData {
   //   background: #F1F0F0;
@@ -344,14 +336,7 @@ export default {
   //   margin-right: 30px;
   // }
 
-  // .fa-times {
-  //   padding-left: 20px;
-  //   color: #DCDCDC;
-  // }
 
-  // .fa-times:hover { 
-  //   color:#696969;
-  // }
 
   // .startTimePicker {
   //   display: flex;

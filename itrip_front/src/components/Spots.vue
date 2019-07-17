@@ -1,6 +1,6 @@
 <template>
-  <b-container class="px-0 mx-0 spotContainer">
-    <b-row align-v="center">
+  <b-container class="px-0 mx-0 spotContainer" fluid>
+    <b-row align-v="center" fluid>
       <p class="mx-4 pt-3">搜尋結果 排序:</p>
       <b-dropdown size="sm" class="m-2" v-model="sortBy">
         <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
@@ -10,7 +10,7 @@
       </b-dropdown>
     </b-row>
     <b-container class="px-0" fluid>
-      <virtual-list :size="150" :remain="5">
+      <virtual-list :size="180" :remain="5">
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
         :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
         @add-spot="$emit('add-spot', spot)" 
@@ -20,8 +20,9 @@
                 v-model="currentPage"
                 :page-count="totalPages"
                 :classes="bootstrapPaginationClasses"
-                :labels="paginationAnchorTexts"></v-pagination>
-        <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
+                :labels="paginationAnchorTexts"
+                style="display:flex;justify-content:center;"></v-pagination>
+        <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">共搜尋到{{dataCount}}筆地點</p>
       </virtual-list>
     </b-container>
   </b-container>

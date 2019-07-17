@@ -1,7 +1,7 @@
 <template>
   <b-container class="trip" fluid>
-    <b-row> 
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+    <b-row align-h="center"> 
+      <b-col cols="12" sm="12" md="12" lg="4" xl="4" class="px-0">
         <Togos
         id="togos"
         class="togos" 
@@ -9,7 +9,7 @@
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </b-col>
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+      <b-col cols="12" sm="12" md="12" lg="4" xl="4" class="px-0">
         <Spots
         id="spots"
         class="spots"
@@ -19,7 +19,7 @@
         @get-spot="callGetSpotApi"
         @sort-spot="callGetSpotApi"/> 
       </b-col>
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4">
+      <b-col cols="12" sm="12" md="12" lg="4" xl="4" class="px-0">
         <Map 
         id="map"
         class="map"
@@ -27,10 +27,6 @@
         :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
       </b-col>
     </b-row>
-    
-    <!-- <button 
-    class="btn-showSpots" 
-    @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button> -->
   </b-container>
 </template>
 
@@ -328,7 +324,7 @@ export default {
     align-items: flex-start;
   } */
 
-  /* @media screen and (max-width: 780px) {
+  @media screen and (max-width: 780px) {
     .btn-showSpots {
       display: none;
     }
@@ -340,6 +336,6 @@ export default {
     }
     .map {
       display: none;
-    }
-  } */
+    } 
+  }
 </style>

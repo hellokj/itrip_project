@@ -1,29 +1,61 @@
 <template>
-    <div class="togo-item">
-        <img class="spot-picture" :src="togo.images[0]" alt="Picture">
-        <div class="infoCol">
-            <div class="nameRow">
-                <p class="p-name"><b>{{togo.name}}</b></p>
-                <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
-            </div>
-            <div class="addressRow">
-                <p>{{ getAddress() }}</p>
-            </div>
-            <p class="stopTime">停留時間</p>
-            <div class="stopTimeRow">
-                <el-input-number class="hrInput" v-model="hrs" :step="1" size="mini"></el-input-number>
-                <p>小時</p>
-                <el-input-number class="minInput" v-model="mins" :step="1" size="mini"></el-input-number>
-                <p>分</p>
-            </div>
-        </div>
-    </div>
+    <b-container class="togo-item">
+        <b-row fluid>
+            <b-col class="px-0" cols="2" sm="3" md="3" lg="3" xl="4">
+                <img class="spot-picture" :src="togo.images[0]" alt="Picture" style="width:100%;height:100%;max-width:110px;max-height:110px;">
+            </b-col>
+            <b-col md="8" lg="8" xl="7" offset-cols="2" class="px-0">
+                <b-row align-h="between">
+                    <p class="mb-0 ml-4 p-name" style="font-size:18px;text-align:left;"><b>{{togo.name}}</b></p>
+                    <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
+                </b-row>
+                <p class="mx-0 my-0 ml-2" style="font-size:12px;text-align:left;">{{getAddress()}}</p>
+                <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;font-size:15px;">停留時間</p>
+                <b-row class="px-0 mx-0" fluid>
+                    <b-col cols="6">
+                        <b-row>
+                            <v-number-smarty
+                                v-model="hrs"
+                                number-type="integer"
+                                unsigned
+                                font-size="1rem"
+                                :step="1"
+                                :max-value="24"
+                                style="width:50px;"
+                                />
+                                <p style="font-size:15px;width:50px;text-align:left;">小時</p>
+                        </b-row>
+                    </b-col>
+                    <b-col cols="6">
+                        <b-row>
+                            <v-number-smarty
+                            v-model="mins"
+                            number-type="integer"
+                            unsigned
+                            font-size="1rem"
+                            :step="1"
+                            :max-value="60"
+                            style="width:50px;"
+                            />
+                            <p style="font-size:15px;width:50px;text-align:left;">分</p>
+                        </b-row> 
+                    </b-col>
+                </b-row>
+            </b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script>
+import Vue from 'vue'
 import {getAddress} from '../../utils/checker.js'
+import VNumberSmarty from 'vue-number-smarty';
+
 export default {
     name: "TogoItem",
+    components: {
+       VNumberSmarty,
+    },
     props: {
         togo: Object,
     },
@@ -54,21 +86,28 @@ export default {
 </script>
 
 <style scoped>
-    p {
-        margin: 0px;
-    }
     .togo-item {
-        display: flex;
-        flex-direction: row;
         margin-left: 4px;
         margin-top: 5px;
-        width: 100%;
-        height: 120px;
         padding-top: 2px;
         background: #ffffff;
         border-bottom: 1p #ccc dotted;
         color: #000000;
     }
+    p {
+        width:200px;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        height:1.5em;
+    }
+    p:hover {
+        overflow:visible;
+    }
+    /* p {
+        margin: 0px;
+    }
+    
     .infoCol {
         display: flex;
         flex-direction: column;
@@ -138,5 +177,5 @@ export default {
         width: 113px;
         height: 100%;
     }
-  }
+  } */
 </style>
