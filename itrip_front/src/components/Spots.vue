@@ -14,7 +14,8 @@
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
         :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
         @add-spot="$emit('add-spot', spot)" 
-        @mouseOver="$emit('hoverSpotItem', index, spot)"/>
+        @mouseOver="$emit('hoverSpotItem', index, spot)"
+        @show-link="Show"/>
         <v-pagination 
                 v-if="isScrollbarShown"
                 v-model="currentPage"
@@ -25,6 +26,7 @@
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">共搜尋到{{dataCount}}筆地點</p>
       </virtual-list>
     </b-container>
+    <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
   </b-container>
 </template>
 
@@ -59,12 +61,19 @@ export default {
         isScrollbarShown: false,
         sortBy: '',
         sortString: '臉書打卡王',
+        url: ''
       }
     },
     props: {
      spots: Array,
      paginator: Object,
      perPage: Number
+    },
+    methods: {
+      Show(Url){
+        this.url = Url;
+        this.$modal.show('link-window');
+      }
     },
     watch: {
       spots: function() {

@@ -6,29 +6,19 @@
     <div id="nav">
     </div>
     <router-view :param="param" :region="region" :type="type"
-    @toggle="toggle"
-    />
-    <Modal name="auth" width="25%" height="auto" :scrollable="true" class=".vue-modal-resizer">
-      <Auth v-if="!isAuthorized" v-model="isAuthorized" v-on:signUp-ok="Authorize" v-on:logIn-ok="Authorize"></Auth>
-      <!-- <BForm></BForm> -->
-    </Modal>
+    @toggle="toggle"/>
   </div>
 </template>
 
 <script>
 import Header from './components/layout/Header'
-import Auth from './components/Auth'
-import FbSignUp from './components/template/FbSignUp'
-import MobileHeader from '../src/components/layout/MobileHeader'
-import BForm from './components/template/BForm'
+import MobileHeader from './components/layout/MobileHeader'
 
 export default {
   name:'app',
   components: {
     Header,
-    Auth,
-    FbSignUp,
-    MobileHeader
+    MobileHeader,
   },
   data() {
     return {

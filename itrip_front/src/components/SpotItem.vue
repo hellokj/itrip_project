@@ -1,4 +1,5 @@
 <template>
+
     <b-container class="px-0 mb-2 spot-item" @mouseover="$emit('mouseOver', spot)">
         <b-row align-h="stretch" flex-wrap="wrap">
             <b-col cols="4" sm="3" md="3" lg="4" xl="4" class="mr-1">
@@ -16,23 +17,25 @@
                         <p style="font-size:12px;">{{ getAddress() }}</p>
                     </b-col>
                 </b-row>
-                <b-row align-h="around">
-                    <i class="fas fa-blog"></i>
-                    <i class="fab fa-facebook-square"></i>
-                    <img class="instagram" src="../assets/instagram.png">
-                    <img class="wiki" src="../assets/wiki.png">
+                <b-row align-h="around" fluid>
+                    <i @click="link('pixnet')" class="fas fa-blog"></i>
+                    <i @click="link('fb')" class="fab fa-facebook-square"></i>
+                    <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
+                    <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
                 </b-row>
             </b-col>
         </b-row>
-
     </b-container>
 </template>
 
 <script>
-import {getAddress} from '../../utils/checker.js'
 
+import {getAddress} from '../../utils/checker.js'
 export default {
     name: "SpotItem",
+    components: {
+        
+    },
     data() {
         return {
             notFound: require('../assets/picNotFound.jpg')
@@ -51,6 +54,37 @@ export default {
         error: function(){
             this.$refs.image.src = this.notFound
         },
+        link: function(type) {
+            let Url = '';
+            let arr = {
+                'ig': "https://ingram.life/tag/",
+                'pixnet': 'https://www.pixnet.net/tags/',
+                'wiki': 'https://zh.wikipedia.org/wiki/',
+                'fb': ['https://www.facebook.com/search/top/?q=', '&epa=SEARCH_BOX']
+            }
+            let url = arr[type];
+            if (typeof url === "string") {
+                Url = url.concat(this.spot.name);
+                
+            } else if (typeof url === "object") {
+                Url = url[0].concat(this.spot.name, url[1]);
+            }
+
+            if (type === 'ig' && this.spot.ig_tag[0] !== undefined){
+                let ig_tag = this.spot.ig_tag;
+                Url = url.concat(ig_tag[0])
+            }
+
+            if (type === 'wiki' && this.spot.wiki_name !== null){
+                Url = url.concat(this.spot.wiki_name);
+            }
+
+            if (type === 'wiki' && this.spot.wiki !== undefined){
+                Url = this.spot.wiki;
+            }
+
+            this.$emit('show-link', Url);
+        }
     },
     computed: {
         spotIndex: function() {

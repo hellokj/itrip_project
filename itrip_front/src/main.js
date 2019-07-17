@@ -62,3 +62,4 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } })

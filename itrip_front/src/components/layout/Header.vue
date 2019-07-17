@@ -54,7 +54,7 @@
                 <router-link to="/trip">旅遊</router-link>
             </div>
             <div class="div_home">
-                <router-link to="/">首頁</router-link> 
+                <router-link to="/">首頁</router-link>
             </div>
             <ProfileButton class="profileButton" v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
         </div> 
@@ -120,7 +120,6 @@ export default {
                 this.$emit('logIn-click');
             }
         },
-        
         setCity(node) {
             this.selected_city = node.parentId;
         },

@@ -1,14 +1,12 @@
 <template lang="pug">
 #home
-  BForm
 </template>
 
 <script>
-import BForm from "../components/template/BForm"
 export default {
   name: 'home',
   components: {
-    BForm
+    
   },
   data() {
     return {
