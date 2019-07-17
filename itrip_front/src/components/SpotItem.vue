@@ -11,26 +11,32 @@
                     <p class="mx-1 my-0 px-0 py-0 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     <p class="mx-1 my-1 px-0 py-0">{{ getAddress() }}</p>
                     <b-row class="mx-2 my-4 px-0 py-0">
-                        <i class="mx-0 my-0 px-0 py-0 fas fa-blog"></i>
-                        <i class="mx-3 my-0 px-0 py-0 fab fa-facebook-square"></i>
-                        <img class="mx-1 my-0 px-0 py-0 instagram" src="../assets/instagram.png">
-                        <img class="mx-3 my-0 px-0 py-0 wiki" src="../assets/wiki.png">
+                        <i @click="link('pixnet')" name="blog" class="mx-0 my-0 px-0 py-0 fas fa-blog"></i>
+                        <i @click="link('fb')" class="mx-3 my-0 px-0 py-0 fab fa-facebook-square"></i>
+                        <img @click="link('ig')" class="mx-1 my-0 px-0 py-0 instagram" src="../assets/instagram.png">
+                        <img @click="link('wiki')" class="mx-3 my-0 px-0 py-0 wiki" src="../assets/wiki.png">
                     </b-row>
                 </b-col>
                 <b-col cols="1" class="ml-5 my-0 pl-2 py-0">
                     <i class="fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
                 </b-col>
+                
+                
             </b-row>
+            
         </b-container>
+        
     </div>
-     <!-- <img class="btn-add" v-on:click=""  src="./icons/add.svg" alt="ADD"> -->
 </template>
 
 <script>
-import {getAddress} from '../../utils/checker.js'
 
+import {getAddress} from '../../utils/checker.js'
 export default {
     name: "SpotItem",
+    components: {
+        
+    },
     data() {
         return {
             notFound: require('../assets/picNotFound.jpg')
@@ -49,6 +55,38 @@ export default {
         error: function(){
             this.$refs.image.src = this.notFound
         },
+        link: function(type) {
+            let Url = '';
+            let arr = {
+                'ig': "https://ingram.life/tag/",
+                'pixnet': 'https://www.pixnet.net/tags/',
+                'wiki': 'https://zh.wikipedia.org/wiki/',
+                'fb': ['https://www.facebook.com/search/top/?q=', '&epa=SEARCH_BOX']
+            }
+            let url = arr[type];
+            if (typeof url === "string") {
+                Url = url.concat(this.spot.name);
+                
+            } else if (typeof url === "object") {
+                Url = url[0].concat(this.spot.name, url[1]);
+            }
+
+            if (type === 'ig' && this.spot.ig_tag[0] !== undefined){
+                let ig_tag = this.spot.ig_tag;
+                Url = url.concat(ig_tag[0])
+            }
+
+            if (type === 'wiki' && this.spot.wiki_name !== null){
+                Url = url.concat(this.spot.wiki_name);
+            }
+
+            if (type === 'wiki' && this.spot.wiki !== undefined){
+                Url = this.spot.wiki;
+            }
+
+            alert(Url)
+            this.$emit('show-link', Url);
+        }
     },
     computed: {
         spotIndex: function() {

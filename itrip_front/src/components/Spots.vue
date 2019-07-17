@@ -14,7 +14,8 @@
       <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
       :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
       @add-spot="$emit('add-spot', spot)" 
-      @mouseOver="$emit('hoverSpotItem', index, spot)"/>
+      @mouseOver="$emit('hoverSpotItem', index, spot)"
+      @show-link="Show"/>
       <b-row class="ml-0 my-0 px-0 py-0">
         <b-col cols="2" class="ml-0 my-0 pl-0 py-0">
           <div class="space"></div>
@@ -31,6 +32,7 @@
       </b-row>
       
     </virtual-list>
+    <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
   </div>
 </template>
 
@@ -64,13 +66,20 @@ export default {
         },
         isScrollbarShown: false,
         sortBy: '',
-        sortString: '臉書打卡王'
+        sortString: '臉書打卡王',
+        url: ''
       }
     },
     props: {
      spots: Array,
      paginator: Object,
      perPage: Number
+    },
+    methods: {
+      Show(Url){
+        this.url = Url;
+        this.$modal.show('link-window');
+      }
     },
     watch: {
       spots: function() {
