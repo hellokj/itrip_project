@@ -9,10 +9,10 @@
       <div style="height: 10px"></div>
       <el-form :model="fbSignUpForm" ref="fbSignUpForm" status-icon :rules="rules" class="demo-ruleForm">
         <el-form-item prop="name" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.name" placeholder="名稱" :disabled="true"></el-input>
+          <el-input v-model="$store.state.user.name" placeholder="名稱" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item prop="email" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.email" placeholder="email" :disabled="true"></el-input>
+          <el-input v-model="$store.state.user.email" placeholder="email" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item prop="url" resetField="resetForm">
           <el-input v-model="fbSignUpForm.url" placeholder="url" clearable></el-input>
@@ -71,8 +71,8 @@ export default {
     return {
       hint: "",
       fbSignUpForm: {
-        name: this.$store.state.user.name,
-        email: this.$store.state.user.email,
+        name: "",
+        email: "",
         url: "",
         password: "",
         reCheckPwd: "",

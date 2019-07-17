@@ -1,11 +1,10 @@
 <template>
 <div id="profileButton">
-  <!-- <button v-model="$store.state.isAuthorized" @click="$emit('button-click')">{{ logInLogOut() }}</button> -->
-  <el-button type="warning" plain v-model="$store.state.isAuthorized" @click="openDialog">{{ logInLogOut() }}</el-button>
+  <ProfileDropDown v-if="$store.state.isAuthorized"></ProfileDropDown>
+  <el-button type="warning" plain v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
   <LoginForm :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
   <SignUpForm :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
   <FbSignUpForm :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
-  
 </div>
 </template>
 
@@ -13,12 +12,14 @@
 import LoginForm from '../components/template/LoginForm'
 import SignUpForm from '../components/template/SignUpForm'
 import FbSignUpForm from '../components/template/FbSignUpForm'
+import ProfileDropDown from '../components/template/ProfileDropDown'
 export default {
   name: 'ProfileButton',
   components: {
     LoginForm,
     SignUpForm,
-    FbSignUpForm
+    FbSignUpForm,
+    ProfileDropDown
   },
   props: {
     
@@ -30,11 +31,20 @@ export default {
   },
   methods: {
     openDialog: function(){
-      this.$store.dispatch("updateFormState", {
+      if (!this.$store.state.isAuthorized){
+        this.$store.dispatch("updateFormState", {
         isLogIn: true,
         isSignUp: false,
         isFbSignUp: false
-      });
+        });
+      }else {
+        this.$store.dispatch("updateAuthorized", false);
+        this.$store.dispatch('updateUserInfo', {});
+        this.$store.dispatch('updateUserToken', "");
+        FB.logout(function (response) {
+          console.log('res when logout', response);
+        });
+      }
     },
     closeDialog: function(){
       this.$store.dispatch("updateFormState", {
@@ -46,13 +56,6 @@ export default {
     changeFormState: function(formState){
       this.$store.dispatch("updateFormState", formState);
     },
-    logInLogOut: function() {
-      if (this.$store.state.isAuthorized){
-        return "登出";
-      }
-      // 之後換成下拉
-      return "登入";
-    }
   },
 }
 </script>

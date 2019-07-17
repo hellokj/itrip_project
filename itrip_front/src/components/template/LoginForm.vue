@@ -18,8 +18,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirm">確認</el-button>
         <el-button @click="toSignUp">註冊</el-button>
-        <el-button type="info" @click="fbLogIn">FB帳號註冊</el-button>
-        <!-- <div class="fb-login-button" data-width="40" data-size="small" data-button-type="continue_with" data-auto-logout-link="true" data-use-continue-as="true" data-onlogin="fbLogIn()"></div> -->
+        <el-button type="info" @click="fbLogIn">以FB帳號註冊</el-button>
       </span>
     </el-dialog>
   </div>
@@ -60,30 +59,6 @@ export default {
         ]
       }
     };
-  },
-  mounted() {
-    let self = this;
-    window.fbAsyncInit = function () {
-        FB.init({
-          appId: "2353529008088124",
-          xfbml: true,
-          status: true,
-          cookie: true,
-          autoLogAppEvents: true,
-          version: "v3.3"
-        });
-      };
-    //login
-    FB.AppEvents.logPageView();
-      //Get FB Login Status
-    if (!self.$store.state.isAuthorized){
-      //login
-      FB.AppEvents.logPageView();
-      //Get FB Login Status
-      FB.getLoginStatus(response => {
-        self.statusChangeCallback(response);
-      });
-    }
   },
   methods: {
     confirm: function(){
@@ -132,8 +107,8 @@ export default {
             name: response.name,
             email: response.email
           });
-          self.toFbSignUp();
         });
+        self.toFbSignUp();
       } else if (response.status === "not_authorized") {
         self.$store.dispatch('updateAuthorized', false);
       } else if (response.status === "unknown") {
