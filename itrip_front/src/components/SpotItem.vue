@@ -19,7 +19,6 @@
                 </b-row>
             </b-col>
         </b-row>
-
     </b-container>
 </template>
 
