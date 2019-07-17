@@ -25,6 +25,7 @@
         <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
       </virtual-list>
     </b-container>
+    <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
   </b-container>
 </template>
 
