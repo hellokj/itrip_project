@@ -78,7 +78,6 @@ export default {
                 Url = this.spot.wiki;
             }
 
-            alert(Url)
             this.$emit('show-link', Url);
         }
     },
