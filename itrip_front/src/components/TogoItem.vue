@@ -1,52 +1,22 @@
 <template>
-    <div class="togo-item px-0 py-0">
-        <b-container>
-            <b-row>
-                <b-col class="mr-2 mt-1 pl-0 py-0" cols="3">
-                    <img class="ml-0 my-0 px-0 py-0 spot-picture" :src="togo.images[0]" alt="Picture">
-                </b-col>
-                <b-col class="ml-0 my-0 px-0 py-0">
-                    <b-row class="ml-3 my-0 px-0 py-0" align-h="start">
-                        <b-col cols="11" class="ml-0 my-0 px-0 py-0">
-                            <p class="mx-0 my-0 px-0 py-0 p-name"><b>{{togo.name}}</b></p>
-                        </b-col>
-                        <b-col cols="1" class="ml-4 my-2 pt-0 mb-3 mr-0 pl-0 pr-0">
-                            <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
-                        </b-col>
-                    </b-row>
-                    <b-row class="ml-3 my-0 px-0 py-0" align-h="start">
-                        <p class="mx-0 my-0 px-0 py-0 address">{{getAddress()}}</p>
-                    </b-row>
-                    <b-row class="ml-0 mb-0 px-0 pt-3" align-h="start">
-                       <b-col><p class="mx-0 my-0 px-0 py-0 stopTime">停留時間</p></b-col>
-                    </b-row>
-                    <b-row v-if="editMode" class="ml-0 my-0 px-0 pt-0">
-                        <b-row class="ml-0 my-0 px-0 pt-0"> 
-                            <b-col cols="2" class="ml-3 my-0 px-0 py-0">
-                                <el-input-number class="hrInput" v-model="hrs" :step="1" size="mini"></el-input-number>
-                            </b-col>
-                            <b-col cols="2" class="ml-4 my-0 pl-2 py-0 mr-0 pr-0">
-                                <p>小時</p>
-                            </b-col>
-                            <b-col cols="2" class="ml-0 my-0 px-0 py-0">
-                                <el-input-number class="minInput" v-model="mins" :step="1" size="mini"></el-input-number>
-                            </b-col>
-                            <b-col cols="1" class="ml-3 my-0 pl-3 py-0">
-                                <p>分</p>
-                            </b-col>
-                        </b-row>
-                    </b-row>
-                    <b-row v-if="!editMode" class="ml-0 my-0 px-0 pt-0">
-                        <b-col cols="2" class="ml-4 my-0 pl-2 py-0 mr-0 pr-0">
-                            {{hrs}}小時
-                        </b-col>
-                        <b-col cols="2" class="ml-0 my-0 pr-0 py-0">
-                            {{mins}}分
-                        </b-col>
-                    </b-row>
-                </b-col>
-            </b-row>
-        </b-container>
+    <div class="togo-item">
+        <img class="spot-picture" :src="togo.images[0]" alt="Picture">
+        <div class="infoCol">
+            <div class="nameRow">
+                <p class="p-name"><b>{{togo.name}}</b></p>
+                <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
+            </div>
+            <div class="addressRow">
+                <p>{{ getAddress() }}</p>
+            </div>
+            <p class="stopTime">停留時間</p>
+            <div class="stopTimeRow">
+                <el-input-number class="hrInput" v-model="hrs" :step="1" size="mini"></el-input-number>
+                <p>小時</p>
+                <el-input-number class="minInput" v-model="mins" :step="1" size="mini"></el-input-number>
+                <p>分</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -84,47 +54,57 @@ export default {
 </script>
 
 <style scoped>
-  .fa-times {
-    color:darkgray;
-    border: none;
-    padding: 5px 9px;
-    border-radius: 50%;
-    cursor: pointer;
-    float: right;
-    padding-top: 10px;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    font-size: 20px;
-  }
-
-  .address {
-      font-size: 15px;
-  }
-
-  .stopTime {
-      font-size: 15px;
-  }
-
+    p {
+        margin: 0px;
+    }
     .togo-item {
+        display: flex;
+        flex-direction: row;
         margin-left: 4px;
         margin-top: 5px;
-        width: 400px;
+        width: 100%;
         height: 120px;
+        padding-top: 2px;
         background: #ffffff;
-        padding: 10px;
         border-bottom: 1p #ccc dotted;
         color: #000000;
     }
-
+    .infoCol {
+        display: flex;
+        flex-direction: column;
+        padding-left: 5px;
+        justify-content: space-evenly;
+        
+    }
+    .nameRow {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
     .spot-picture{
         width: 113px;
-        height: 113px;
+        height: 100%;
+    }
+    .fa-times {
+        color:darkgray;
+        border: none;
+        padding: 5px 9px;
+        border-radius: 50%;
+        cursor: pointer;
     }
 
+    .address {
+        font-size: 15px;
+    }
+
+    .stopTimeRow {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .stopTime {
+        font-size: 15px;
+    }
     .p-name {
         font-size: 20px;
         overflow:hidden;
@@ -149,4 +129,14 @@ export default {
     .minInput {
         width: 80px;
     }
+
+    @media only screen and (max-width: 780px) {
+    .togo-item {
+        
+    }
+    .spot-picture{
+        width: 113px;
+        height: 100%;
+    }
+  }
 </style>

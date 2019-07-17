@@ -1,10 +1,12 @@
 <template>
   <div id="app">
     <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
-    <MobileHeader v-if="mobileMode"/>
+    <MobileHeader 
+    class="mobileHeader"/>
     <div id="nav">
     </div>
-    <router-view :param="param" :region="region" :type="type"/>
+    <router-view :param="param" :region="region" :type="type"
+    @toggle="toggle"/>
   </div>
 </template>
 
@@ -55,7 +57,7 @@ export default {
     },
     handleResize() {
       this.windowWidth = window.innerWidth;
-    }
+    },
   },
   computed: {
     isAuthorized() {
@@ -132,6 +134,18 @@ export default {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.4;
   }
+
+  .mobileHeader {
+      display: none;
+    }
+
+  @media only screen and (max-width: 780px) {
+    .mobileHeader {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
 
   .modal {
     width: 40%;

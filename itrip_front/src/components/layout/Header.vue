@@ -173,9 +173,10 @@ export default {
         width: 600px;
         display: flex;
         flex-wrap:wrap;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
-        flex: 1 0 auto;
+        flex:0 0 auto;
     }
 
     .header a {
@@ -185,7 +186,7 @@ export default {
     }
     .input_name {
         width: 300px;
-        flex: 0 1 auto;
+        flex:0 1 auto;
         height: 36px;
         border-radius: 18px 1px 1px 18px;
         border: none;
@@ -203,7 +204,7 @@ export default {
     }
     .input_type {
         width: 130px;
-        flex: 0 1 auto;
+        flex: 0 0 auto;
         height: 40px;
         border-radius: 20px 0 0 20px;
         border: none;
@@ -216,7 +217,7 @@ export default {
 
     .input_region {
         width: 130px;
-        flex: 0 1 auto;
+        flex: 0 0 auto;
         height: 40px;
         border-radius: 0 20px 20px 0;
         border: none;
@@ -228,6 +229,7 @@ export default {
 
     .icon_search {
         position: relative;
+        width: 40px;
         margin-left: 5px;
         cursor: pointer;
     }
@@ -264,9 +266,6 @@ export default {
         font-family: logoFont;
     }
 
-    ::-ms-b-form-input-placeholder { /* Microsoft Edge */
-        color: red;
-    }
     
     .active {
         transform: translate(0px, -5px);
@@ -355,8 +354,8 @@ export default {
     }
     .logo img {
         margin: 0px;
-        width: 45px;
-        height: 40px;
+        width: 55px;
+        height: 55px;
     }
     .logo {
         margin-left: 10px;

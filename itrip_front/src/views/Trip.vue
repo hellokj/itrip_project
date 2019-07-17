@@ -1,18 +1,37 @@
 <template>
-  <div class="trip">
-    <Togos :togos="togos[page]" :travelInfo="travelInfos[page]" 
-    :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
-    v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
-    <Spots v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
-    @hoverSpotItem="hoverSpotItem"
-    @add-spot="addSpotToTrip"
-    @get-spot="callGetSpotApi"
-    @sort-spot="callGetSpotApi" /> 
-    <button class="btn-showSpots" @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button>
-    <!-- <button class="btn-showSpots" @click="AddFakeSpot()" > Add </button> -->
-    <Map class="ml-2" :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
-    :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
-  </div>
+  <b-container class="trip" fluid>
+    <b-row> 
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+        <Togos
+        id="togos"
+        class="togos" 
+        :togos="togos[page]" :travelInfo="travelInfos[page]" 
+        :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
+        v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
+      </b-col>
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+        <Spots
+        id="spots"
+        class="spots"
+        v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
+        @hoverSpotItem="hoverSpotItem"
+        @add-spot="addSpotToTrip"
+        @get-spot="callGetSpotApi"
+        @sort-spot="callGetSpotApi"/> 
+      </b-col>
+      <b-col xs="12" sm="12" md="12" lg="4" xl="4">
+        <Map 
+        id="map"
+        class="map"
+        bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+        :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
+      </b-col>
+    </b-row>
+    
+    <!-- <button 
+    class="btn-showSpots" 
+    @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button> -->
+  </b-container>
 </template>
 
 <script>
@@ -20,6 +39,7 @@
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
+import MobileHeader from '../components/layout/MobileHeader'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
 
@@ -29,6 +49,7 @@ export default {
       Togos,
       Spots,
       Map,
+      MobileHeader
   },
   props: {
     param: Object,
@@ -229,6 +250,19 @@ export default {
     hoverSpotItem: function(index, spot) {
       this.centerSpot = spot;
       this.$set(this.centerSpot, 'index', index);
+    },
+    toggle: function(toggle) {
+      let components = ['togos', 'spots', 'map'];
+      for(let i=0;i<components.length;i++) {
+        if(toggle == components[i]) {
+          document.getElementById(components[i]).style.display = 'block';
+        }
+        else {
+          document.getElementById(components[i]).style.display = 'none';
+        }
+      }
+      
+
     }
   },
   
@@ -236,12 +270,22 @@ export default {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
+  },
+  created () {
+    // [註冊監聽事件]
+    this.$bus.$on('toggle', event => {
+        this.toggle(event.id)
+    });
+ },
+  beforeDestroy: function() {
+    // [銷毀監聽事件]
+    this.$bus.$off('toggle');
   }
 }
 </script>
 
 <style scoped>
-  * {
+  /* * {
     box-sizing: border-box;
     padding: 0;
   }
@@ -279,14 +323,23 @@ export default {
     margin: 0 0 0 0;
     height: auto;
     display: flex;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
-  }
+  } */
 
-  @media only screen and (max-width: 780px) {
+  /* @media screen and (max-width: 780px) {
     .btn-showSpots {
       display: none;
     }
-  }
-
+    .togos {
+      display: none;
+    }
+    .spots {
+      display: none;
+    }
+    .map {
+      display: none;
+    }
+  } */
 </style>
