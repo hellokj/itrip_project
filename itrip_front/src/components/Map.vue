@@ -98,7 +98,7 @@ export default {
           icon: '',
           markerColor: 'darkblue',
           prefix: 'fa',
-          html: ((i+1) + ((this.spotPage-1) *  this.perPage))
+          text: ((i+1) + ((this.spotPage-1) *  this.perPage))
         })
       );
     }
@@ -208,12 +208,12 @@ export default {
 
 <style scope >
   .map-big{
-    width: 100%;
-    height: calc(100vh - 85px);
+    width: 100vw;
+    height: 100vh;
   }
   .map-small{
-    width: 100%;
-    height: calc(100vh - 85px);
+    width: 100vw;
+    height: 100vh;
   }
   .icon::before {
     display: inline-block;

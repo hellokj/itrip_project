@@ -1,15 +1,15 @@
 <template>
-  <b-container class="px-0 mx-0 spotContainer" fluid>
-    <b-row align-v="center" fluid>
+  <div class="spotContainer">
+    <div class="tag-container">
       <p class="mx-4 pt-3">搜尋結果 排序:</p>
       <b-dropdown size="sm" class="m-2" v-model="sortBy">
-        <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
-        <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
-        <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
-        <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
+          <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
+          <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
+          <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
+          <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
-    </b-row>
-    <b-container class="px-0" fluid>
+    </div>
+    <div class="result-container">
       <virtual-list :size="180" :remain="5">
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
         :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
@@ -25,9 +25,9 @@
                 style="display:flex;justify-content:center;"></v-pagination>
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">共搜尋到{{dataCount}}筆地點</p>
       </virtual-list>
-    </b-container>
     <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
-  </b-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -104,9 +104,17 @@ export default {
 
 <style scoped>
   .spotContainer {
+    display: flex;
+    flex-direction: column;
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;
     color: #515151;
+    width: 500px;
+    height: 90%;
+  }
+  .tag-container {
+    display: flex;
+    flex-direction: row;
   }
   /* .Result {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -121,15 +129,12 @@ export default {
 
   p, b-dropdown {
     display: inline-block;
-  }
-
-  .virtualList {
-    width: 100%;
-  }
+  }*/
 
   @media only screen and (max-width: 780px) {
     .spotContainer {
-      border: none;
+      width: 100%;
+      height: 85%;
     }
-  } */
+  } 
 </style>

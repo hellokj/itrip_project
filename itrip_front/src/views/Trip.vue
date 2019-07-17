@@ -1,15 +1,14 @@
 <template>
-  <b-container class="trip" fluid>
-    <b-row align-h="center"> 
-      <b-col cols="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+  <div class="trip">
+      <div id="Togos" class="Togos">
         <Togos
         id="togos"
         class="togos" 
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
-      </b-col>
-      <b-col cols="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+      </div>
+      <div id="Spots" class="Spots">
         <Spots
         id="spots"
         class="spots"
@@ -18,16 +17,15 @@
         @add-spot="addSpotToTrip"
         @get-spot="callGetSpotApi"
         @sort-spot="callGetSpotApi"/> 
-      </b-col>
-      <b-col cols="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+      </div>
+      <div id="Map" class="Map">
         <Map 
         id="map"
         class="map"
         bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
         :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
-      </b-col>
-    </b-row>
-  </b-container>
+      </div>
+  </div>
 </template>
 
 <script>
@@ -130,6 +128,9 @@ export default {
       // only need to get travelInfo if length > 2
       if(length > 1) {
         this.addTravelInfo(this.togos[this.page][length - 2], spot);
+      }
+      if(window.innerWidth <= 768) {
+          this.$bus.$emit('toggle', {id: 'Togos'});
       }
     },
     addTravelInfo(startOb, destOb) {
@@ -248,7 +249,7 @@ export default {
       this.$set(this.centerSpot, 'index', index);
     },
     toggle: function(toggle) {
-      let components = ['togos', 'spots', 'map'];
+      let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
           document.getElementById(components[i]).style.display = 'block';
@@ -257,8 +258,6 @@ export default {
           document.getElementById(components[i]).style.display = 'none';
         }
       }
-      
-
     }
   },
   
@@ -281,6 +280,24 @@ export default {
 </script>
 
 <style scoped>
+  .trip {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex: 0 0 100%;
+    height: 100%;
+  }
+  .Spots {
+      width: 100%;
+  }
+  .Togos {
+      width: 100%;
+  }
+  .Map {
+      width: 100%;
+  }
+
+  
   /* * {
     box-sizing: border-box;
     padding: 0;
@@ -310,11 +327,6 @@ export default {
     justify-content: center;
   }
 
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.4;
-  }
-
   .trip {
     margin: 0 0 0 0;
     height: auto;
@@ -328,14 +340,14 @@ export default {
     .btn-showSpots {
       display: none;
     }
-    .togos {
+    .Togos {
       display: none;
     }
-    .spots {
+    .Spots {
       display: none;
     }
-    .map {
+    .Map {
       display: none;
-    } 
+    }
   }
 </style>
