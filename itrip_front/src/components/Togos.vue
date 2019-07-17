@@ -1,36 +1,32 @@
 <template>
-  <div class="MyTrip">
-    <div class="tripData  mx-0 my-0 px-0 py-0">
-      <div class="tripName">
-        <p class="pTripName  mx-2 my-2 px-0 py-0">旅行名稱</p>
-        <!-- <input type="text" v-model="tripName" :placeholder="'我的旅行'"> -->
-        <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
-      </div>
-      <div class="tripDate">
-        <p class="pTripDate  mx-2 my-2 px-0 py-0" >開始日期</p>
-        <!-- <input type="date" v-model="tripDate"> -->
-        <el-date-picker
-          class="iDatePicker"
+  <b-container class="text-center MyTrip" fluid>
+      <b-row >
+        <b-col xs="3" sm="3" md="4" lg="4" xl="3"><p class="mb-0 pt-2 mr-3 TripName">旅行名稱</p></b-col>
+        <b-col xs="4" offset-xs="3" sm="4" md="4" lg="7" xl="7"><el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input></b-col>
+      </b-row>
+      <b-row>
+        <b-col xs="3" sm="3" md="4" lg="4" xl="3"><p class="pt-2 mb-0 mr-3 pTripDate">開始日期</p></b-col>
+        <b-col  xs="3" sm="3" md="3" lg="4" xl="3">
+          <el-date-picker
+          class="ml-0 iDatePicker"
           v-model="tripDate"
           type="date"
           placeholder="選擇日期"
-          style="width:200px;">
-        </el-date-picker>
-      </div>
-      
-    </div>
-    <b-container class="save-div" fluid>
-      <el-button><i class="fas fa-save" @click="saveTrip"> 儲存行程</i></el-button> 
-    </b-container> 
-    <div>
-      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage">
-        <b-container>
-          <b-row class="mx-0 my-0 px-0 py-0"> 
-            <b-col cols="5" class="ml-5 mb-2 pl-2 pt-1">
-              <p class="ml-0 my-0 px-0 py-0" style="text-align:right;width:200px;">出發時間:</p>
-            </b-col>
-            <b-col cols="1" class="ml-5 mb-2 pl-2 py-0">
-              <el-time-select
+          style="width:200px;"/>
+        </b-col>
+      </b-row>
+      <b-row align-h="end" class="mr-1">
+        <el-button><i class="fas fa-save" @click="saveTrip">  儲存</i></el-button>
+      </b-row>
+      <b-row>
+        <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;">
+          <template slot="tabs">
+              <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
+          </template>
+          <b-row align-h="end">
+            <p>出發時間:</p>
+            <el-time-select
+              class="ml-3 mr-4"
               v-model="startTime"
               :picker-options="{
                 start: '00:00',
@@ -40,49 +36,58 @@
               :align="'center'"
               :size="'small'"
               placeholder="請輸入時間"
-              style="width: 130px;">
-              </el-time-select>
-            </b-col>
+              style="width: 140px;"/>
           </b-row>
-        </b-container>
-        <b-tab v-for="i in tabs" :key="'tab' + i" :title="'Day' + (i+1)">
-          <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
-            <transition-group type="transition" name="flip-list">
-              <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
-                <!-- TogoItem -->
-                <b-row class="mx-0 my-0 px-0 py-0">
-                  <b-col cols="1" class="mx-2 my-0 px-0 py-0">
+          <b-tab v-for="i in tabs" :key="'tab' + i">
+            <template slot="title"> 
+                {{ 'Day' + (i+1) }}<i class="fas fa-times" @click="closeTab(i)"></i>
+            </template>
+            <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
+              <transition-group type="transition" name="flip-list">
+                <div class="container" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
+                  <div class="togoContainer sortable" >
+                  <div class="tripTime">
                     <div class="startTime">{{getStartTime(index)}}</div>
-                    <div class="mx-0 my-0 pt-4 py-0 order">
-                      <div class="circleNum"><b>{{index + 1}}</b></div>
-                    </div>
-                    <div class="mx-0 my-0 pt-5 py-0 endTime">{{getEndTime(index)}}</div>
-                  </b-col>
-                  <b-col cols="9" class="ml-0 my-0 px-0 py-0">
-                    <TogoItem class="mx-0 my-0" :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
-                  </b-col>
-                </b-row>
-                <!-- Travel time -->
-                <b-row class="ml-0 my-0 px-0 py-0">
-                  <b-col cols="1" class="ml-0 my-0 px-0 py-0">
-                    <div v-if="isTravelTimeShown(index)" class="ml-3 mb-0 px-1 pb-0 lineContainer">
-                      <hr class="mt-0 mb-0 ml-2 px-0 pb-0 vertical"/>
-                    </div>
-                  </b-col>
-                  <b-col class="ml-0 my-0 px-0 py-0">
-                    <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" class="ml-0 pt-1 px-0 py-0" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
-                  </b-col>
-                </b-row>
-              </div>
-            </transition-group>
-          </draggable>
-        </b-tab>
-        <template slot="tabs">
-          <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
-        </template>
-      </b-tabs>
+                    <div class="circleNum"><b>{{index + 1}}</b></div>
+                    <div class="endTime">{{getEndTime(index)}}</div>
+                  </div>
+                  <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
+                </div>
+                <div class="travelTimeDiv">
+                  <hr v-if="isTravelTimeShown(index)" class="vertical"/>
+                  <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" v-if="isTravelTimeShown(index)" :travelTime="travelInfos[index].duration"/>
+                </div>
+                </div>
+              </transition-group>
+            </draggable>
+          </b-tab>
+          
+          
+
+        </b-tabs>
+      </b-row>
+
+
+      
+      <!--</div>
+      <div >
+        
+        </el-date-picker>
+      </div>
+      
     </div>
-  </div>
+    <b-container class="save-div" fluid>
+      
+    </b-container> 
+    <div style="width: 100%;">
+      
+        <div class="startTimePicker" style="width: 100%;">
+          
+        </div> 
+        
+      
+    </div>-->
+  </b-container>
 </template>
 
 <script>
@@ -111,7 +116,8 @@ export default {
         startTimeOb: {
           hr: 8,
           min: 0
-        }
+        },
+        isScrollbarShown: false,
       }
     },
     components: {
@@ -193,7 +199,15 @@ export default {
         }
         hr += this.togos[index].stopTime.hrs;
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
-      }
+      },
+       closeTab: function(x) {
+        for (let i = 0; i < this.tabs.length; i++) {
+          if (x > 0 && this.tabs[i] === x) {
+            this.tabs.splice(i, 1)
+            this.tabCounter--;
+          }
+        }
+      },
     },
     watch: {
       travelInfo: {
@@ -213,126 +227,148 @@ export default {
         let tmp = this.startTime.split(':')
         this.startTimeOb.hr = parseInt(tmp[0])
         this.startTimeOb.min = parseInt(tmp[1])
-      }
+      },
+     
     },
 }
 </script>
 
 <style lang="scss" scoped>
-  .save-div {
-    text-align: right;
-  }
-
-  .el-time-picker {
-    margin-bottom: 5px;
-  }
-  .order {
-    margin: 10px;
-  }
-  .order div{
-    font-size: 20px;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%)
-  }
-
-  .circleNum {
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    padding: 2px;
-    background: #fff;
-    border: 2px solid #666;
-    color: #666;
-    text-align: center;
-  }
-
   .MyTrip {
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
     border: none;
     /* background: #F1F0F0; */
     background: #F1F0F0;
     color: #515151;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
   }
 
-  .tripData {
-    background: #F1F0F0;
-  }
+  // .container {
+  //   display: flex;
+  //   flex-direction: column;
+  // }
+  // .save-div {
+  //   text-align: right;
+  // }
 
-  .tripName, .tripDate {
-    margin-left: 11px;
-    margin-top: 4px;
-    display: flex;
-    flex-direction: row;
-    font-size: 16px;
-  }
-  .iTripName {
-     width:200px;
-     text-align: center;
-  }
+  // .el-time-picker {
+  //   margin-bottom: 5px;
+  // }
 
-  b-tabs {
-    color: #707070;
-    font-size: 20px;
-    border: none;
-    background: #333555;
-  }
+  // .travelTimeDiv {
+  //   width: 100%;
+  //   display: flex;
+  //   flex-direction: row;
+  //   justify-content: flex-start;
+  // }
 
-  .fa-save {
-    border:darkgray;
-    color:darkred;
-    cursor: pointer;
-    font-size: 15px;
-  }
+  // .circleNum {
+  //   border-radius: 50%;
+  //   width: 36px;
+  //   height: 36px;
+  //   padding: 2px;
+  //   background: #fff;
+  //   border: 2px solid #666;
+  //   color: #666;
+  //   text-align: center;
+  // }
 
-  .MyTrip .sortable-drag {
-    opacity: 0;
-  }
+  // .tripData {
+  //   background: #F1F0F0;
+  // }
 
+  // .tripName, .tripDate {
+  //   margin-left: 11px;
+  //   margin-top: 4px;
+  //   display: flex;
+  //   flex-direction: row;
+  //   font-size: 16px;
+  // }
+  // .iTripName {
+  //    width:200px;
+  //    text-align: center;
+  // }
 
-  .flip-list-move {
-    transition: transform 0.5s;
-  }
+  // b-tabs {
+  //   color: #707070;
+  //   font-size: 20px;
+  //   border: none;
+  //   background: #333555;
+  // }
+
+  // .fa-save {
+  //   border:darkgray;
+  //   color:darkred;
+  //   cursor: pointer;
+  //   font-size: 15px;
+  // }
+  // .sortable {
+  //   width: 100%;
+  //   display: flex;
+  //   flex-direction: row;
+  // }
+  // .MyTrip .sortable-drag {
+  //   opacity: 0;
+
+  // }
+
+  // .flip-list-move {
+  //   transition: transform 0.5s;
+  // }
   
-  .ghost {
-    border-left: 6px solid rgb(0, 183, 255);
-    box-shadow: 10px 10px 5px -1px rgba(0,0,0,0.14);
-    opacity: .7;
+  // .ghost {
+  //   border-left: 6px solid rgb(0, 183, 255);
+  //   box-shadow: 10px 10px 5px -1px rgba(0,0,0,0.14);
+  //   opacity: .7;
 
-    &::before {
-      content: " ";
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      margin-left: -50px;
-      // background-image: url('../assets/drag.svg')
-    }
-  }
+  //   &::before {
+  //     content: " ";
+  //     position: absolute;
+  //     width: 20px;
+  //     height: 20px;
+  //     margin-left: -50px;
+  //     // background-image: url('../assets/drag.svg')
+  //   }
+  // }
 
-  .lineContainer {
-    width: 2px;
-    height: 40px;
-  }
+  // .lineContainer {
+  //   width: 2px;
+  //   height: 40px;
+  // }
 
-  hr.vertical {
-    width: 2px;
-    height: 50px; /* or height in PX */
-    background:dimgray;
-    border: none;
-  }
+  // hr.vertical {
+  //   width: 2px;
+  //   height: 50px; /* or height in PX */
+  //   background:dimgray;
+  //   border: none;
+  //   margin: 0px;
+  //   margin-left: 20px;
+  //   margin-right: 30px;
+  // }
+
+  // .fa-times {
+  //   padding-left: 20px;
+  //   color: #DCDCDC;
+  // }
+
+  // .fa-times:hover { 
+  //   color:#696969;
+  // }
+
+  // .startTimePicker {
+  //   display: flex;
+  //   flex-direction: row;
+  //   width: 100%;
+  // }
+
+  // .tripTime {
+  //   display: flex;
+  //   flex-direction: column;
+  //   width: 10%;
+  //   justify-content: space-evenly;
+  // }
 
   // @media only screen and (max-width: 780px) {
-  //   .MyTrip {
-  //     display: none;
+  //   .container {
+  //     padding: 0px;
   //   }
   // }
 </style>

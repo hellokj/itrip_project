@@ -18,8 +18,8 @@ import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
 import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import store from './store'
-
 import eventBus from '../utils/eventBus.js'
+
 
 Vue.use(ElementUI);
 // configure language

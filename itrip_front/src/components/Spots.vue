@@ -1,39 +1,31 @@
 <template>
-  <div class="spotContainer">
-    <div class="Result">
-      <p>搜尋結果 排序:</p>
+  <b-container class="px-0 mx-0 spotContainer">
+    <b-row align-v="center">
+      <p class="mx-4 pt-3">搜尋結果 排序:</p>
       <b-dropdown size="sm" class="m-2" v-model="sortBy">
         <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
         <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
         <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
         <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
-    </div>
-
-    <virtual-list :size="150" :remain="10">
-      <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-      :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
-      @add-spot="$emit('add-spot', spot)" 
-      @mouseOver="$emit('hoverSpotItem', index, spot)"
-      @show-link="Show"/>
-      <b-row class="ml-0 my-0 px-0 py-0">
-        <b-col cols="2" class="ml-0 my-0 pl-0 py-0">
-          <div class="space"></div>
-        </b-col>
-        <b-col class="mx-0 my-0 px-0 py-0">
-          <v-pagination 
-                  v-if="isScrollbarShown"
-                  v-model="currentPage"
-                  :page-count="totalPages"
-                  :classes="bootstrapPaginationClasses"
-                  :labels="paginationAnchorTexts"></v-pagination>
-          <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
-        </b-col>
-      </b-row>
-      
-    </virtual-list>
-    <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
-  </div>
+    </b-row>
+    <b-container class="px-0" fluid>
+      <virtual-list :size="150" :remain="5">
+        <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
+        :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
+        @add-spot="$emit('add-spot', spot)" 
+        @mouseOver="$emit('hoverSpotItem', index, spot)"
+        @show-link="Show"/>
+        <v-pagination 
+                v-if="isScrollbarShown"
+                v-model="currentPage"
+                :page-count="totalPages"
+                :classes="bootstrapPaginationClasses"
+                :labels="paginationAnchorTexts"></v-pagination>
+        <p v-if="isScrollbarShown" class="spotResults">共搜尋到{{dataCount}}筆地點</p>
+      </virtual-list>
+    </b-container>
+  </b-container>
 </template>
 
 <script>
@@ -45,8 +37,8 @@ export default {
     name: "Spots",
     components: {
       SpotItem,
-      'virtual-list': virtualList,
-      vPagination
+      vPagination,
+      'virtual-list': virtualList
     },
     data() {
       return {
@@ -110,21 +102,12 @@ export default {
 
 <style scoped>
   .spotContainer {
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
-    height: calc(100vh - 80px);
     border-left: 2px solid rgb(199, 199, 199);
     background: #F1F0F0;
     color: #515151;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
   }
-  .Result {
+  /* .Result {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    size: 16px; /*This line does not work in chrome*/
     color: #515151;
     margin-left: 11px;
     margin-top: 4px;
@@ -138,9 +121,13 @@ export default {
     display: inline-block;
   }
 
+  .virtualList {
+    width: 100%;
+  }
+
   @media only screen and (max-width: 780px) {
     .spotContainer {
       border: none;
     }
-  }
+  } */
 </style>
