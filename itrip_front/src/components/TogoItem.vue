@@ -1,13 +1,13 @@
 <template>
     <div class="px-2 py-2 togo-item">
-        <img class="spot-picture" :src="togo.images[0]" alt="Picture" style="width:140px;height:117px;">
+        <img class="spot-picture" :src="togo.images[0]" alt="Picture">
         <div class="info-col">
             <div class="name-container">
-                <p class="mb-0 ml-2 p-name" style="font-size:20px;text-align:left;"><b>{{togo.name}}</b></p>
+                <p class="mb-0 ml-2 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
                 <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
             </div>
-            <p class="mx-0 my-1 ml-2" style="font-size:15px;text-align:left;">{{getAddress()}}</p>
-            <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;font-size:15px;">停留時間</p>
+            <p class="mx-0 my-1 ml-2 address" style="text-align:left;">{{getAddress()}}</p>
+            <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
             <div class="iNumber-container">
                 <v-number-smarty
                 v-model="hrs"
@@ -29,35 +29,10 @@
                 style="width:50px;"
                 />
                 <p class="pt-1" style="font-size:15px;width:50px;">分</p>
+                <i class="fas fa-ellipsis-h"></i>
             </div>
         </div>
     </div>
-    <!-- <b-container class="togo-item">
-        <b-row fluid>
-            <b-col class="px-0" cols="2" sm="3" md="3" lg="3" xl="4">
-                
-            </b-col>
-            <b-col md="8" lg="8" xl="7" offset-cols="2" class="px-0">
-                <b-row align-h="between">
-                    
-                </b-row>
-               
-                
-                <b-row class="px-0 mx-0" fluid>
-                    <b-col cols="6">
-                        <b-row>
-                            
-                        </b-row>
-                    </b-col>
-                    <b-col cols="6">
-                        <b-row>
-                            
-                        </b-row> 
-                    </b-col>
-                </b-row>
-            </b-col>
-        </b-row>
-    </b-container> -->
 </template>
 
 <script>
@@ -90,10 +65,10 @@ export default {
     },
     watch: {
         hrs: function() {
-            this.togo.stopTime.hrs = this.hrs;
+            this.togo.stopTime.hrs = parseInt(this.hrs);
         },
         mins: function() {
-            this.togo.stopTime.mins = this.mins;
+            this.togo.stopTime.mins =  parseInt(this.mins);
         }
     }
 }
@@ -101,34 +76,37 @@ export default {
 
 <style scoped>
     .togo-item {
-        width: 420px;
+        width: 85%;
         margin-left: 4px;
         padding-top: 2px;
+        margin-right: 5px;
         background: #ffffff;
         color: #000000;
         display: flex;
         flex-direction: row;
     }
     .info-col {
-        width: 100%;
+        width: 68%;
         display: flex;
         flex-direction: column;
-        padding-left: 5px;
         justify-content: space-evenly;
+        padding-left: 5px;
     }
     .name-container {
         width: 100%;
         display: flex;
         flex-direction: row;
-        justify-content: space-between
+        justify-content: space-between;
     }
     .iNumber-container {
         display: flex;
         flex-direction: row;
+        width: 270px;
+        padding-top: 5px;
 
     }
     p {
-        width:200px;
+        width:85%;
         overflow:hidden;
         white-space:nowrap;
         text-overflow:ellipsis;
@@ -147,64 +125,48 @@ export default {
     .fa-times:hover {
         color:dimgray;
     }
-
-    /* 
-    .nameRow {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    .spot-picture{
-        width: 113px;
-        height: 100%;
-    }
-    
-
-    .address {
-        font-size: 15px;
-    }
-
-    .stopTimeRow {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .stopTime {
-        font-size: 15px;
+    .spot-picture {
+        width: 140px;
+        height: 117px;
     }
     .p-name {
         font-size: 20px;
-        overflow:hidden;
-        white-space:nowrap;
-        -ms-text-overflow:ellipsis;
-        text-overflow:ellipsis;
-        width:220px;
-        height:1.4em;
     }
-    .p-name:hover {
-        overflow:visible;
+    .address {
+        font-size: 15px;
     }
-
-    .btn-add {
-        width: 20px;
+    .stopTime {
+        font-size: 15px;
     }
-
-    .hrInput {
-        width: 80px;
+    .fa-ellipsis-h {
+        padding-right: 10px;
+        margin-top: 20px;
+        font-size: 15px;
+        cursor: pointer;
     }
-
-    .minInput {
-        width: 80px;
-    } */
-
-    
     @media only screen and (max-width: 780px) {
-    .togo-item {
-        width: 100%;
-    }
     .spot-picture{
         width: 100px;
-        height: 100%;
+        height: 90px;
+    }
+    p {
+        width: 75%;
+    }
+    .p-name {
+        font-size: 15px;
+    }
+    .fa-times {
+        padding: 0px;
+        padding-right: 5px;
+    }
+    .iNumber-container {
+        width: 150px;
+    }
+    .address {
+        font-size:10px;
+    }
+    .stopTime {
+        font-size: 10px;
     }
   }
 </style>

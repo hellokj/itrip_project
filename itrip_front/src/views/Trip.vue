@@ -1,24 +1,24 @@
 <template>
   <div class="trip">
-      <div id="Togos" class="Togos">
+      <div id="Togos" class="Togos" :class="{'display': isDisplayArr[0]}" v-show=" isDisplayArr[0]">
         <Togos
         id="togos"
-        class="togos" 
+        class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </div>
-      <div id="Spots" class="Spots">
+      <div id="Spots" class="Spots" :class="{'display': isDisplayArr[1]}" v-show=" isDisplayArr[1]">
         <Spots
         id="spots"
         class="spots"
-        v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
+        :paginator="paginator" :spots="spots" :perPage="perPage" 
         @hoverSpotItem="hoverSpotItem"
         @add-spot="addSpotToTrip"
         @get-spot="callGetSpotApi"
         @sort-spot="callGetSpotApi"/> 
       </div>
-      <div id="Map" class="Map">
+      <div id="Map" class="Map"  :class="{'displayMap': isDisplayArr[2]}" v-show=" isDisplayArr[2]">
         <Map 
         id="map"
         class="map"
@@ -71,7 +71,8 @@ export default {
       // { start: , dest: ,duration: , time: , mode:}
       travelInfos: [],
       paginator: {},
-      centerSpot: {}
+      centerSpot: {},
+      isDisplayArr: [true, true, true],
     }
   },
   methods: {
@@ -97,7 +98,6 @@ export default {
     },
     fixTravelInfo(index) {
       if(index == 0) {
-        console.log(this.travelInfos)
         this.travelInfos[this.page].shift();
       }
       else if(index == this.togos[this.page].length - 1) {
@@ -110,8 +110,8 @@ export default {
         this.callGetRoutesApi(index - 1, start, dest, this.travelInfos[this.page][index - 1].mode);
         this.travelInfos[this.page].splice(index, 1);
         // reset routes
-        this.resetRoutes();
       }
+      this.resetRoutes();
     },
     addSpotToTrip(spot) {
       if (this.togos[this.page] === undefined){
@@ -240,9 +240,16 @@ export default {
             color: "#FF0000"
           });
         }
+        else {
+          this.routes = [];
+        }
       }
     },
     hoverSpotItem: function(index, spot) {
+      if(index === undefined && this.togos[this.page].length > 0) {
+        this.centerSpot = this.togos[this.page][0]
+        return;
+      }
       this.centerSpot = spot;
       this.$set(this.centerSpot, 'index', index);
     },
@@ -250,29 +257,46 @@ export default {
       let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
-          document.getElementById(components[i]).style.display = 'block';
+          this.$set(this.isDisplayArr, i, true);
         }
         else {
-          document.getElementById(components[i]).style.display = 'none';
+          this.$set(this.isDisplayArr, i, false);
         }
       }
-    }
+      console.log(this.isDisplayArr)
+    },
+    getWindowWidth(event) {
+        this.windowWidth = window.innerWidth;
+      },
   },
-  
   watch: {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
-  },
+    windowWidth: function(newVal) {
+      if(this.windowWidth <= 780) {
+        for(let i=0;i<this.isDisplayArr.length;i++) {
+        }
+      }
+    }
+ },
   created () {
     // [註冊監聽事件]
     this.$bus.$on('toggle', event => {
         this.toggle(event.id)
     });
  },
+ mounted() {
+   this.$nextTick(function() {
+      window.addEventListener('resize', this.getWindowWidth);
+      //Init
+      this.getWindowWidth();
+    })
+ },
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
+    window.removeEventListener('resize', this.getWindowWidth);
   }
 }
 </script>
@@ -286,66 +310,21 @@ export default {
     height: 100%;
   }
   .Spots {
-      width: 100%;
+      width: 500px;
+      display: flex;
   }
   .Togos {
-      width: 100%;
+      width: 500px;
+      display: flex;
   }
   .Map {
       width: 100%;
+      display: flex;
   }
-
-  
-  /* * {
-    box-sizing: border-box;
-    padding: 0;
-  }
-  .btn {
-    display: inline-block;
-    border: none;
-    background: #555;
-    color:#fff;
-    padding: 7px 20px;
-    cursor: pointer;
-  }
-
-  .btn-showSpots {
-    border-style: none;
-    width: 30px;
-    height: 40px;
-    margin-right: 0px;
-    margin-left: -30px;
-    z-index: 100;
-    font-size: 30px;
-    margin-top: 10px;
+  .displayMap {
     display: block;
-    background:rgb(96, 94, 109);
-    color: #FFFFFF;
-    outline: none;
-    justify-content: center;
   }
-
-  .trip {
-    margin: 0 0 0 0;
-    height: auto;
+  .display {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-  } */
-
-  @media screen and (max-width: 780px) {
-    .btn-showSpots {
-      display: none;
-    }
-    .Togos {
-      display: none;
-    }
-    .Spots {
-      display: none;
-    }
-    .Map {
-      display: none;
-    }
   }
 </style>

@@ -42,8 +42,8 @@
             <template slot="title">
                 {{ 'Day' + (i+1) }}<i class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-            <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <virtual-list :size="150" :remain="4">
+            <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
                     <div class="big-container">
@@ -54,12 +54,12 @@
                       </div>
                       <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
                     </div>
-                    <TravelTimeItem v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
-                      v-if="isTravelTimeShown(index)"/>
+                    <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
+                      />
                   </div>
                 </transition-group>
-              </virtual-list>
             </draggable> 
+              </virtual-list>
           </b-tab>    
       </b-tabs>
     </div>
@@ -134,6 +134,9 @@ export default {
         this.$emit('resetRoutes');
       },
       isTravelTimeShown(index) {
+        if(this.travelInfos == undefined || this.travelInfos.length == 0 || index >= this.travelInfos.length) {
+          return false;
+        }
         if(index < (this.togos.length-1) && this.travelInfos[index] != undefined) {
           return true;
         }
@@ -159,6 +162,7 @@ export default {
         let min = this.startTimeOb.min;
 
         for(let i=0;i<index;i++) {
+          if(this.travelInfos[i] === undefined) continue;
           min += this.togos[i].stopTime.mins;
           if(i <= index - 1) {
             min += Math.floor(this.travelInfos[i].duration / 60);
@@ -204,7 +208,6 @@ export default {
       },
       togos: function() {
         this.togos_prop = this.togos;
-        console.log(this.togos)
       },
       startTime: function() {
         let tmp = this.startTime.split(':')
@@ -312,23 +315,20 @@ export default {
   .flip-list-move {
     transition: transform 0.5s;
   }
-  // .lineContainer {
-  //   width: 2px;
-  //   height: 40px;
-  // }
+  .big-container {
+    display: flex;
+    flex-direction: row;
+  }
 
-  // hr.vertical {
-  //   width: 2px;
-  //   height: 50px; /* or height in PX */
-  //   background:dimgray;
-  //   border: none;
-  //   margin: 0px;
-  //   margin-left: 20px;
-  //   margin-right: 30px;
-  // }
   @media only screen and (max-width: 780px) {
     .MyTrip {
       width: 100%;
+    }
+    .big-container {
+      flex-direction: column;
+    }
+    .trip-time-container {
+      flex-direction: row;
     }
   }
 </style>

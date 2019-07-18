@@ -112,6 +112,7 @@ export default {
         searchClicked() {
             this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
             this.$emit('search-click', this.params);
+
             if(window.innerWidth <= 768) {
                 this.$bus.$emit('toggle', {id: 'Spots'});
             }
@@ -173,7 +174,7 @@ export default {
 
     }
     .searchbar {
-        width: 600px;
+        width: 650px;
         display: flex;
         flex-wrap:wrap;
         flex-direction: row;
@@ -219,7 +220,7 @@ export default {
     }
 
     .input_region {
-        width: 130px;
+        width: 150px;
         flex: 0 0 auto;
         height: 40px;
         border-radius: 0 20px 20px 0;
