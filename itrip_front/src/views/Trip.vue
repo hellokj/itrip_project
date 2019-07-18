@@ -1,31 +1,42 @@
 <template>
-  <div class="trip">
-      <div id="Togos" class="Togos" :class="{'display': isDisplayArr[0]}" v-show=" isDisplayArr[0]">
+  <b-container class="trip" fluid>
+    <b-row class="trip-row">
+      <b-col class="px-0 togos-col" cols="12" md="3" order="2" order-md="1">
         <Togos
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
+      </b-col>
+      <b-col class="px-0 spots-col" cols="12" md="3" order="1" order-md="2">
+        <Spots
+          id="spots"
+          class="spots"
+          :paginator="paginator" :spots="spots" :perPage="perPage" 
+          @hoverSpotItem="hoverSpotItem"
+          @add-spot="addSpotToTrip"
+          @get-spot="callGetSpotApi"
+          @sort-spot="callGetSpotApi"/> 
+      </b-col>
+      <b-col class="px-0 map-col" cols="12" md="6" order="3">
+        <Map 
+          id="map"
+          class="map"
+          bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+          :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
+      </b-col>
+    </b-row>
+      <!-- <div id="Togos" class="Togos" :class="{'display': isDisplayArr[0]}" v-show=" isDisplayArr[0]">
+        
       </div>
       <div id="Spots" class="Spots" :class="{'display': isDisplayArr[1]}" v-show=" isDisplayArr[1]">
-        <Spots
-        id="spots"
-        class="spots"
-        :paginator="paginator" :spots="spots" :perPage="perPage" 
-        @hoverSpotItem="hoverSpotItem"
-        @add-spot="addSpotToTrip"
-        @get-spot="callGetSpotApi"
-        @sort-spot="callGetSpotApi"/> 
+        
       </div>
       <div id="Map" class="Map"  :class="{'displayMap': isDisplayArr[2]}" v-show=" isDisplayArr[2]">
-        <Map 
-        id="map"
-        class="map"
-        bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
-        :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
-      </div>
-  </div>
+        
+      </div> -->
+  </b-container>
 </template>
 
 <script>
@@ -96,6 +107,7 @@ export default {
         this.fixTravelInfo(index);
       }
       this.togos[this.page].splice(index, 1);
+      console.log(document.getElementsByClassName("togos-col").style);
     },
     fixTravelInfo(index) {
       if(index == 0) {
@@ -259,28 +271,19 @@ export default {
       let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
-          this.$set(this.isDisplayArr, i, true);
+          if(toggle)
+          document.getElementById(toggle).style.setProperty('display', 'flex', 'important');
         }
         else {
-          this.$set(this.isDisplayArr, i, false);
+          document.getElementById(toggle).style.setProperty('display', 'none', 'important');
         }
       }
-      console.log(this.isDisplayArr)
     },
-    getWindowWidth(event) {
-        this.windowWidth = window.innerWidth;
-      },
   },
   watch: {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
-    windowWidth: function(newVal) {
-      if(this.windowWidth <= 780) {
-        for(let i=0;i<this.isDisplayArr.length;i++) {
-        }
-      }
-    }
  },
   created () {
     // [註冊監聽事件]
@@ -288,45 +291,43 @@ export default {
         this.toggle(event.id)
     });
  },
- mounted() {
-   this.$nextTick(function() {
-      window.addEventListener('resize', this.getWindowWidth);
-      //Init
-      this.getWindowWidth();
-    })
- },
+
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
-    window.removeEventListener('resize', this.getWindowWidth);
+    
   }
 }
 </script>
 
 <style scoped>
   .trip {
-    width: 100%;
+    height: 100%;
+    padding-left: 150px;
+    padding-right: 150px;
+    background: #f2f2f2;
+  }
+  @media screen and (max-width: 768px) {
+  .trip {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .trip-row {
     display: flex;
     flex-direction: row;
-    flex: 0 0 100%;
-    height: 100%;
+    flex-wrap: nowrap;
   }
   .Spots {
-      width: 500px;
-      display: flex;
-  }
-  .Togos {
-      width: 500px;
-      display: flex;
-  }
-  .Map {
       width: 100%;
       display: flex;
   }
-  .displayMap {
-    display: block;
+  .Togos {
+      width: 100%;
+      display: none;
   }
-  .display {
-    display: flex;
+  .Map {
+      width: 100%;
+      display: none;
   }
+}
 </style>

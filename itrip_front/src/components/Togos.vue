@@ -47,7 +47,7 @@
                 <transition-group type="transition" name="flip-list">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
                     <div class="big-container">
-                      <div class="mt-1 mx-2 trip-time-container">
+                      <div class="trip-time-container">
                         <p class="my-0 startTime">{{getStartTime(index)}}</p>
                         <div class="circleNum"><b>{{index + 1}}</b></div>
                         <p class="my-0 endTime">{{getEndTime(index)}}</p>
@@ -220,20 +220,20 @@ export default {
     flex-direction: column;
     flex: 0 0 auto;
     border: none;
-    background: #F1F0F0;
-    color: #515151;
+    background: #f2f2f2;
+    color:black;
     height:100%;
-    width: 500px;
+    width: 100%;
+    border-left: 2px solid rgb(230, 230, 230);
   }
   .MyTrip .sortable-drag {
     opacity: 0;
-
   }
   .save-trip {
     text-align: right;
   }
   .info-container {
-    border-bottom: 2px solid rgb(199, 199, 199);
+    border-bottom: 2px solid rgb(243, 243, 243);
   }
   .sortable {
     display: flex;
@@ -253,7 +253,8 @@ export default {
   .trip-time-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-evenly;
+    margin-left: 8px;
   }
   .trip-time {
     display: flex;
@@ -273,9 +274,9 @@ export default {
   }
   .circleNum {
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    padding: 2px;
+    width: 30px;
+    height: 30px;
+    padding: 1px;
     background: #fff;
     border: 2px solid #666;
     color: #666;
@@ -295,8 +296,14 @@ export default {
       // background-image: url('../assets/drag.svg')
     }
   }
+  .startTime {
+    font-size: 12px;
+  }
+  .endTime {
+    font-size: 12px;
+  }
   b-tabs {
-    color: #707070;
+    color: #f2f2f2;
     font-size: 20px;
     border: none;
     background: #333555;

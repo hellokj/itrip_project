@@ -1,20 +1,22 @@
 <template>
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
-        <img ref="image" class="px-2 py-2 mt-1 spot-picture" :src="srcFunc" @error="error">
-        <div class="info-col">
-            <div class="name-container">
-                <p class="my-2 p-name">{{spotIndex}}. <b>{{spot.name}}</b></p>
-                <i class="pr-1 mt-1 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+        <el-card class="el-card" :body-style="{ width: '100%', padding: '0px'}" shadow="hover">
+            <div class="card-container">
+                <img ref="image" class="px-2 py-2 mt-3 spot-picture" :src="srcFunc" @error="error">
+                <div class="info-col">
+                    <div class="name-container">
+                        <p class="my-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
+                        <i class="pr-1 mt-1 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+                    </div>
+                    <p class="address">{{ getAddress() }}</p>
+                    <div class="icons">
+                        <i @click="link('pixnet')" class="fas fa-blog"></i>
+                        <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
+                        <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
+                    </div>
+                </div> 
             </div>
-            <p class="address">{{ getAddress() }}</p>
-            <div class="icons">
-                <i @click="link('pixnet')" class="fas fa-blog"></i>
-                <i @click="link('fb')" class="fab fa-facebook-square"></i>
-                <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
-                <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
-            </div>
-        </div>
-        
+        </el-card>
     </div>
 </template>
 
@@ -28,7 +30,7 @@ export default {
     },
     data() {
         return {
-            notFound: require('../assets/picNotFound.jpg')
+            notFound: require('../assets/picNotFound.jpg'),
         }
     },
     props: {
@@ -72,7 +74,6 @@ export default {
             if (type === 'wiki' && this.spot.wiki !== undefined){
                 Url = this.spot.wiki;
             }
-
             this.$emit('show-link', Url);
         }
     },
@@ -90,46 +91,53 @@ export default {
             }
             return src  
         },
+        hasWiki: function() {
+
+        }
     }
 }
 </script>
 
 <style scoped>
     .spot-item-container {
+        width:100%;
         display: flex;
         flex-direction: row;
-        background: #ffffff;
-        border-bottom: 2px dotted rgb(199, 199, 199);
         color: #000000;
-        height: 150px;
+        height: 145px;
+        margin-bottom: 10px;
     }
-    .info-col {
-        width: 310px;
-        display:flex;
-        flex-direction: column;
+    .card-container {
+        display: flex;
+        flex-direction: row;
+        width: 100%; 
+    }
+    .el-card {
+        display: flex;
+        width: 100%;
+    }
+    .spot-picture{
+        width: 120px;
+        height: 120px;
+    }
+    .p-name {
+        font-size:16px;
     }
     .name-container {
         width: 100%;
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         flex-direction: row;
         justify-content: space-between;
     }
-    .fa-blog {
+    .info-col {
+        width: 65%;
+        display:flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+     .fa-plus-square {
         font-size: 25px;
-        color:darkorange;
-        cursor: pointer;
-    }
-    .icons {
-        width: 250px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        padding-top: 3px;
-        margin-top: 10px;
-    }
-    .fa-plus-square {
-        font-size: 30px;
         color:darkgray;
         cursor: pointer;
     }
@@ -146,13 +154,27 @@ export default {
         height:30px;
         cursor: pointer;
     }
+    .fa-blog {
+        font-size: 25px;
+        color:darkorange;
+        cursor: pointer;
+    }
+    .icons {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding-top: 3px;
+        margin-top: 10px;
+    }
+   
     .wiki {
         width:30px;
         height:30px;
         cursor: pointer;
     }
     p {
-        width: 90%;
+        width: 100%;
         white-space:nowrap;
         overflow: hidden;
         text-overflow:ellipsis;
@@ -161,58 +183,42 @@ export default {
     p:hover {
         overflow:visible;
     }
-    .spot-picture{
-        width: 170px;
-        height: 137px;
-    }
-    .p-name {
-        font-size:20px;
-    }
+    
     .address {
-        font-size:15px;
+        font-size:12px;
     }
-    /*
-    @media only screen and (max-width: 780px) {
-    .spot-picture {
-        width: 30%;
-        height: 100%;
-        min-width: 100px;
-    }
-    .container {
-        align-self: center;
-        height: 100px;
-    }
-    .spot-item {
-        height: 100px;
-
-    }
-
-    .instagram {
-        width:20px;
-        height:20px;
-    }
-    .wiki {
-        width:20px;
-        height:20px;
-    }
-  } */
+    
   @media only screen and (max-width: 768px){
+    .card-container {
+        width: 100%;
+        height: 100%;
+    }
     .spot-item-container {
         height: 100px;
+    }
+    .info-col {
+        width: 100%;
+    }
+    .name-container {
+        width: 95%;
     }
     .p-name {
         font-size: 15px;
     }
     .address {
         font-size:10px;
+        margin: 0px;
     }
     .spot-picture {
         width: 100px;
         height: 90px;
         padding-top: 1;
     }
+    span {
+        width: 85%;
+    }
     .icons {
-        width: 200px;
+        width: 75%;
         display: flex;
         flex-direction: row;
         justify-content: space-around;

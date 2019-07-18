@@ -163,6 +163,7 @@ export default {
         font-family: logoFont;
         justify-content: space-between;
         flex-grow: 3;
+        width: 100%;
     }
 
     .btns {

@@ -1,16 +1,23 @@
 <template>
     <div class="travelTime-item">
         <b-row>
-            <b-col class="ml-4 pl-5 select">
+            <b-col class="select">
                 <b-row>
-                    <select class="my-0 mx-3" v-model="current" v-on:change="onModesChange">
-                        <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
-                            {{mode.text}}
-                        </option>
-                    </select>
-                    <p class="mb-0 py-0" style="font-size:18px;padding-top:10px;text-align:left;">約 {{formatTime(travelTime)}}</p>
-                </b-row>
-                
+                    <b-col cols="2" style="display:flex;justify-content:center;">
+                        
+                        <i class="fas fa-angle-double-down"></i>
+                    </b-col>
+                    <b-col>
+                        <b-row>
+                            <select class="my-0 mx-3" v-model="current" v-on:change="onModesChange">
+                                <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
+                                    {{mode.text}}
+                                </option>
+                            </select>  
+                            <p class="mb-0 py-0" style="font-size:15px;padding-top:10px;text-align:left;">約 {{formatTime(travelTime)}}</p>
+                        </b-row>
+                    </b-col>
+                </b-row> 
             </b-col>
         </b-row>
     </div>
@@ -63,14 +70,15 @@ export default {
 </script>
 
 <style scoped lang="sass">
-    .travelTime-item
-        background: #F0FFF0
+    .fa-angle-double-down
+        font-size: 20px
+        padding-top: 5px
     select 
         option
             font-family: 'Font Awesome\ 5 Free', monospace
             font-weight: 900
         font-family: 'Font Awesome\ 5 Free', monospace
         font-weight: 900
-        font-size: 25px
+        font-size: 20px
         margin-top: 10px
 </style>

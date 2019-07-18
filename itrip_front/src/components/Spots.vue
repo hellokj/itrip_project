@@ -11,7 +11,7 @@
     </div>
     
     <div class="vld-parent result-container">
-      <virtual-list :size="180" :remain="5" @change="showLoading">
+      <virtual-list :size="165" :remain="5" @change="showLoading">
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
@@ -121,11 +121,11 @@ export default {
   .spotContainer {
     display: flex;
     flex-direction: column;
-    border-left: 2px solid rgb(199, 199, 199);
-    background: #F1F0F0;
-    color: #515151;
-    width: 500px;
+    border-left: 2px solid rgb(230, 230, 230);
+    background: #f2f2f2;
+    color: black;
     height: 90%;
+    /* width: 500px; */
   }
   .tag-container {
     display: flex;
