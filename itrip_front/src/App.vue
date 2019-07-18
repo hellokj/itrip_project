@@ -44,12 +44,15 @@ export default {
   created() {
     window.addEventListener('resize', this.handleResize)
     this.handleResize();
-
+    // 重新載入頁面不登出
     let status = window.localStorage.getItem('isAuthorized');
+    let userToken = window.localStorage.getItem('userToken');
     if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
+      this.$store.dispatch('updateUserToken', userToken);
     }else{
       this.$store.dispatch('updateAuthorized', false);
+      this.$store.dispatch('updateUserToken', "");
     }
   },
   mounted() {

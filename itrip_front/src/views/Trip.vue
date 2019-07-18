@@ -22,7 +22,7 @@
         <Map 
         id="map"
         class="map"
-        bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+        :bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
         :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
       </div>
   </div>
@@ -79,10 +79,9 @@ export default {
       // itinerary format:
       //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
       //memberId, startDate, name, dayNum, togos, travelInfos
-      console.log(this.togos);
-      console.log(this.travelInfos);
-      console.log(name, date);
-      apiSaveTrip(123, date, name, this.togos.length, this.togos, this.travelInfos)
+      let userId = this.$store.state.user.id;
+      let token = this.$store.state.userToken;
+      apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
       }))
@@ -185,7 +184,6 @@ export default {
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
-
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
       })
