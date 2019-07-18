@@ -30,17 +30,21 @@
   export default {
     methods: {
       myProfile: function(){
-        
+        // 導向會員頁面
+        this.$router.push({path: '/member'});
       },
       setting: function(){
-
+        // 還沒想到要做怎樣
       },
       logOut: function(){
         this.$store.dispatch('updateAuthorized', false);
+        this.$store.dispatch("updateUserToken", "");
         this.$store.dispatch('updateUserInfo', {});
         FB.logout(function (response) {
           console.log('res when logout', response);
         });
+        // 登出後導向首頁
+        this.$router.push({path: '/'});
       }
     }
   }

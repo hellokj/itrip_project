@@ -1,5 +1,5 @@
-<template lang="pug">
-#home
+<template>
+
 </template>
 
 <script>
@@ -19,7 +19,6 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-#home
-  width: 100%
+<style scoped>
+
 </style>

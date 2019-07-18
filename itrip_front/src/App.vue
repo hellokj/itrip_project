@@ -1,12 +1,11 @@
 <template>
   <div id="app">
-    <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
+    <Header v-model="isAuthorized" v-on:search-click="Search"/>
     <MobileHeader 
     class="mobileHeader"/>
     <div id="nav">
     </div>
-    <router-view :param="param" :region="region" :type="type"
-    @toggle="toggle"/>
+    <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
   </div>
 </template>
 
@@ -38,31 +37,9 @@ export default {
       this.param = para;
       //console.log(this.param);
     },
-    LogIn() {
-      this.$modal.show('auth');
-    },
-    LogOut() {
-      // this.isAuthorized = false;
-      this.$store.dispatch('updateAuthorized', false);
-      this.$store.dispatch('updateUserInfo', {});
-      FB.logout(function (response) {
-        console.log('res when logout', response);
-      });
-    },
-    Authorize(){
-      // this.isAuthorized = true;
-      this.$store.dispatch('updateAuthorized', true);
-      alert("success");
-      this.$modal.hide('auth');
-    },
     handleResize() {
       this.windowWidth = window.innerWidth;
     },
-  },
-  computed: {
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    }
   },
   created() {
     window.addEventListener('resize', this.handleResize)
