@@ -1,6 +1,5 @@
 <template lang="pug">
-#map(:class="{'map-big' : bigMap, 'map-small' : !bigMap}")
-  //v-for="(route, index) in (routesArr)"
+#map(class="map")
   l-map(:zoom='zoom', :center='center', style='height: 100%', :options="{zoomControl: false}"
     ,@update:center="centerUpdate"
     ,@update:zoom="zoomUpdate")
@@ -82,7 +81,6 @@ export default {
     togos: Array,
     routes: Object,
     page: Number,
-    bigMap: Boolean,
     perPage: Number,
     spotPage: Number,
     centerSpot: Object
@@ -149,9 +147,6 @@ export default {
       this.routesArr = this.routes[this.currentPage].routes;
     }
   },
-  // updated() {
-  //   //this.routesArr = this.routes[this.page].routes;
-  // },
   watch: {
     togos: function() {
       let togoIcon = L.AwesomeMarkers.icon({
@@ -169,7 +164,7 @@ export default {
     spots: function(){
       let spot = this.spots[0];
       this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
-      this.zoom = 15;
+      this.zoom = 18;
 
     },
     routes: {
@@ -207,12 +202,8 @@ export default {
 </script>
 
 <style scope >
-  .map-big{
-    width: 100vw;
-    height: 100vh;
-  }
-  .map-small{
-    width: 100vw;
+  .map{
+    width: auto;
     height: 100vh;
   }
   .icon::before {

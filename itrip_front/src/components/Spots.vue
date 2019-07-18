@@ -9,12 +9,16 @@
           <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
     </div>
-    <div class="result-container">
-      <virtual-list :size="180" :remain="5">
+    
+    <div class="vld-parent result-container">
+      <virtual-list :size="180" :remain="5" @change="showLoading">
+        <loading :active.sync="isLoading" 
+        :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
         :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
         @add-spot="$emit('add-spot', spot)" 
         @mouseOver="$emit('hoverSpotItem', index, spot)"
+        @mouseOut="$emit('hoverSpotItem')"
         @show-link="Show"/>
         <v-pagination 
                 v-if="isScrollbarShown"
@@ -34,13 +38,16 @@
 import SpotItem from './SpotItem'
 import virtualList from 'vue-virtual-scroll-list'
 import vPagination from 'vue-plain-pagination'
+import VueLoading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
     name: "Spots",
     components: {
       SpotItem,
       vPagination,
-      'virtual-list': virtualList
+      'virtual-list': virtualList,
+      loading: VueLoading
     },
     data() {
       return {
@@ -61,7 +68,8 @@ export default {
         isScrollbarShown: false,
         sortBy: '',
         sortString: '臉書打卡王',
-        url: ''
+        url: '',
+        isLoading: false,
       }
     },
     props: {
@@ -73,6 +81,12 @@ export default {
       Show(Url){
         this.url = Url;
         this.$modal.show('link-window');
+      },
+      showLoading(){
+        this.isLoading = true;
+        setTimeout(() => {
+            this.isLoading = false
+        },2000)
       }
     },
     watch: {
@@ -87,6 +101,7 @@ export default {
         this.totalPages = this.paginator.pageCount;
         this.currentPage = this.paginator.currentPage;
         this.dataCount = this.paginator.spotCount;
+        this.showLoading();
       },
       currentPage: function(newVal) {
         //console.log(this.paginator);
@@ -116,20 +131,6 @@ export default {
     display: flex;
     flex-direction: row;
   }
-  /* .Result {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #515151;
-    margin-left: 11px;
-    margin-top: 4px;
-  }
-  .spotResults {
-    font-size: 15px;
-    margin-left: 80px;
-  }
-
-  p, b-dropdown {
-    display: inline-block;
-  }*/
 
   @media only screen and (max-width: 780px) {
     .spotContainer {

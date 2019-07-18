@@ -4,7 +4,7 @@ const Response = require('../utils/responseHandler');
 const errorHandler = require('../utils/errorHandler');
 
 const save = (req, res, next) => {
-    let memberId = req.body.memberId;
+    let memberIds = req.body.memberIds;
     let _id = new Date().getTime();
     let startDate = req.body.startDate;
     let name = req.body.name;
@@ -18,7 +18,7 @@ const save = (req, res, next) => {
  
     let itinerary = new Itinerary({
         _id: _id,
-        memberId: memberId,
+        memberIds: memberIds,
         start_date: startDate,
         name: name,
         dayNum: dayNum,

@@ -5,7 +5,7 @@
     class="mobileHeader"/>
     <div id="nav">
     </div>
-    <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
+    <router-view :param="param" :region="region" :type="type"/>
   </div>
 </template>
 
@@ -25,26 +25,15 @@ export default {
       region: '',
       type: '',
       param: {},
-      mobileMode: false,
-      windowWidth: 0,
+      isAuthorized: false,
     }
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     Search(para) {
       this.param = para;
-      //console.log(this.param);
-    },
-    handleResize() {
-      this.windowWidth = window.innerWidth;
     },
   },
   created() {
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize();
-
     let status = window.localStorage.getItem('isAuthorized');
     if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
@@ -73,16 +62,6 @@ export default {
       });
     }
   },
-  watch: {
-    windowWidth: function(newVal) {
-      if(newVal <= 780) {
-        this.mobileMode = true;
-      }
-      else {
-        this.mobileMode = false;
-      }
-    }
-  }
 }
 </script>
 <style scoped>
@@ -122,8 +101,6 @@ export default {
       justify-content: center;
     }
   }
-
-
   .modal {
     width: 40%;
     height: auto;

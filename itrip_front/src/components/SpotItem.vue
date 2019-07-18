@@ -1,5 +1,5 @@
 <template>
-    <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)">
+    <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
         <img ref="image" class="px-2 py-2 mt-1 spot-picture" :src="srcFunc" @error="error">
         <div class="info-col">
             <div class="name-container">
@@ -104,11 +104,12 @@ export default {
         height: 150px;
     }
     .info-col {
-        width: 100%;
+        width: 310px;
         display:flex;
         flex-direction: column;
     }
     .name-container {
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
         flex-direction: row;
@@ -150,9 +151,9 @@ export default {
         cursor: pointer;
     }
     p {
-        max-width: 90%;
-        overflow:hidden;
+        width: 90%;
         white-space:nowrap;
+        overflow: hidden;
         text-overflow:ellipsis;
         height:1.5em;
     }
@@ -160,7 +161,7 @@ export default {
         overflow:visible;
     }
     .spot-picture{
-        width: 180px;
+        width: 170px;
         height: 137px;
     }
     .p-name {
@@ -197,9 +198,6 @@ export default {
   @media only screen and (max-width: 768px){
     .spot-item-container {
         height: 100px;
-    }
-    p {
-        height: 1.3em;
     }
     .p-name {
         font-size: 15px;

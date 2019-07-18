@@ -245,6 +245,10 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
+      if(index === undefined && this.togos[this.page].length > 0) {
+        this.centerSpot = this.togos[this.page][0]
+        return;
+      }
       this.centerSpot = spot;
       this.$set(this.centerSpot, 'index', index);
     },
@@ -265,6 +269,9 @@ export default {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
+    travelInfos: function() {
+      console.log(this.travelInfos);
+    }
   },
   created () {
     // [註冊監聽事件]
@@ -288,10 +295,10 @@ export default {
     height: 100%;
   }
   .Spots {
-      width: 100%;
+      width: 500px;
   }
   .Togos {
-      width: 100%;
+      width: 500px;
   }
   .Map {
       width: 100%;
@@ -341,7 +348,7 @@ export default {
       display: none;
     }
     .Togos {
-      display: none;
+      display: block;
     }
     .Spots {
       display: none;
@@ -350,4 +357,18 @@ export default {
       display: none;
     }
   }
+
+   @media screen and (min-width: 781px) {
+    .Togos {
+      display: block;
+    }
+    .Spots {
+      display: block;
+    }
+    .Map {
+      display: block;
+    }
+  }
+
+
 </style>
