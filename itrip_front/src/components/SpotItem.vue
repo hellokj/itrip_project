@@ -126,6 +126,7 @@ export default {
         flex-direction: row;
         justify-content: space-around;
         padding-top: 3px;
+        margin-top: 10px;
     }
     .fa-plus-square {
         font-size: 30px;
