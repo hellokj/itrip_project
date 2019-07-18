@@ -19,6 +19,13 @@ const itineraryRequest = axios.create({
   baseURL: SERVER_IP + '/api/itinerary/'
 });
 
+const apiGetItineraries = (token) => {
+  let headers = {
+    "x-access-token": token
+  }
+  return itineraryRequest.post('/getItineraries', {} , {headers: headers});
+};
+
 // spot api
 const apiGetSpots = (data) => {
     return spotRequest.get('/get', { params: data });
@@ -37,10 +44,13 @@ const apiGetRoutes = (data, mode) => {
 
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-const apiSaveTrip = (memberId, startDate, name, dayNum, togos, travelInfos) => {
+const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": token
+  }
   let date = startDate.split("-");
   let data = {
-    memberId: memberId,
     startDate: {
       year: parseInt(date[0]),
       month: parseInt(date[1]),
@@ -51,7 +61,7 @@ const apiSaveTrip = (memberId, startDate, name, dayNum, togos, travelInfos) => {
     togos: togos,
     travelInfos: travelInfos
   }
-  return itineraryRequest.post('/save', data);
+  return itineraryRequest.post('/save', data, { headers: headers });
 };
 
 const apiLogIn = (authData) => {
@@ -65,6 +75,7 @@ const apiSignUp = (user) => {
 export {
     apiGetSpots,
     apiGetRoutes,
+    apiGetItineraries,
     apiLogIn,
     apiSignUp,
     apiSaveTrip

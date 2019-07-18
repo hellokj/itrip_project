@@ -11,7 +11,6 @@ const itinerarySchema = new Schema({
     togos: Array,
     travelInfos: Array,
     popularity: Number,
-})
-
+});
 
 module.exports = mongoose.model('Itinerary', itinerarySchema);

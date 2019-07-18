@@ -111,7 +111,12 @@ export default {
     methods: {
       saveTrip() {
         if (this.$store.state.isAuthorized == false){
-          this.$modal.show('auth');
+          this.$message("請先登入");
+          this.$store.dispatch("updateFormState", {
+            isLogIn: true,
+            isSignUp: false,
+            isFbSignUp: false
+          });
         }else{
           if (this.tripDate.date == ""){
             // 預設今天日期

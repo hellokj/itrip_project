@@ -4,7 +4,7 @@ const Response = require('../utils/responseHandler');
 const errorHandler = require('../utils/errorHandler');
 
 const save = (req, res, next) => {
-    let memberIds = req.body.memberIds;
+    let memberIds = [req.decoded.memberId];
     let _id = new Date().getTime();
     let startDate = req.body.startDate;
     let name = req.body.name;
@@ -15,11 +15,11 @@ const save = (req, res, next) => {
     if(NilChecker(req.body, 6, [])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
     }
- 
+
     let itinerary = new Itinerary({
         _id: _id,
         memberIds: memberIds,
-        start_date: startDate,
+        startDate: startDate,
         name: name,
         dayNum: dayNum,
         togos: togos,
@@ -27,8 +27,17 @@ const save = (req, res, next) => {
     });
 
     itinerary.save().then(() => Response(null, togos, res));
-} 
+}
+
+const getItineraries = async(req, res, next) => {
+    // 藉由 memeberId 去查詢有包含此會員id的行程
+    let memberId = req.decoded.memberId;
+    console.log("memberId", memberId);
+    let itineraries = await Itinerary.find({ memberIds: memberId});
+    res.json({status: -1, msg:'success', data: itineraries});
+};
 
 module.exports = {
     save,
+    getItineraries
 }
