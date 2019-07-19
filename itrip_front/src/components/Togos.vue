@@ -125,6 +125,11 @@ export default {
             let month = date.getMonth() + 1;
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
+          }else {
+            let year = this.tripDate.getFullYear();
+            let month = this.tripDate.getMonth() + 1;
+            let day = this.tripDate.getDate();
+            this.tripDate = year + "-" + month + "-" + day;
           }
           this.$emit('saveTrip', this.tripName, this.tripDate);
         }
