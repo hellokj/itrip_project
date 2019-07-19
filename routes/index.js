@@ -13,13 +13,12 @@ const authController = require('../controllers/authController');
 
 router.use('/spot', spotRoutes);
 router.use('/auth', authRoutes);
-router.use('/itinerary', itiRoutes);
 
 // 上面 => 不用驗證 
 router.use(authController.checkToken);
 // 下面 => 要驗證
 
-
+router.use('/itinerary', itiRoutes);
 router.use('/member', memberRoutes);
 
 module.exports = router;

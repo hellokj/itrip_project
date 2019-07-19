@@ -112,6 +112,10 @@ export default {
         searchClicked() {
             this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
             this.$emit('search-click', this.params);
+
+            if(window.innerWidth <= 768) {
+                this.$bus.$emit('toggle', {id: 'Spots'});
+            }
         },
         checkState(){
             if (this.$store.state.isAuthorized){
@@ -159,6 +163,7 @@ export default {
         font-family: logoFont;
         justify-content: space-between;
         flex-grow: 3;
+        width: 100%;
     }
 
     .btns {

@@ -1,8 +1,8 @@
 <template>
     <div class="MobileHeader">
-        <el-button @click="toggle('togos')">行程表</el-button>
-        <el-button @click="toggle('spots')">列表模式</el-button>
-        <el-button @click="toggle('map')">地圖模式</el-button>
+        <el-button @click="toggle('Togos')">行程表</el-button>
+        <el-button @click="toggle('Spots')">列表模式</el-button>
+        <el-button @click="toggle('Map')">地圖模式</el-button>
     </div>
     
 </template>

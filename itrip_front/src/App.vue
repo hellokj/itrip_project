@@ -28,50 +28,24 @@ export default {
       atHome: true
     }
   },
-  destroyed() {
-    window.removeEventListener('resize', this.handleResize)
-  },
   methods: {
     Search(para) {
       this.param = para;
-      //console.log(this.param);
     },
-    LogIn() {
-      this.$modal.show('auth');
-    },
-    LogOut() {
-      // this.isAuthorized = false;
-      this.$store.dispatch('updateAuthorized', false);
-      this.$store.dispatch('updateUserInfo', {});
-      FB.logout(function (response) {
-        console.log('res when logout', response);
-      });
-    },
-    Authorize(){
-      // this.isAuthorized = true;
-      this.$store.dispatch('updateAuthorized', true);
-      alert("success");
-      this.$modal.hide('auth');
-    },
-    handleResize() {
-      this.windowWidth = window.innerWidth;
-    },
-  },
-  computed: {
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    }
   },
   created() {
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize();
-
+    // 重新載入頁面不登出
     let status = window.localStorage.getItem('isAuthorized');
+    let userToken = window.localStorage.getItem('userToken');
     if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
+      this.$store.dispatch('updateUserToken', userToken);
     }else{
       this.$store.dispatch('updateAuthorized', false);
+      this.$store.dispatch('updateUserToken', "");
     }
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize();
   },
   mounted() {
     let vm = this;
@@ -151,8 +125,6 @@ export default {
       justify-content: center;
     }
   }
-
-
   .modal {
     width: 40%;
     height: auto;

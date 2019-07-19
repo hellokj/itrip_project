@@ -1,25 +1,23 @@
 <template>
-
-    <b-container class="px-0 mb-2 spot-item" @mouseover="$emit('mouseOver', spot)">
-        <b-row align-h="start">
-            <b-col xs="3" sm="3" md="4" lg="4" xl="3" class="mr-1 pr-0">
-                <img ref="image" class="spot-picture" :src="srcFunc" @error="error" style="width:120px; height:120px;">
-            </b-col>
-            <b-col class="pl-1">
-                <b-row align-h="between" fluid>
-                    <p class="p-name">{{spotIndex}}. <b>{{spot.name}}</b></p>
-                    <i class="pr-4 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
-                </b-row>
-                <p>{{ getAddress() }}</p>
-                <b-row align-h="around" fluid>
-                    <i @click="link('pixnet')" class="fas fa-blog"></i>
-                    <i @click="link('fb')" class="fab fa-facebook-square"></i>
-                    <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
-                    <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
-                </b-row>
-            </b-col>
-        </b-row>
-    </b-container>
+    <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
+        <el-card class="el-card" :body-style="{ width: '100%', padding: '0px'}" shadow="hover">
+            <div class="card-container">
+                <img ref="image" class="px-2 py-2 mt-3 spot-picture" :src="srcFunc" @error="error">
+                <div class="info-col">
+                    <div class="name-container">
+                        <p class="my-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
+                        <i class="pr-1 mt-1 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
+                    </div>
+                    <p class="address">{{ getAddress() }}</p>
+                    <div class="icons">
+                        <i @click="link('pixnet')" class="fas fa-blog"></i>
+                        <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
+                        <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
+                    </div>
+                </div> 
+            </div>
+        </el-card>
+    </div>
 </template>
 
 <script>
@@ -32,7 +30,7 @@ export default {
     },
     data() {
         return {
-            notFound: require('../assets/picNotFound.jpg')
+            notFound: require('../assets/picNotFound.jpg'),
         }
     },
     props: {
@@ -76,7 +74,6 @@ export default {
             if (type === 'wiki' && this.spot.wiki !== undefined){
                 Url = this.spot.wiki;
             }
-
             this.$emit('show-link', Url);
         }
     },
@@ -94,25 +91,58 @@ export default {
             }
             return src  
         },
+        hasWiki: function() {
+
+        }
     }
 }
 </script>
 
 <style scoped>
-    .spot-item {
-        background: #ffffff;
-        border-bottom: 1p #ccc dotted;
+    .spot-item-container {
+        width:100%;
+        display: flex;
+        flex-direction: row;
         color: #000000;
+        height: 145px;
+        margin-bottom: 10px;
     }
-    .fa-blog {
+    .card-container {
+        display: flex;
+        flex-direction: row;
+        width: 100%; 
+    }
+    .el-card {
+        display: flex;
+        width: 100%;
+    }
+    .spot-picture{
+        width: 120px;
+        height: 120px;
+    }
+    .p-name {
+        font-size:16px;
+    }
+    .name-container {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .info-col {
+        width: 65%;
+        display:flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+     .fa-plus-square {
         font-size: 25px;
-        color:darkorange;
-        cursor: pointer;
-    }
-    .fa-plus-square {
-        font-size: 30px;
         color:darkgray;
         cursor: pointer;
+    }
+    .fa-plus-square:hover {
+        color:dimgray;
     }
     .fa-facebook-square {
         font-size: 30px;
@@ -124,106 +154,103 @@ export default {
         height:30px;
         cursor: pointer;
     }
+    .fa-blog {
+        font-size: 25px;
+        color:darkorange;
+        cursor: pointer;
+    }
+    .icons {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding-top: 3px;
+        margin-top: 10px;
+    }
+   
     .wiki {
         width:30px;
         height:30px;
         cursor: pointer;
     }
     p {
-        width:200px;
-        overflow:hidden;
+        width: 100%;
         white-space:nowrap;
+        overflow: hidden;
         text-overflow:ellipsis;
         height:1.5em;
     }
     p:hover {
         overflow:visible;
     }
-    /* .container {
-        align-self: center;
-        height: 130px;
+    
+    .address {
+        font-size:12px;
     }
     
-    .spot-picture{
-        width: 120px;
-        height: 120px;
-    }
-    .p-name {
-        font-size:20px;
-        display: flex;
-        flex: 1 1 auto;
-    }
-
-    
-    
-    .nameRow {
+  @media only screen and (max-width: 768px){
+    .card-container {
         width: 100%;
-        display: flex;
-        justify-content: space-between;
-    }
-    .infoCol {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        flex: 1 1 auto;
-    }
-    .iconRow {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        justify-content: space-evenly;
-        min-width: 130px;
-        max-width: 200px;
-    }
-
-    @media only screen and (max-width: 780px) {
-    .spot-picture {
-        width: 30%;
         height: 100%;
-        min-width: 100px;
     }
-    .container {
-        align-self: center;
+    .spot-item-container {
         height: 100px;
     }
-    .spot-item {
-        height: 100px;
-
+    .info-col {
+        width: 100%;
+    }
+    .name-container {
+        width: 95%;
     }
     .p-name {
-        font-size:12px;
-        display: flex;
-        flex: 0 1 auto;
-        margin-top:0px;
-        max-width: 180px;
+        font-size: 15px;
     }
-    p {
-        font-size:12px;
-        height:1.5em;
+    .address {
+        font-size:10px;
         margin: 0px;
     }
-    .fa-blog {
-        margin-top: 1px;
-        font-size: 18px;
+    .spot-picture {
+        width: 100px;
+        height: 90px;
+        padding-top: 1;
+    }
+    span {
+        width: 85%;
+    }
+    .icons {
+        width: 75%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0px;
     }
     .fa-plus-square {
         font-size: 20px;
+        color:darkgray;
+        cursor: pointer;
+    }
+    .fa-plus-square:hover {
+        color:dimgray;
     }
     .fa-facebook-square {
         font-size: 20px;
+        color:#3b5998;
+        cursor: pointer;
     }
     .instagram {
         width:20px;
         height:20px;
+        cursor: pointer;
     }
     .wiki {
         width:20px;
         height:20px;
+        cursor: pointer;
     }
-    .infoCol {
-        padding-right: 10px;
-        padding-left: 10px;
+    .fa-blog {
+        font-size: 18px;
+        color:darkorange;
+        cursor: pointer;
     }
-  } */
+}
 </style>

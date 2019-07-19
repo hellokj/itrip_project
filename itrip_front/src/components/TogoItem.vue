@@ -1,29 +1,54 @@
 <template>
-    <div class="togo-item">
-        <img class="spot-picture" :src="togo.images[0]" alt="Picture">
-        <div class="infoCol">
-            <div class="nameRow">
-                <p class="p-name"><b>{{togo.name}}</b></p>
-                <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
+    <div class="px-2 py-2 togo-item">
+        <el-card :body-style="{ padding: '0px' }" shadow="hover"> 
+            <div class="card-container">
+                <img class="spot-picture" :src="togo.images[0]" alt="Picture">
+                <div class="info-col">
+                    <div class="name-container">
+                        <p class="mb-0 ml-2 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
+                        <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
+                    </div>
+                    <p class="address" style="text-align:left;">{{getAddress()}}</p>
+                    <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
+                    <div class="iNumber-container">
+                        <v-number-smarty
+                        v-model="hrs"
+                        number-type="integer"
+                        unsigned
+                        font-size="1rem"
+                        :step="1"
+                        :max-value="24"
+                        style="width:50px;"
+                        />
+                        <p class="pt-1" style="width:50px;font-size:13px;">小時</p>
+                        <v-number-smarty
+                        v-model="mins"
+                        number-type="integer"
+                        unsigned
+                        font-size="1rem"
+                        :step="1"
+                        :max-value="60"
+                        style="width:50px;"
+                        />
+                        <p class="pt-1" style="font-size:13px;width:50px;">分</p>
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
             </div>
-            <div class="addressRow">
-                <p>{{ getAddress() }}</p>
-            </div>
-            <p class="stopTime">停留時間</p>
-            <div class="stopTimeRow">
-                <el-input-number class="hrInput" v-model="hrs" :step="1" size="mini"></el-input-number>
-                <p>小時</p>
-                <el-input-number class="minInput" v-model="mins" :step="1" size="mini"></el-input-number>
-                <p>分</p>
-            </div>
-        </div>
+        </el-card> 
     </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import {getAddress} from '../../utils/checker.js'
+import VNumberSmarty from 'vue-number-smarty';
+
 export default {
     name: "TogoItem",
+    components: {
+       VNumberSmarty,
+    },
     props: {
         togo: Object,
     },
@@ -44,46 +69,59 @@ export default {
     },
     watch: {
         hrs: function() {
-            this.togo.stopTime.hrs = this.hrs;
+            this.togo.stopTime.hrs = parseInt(this.hrs);
         },
         mins: function() {
-            this.togo.stopTime.mins = this.mins;
+            this.togo.stopTime.mins =  parseInt(this.mins);
         }
     }
 }
 </script>
 
 <style scoped>
-    p {
-        margin: 0px;
-    }
     .togo-item {
+        width: 90%;
+        padding-top: 2px;
+        color: #000000;
         display: flex;
         flex-direction: row;
-        margin-left: 4px;
-        margin-top: 5px;
-        width: 100%;
-        height: 120px;
-        padding-top: 2px;
-        background: #ffffff;
-        border-bottom: 1p #ccc dotted;
-        color: #000000;
     }
-    .infoCol {
+    .card-container {
+        height: 130px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+    .info-col {
+        width: 68%;
         display: flex;
         flex-direction: column;
-        padding-left: 5px;
         justify-content: space-evenly;
-        
+        padding-left: 5px;
     }
-    .nameRow {
+    .name-container {
+        width: 89%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
     }
-    .spot-picture{
-        width: 113px;
-        height: 100%;
+    .iNumber-container {
+        display: flex;
+        flex-direction: row;
+        width: 90%;
+        padding-top: 5px;
+        justify-content: flex-start;
+
+    }
+    p {
+        width:80%;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        height:1.5em;
+    }
+    p:hover {
+        overflow:visible;
     }
     .fa-times {
         color:darkgray;
@@ -92,51 +130,56 @@ export default {
         border-radius: 50%;
         cursor: pointer;
     }
-
-    .address {
-        font-size: 15px;
+    .fa-times:hover {
+        color:dimgray;
     }
-
-    .stopTimeRow {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .stopTime {
-        font-size: 15px;
+    .spot-picture {
+        width: 120px;
+        height: 120px;
+        padding: 8px;
+        margin-top: 4px;
+        margin-left: 4px;
     }
     .p-name {
-        font-size: 20px;
-        overflow:hidden;
-        white-space:nowrap;
-        -ms-text-overflow:ellipsis;
-        text-overflow:ellipsis;
-        width:220px;
-        height:1.4em;
+        font-size: 15px;
     }
-    .p-name:hover {
-        overflow:visible;
+    .address {
+        margin:0px;
+        font-size: 12px;
+        margin-left: 3px;
     }
-
-    .btn-add {
-        width: 20px;
+    .stopTime {
+        font-size: 12px;
     }
-
-    .hrInput {
-        width: 80px;
+    .fa-ellipsis-h {
+        padding-right: 20px;
+        margin-top: 20px;
+        font-size: 12px;
+        cursor: pointer;
     }
-
-    .minInput {
-        width: 80px;
-    }
-
     @media only screen and (max-width: 780px) {
-    .togo-item {
-        
-    }
     .spot-picture{
-        width: 113px;
-        height: 100%;
+        width: 100px;
+        height: 90px;
+    }
+    p {
+        width: 75%;
+    }
+    .p-name {
+        font-size: 12px;
+    }
+    .fa-times {
+        padding: 0px;
+        padding-right: 5px;
+    }
+    .iNumber-container {
+        width: 150px;
+    }
+    .address {
+        font-size:10px;
+    }
+    .stopTime {
+        font-size: 10px;
     }
   }
 </style>

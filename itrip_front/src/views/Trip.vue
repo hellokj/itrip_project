@@ -1,36 +1,41 @@
 <template>
   <b-container class="trip" fluid>
-    <b-row> 
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+    <b-row class="trip-row">
+      <b-col class="px-0 togos-col" cols="12" md="3" order="2" order-md="1">
         <Togos
         id="togos"
-        class="togos" 
+        class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </b-col>
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4" class="px-0">
+      <b-col class="px-0 spots-col" cols="12" md="3" order="1" order-md="2">
         <Spots
-        id="spots"
-        class="spots"
-        v-if="showSpots" :paginator="paginator" :spots="spots" :perPage="perPage" 
-        @hoverSpotItem="hoverSpotItem"
-        @add-spot="addSpotToTrip"
-        @get-spot="callGetSpotApi"
-        @sort-spot="callGetSpotApi"/> 
+          id="spots"
+          class="spots"
+          :paginator="paginator" :spots="spots" :perPage="perPage" 
+          @hoverSpotItem="hoverSpotItem"
+          @add-spot="addSpotToTrip"
+          @get-spot="callGetSpotApi"
+          @sort-spot="callGetSpotApi"/> 
       </b-col>
-      <b-col xs="12" sm="12" md="12" lg="4" xl="4">
+      <b-col class="px-0 map-col" cols="12" md="6" order="3">
         <Map 
-        id="map"
-        class="map"
-        bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
-        :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
+          id="map"
+          class="map"
+          bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+          :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
       </b-col>
     </b-row>
-    
-    <!-- <button 
-    class="btn-showSpots" 
-    @click="showSpots = !showSpots"> {{showSpots?Close:Open}} </button> -->
+      <!-- <div id="Togos" class="Togos" :class="{'display': isDisplayArr[0]}" v-show=" isDisplayArr[0]">
+        
+      </div>
+      <div id="Spots" class="Spots" :class="{'display': isDisplayArr[1]}" v-show=" isDisplayArr[1]">
+        
+      </div>
+      <div id="Map" class="Map"  :class="{'displayMap': isDisplayArr[2]}" v-show=" isDisplayArr[2]">
+        
+      </div> -->
   </b-container>
 </template>
 
@@ -77,7 +82,8 @@ export default {
       // { start: , dest: ,duration: , time: , mode:}
       travelInfos: [],
       paginator: {},
-      centerSpot: {}
+      centerSpot: {},
+      isDisplayArr: [true, true, true],
     }
   },
   methods: {
@@ -85,10 +91,9 @@ export default {
       // itinerary format:
       //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
       //memberId, startDate, name, dayNum, togos, travelInfos
-      console.log(this.togos);
-      console.log(this.travelInfos);
-      console.log(name, date);
-      apiSaveTrip(123, date, name, this.togos.length, this.togos, this.travelInfos)
+      let userId = this.$store.state.user.id;
+      let token = this.$store.state.userToken;
+      apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
       }))
@@ -101,10 +106,10 @@ export default {
         this.fixTravelInfo(index);
       }
       this.togos[this.page].splice(index, 1);
+      console.log(document.getElementsByClassName("togos-col").style);
     },
     fixTravelInfo(index) {
       if(index == 0) {
-        console.log(this.travelInfos)
         this.travelInfos[this.page].shift();
       }
       else if(index == this.togos[this.page].length - 1) {
@@ -117,8 +122,8 @@ export default {
         this.callGetRoutesApi(index - 1, start, dest, this.travelInfos[this.page][index - 1].mode);
         this.travelInfos[this.page].splice(index, 1);
         // reset routes
-        this.resetRoutes();
       }
+      this.resetRoutes();
     },
     addSpotToTrip(spot) {
       if (this.togos[this.page] === undefined){
@@ -134,6 +139,9 @@ export default {
       // only need to get travelInfo if length > 2
       if(length > 1) {
         this.addTravelInfo(this.togos[this.page][length - 2], spot);
+      }
+      if(window.innerWidth <= 768) {
+          this.$bus.$emit('toggle', {id: 'Togos'});
       }
     },
     addTravelInfo(startOb, destOb) {
@@ -188,7 +196,6 @@ export default {
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
-
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
       })
@@ -245,101 +252,80 @@ export default {
             color: "#FF0000"
           });
         }
+        else {
+          this.routes = [];
+        }
       }
     },
     hoverSpotItem: function(index, spot) {
+      if(index === undefined && this.togos[this.page].length > 0) {
+        this.centerSpot = this.togos[this.page][0]
+        return;
+      }
       this.centerSpot = spot;
       this.$set(this.centerSpot, 'index', index);
     },
     toggle: function(toggle) {
-      let components = ['togos', 'spots', 'map'];
+      let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
-          document.getElementById(components[i]).style.display = 'block';
+          if(toggle)
+          document.getElementById(toggle).style.setProperty('display', 'flex', 'important');
         }
         else {
-          document.getElementById(components[i]).style.display = 'none';
+          document.getElementById(toggle).style.setProperty('display', 'none', 'important');
         }
       }
-      
-
-    }
+    },
   },
-  
   watch: {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
-  },
+ },
   created () {
     // [註冊監聽事件]
     this.$bus.$on('toggle', event => {
         this.toggle(event.id)
     });
  },
+
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
+    
   }
 }
 </script>
 
 <style scoped>
-  /* * {
-    box-sizing: border-box;
-    padding: 0;
-  }
-  .btn {
-    display: inline-block;
-    border: none;
-    background: #555;
-    color:#fff;
-    padding: 7px 20px;
-    cursor: pointer;
-  }
-
-  .btn-showSpots {
-    border-style: none;
-    width: 30px;
-    height: 40px;
-    margin-right: 0px;
-    margin-left: -30px;
-    z-index: 100;
-    font-size: 30px;
-    margin-top: 10px;
-    display: block;
-    background:rgb(96, 94, 109);
-    color: #FFFFFF;
-    outline: none;
-    justify-content: center;
-  }
-
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.4;
-  }
-
   .trip {
-    margin: 0 0 0 0;
-    height: auto;
+    height: 100%;
+    padding-left: 150px;
+    padding-right: 150px;
+    background: #f2f2f2;
+  }
+  @media screen and (max-width: 768px) {
+  .trip {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .trip-row {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-  } */
-
-  /* @media screen and (max-width: 780px) {
-    .btn-showSpots {
+    flex-wrap: nowrap;
+  }
+  .Spots {
+      width: 100%;
+      display: flex;
+  }
+  .Togos {
+      width: 100%;
       display: none;
-    }
-    .togos {
+  }
+  .Map {
+      width: 100%;
       display: none;
-    }
-    .spots {
-      display: none;
-    }
-    .map {
-      display: none;
-    }
-  } */
+  }
+}
 </style>
