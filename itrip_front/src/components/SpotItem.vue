@@ -9,6 +9,14 @@
                         <p class="my-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
+                    <div class="tags">
+                        <el-tag
+                            class="mx-1"
+                            v-for="(t, index) in spot.ig_tag"
+                            :key="index" effect="plain" :size="mini">
+                            #{{t}}
+                        </el-tag>
+                    </div>
                     <div class="icons">
                         <i @click="link('pixnet')" class="fas fa-blog"></i>
                         <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
@@ -44,7 +52,7 @@ export default {
         clickAdd: function(spot) {
             this.$emit('add-spot', spot);
             this.markClass = 'fas fa-bookmark';
-            
+            console.log(this.spot);
         },
         getAddress: function(){
            return getAddress(this.spot.address)
@@ -126,8 +134,15 @@ export default {
         width: 100%;
     }
     .spot-picture{
-        width: 190px;
+        width: 160px;
         height: 150px;
+    }
+    .tags {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        overflow: hidden;
     }
     .p-name {
         font-size:18px;
@@ -184,7 +199,7 @@ export default {
         flex-direction: row;
         justify-content: space-around;
         padding-top: 3px;
-        margin-top: 30px;
+        margin-top: 5px;
         align-self: flex-end;
     }
    
