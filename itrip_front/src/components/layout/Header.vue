@@ -51,7 +51,7 @@
         </div>
         <div class="btns">
             <div class="div_trip">
-                <router-link to="/trip">旅遊</router-link>
+                <router-link  to="/trip">旅遊</router-link>
             </div>
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
@@ -170,7 +170,7 @@ export default {
 
     }
     .searchbar {
-        width: 600px;
+        width: 650px;
         display: flex;
         flex-wrap:wrap;
         flex-direction: row;
@@ -216,7 +216,7 @@ export default {
     }
 
     .input_region {
-        width: 130px;
+        width: 150px;
         flex: 0 0 auto;
         height: 40px;
         border-radius: 0 20px 20px 0;

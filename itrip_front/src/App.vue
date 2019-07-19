@@ -1,12 +1,9 @@
 <template>
   <div id="app">
-    <Header v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
-    <MobileHeader 
-    class="mobileHeader"/>
-    <div id="nav">
-    </div>
-    <router-view :param="param" :region="region" :type="type"
-    @toggle="toggle"/>
+    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
+    <MobileHeader v-if="!atHome" class="mobileHeader"/>
+    <div id="nav"></div>
+    <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
   </div>
 </template>
 
@@ -28,6 +25,7 @@ export default {
       param: {},
       mobileMode: false,
       windowWidth: 0,
+      atHome: true
     }
   },
   destroyed() {
@@ -104,6 +102,14 @@ export default {
       else {
         this.mobileMode = false;
       }
+    },
+    $route (to, from){
+        console.log(to);
+        if (to.name === "home") {
+          this.atHome = true;
+        } else {
+          this.atHome = false;
+        }
     }
   }
 }
