@@ -9,9 +9,7 @@
           <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
       <div class="space"></div>
-      <el-button class="view-map" round><i class="fas fa-map-marker-alt"></i>
-        <router-link to="/trip/MAPVIEW">檢視地圖</router-link> 
-      </el-button>
+      <el-button class="view-map" round><i class="fas fa-map-marker-alt"></i> 檢視地圖</el-button>
     </div>
     
     <div class="vld-parent result-container">
@@ -91,7 +89,7 @@ export default {
         setTimeout(() => {
             this.isLoading = false
         },2000)
-      }
+      },
     },
     watch: {
       spots: function() {
@@ -149,6 +147,14 @@ export default {
     .spotContainer {
       width: 100%;
       height: 85%;
+      margin: 0px;
+    }
+    .tag-container {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .view-map {
+      display: none;
     }
   } 
 </style>

@@ -3,7 +3,9 @@
     <b-row class="trip-row" fluid>
       <!-- :style="[(isMobile && (selected != 0)) ? { display: none }:{ display: flex}]" -->
       <b-col 
-      class="px-0 togos-col" cols="12" md="5" lg="5" xl="3">
+      class="px-0 togos-col" cols="12" lg="5" xl="3"
+      :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
+      :value="selected">
         <Togos
         id="togos"
         class="togos"
@@ -11,7 +13,10 @@
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </b-col>
-      <b-col class="px-0 spots-col" cols="12" md="7" lg="4" xl="4">
+      <b-col 
+      class="px-0 spots-col" cols="12" lg="4" xl="4"
+      :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
+      :value="selected">
         <Spots
           id="spots"
           class="spots"
@@ -19,13 +24,17 @@
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
-          @sort-spot="callGetSpotApi"/> 
+          @sort-spot="callGetSpotApi"
+          @show-map="showMap"/> 
       </b-col>
-      <b-col class="px-0 map-col" cols="12" lg="5" order=displayOrders[2] order-md="3">
+      <b-col 
+      class="px-0 map-col" cols="12" lg="5" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(768) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      :value="selected">
         <Map 
           id="map"
           class="map"
-          bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+          :spots="spots" :togos="togos[page]" :routes="routes" 
           :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
       </b-col>
     </b-row>
@@ -263,19 +272,14 @@ export default {
       let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
-          this.$set(this.displayOrders, i, 1);
-        }
-        else {
-          this.$set(this.displayOrders, i, 2);
+          this.selected = i;
+          return;
         }
       }
     },
-  },
-  computed: {
-    // isMobile: function() {
-    //   if($mq === 'sm' || $mq === 'md') return true;
-    //   return false;
-    // }
+    showMap: function() {
+        
+    }
   },
   watch: {
     param: function(newVal) {

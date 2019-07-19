@@ -1,9 +1,11 @@
 <template>
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
-        <el-card class="el-card" :body-style="{ width: '100%', padding: '15px'}" shadow="hover">
+        <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}" shadow="hover">
             <div class="card-container">
                 <i :class="markClass"  @click="clickAdd(spot)"></i>
-                <img ref="image" class="px-2 py-2 spot-picture" :src="srcFunc" @error="error">
+                <div class="picture-container">
+                    <img ref="image" class="px-2 py-2 spot-picture" :src="srcFunc" @error="error">
+                </div>
                 <div class="info-col">
                     <div class="name-container">
                         <p class="my-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
@@ -122,6 +124,13 @@ export default {
         margin-left: 10px;
         margin-right: 10px;
     }
+    .picture-container {
+        width: 160px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
     .card-container {
         display: flex;
         flex-direction: row;
@@ -229,7 +238,7 @@ export default {
         height: 100%;
     }
     .spot-item-container {
-        height: 150px;
+        height: 130px;
     }
     .info-col {
         width: 100%;
@@ -245,20 +254,23 @@ export default {
         margin: 0px;
     }
     .spot-picture {
-        width: 120px;
-        height: 110px;
-        margin-top: 4px !important;
+        width: 100px;
+        height: 90px;
+       
     }
     span {
         width: 85%;
     }
     .icons {
-        width: 75%;
+        width: 100%;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
         padding: 0px;
         align-self:flex-end;
+    }
+    .fa-bookmark {
+        font-size: 15px;
     }
     
     .fa-facebook-square {

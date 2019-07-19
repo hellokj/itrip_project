@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Trip from './views/Trip.vue'
-import MapView from './views/MapView.vue'
 
 Vue.use(Router)
 
@@ -17,13 +16,6 @@ export default new Router({
       path: '/trip',
       name: 'trip',
       component: () => import(/* webpackChunkName: "about" */ './views/Trip.vue'),
-      children: [
-        {
-          path: '/MapView',
-          name: 'MapView',
-          component: MapView
-        },
-      ]
     },
     {
       path: '/about',

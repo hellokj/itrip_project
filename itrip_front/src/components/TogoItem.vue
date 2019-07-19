@@ -2,10 +2,12 @@
     <div class="px-2 py-2 togo-item">
         <el-card :body-style="{ padding: '0px' }" shadow="hover"> 
             <div class="card-container">
-                <img class="spot-picture" :src="togo.images[0]" alt="Picture">
+                <div class="picture-container">
+                    <img class="spot-picture" :src="togo.images[0]" alt="Picture">
+                </div>
                 <div class="info-col">
                     <div class="name-container">
-                        <p class="mb-0 ml-2 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
+                        <p class="mb-0 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
                         <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
                     </div>
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
@@ -74,6 +76,13 @@ export default {
         width: 100%;
         display: flex;
         flex-direction: row;
+    }
+    .picture-container {
+        height: 100%;
+        width: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     .info-col {
         width: 68%;
@@ -154,7 +163,7 @@ export default {
         width: 75%;
     }
     .p-name {
-        font-size: 12px;
+        font-size: 15px;
     }
     .fa-times {
         padding: 0px;
