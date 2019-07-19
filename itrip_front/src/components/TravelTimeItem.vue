@@ -73,6 +73,7 @@ export default {
     .fa-angle-double-down
         font-size: 20px
         padding-top: 5px
+        padding-left: 8px
     select 
         option
             font-family: 'Font Awesome\ 5 Free', monospace

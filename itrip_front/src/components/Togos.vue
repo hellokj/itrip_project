@@ -222,10 +222,9 @@ export default {
 <style lang="scss" scoped>
   .MyTrip {
     display: flex;
-    flex-direction: column;
-    flex: 0 0 auto;
+    flex-direction: column; 
     border: none;
-    background: #f2f2f2;
+    background: rgb(250,250,250);;
     color:black;
     height:100%;
     width: 100%;
@@ -330,12 +329,6 @@ export default {
   @media only screen and (max-width: 780px) {
     .MyTrip {
       width: 100%;
-    }
-    .big-container {
-      flex-direction: column;
-    }
-    .trip-time-container {
-      flex-direction: row;
     }
   }
 </style>

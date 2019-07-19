@@ -8,6 +8,10 @@
           <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
           <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
       </b-dropdown>
+      <div class="space"></div>
+      <el-button class="view-map" round><i class="fas fa-map-marker-alt"></i>
+        <router-link to="/trip/MAPVIEW">檢視地圖</router-link> 
+      </el-button>
     </div>
     
     <div class="vld-parent result-container">
@@ -27,7 +31,7 @@
                 :classes="bootstrapPaginationClasses"
                 :labels="paginationAnchorTexts"
                 style="display:flex;justify-content:center;"></v-pagination>
-        <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">共搜尋到{{dataCount}}筆地點</p>
+        <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
       </virtual-list>
     <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
     </div>
@@ -121,17 +125,26 @@ export default {
   .spotContainer {
     display: flex;
     flex-direction: column;
+    /* border-right: 2px solid rgb(230, 230, 230); */
     border-left: 2px solid rgb(230, 230, 230);
-    background: #f2f2f2;
+    background: rgb(250,250,250);
     color: black;
     height: 90%;
-    /* width: 500px; */
+    margin: 10px;
   }
   .tag-container {
     display: flex;
     flex-direction: row;
   }
-
+  .view-map {
+    height: 40px;
+    align-self: center;
+    margin-right: 10px;
+  }
+  .space {
+    display: flex;
+    flex: 1;
+  }
   @media only screen and (max-width: 780px) {
     .spotContainer {
       width: 100%;

@@ -11,26 +11,7 @@
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
                     <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
                     <div class="iNumber-container">
-                        <v-number-smarty
-                        v-model="hrs"
-                        number-type="integer"
-                        unsigned
-                        font-size="1rem"
-                        :step="1"
-                        :max-value="24"
-                        style="width:50px;"
-                        />
-                        <p class="pt-1" style="width:50px;font-size:13px;">小時</p>
-                        <v-number-smarty
-                        v-model="mins"
-                        number-type="integer"
-                        unsigned
-                        font-size="1rem"
-                        :step="1"
-                        :max-value="60"
-                        style="width:50px;"
-                        />
-                        <p class="pt-1" style="font-size:13px;width:50px;">分</p>
+                        <a-time-picker class="time-picker" :defaultValue="moment('01:00', 'HH:mm')" format="HH:mm" />
                         <i class="fas fa-ellipsis-h"></i>
                     </div>
                 </div>
@@ -43,6 +24,7 @@
 import Vue from 'vue'
 import {getAddress} from '../../utils/checker.js'
 import VNumberSmarty from 'vue-number-smarty';
+import moment from 'moment';
 
 export default {
     name: "TogoItem",
@@ -60,6 +42,7 @@ export default {
         }
     },
     methods: {
+       moment,
         deleteTogo() {
             this.$emit('deleteTogo');
         },
@@ -98,9 +81,10 @@ export default {
         flex-direction: column;
         justify-content: space-evenly;
         padding-left: 5px;
+        overflow: hidden;
     }
     .name-container {
-        width: 89%;
+        width: 95%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -108,9 +92,9 @@ export default {
     .iNumber-container {
         display: flex;
         flex-direction: row;
-        width: 90%;
+        width: 100%;
         padding-top: 5px;
-        justify-content: flex-start;
+        justify-content: space-between;
 
     }
     p {
@@ -122,6 +106,10 @@ export default {
     }
     p:hover {
         overflow:visible;
+    }
+    .time-picker {
+        width: 50%;
+        margin-bottom: 5px;
     }
     .fa-times {
         color:darkgray;
@@ -171,9 +159,6 @@ export default {
     .fa-times {
         padding: 0px;
         padding-right: 5px;
-    }
-    .iNumber-container {
-        width: 150px;
     }
     .address {
         font-size:10px;
