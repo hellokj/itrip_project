@@ -20,7 +20,7 @@
                         </el-tag>
                     </div>
                     <div class="icons">
-                        <i @click="link('pixnet')" class="fas fa-blog"></i>
+                        <i @click="link('pixnet')" class="fab fa-blogger"></i>
                         <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
                         <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
                     </div>
@@ -126,7 +126,7 @@ export default {
     }
     .picture-container {
         width: 160px;
-        height: 100%;
+        height: 160px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -197,19 +197,19 @@ export default {
     .fa-bookmark:hover {
         color:dimgray;
     }
-    .fa-blog {
+    .fa-blogger {
         font-size: 25px;
         color:darkorange;
         cursor: pointer;
     }
     .icons {
-        width: 100%;
+        width: 50%;
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: space-evenly;
         padding-top: 3px;
         margin-top: 5px;
-        align-self: flex-end;
+        
     }
    
     .wiki {
