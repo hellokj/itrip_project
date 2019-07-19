@@ -1,11 +1,9 @@
 <template>
   <div id="app">
-    <Header v-model="isAuthorized" v-on:search-click="Search"/>
-    <MobileHeader 
-    class="mobileHeader"/>
-    <div id="nav">
-    </div>
-    <router-view :param="param" :region="region" :type="type"/>
+    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
+    <MobileHeader v-if="!atHome" class="mobileHeader"/>
+    <div id="nav"></div>
+    <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
   </div>
 </template>
 
@@ -25,7 +23,9 @@ export default {
       region: '',
       type: '',
       param: {},
-      isAuthorized: false,
+      mobileMode: false,
+      windowWidth: 0,
+      atHome: true
     }
   },
   methods: {
@@ -34,8 +34,6 @@ export default {
     },
   },
   created() {
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize();
     // 重新載入頁面不登出
     let status = window.localStorage.getItem('isAuthorized');
     let userToken = window.localStorage.getItem('userToken');
@@ -46,6 +44,8 @@ export default {
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
     }
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize();
   },
   mounted() {
     let vm = this;
@@ -68,6 +68,24 @@ export default {
       });
     }
   },
+  watch: {
+    windowWidth: function(newVal) {
+      if(newVal <= 780) {
+        this.mobileMode = true;
+      }
+      else {
+        this.mobileMode = false;
+      }
+    },
+    $route (to, from){
+        console.log(to);
+        if (to.name === "home") {
+          this.atHome = true;
+        } else {
+          this.atHome = false;
+        }
+    }
+  }
 }
 </script>
 <style scoped>

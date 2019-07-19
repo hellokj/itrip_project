@@ -49,7 +49,8 @@ const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
     "Content-Type": "application/json",
     "x-access-token": token
   }
-  let date = startDate.split("-");
+  console.log(startDate);
+  let date = startDate.split('-');
   let data = {
     startDate: {
       year: parseInt(date[0]),

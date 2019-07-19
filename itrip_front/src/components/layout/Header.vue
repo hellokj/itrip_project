@@ -54,7 +54,7 @@
         </div>
         <div class="btns">
             <div class="div_trip">
-                <router-link to="/trip">旅遊</router-link>
+                <router-link  to="/trip">旅遊</router-link>
             </div>
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
