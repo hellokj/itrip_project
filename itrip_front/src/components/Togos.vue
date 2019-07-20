@@ -84,9 +84,7 @@ export default {
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
-        tripDate: {
-          date: ""
-        },
+        tripDate: "",
         togos_prop: this.togos,
         startTime: '08:00',
         editMode: true,
@@ -219,7 +217,6 @@ export default {
         this.startTimeOb.hr = parseInt(tmp[0])
         this.startTimeOb.min = parseInt(tmp[1])
       },
-     
     },
 }
 </script>
@@ -247,6 +244,8 @@ export default {
   .sortable {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .tripName, .tripDate {
     margin-left: 11px;
@@ -273,6 +272,8 @@ export default {
   .big-container {
     display: flex;
     flex-direction: row;
+    align-self: center;
+    width: auto;
   }
   .fa-times {
     padding-left: 20px;

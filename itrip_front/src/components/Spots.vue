@@ -16,11 +16,11 @@
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-        :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
-        @add-spot="$emit('add-spot', spot)" 
-        @mouseOver="$emit('hoverSpotItem', index, spot)"
-        @mouseOut="$emit('hoverSpotItem')"
-        @show-link="Show"/>
+          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :togos="togos"
+          @add-spot="$emit('add-spot', spot)" 
+          @mouseOver="$emit('hoverSpotItem', index, spot)"
+          @mouseOut="$emit('hoverSpotItem')"
+          @show-link="Show"/>
         <v-pagination 
                 v-if="isScrollbarShown"
                 v-model="currentPage"
@@ -76,7 +76,8 @@ export default {
     props: {
      spots: Array,
      paginator: Object,
-     perPage: Number
+     perPage: Number,
+     togos: Array
     },
     methods: {
       Show(Url){

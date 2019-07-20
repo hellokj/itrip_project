@@ -2,34 +2,37 @@
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
         <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}" shadow="hover">
             <div class="card-container">
-                <i :class="markClass"  @click="clickAdd(spot)"></i>
+                <i :class="markClass"  @click="clickAdd(spot)"></i>         
                 <div class="picture-container">
                     <vue-load-image>
-                        <img ref="image" class="px-2 py-2 spot-picture" slot="image" :src="srcFunc">
+                        <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
                         <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                         <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
-
                     </vue-load-image>
                 </div>
                 <div class="info-col">
-                    <div class="name-container">
-                        <p class="my-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
+                    <div class="spot-header">
+                        <a-tag style="width:50px;text-align:center;">{{category}}</a-tag>
+                        <div class="tags">
+                            <el-tag
+                                class="mx-1 el-tag"
+                                v-for="(t, index) in spot.ig_tag"
+                                :key="index" effect="plain" size="mini" type="danger" @click="link('ig', t)">
+                                #{{t}}
+                            </el-tag>
+                        </div>
+                    </div>
+                    <div class="name-container">   
+                        <p class="mb-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
-                    <div class="tags">
-                        <el-tag
-                            class="mx-1"
-                            v-for="(t, index) in spot.ig_tag"
-                            :key="index" effect="plain" size="mini">
-                            #{{t}}
-                        </el-tag>
-                    </div>
                     <div class="icons">
                         <i @click="link('pixnet')" class="fab fa-blogger"></i>
-                        <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
+                        <!-- <img @click="link('ig')" class="instagram" src="../assets/instagram.png"> -->
                         <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
                     </div>
-                </div> 
+                </div>
+                <i class="fas fa-info-circle"></i>
             </div>
         </el-card>
     </div>
@@ -46,7 +49,7 @@ export default {
     },
     data() {
         return {
-            markClass: 'far fa-bookmark'
+            markClass: 'far fa-bookmark',
         }
     },
     props: {
@@ -54,6 +57,7 @@ export default {
         index: Number,
         perPage: Number,
         currentPage: Number,
+        togos: Array
     },
     methods: {
         clickAdd: function(spot) {
@@ -64,7 +68,7 @@ export default {
         getAddress: function(){
            return getAddress(this.spot.address)
         },
-        link: function(type) {
+        link: function(type, tag) {
             let Url = '';
             let arr = {
                 'ig': "https://ingram.life/tag/",
@@ -82,7 +86,7 @@ export default {
 
             if (type === 'ig' && this.spot.ig_tag[0] !== undefined){
                 let ig_tag = this.spot.ig_tag;
-                Url = url.concat(ig_tag[0])
+                Url = url.concat(tag)
             }
 
             if (type === 'wiki' && this.spot.wiki_name !== null){
@@ -108,6 +112,16 @@ export default {
                 src = this.spot.images[0]
             }
             return src  
+        },
+        category: function() {
+            switch(this.spot.category) {
+                case 'gourmet': return '美食'
+                case 'scenic spot': return '景點'
+                case 'transportation': return '交通'
+                case 'shopping': return '購物'
+                case 'lodging': return '住宿'
+                case 'entertainment': return '娛樂'
+            }
         },
     }
 }
@@ -140,6 +154,10 @@ export default {
         height: 100%;
         display: flex;
         width: 100%;
+    }
+    .spot-header {
+        display: flex;
+        flex-direction: row;
     }
     .spot-picture{
         width: 160px;
@@ -174,6 +192,7 @@ export default {
     .info-col {
         width: 65%;
         height: 100%;
+        margin-left: 10px;
         overflow: hidden;
         display:flex;
         flex-direction: column;
@@ -200,25 +219,24 @@ export default {
         font-size: 25px;
         cursor: pointer;
         padding-right: 5px;
+        
     }
     .fa-bookmark:hover {
         color:dimgray;
     }
     .fa-blogger {
-        font-size: 25px;
+        font-size: 30px;
         color:darkorange;
         cursor: pointer;
     }
     .icons {
-        width: 50%;
+        width: 30%;
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
+        justify-content: space-around;
         padding-top: 3px;
         margin-top: 5px;
-        
     }
-   
     .wiki {
         width:30px;
         height:30px;
@@ -238,7 +256,16 @@ export default {
     .address {
         font-size:12px;
     }
-    
+    .spot-tag {
+        width: 50px;
+    }
+    .el-tag:hover {
+        cursor: pointer;
+    }
+    .fa-info-circle {
+        font-size: 20px;
+        color:darkgrey;
+    }
   @media only screen and (max-width: 768px){
     .card-container {
         width: 100%;
