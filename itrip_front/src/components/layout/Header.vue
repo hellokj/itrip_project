@@ -1,7 +1,7 @@
 <template>
     <header class="header">
         <div class="logo">
-            <img src="./Logo.svg" alt="iTripLogo">
+            <img src="./Logo.svg" alt="iTripLogo" @click="toHome">
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
@@ -59,7 +59,7 @@
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
             </div>
-            <ProfileButton class="profileButton" v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
+            <ProfileButton class="profileButton" v-model="$store.state.isAuthorized"></ProfileButton>
         </div> 
     </header>
 </template>
@@ -120,13 +120,6 @@ export default {
                 this.$bus.$emit('toggle', {id: 'Spots'});
             }
         },
-        checkState(){
-            if (this.$store.state.isAuthorized){
-                this.$emit('logOut-click');
-            }else {
-                this.$emit('logIn-click');
-            }
-        },
         setCity(node) {
             this.selected_city = node.parentId;
         },
@@ -145,6 +138,9 @@ export default {
                 }
             }
         },
+        toHome: function(){
+            this.$router.push({path: '/'});
+        }
     },
 }
 </script>

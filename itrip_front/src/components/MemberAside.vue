@@ -42,7 +42,7 @@ export default {
     
   },
   watch: {
-    myItineraries(newVal, oldVal){
+    myItineraries: function(newVal, oldVal){
       console.log(newVal);
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
+    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <div id="nav"></div>
     <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
@@ -44,8 +44,8 @@ export default {
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
     }
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
+    // this.handleResize(); // 有錯先註解掉
   },
   mounted() {
     let vm = this;
