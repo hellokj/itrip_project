@@ -189,7 +189,7 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: async function(data=null, page=1, sort='checkins') {
+    callGetSpotApi: async function(data=null, page=1, sort='ig_post_num') {
       let self = this;
       if(data == null) data=this.param;
       data.page = page;
@@ -261,7 +261,7 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
-      if(index === undefined && this.togos[this.page].length > 0) {
+      if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
         this.centerSpot = this.togos[this.page][0]
         return;
       }
@@ -291,7 +291,6 @@ export default {
     this.$bus.$on('toggle', event => {
         this.toggle(event.id)
     });
-    console.log($mq);
  },
 
   beforeDestroy: function() {

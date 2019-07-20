@@ -101,7 +101,7 @@ const paramsHelper = (params, values) => {
     return result;
 }
 
-const makeParams = (city = null, region = null, _category = null, _name = null, _sortBy = "checkins", _page = 1, _limit = 10, _order = -1) => {
+const makeParams = (city = null, region = null, _category = null, _name = null, _sortBy = "ig_post_num", _page = 1, _limit = 10, _order = -1) => {
     let _region = region;
     let _city = city;
     if (region != null && region.length >= 4) {

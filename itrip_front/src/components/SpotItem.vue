@@ -4,7 +4,12 @@
             <div class="card-container">
                 <i :class="markClass"  @click="clickAdd(spot)"></i>
                 <div class="picture-container">
-                    <img ref="image" class="px-2 py-2 spot-picture" :src="srcFunc" @error="error">
+                    <vue-load-image>
+                        <img ref="image" class="px-2 py-2 spot-picture" slot="image" :src="srcFunc">
+                        <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
+                        <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
+
+                    </vue-load-image>
                 </div>
                 <div class="info-col">
                     <div class="name-container">
@@ -15,7 +20,7 @@
                         <el-tag
                             class="mx-1"
                             v-for="(t, index) in spot.ig_tag"
-                            :key="index" effect="plain" :size="mini">
+                            :key="index" effect="plain" size="mini">
                             #{{t}}
                         </el-tag>
                     </div>
@@ -33,14 +38,14 @@
 <script>
 
 import {getAddress} from '../../utils/checker.js'
+import VueLoadImage from 'vue-load-image'
 export default {
     name: "SpotItem",
     components: {
-        
+        'vue-load-image': VueLoadImage
     },
     data() {
         return {
-            notFound: require('../assets/picNotFound.jpg'),
             markClass: 'far fa-bookmark'
         }
     },
@@ -58,9 +63,6 @@ export default {
         },
         getAddress: function(){
            return getAddress(this.spot.address)
-        },
-        error: function(){
-            this.$refs.image.src = this.notFound
         },
         link: function(type) {
             let Url = '';
@@ -107,9 +109,6 @@ export default {
             }
             return src  
         },
-        hasWiki: function() {
-
-        }
     }
 }
 </script>
@@ -143,6 +142,14 @@ export default {
         width: 100%;
     }
     .spot-picture{
+        width: 160px;
+        height: 150px;
+    }
+    .preloader {
+        width: 160px;
+        height: 150px;
+    }
+    .picNotFound {
         width: 160px;
         height: 150px;
     }
@@ -256,7 +263,14 @@ export default {
     .spot-picture {
         width: 100px;
         height: 90px;
-       
+    }
+    .preloader {
+        width: 100px;
+        height: 90px;
+    }
+    .picNotFound {
+        width: 100px;
+        height: 90px;
     }
     span {
         width: 85%;
@@ -292,6 +306,9 @@ export default {
         font-size: 18px;
         color:darkorange;
         cursor: pointer;
+    }
+    .picture-container {
+        height: 100px;
     }
 }
 </style>

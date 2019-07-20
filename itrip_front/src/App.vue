@@ -119,17 +119,15 @@ export default {
       display: none;
     }
 
-  @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 768px) {
     .mobileHeader {
       display: flex;
       justify-content: center;
+      }
     }
-  }
   .modal {
     width: 40%;
     height: auto;
     text-align: center;
   }
-
-
 </style>
