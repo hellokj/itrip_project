@@ -158,7 +158,7 @@ export default {
         margin: 0px;
         background: rgb(255,208,129);
         background: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%);
-        height: 80px;
+        height: 10vh;
         display: flex;
         font-family: logoFont;
         justify-content: space-between;
