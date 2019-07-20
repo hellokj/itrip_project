@@ -13,7 +13,7 @@
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
                     <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
                     <div class="iNumber-container">
-                        <a-time-picker class="time-picker" :defaultValue="moment('01:00', 'HH:mm')" format="HH:mm" />
+                        <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment('01:00', 'HH:mm')" format="HH:mm" />
                         <i class="fas fa-ellipsis-h"></i>
                     </div>
                 </div>
@@ -40,7 +40,8 @@ export default {
         return {
             hrs: this.togo.stopTime.hrs,
             mins: this.togo.stopTime.mins,
-            editMode: true
+            editMode: true,
+            stopTime:''
         }
     },
     methods: {
@@ -50,16 +51,15 @@ export default {
         },
         getAddress() {
             return getAddress(this.togo.address);
-        }
-    },
-    watch: {
-        hrs: function() {
-            this.togo.stopTime.hrs = parseInt(this.hrs);
         },
-        mins: function() {
-            this.togo.stopTime.mins =  parseInt(this.mins);
+        onChange(time, timeString){
+            this.hrs = parseInt(timeString.split(':')[0]);
+            this.mins = parseInt(timeString.split(':')[1]);
+            this.togo.stopTime.hrs = this.hrs;
+            this.togo.stopTime.mins = this.mins;
         }
-    }
+
+    },
 }
 </script>
 
@@ -79,7 +79,7 @@ export default {
     }
     .picture-container {
         height: 100%;
-        width: 100px;
+        width: 130px;
         display: flex;
         flex-direction: column;
         justify-content: center;

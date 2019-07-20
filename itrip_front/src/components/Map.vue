@@ -35,8 +35,7 @@
 import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom } from 'vue2-leaflet';
 import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
-import MarkerPopover from '../components/template/MarkerPopover'
-import { userLocator } from '../../utils/userLocator' 
+import MarkerPopover from '../components/template/MarkerPopover' 
 import Vue from 'vue'
 import L from "leaflet"
 
@@ -145,7 +144,7 @@ export default {
         return;
       }
       this.routesArr = this.routes[this.currentPage].routes;
-    }
+    },
   },
   watch: {
     togos: function() {
@@ -164,7 +163,7 @@ export default {
     spots: function(){
       let spot = this.spots[0];
       this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
-      this.zoom = 18;
+      this.zoom = 12;
 
     },
     routes: {

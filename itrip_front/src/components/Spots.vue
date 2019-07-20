@@ -4,9 +4,8 @@
       <p class="mx-4 pt-3">搜尋結果 排序:</p>
       <b-dropdown size="sm" class="m-2" v-model="sortBy">
           <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
-          <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
           <b-dropdown-item-button @click="sortBy='ig_post_num'">IG Tag熱度</b-dropdown-item-button>
-          <b-dropdown-item-button @click="sortBy='government_data'">政府推薦</b-dropdown-item-button>
+          <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
       </b-dropdown>
       <div class="space"></div>
       <el-button class="view-map" round><i class="fas fa-map-marker-alt"></i> 檢視地圖</el-button>
@@ -17,11 +16,11 @@
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-        :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage"
-        @add-spot="$emit('add-spot', spot)" 
-        @mouseOver="$emit('hoverSpotItem', index, spot)"
-        @mouseOut="$emit('hoverSpotItem')"
-        @show-link="Show"/>
+          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :togos="togos"
+          @add-spot="$emit('add-spot', spot)" 
+          @mouseOver="$emit('hoverSpotItem', index, spot)"
+          @mouseOut="$emit('hoverSpotItem')"
+          @show-link="Show"/>
         <v-pagination 
                 v-if="isScrollbarShown"
                 v-model="currentPage"
@@ -69,7 +68,7 @@ export default {
         },
         isScrollbarShown: false,
         sortBy: '',
-        sortString: '臉書打卡王',
+        sortString: 'IG Tag熱度',
         url: '',
         isLoading: false,
       }
@@ -77,7 +76,8 @@ export default {
     props: {
      spots: Array,
      paginator: Object,
-     perPage: Number
+     perPage: Number,
+     togos: Array
     },
     methods: {
       Show(Url){
@@ -99,7 +99,6 @@ export default {
         }
       },
       paginator: function(){
-        //console.log(this.paginator);
         this.totalPages = this.paginator.pageCount;
         this.currentPage = this.paginator.currentPage;
         this.dataCount = this.paginator.spotCount;
@@ -111,7 +110,7 @@ export default {
       },
       sortBy: function(newVal) {
         // alert(this.sortBy)
-        let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度','government_data':'政府推薦'}
+        let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度'}
         this.sortString = choices[newVal];
         this.$emit('sort-spot', null, 1, newVal);
       },
@@ -129,6 +128,7 @@ export default {
     color: black;
     height: 90%;
     margin: 10px;
+    width: 100%;
   }
   .tag-container {
     display: flex;
@@ -143,7 +143,7 @@ export default {
     display: flex;
     flex: 1;
   }
-  @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 768px) {
     .spotContainer {
       width: 100%;
       height: 85%;

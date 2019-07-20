@@ -3,7 +3,7 @@
     <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <div id="nav"></div>
-    <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
+    <router-view :param="param" :region="region" :type="type"/>
   </div>
 </template>
 
@@ -44,8 +44,6 @@ export default {
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
     }
-    window.addEventListener('resize', this.handleResize);
-    // this.handleResize(); // 有錯先註解掉
   },
   mounted() {
     let vm = this;
@@ -119,17 +117,15 @@ export default {
       display: none;
     }
 
-  @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 768px) {
     .mobileHeader {
       display: flex;
       justify-content: center;
+      }
     }
-  }
   .modal {
     width: 40%;
     height: auto;
     text-align: center;
   }
-
-
 </style>

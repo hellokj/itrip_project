@@ -3,8 +3,8 @@
     <b-row class="trip-row" fluid>
       <!-- :style="[(isMobile && (selected != 0)) ? { display: none }:{ display: flex}]" -->
       <b-col 
-      class="px-0 togos-col" cols="12" lg="5" xl="3"
-      :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
+        class="px-0 togos-col" cols="12" lg="5" xl="3"
+        :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
         id="togos"
@@ -20,7 +20,7 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" 
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
@@ -35,7 +35,8 @@
           id="map"
           class="map"
           :spots="spots" :togos="togos[page]" :routes="routes" 
-          :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
+          :page="page" :perPage="perPage" :spotPage="spotPage" 
+          :centerSpot="centerSpot"/>
       </b-col>
     </b-row>
   </b-container>
@@ -189,7 +190,7 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: async function(data=null, page=1, sort='checkins') {
+    callGetSpotApi: async function(data=null, page=1, sort='ig_post_num') {
       let self = this;
       if(data == null) data=this.param;
       data.page = page;
@@ -261,7 +262,7 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
-      if(index === undefined && this.togos[this.page].length > 0) {
+      if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
         this.centerSpot = this.togos[this.page][0]
         return;
       }
@@ -285,13 +286,15 @@ export default {
     param: function(newVal) {
       this.callGetSpotApi(newVal);
     },
+    togos: function(newVal) {
+      console.log(this.togos);
+    }
  },
   created () {
     // [註冊監聽事件]
     this.$bus.$on('toggle', event => {
         this.toggle(event.id)
     });
-    console.log($mq);
  },
 
   beforeDestroy: function() {
