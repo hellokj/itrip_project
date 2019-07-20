@@ -1,16 +1,26 @@
 <template>
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
-        <el-card class="el-card" :body-style="{ width: '100%', padding: '0px'}" shadow="hover">
+        <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}" shadow="hover">
             <div class="card-container">
-                <img ref="image" class="px-2 py-2 mt-3 spot-picture" :src="srcFunc" @error="error">
+                <i :class="markClass"  @click="clickAdd(spot)"></i>
+                <div class="picture-container">
+                    <img ref="image" class="px-2 py-2 spot-picture" :src="srcFunc" @error="error">
+                </div>
                 <div class="info-col">
                     <div class="name-container">
                         <p class="my-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
-                        <i class="pr-1 mt-1 fas fa-plus-square" @click="$emit('add-spot', spot)"></i>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
+                    <div class="tags">
+                        <el-tag
+                            class="mx-1"
+                            v-for="(t, index) in spot.ig_tag"
+                            :key="index" effect="plain" :size="mini">
+                            #{{t}}
+                        </el-tag>
+                    </div>
                     <div class="icons">
-                        <i @click="link('pixnet')" class="fas fa-blog"></i>
+                        <i @click="link('pixnet')" class="fab fa-blogger"></i>
                         <img @click="link('ig')" class="instagram" src="../assets/instagram.png">
                         <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
                     </div>
@@ -31,6 +41,7 @@ export default {
     data() {
         return {
             notFound: require('../assets/picNotFound.jpg'),
+            markClass: 'far fa-bookmark'
         }
     },
     props: {
@@ -40,6 +51,11 @@ export default {
         currentPage: Number,
     },
     methods: {
+        clickAdd: function(spot) {
+            this.$emit('add-spot', spot);
+            this.markClass = 'fas fa-bookmark';
+            console.log(this.spot);
+        },
         getAddress: function(){
            return getAddress(this.spot.address)
         },
@@ -100,28 +116,45 @@ export default {
 
 <style scoped>
     .spot-item-container {
-        width:100%;
         display: flex;
         flex-direction: row;
         color: #000000;
-        height: 145px;
+        height: 180px;
         margin-bottom: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    .picture-container {
+        width: 160px;
+        height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     .card-container {
         display: flex;
         flex-direction: row;
-        width: 100%; 
+        width: 100%;
+        height: 200px;
     }
     .el-card {
+        height: 100%;
         display: flex;
         width: 100%;
     }
     .spot-picture{
-        width: 120px;
-        height: 120px;
+        width: 160px;
+        height: 150px;
+    }
+    .tags {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        overflow: hidden;
     }
     .p-name {
-        font-size:16px;
+        font-size:18px;
     }
     .name-container {
         width: 100%;
@@ -129,14 +162,16 @@ export default {
         flex-wrap: nowrap;
         flex-direction: row;
         justify-content: space-between;
+        align-self: flex-start;
     }
     .info-col {
         width: 65%;
+        height: 100%;
+        overflow: hidden;
         display:flex;
         flex-direction: column;
-        justify-content: space-evenly;
     }
-     .fa-plus-square {
+    .fa-plus-square {
         font-size: 25px;
         color:darkgray;
         cursor: pointer;
@@ -154,18 +189,27 @@ export default {
         height:30px;
         cursor: pointer;
     }
-    .fa-blog {
+    .fa-bookmark {
+        font-size: 25px;
+        cursor: pointer;
+        padding-right: 5px;
+    }
+    .fa-bookmark:hover {
+        color:dimgray;
+    }
+    .fa-blogger {
         font-size: 25px;
         color:darkorange;
         cursor: pointer;
     }
     .icons {
-        width: 100%;
+        width: 50%;
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: space-evenly;
         padding-top: 3px;
-        margin-top: 10px;
+        margin-top: 5px;
+        
     }
    
     .wiki {
@@ -194,7 +238,7 @@ export default {
         height: 100%;
     }
     .spot-item-container {
-        height: 100px;
+        height: 130px;
     }
     .info-col {
         width: 100%;
@@ -212,26 +256,23 @@ export default {
     .spot-picture {
         width: 100px;
         height: 90px;
-        padding-top: 1;
+       
     }
     span {
         width: 85%;
     }
     .icons {
-        width: 75%;
+        width: 100%;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
         padding: 0px;
+        align-self:flex-end;
     }
-    .fa-plus-square {
-        font-size: 20px;
-        color:darkgray;
-        cursor: pointer;
+    .fa-bookmark {
+        font-size: 15px;
     }
-    .fa-plus-square:hover {
-        color:dimgray;
-    }
+    
     .fa-facebook-square {
         font-size: 20px;
         color:#3b5998;

@@ -17,8 +17,9 @@
                 <input  
                 class="input_name"
                 type="text"
-                placeholder="景點名稱"
-                v-model="input_name" />
+                placeholder="想去哪?"
+                v-model="input_name"
+                style="text-align:center;" />
             </div>
             <div class="trees">
                 <!-- Select Type -->
@@ -30,7 +31,8 @@
                 :sort-value-by="sortValueBy"
                 :default-expand-level="0"
                 placeholder="種類"
-                v-model="selected_type"/>
+                v-model="selected_type"
+                style="text-align:center;" />
                 
                 <treeselect
                 class="input_region"
@@ -41,6 +43,7 @@
                 :default-expand-level="0"
                 placeholder="地區"
                 v-model="selected_region"
+                style="text-align:center;" 
                 @select="setCity"
                 />  
             </div>
@@ -51,7 +54,7 @@
         </div>
         <div class="btns">
             <div class="div_trip">
-                <router-link to="/trip">旅遊</router-link>
+                <router-link  to="/trip">旅遊</router-link>
             </div>
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
@@ -172,6 +175,7 @@ export default {
         align-items: center;
         justify-content: flex-end;
         flex: 0 1 auto;
+        padding-right: 20px;
 
     }
     .searchbar {

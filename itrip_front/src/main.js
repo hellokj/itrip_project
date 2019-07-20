@@ -19,13 +19,22 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import store from './store'
 import eventBus from '../utils/eventBus.js'
+import 'ant-design-vue/dist/antd.css'
+import Antd from 'ant-design-vue'
+import {MediaQueries} from 'vue-media-queries';
+
+const mediaQueries = new MediaQueries();
+ 
+Vue.use(mediaQueries);
+
+
 
 
 Vue.use(ElementUI);
 // configure language
 locale.use(lang)
 Vue.use(Vuex);
-
+Vue.use(Antd);
 Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
 Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
@@ -60,6 +69,7 @@ new Vue({
   },
   router,
   store,
+  mediaQueries: mediaQueries,
   render: h => h(App)
 }).$mount('#app')
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } })

@@ -1,7 +1,11 @@
 <template>
   <b-container class="trip" fluid>
-    <b-row class="trip-row">
-      <b-col class="px-0 togos-col" cols="12" md="3" order="2" order-md="1">
+    <b-row class="trip-row" fluid>
+      <!-- :style="[(isMobile && (selected != 0)) ? { display: none }:{ display: flex}]" -->
+      <b-col 
+      class="px-0 togos-col" cols="12" lg="5" xl="3"
+      :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
+      :value="selected">
         <Togos
         id="togos"
         class="togos"
@@ -9,7 +13,10 @@
         :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </b-col>
-      <b-col class="px-0 spots-col" cols="12" md="3" order="1" order-md="2">
+      <b-col 
+      class="px-0 spots-col" cols="12" lg="4" xl="4"
+      :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
+      :value="selected">
         <Spots
           id="spots"
           class="spots"
@@ -17,30 +24,26 @@
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
-          @sort-spot="callGetSpotApi"/> 
+          @sort-spot="callGetSpotApi"
+          @show-map="showMap"/> 
       </b-col>
-      <b-col class="px-0 map-col" cols="12" md="6" order="3">
+      <b-col 
+      class="px-0 map-col" cols="12" lg="5" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(768) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      :value="selected">
         <Map 
           id="map"
           class="map"
-          bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
+          :spots="spots" :togos="togos[page]" :routes="routes" 
           :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
       </b-col>
     </b-row>
-      <!-- <div id="Togos" class="Togos" :class="{'display': isDisplayArr[0]}" v-show=" isDisplayArr[0]">
-        
-      </div>
-      <div id="Spots" class="Spots" :class="{'display': isDisplayArr[1]}" v-show=" isDisplayArr[1]">
-        
-      </div>
-      <div id="Map" class="Map"  :class="{'displayMap': isDisplayArr[2]}" v-show=" isDisplayArr[2]">
-        
-      </div> -->
   </b-container>
 </template>
 
 <script>
 // @ is an alias to /src
+import Vue from 'vue'
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
@@ -83,7 +86,7 @@ export default {
       travelInfos: [],
       paginator: {},
       centerSpot: {},
-      isDisplayArr: [true, true, true],
+      selected: 1,
     }
   },
   methods: {
@@ -269,14 +272,14 @@ export default {
       let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
-          if(toggle)
-          document.getElementById(toggle).style.setProperty('display', 'flex', 'important');
-        }
-        else {
-          document.getElementById(toggle).style.setProperty('display', 'none', 'important');
+          this.selected = i;
+          return;
         }
       }
     },
+    showMap: function() {
+        
+    }
   },
   watch: {
     param: function(newVal) {
@@ -288,6 +291,7 @@ export default {
     this.$bus.$on('toggle', event => {
         this.toggle(event.id)
     });
+    console.log($mq);
  },
 
   beforeDestroy: function() {
@@ -301,12 +305,13 @@ export default {
 <style scoped>
   .trip {
     height: 100%;
-    padding-left: 150px;
-    padding-right: 150px;
-    background: #f2f2f2;
+ 
+    background: rgb(250,250,250);
   }
   @media screen and (max-width: 768px) {
   .trip {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
     padding-left: 0px;
     padding-right: 0px;
   }
@@ -314,18 +319,8 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-  }
-  .Spots {
-      width: 100%;
-      display: flex;
-  }
-  .Togos {
-      width: 100%;
-      display: none;
-  }
-  .Map {
-      width: 100%;
-      display: none;
+    margin-left: 0px;
+    margin-right: 0px;
   }
 }
 </style>
