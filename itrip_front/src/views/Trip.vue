@@ -2,7 +2,7 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid>
       <!-- :style="[(isMobile && (selected != 0)) ? { display: none }:{ display: flex}]" -->
-      <b-col 
+      <b-col
         class="px-0 togos-col" cols="12" lg="5" xl="3"
         :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
@@ -14,21 +14,22 @@
         v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" lg="4" xl="4"
+      class="px-0 spots-col" cols="12" lg="4" xl="5"
       :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos" :isMapShown="isMapShown"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
           @sort-spot="callGetSpotApi"
-          @show-map="showMap"/> 
+          @click-view-map="clickViewMap"/> 
       </b-col>
-      <b-col 
-      class="px-0 map-col" cols="12" lg="5" order=displayOrders[2] order-md="3"
+      <b-col
+      v-if="isMapShown"
+      class="px-0 map-col" cols="12" lg="4" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(768) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected">
         <Map 
@@ -88,6 +89,8 @@ export default {
       paginator: {},
       centerSpot: {},
       selected: 1,
+      isMapShown: true,
+      
     }
   },
   methods: {
@@ -278,8 +281,9 @@ export default {
         }
       }
     },
-    showMap: function() {
-        
+    clickViewMap: function() {
+      this.isMapShown = !this.isMapShown;
+      console.log(this.isMapShown);
     }
   },
   watch: {

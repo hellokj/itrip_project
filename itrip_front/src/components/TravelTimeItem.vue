@@ -8,26 +8,21 @@
                     </b-col>
                     <b-col>
                         <b-row style="width:auto;">
-                            <!-- <select class="my-0 mr-3" v-model="current" v-on:change="onModesChange">
-                                <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
-                                    {{mode.text}}
-                                </option>
-                            </select>   -->
                             <a-dropdown :trigger="['click']">
-                                <a class="ant-dropdown-link" href="#">
-                                <i class="fas fa-car"></i>
+                                <a class="ant-dropdown-link">
+                                <i :class="modes[current].class"></i>
                                 <a-icon type="down" />
                                 </a>
                                 <a-menu slot="overlay">
-                                <a-menu-item :key="index" v-for="(mode, index) in modes" :value="mode.value">
-                                    <i :class="modes[index].class"></i>
-                                </a-menu-item>
+                                    <a-menu-item :key="index" v-for="(mode, index) in modes" :value="mode.value" @click="onModesChange(index)">
+                                        <i :class="modes[index].class"></i>
+                                    </a-menu-item>
                                 </a-menu>
                             </a-dropdown>
                             <p class="ml-2 py-0 my-0" style="font-size:15px;padding-top:10px;text-align:left;">約 {{formatTime(travelTime)}}</p>
                         </b-row>
                     </b-col>
-                    <b-col cols="2" style="display:flex;justify-content:center;">
+                    <b-col cols="2" class="pl-0" style="display:flex;justify-content:center;">
                         <i class="fas fa-angle-double-down"></i>
                     </b-col>
                 </b-row> 
@@ -55,7 +50,8 @@ export default {
         }
     },
     methods: {
-        onModesChange() {
+        onModesChange(index) {
+            this.current = index;
             this.$emit('changeMode', this.index, this.modes[this.current].apiName);
         },
         carryTimeUnit(time) {
@@ -87,6 +83,15 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: center;     
+    }
+    .fa-car-alt {
+        font-size: 25px;
+    }
+    .fa-biking {
+        font-size: 25px;
+    }
+    .fa-walking {
+        font-size: 25px;
     }
     
     .fa-angle-double-down {
