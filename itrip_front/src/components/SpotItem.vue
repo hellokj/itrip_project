@@ -18,7 +18,7 @@
                         <p class="mb-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
-                    <div class="tags">
+                    <div class="tags" v-if="sortBy === 'ig_post_num'">
                         <i class="fab fa-instagram"></i>
                         <el-tag
                             class="mx-1 el-tag"
@@ -27,7 +27,8 @@
                             #{{t}}
                         </el-tag>
                     </div>
-                    <a-tag class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i>   {{spot.ig_post_num}} 則貼文</a-tag>
+                    <a-tag v-if="sortBy === 'ig_post_num'" class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i><b>   {{spot.ig_post_num}}</b> 次<b>TAG</b></a-tag>
+                    <a-tag v-if="sortBy === 'checkins'" class="mt-2 fb-checkins-tag" color="#3b5998"><i class="fas fa-map-marker"></i><b>   {{spot.checkins}}</b> 次<b>打卡</b></a-tag>
                 </div>
                 <div class="edit-dropdown">
                    <a-dropdown :trigger="['click']">
@@ -41,7 +42,7 @@
                             <a-menu-item @click="link('wiki')">
                                  <i class="fab fa-wikipedia-w"></i> Wiki頁面
                             </a-menu-item>
-                            <a-menu-item>
+                            <a-menu-item @click="edit(spot)">
                                <i class="fas fa-cog"></i> 編輯景點資料
                             </a-menu-item>
                         </a-menu>
@@ -71,13 +72,13 @@ export default {
         index: Number,
         perPage: Number,
         currentPage: Number,
-        togos: Array
+        togos: Array,
+        sortBy: String,
     },
     methods: {
         clickAdd: function(spot) {
             this.$emit('add-spot', spot);
             this.markClass = 'fas fa-bookmark';
-            console.log(this.spot);
         },
         getAddress: function(){
            return getAddress(this.spot.address)
@@ -111,6 +112,9 @@ export default {
                 Url = this.spot.wiki;
             }
             this.$emit('show-link', Url);
+        },
+        edit(spot) {
+            this.$emit('edit-form', this.spot);
         }
     },
     computed: {
@@ -277,12 +281,16 @@ export default {
         height: auto;
     }
     .ig-post-num-tag {
-        width: 35%;
+        width: 40%;
         font-size: 15px;
     }
     .fa-instagram {
         color: #db4e35;
         font-size: 22px;
+    }
+    .fb-checkins-tag {
+        width: 35%;
+        font-size: 15px;
     }
   @media only screen and (max-width: 768px){
     .card-container {

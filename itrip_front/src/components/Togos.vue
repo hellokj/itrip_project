@@ -53,7 +53,9 @@
                         <div class="circleNum"><b>{{index + 1}}</b></div>
                         <p class="my-0 endTime">{{getEndTime(index)}}</p>
                       </div>
-                      <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
+                      <TogoItem :togo="togo" 
+                      @deleteTogo="$emit('deleteTogo', index)"
+                      @getNearby="getNearby"/>
                     </div>
                     <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
                       />
@@ -199,6 +201,9 @@ export default {
           }
         }
       },
+      getNearby: function(togo) {
+        this.$emit('getNearby', togo);
+      }
     },
     watch: {
       travelInfo: {

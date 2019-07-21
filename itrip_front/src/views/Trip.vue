@@ -1,7 +1,6 @@
 <template>
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid>
-      <!-- :style="[(isMobile && (selected != 0)) ? { display: none }:{ display: flex}]" -->
       <b-col
         class="px-0 togos-col" cols="12" lg="5" xl="3"
         :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
@@ -10,8 +9,8 @@
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
-        :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
-        v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
+        :page="page" :deleteTogo="deleteTogo" :change-page="changePage" :togos-changeOrder="updateTogos"
+        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" lg="4" xl="5"
@@ -24,6 +23,7 @@
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
+          @get-nearby="callNearbyApi"
           @sort-spot="callGetSpotApi"
           @click-view-map="clickViewMap"/> 
       </b-col>
@@ -51,7 +51,7 @@ import Spots from '../components/Spots'
 import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
 
 export default {
   name: 'trip',
@@ -90,7 +90,7 @@ export default {
       centerSpot: {},
       selected: 1,
       isMapShown: true,
-      
+      paramProp: ''
     }
   },
   methods: {
@@ -193,9 +193,9 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: async function(data=null, page=1, sort='ig_post_num') {
+    callGetSpotApi: function(data=null, page=1, sort='ig_post_num') {
       let self = this;
-      if(data == null) data=this.param;
+      if(data == null) data=this.paramProp;
       data.page = page;
       data.sortBy = sort;
       self.spotPage = page;
@@ -205,6 +205,38 @@ export default {
       .then(function (res) {
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+    },
+    callNearbyApi: function(data=null, page=1, sort='ig_post_num') {
+      let self = this;
+      if(data == null) data=this.paramProp;
+      data.page = page;
+      data.sortBy = sort;
+      self.spotPage = page;
+      
+      // call get nearby api
+      apiGetNearby(data)
+      .then(function (res) {
+        let tmp = res.data.data;
+        self.spots = res.data.data.resultList;
+        self.paginator = {
+          "nearby": true,
+          "spotCount": tmp["spotCount"],
+          "perPage": tmp["perPage"],
+          "currentPage": tmp["currentPage"],
+          "pageCount": tmp["pageCount"],
+          "slNo": tmp["slNo"],
+          "hasPrevPage": tmp["hasPrevPage"],
+          "hasNextPage": tmp["hasNextPage"],
+          "prev": tmp["prev"],
+          "next": tmp["next"]
+        }
       })
       .catch(function (error) {
         console.log(error);
@@ -283,11 +315,27 @@ export default {
     },
     clickViewMap: function() {
       this.isMapShown = !this.isMapShown;
-      console.log(this.isMapShown);
+    },
+    getNearby: function(spot) {
+      let data = {
+        id: spot._id,
+        distance: 1000,
+        limit: 10,
+        order: -1,
+        sortBy: 'ig_post_num'
+      }
+      this.paramProp = data;
     }
   },
   watch: {
     param: function(newVal) {
+      this.paramProp = newVal;
+    },
+    paramProp: function(newVal) {
+      if(Object.keys(newVal).includes('distance')) {
+        this.callNearbyApi(newVal);
+        return;
+      }
       this.callGetSpotApi(newVal);
     },
     togos: function(newVal) {

@@ -3,7 +3,11 @@
         <el-card :body-style="{ padding: '0px' }" shadow="hover"> 
             <div class="card-container">
                 <div class="picture-container">
-                    <img class="spot-picture" :src="togo.images[0]" alt="Picture">
+                    <vue-load-image>
+                        <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
+                        <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
+                        <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
+                    </vue-load-image>
                 </div>
                 <div class="info-col">
                     <div class="name-container">
@@ -14,7 +18,16 @@
                     <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
                     <div class="iNumber-container">
                         <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment('01:00', 'HH:mm')" format="HH:mm" />
-                        <i class="fas fa-ellipsis-h"></i>
+                        <a-dropdown :trigger="['click']">
+                        <a class="ant-dropdown-link">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </a>
+                        <a-menu slot="overlay">
+                            <a-menu-item @click="$emit('getNearby', togo)">
+                                <i class="fas fa-map-marked-alt"></i>  附近景點
+                            </a-menu-item>
+                        </a-menu>
+                    </a-dropdown> 
                     </div>
                 </div>
             </div>
@@ -25,13 +38,15 @@
 <script>
 import Vue from 'vue'
 import {getAddress} from '../../utils/checker.js'
-import VNumberSmarty from 'vue-number-smarty';
-import moment from 'moment';
+import VNumberSmarty from 'vue-number-smarty'
+import moment from 'moment'
+import VueLoadImage from 'vue-load-image'
 
 export default {
     name: "TogoItem",
     components: {
        VNumberSmarty,
+       'vue-load-image': VueLoadImage
     },
     props: {
         togo: Object,
@@ -57,9 +72,20 @@ export default {
             this.mins = parseInt(timeString.split(':')[1]);
             this.togo.stopTime.hrs = this.hrs;
             this.togo.stopTime.mins = this.mins;
-        }
-
+        },
     },
+    computed: {
+        srcFunc: function() {
+            let src;
+            if(!Object.keys(this.togo).includes('images') || this.togo.images.length == 0) {
+                src = this.notFound
+            }
+            else {
+                src = this.togo.images[0]
+            }
+            return src  
+        },
+    }
 }
 </script>
 
@@ -70,6 +96,10 @@ export default {
         color: #000000;
         display: flex;
         flex-direction: row;
+    }
+    .el-card:hover {
+        border: 2px solid #ebb134;
+        box-shadow: 0 0 5px #ebb134;
     }
     .card-container {
         height: 130px;
