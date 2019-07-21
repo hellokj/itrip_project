@@ -16,6 +16,7 @@
       @mouseout="mouseOut"
       :icon="icons[index]"
       v-for="(spot, index) in spots"
+      v-if="!isContains(index)"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
     )
       l-tooltip
@@ -67,7 +68,7 @@ export default {
       togoIcons: [],
       spotsPerPage: 10,
        // polyline options
-      color: "#FF0000",
+      color: "#fc9d03",
       opacity: 0.6,
       weight: 7,
       routesArr: [],
@@ -96,9 +97,8 @@ export default {
           markerColor: 'darkblue',
           prefix: 'fa',
           text: ((i+1) + ((this.spotPage-1) *  this.perPage))
-        })
-      );
-    }
+        }));
+      }
     },
     mouseOver(evt) {
       this.$set(evt.target.options.icon.options, 'markerColor', 'red');
@@ -145,16 +145,21 @@ export default {
       }
       this.routesArr = this.routes[this.currentPage].routes;
     },
+    isContains: function(index) {
+      if(this.togos !== undefined && this.spots[index] !== undefined && this.togos.some(e => e._id === this.spots[index]._id)) return true;
+      return false;
+    }
   },
   watch: {
-    togos: function() {
+    togos: function(newVal, oldVal) {
       let togoIcon = L.AwesomeMarkers.icon({
-        icon: '',
-        markerColor: 'red',
+        icon: 'star',
+        markerColor: 'orange',
         prefix: 'fa',
         html: this.togos.length
       });
       this.togoIcons.push(togoIcon);
+      this.updateMarkers();
     },
     page: function(){
       this.currentPage = this.page;

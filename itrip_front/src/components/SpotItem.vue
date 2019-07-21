@@ -13,26 +13,40 @@
                 <div class="info-col">
                     <div class="spot-header">
                         <a-tag style="width:50px;text-align:center;">{{category}}</a-tag>
-                        <div class="tags">
-                            <el-tag
-                                class="mx-1 el-tag"
-                                v-for="(t, index) in spot.ig_tag"
-                                :key="index" effect="plain" size="mini" type="danger" @click="link('ig', t)">
-                                #{{t}}
-                            </el-tag>
-                        </div>
                     </div>
                     <div class="name-container">   
                         <p class="mb-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
-                    <div class="icons">
-                        <i @click="link('pixnet')" class="fab fa-blogger"></i>
-                        <!-- <img @click="link('ig')" class="instagram" src="../assets/instagram.png"> -->
-                        <img @click="link('wiki')" class="wiki" src="../assets/wiki.png">
+                    <div class="tags">
+                        <i class="fab fa-instagram"></i>
+                        <el-tag
+                            class="mx-1 el-tag"
+                            v-for="(t, index) in spot.ig_tag"
+                            :key="index" effect="plain" size="mini" type="danger" @click="link('ig', t)">
+                            #{{t}}
+                        </el-tag>
                     </div>
+                    <a-tag class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i>   {{spot.ig_post_num}} 則貼文</a-tag>
                 </div>
-                <i class="fas fa-info-circle"></i>
+                <div class="edit-dropdown">
+                   <a-dropdown :trigger="['click']">
+                        <a class="ant-dropdown-link">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a-menu slot="overlay">
+                            <a-menu-item @click="link('pixnet')">
+                                <i class="fab fa-blogger" style="color: #3b5998;"></i>  痞客幫
+                            </a-menu-item>
+                            <a-menu-item @click="link('wiki')">
+                                 <i class="fab fa-wikipedia-w"></i> Wiki頁面
+                            </a-menu-item>
+                            <a-menu-item>
+                               <i class="fas fa-cog"></i> 編輯景點資料
+                            </a-menu-item>
+                        </a-menu>
+                    </a-dropdown> 
+                </div>
             </div>
         </el-card>
     </div>
@@ -148,7 +162,7 @@ export default {
         display: flex;
         flex-direction: row;
         width: 100%;
-        height: 200px;
+        height: auto;
     }
     .el-card {
         height: 100%;
@@ -224,23 +238,13 @@ export default {
     .fa-bookmark:hover {
         color:dimgray;
     }
-    .fa-blogger {
-        font-size: 30px;
-        color:darkorange;
-        cursor: pointer;
-    }
     .icons {
-        width: 30%;
+        width: 50%;
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: space-between;
         padding-top: 3px;
         margin-top: 5px;
-    }
-    .wiki {
-        width:30px;
-        height:30px;
-        cursor: pointer;
     }
     p {
         width: 100%;
@@ -259,12 +263,26 @@ export default {
     .spot-tag {
         width: 50px;
     }
+    .el-tag {
+        font-size: 15px;
+    }
     .el-tag:hover {
         cursor: pointer;
     }
     .fa-info-circle {
         font-size: 20px;
         color:darkgrey;
+    }
+    .edit-dropdown {
+        height: auto;
+    }
+    .ig-post-num-tag {
+        width: 35%;
+        font-size: 15px;
+    }
+    .fa-instagram {
+        color: #db4e35;
+        font-size: 22px;
     }
   @media only screen and (max-width: 768px){
     .card-container {
@@ -322,16 +340,6 @@ export default {
     .instagram {
         width:20px;
         height:20px;
-        cursor: pointer;
-    }
-    .wiki {
-        width:20px;
-        height:20px;
-        cursor: pointer;
-    }
-    .fa-blog {
-        font-size: 18px;
-        color:darkorange;
         cursor: pointer;
     }
     .picture-container {

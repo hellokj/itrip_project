@@ -8,7 +8,7 @@
           <b-dropdown-item-button @click="sortBy='checkins'" >臉書打卡王</b-dropdown-item-button>
       </b-dropdown>
       <div class="space"></div>
-      <el-button class="view-map" round><i class="fas fa-map-marker-alt"></i> 檢視地圖</el-button>
+      <el-button class="view-map" round @click="clickViewMap"><i class="fas fa-map-marker-alt"></i>  {{viewMapString}}</el-button>
     </div>
     
     <div class="vld-parent result-container">
@@ -71,13 +71,14 @@ export default {
         sortString: 'IG Tag熱度',
         url: '',
         isLoading: false,
+        viewMapString: '關閉地圖',
       }
     },
     props: {
      spots: Array,
      paginator: Object,
      perPage: Number,
-     togos: Array
+     togos: Array,
     },
     methods: {
       Show(Url){
@@ -90,6 +91,13 @@ export default {
             this.isLoading = false
         },2000)
       },
+      clickViewMap() {
+        this.$emit('click-view-map');
+        if(this.viewMapString === '關閉地圖') this.viewMapString = '檢視地圖';
+        else {
+          this.viewMapString = '關閉地圖';
+        }
+      }
     },
     watch: {
       spots: function() {
@@ -122,8 +130,8 @@ export default {
   .spotContainer {
     display: flex;
     flex-direction: column;
-    /* border-right: 2px solid rgb(230, 230, 230); */
-    border-left: 2px solid rgb(230, 230, 230);
+    border-right: 1px solid rgb(230, 230, 230);
+    border-left: 1px solid rgb(230, 230, 230);
     background: rgb(250,250,250);
     color: black;
     height: 90%;
