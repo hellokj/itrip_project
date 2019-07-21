@@ -139,3 +139,10 @@ export default {
 };
 </script>
 
+<style scoped>
+  .el-button--info {
+    color: #FFF;
+    background-color: #3b5998;
+    border-color: #3b5998;
+}
+</style>
