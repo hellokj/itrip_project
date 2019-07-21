@@ -1,161 +1,35 @@
 <template>
 <el-container style="height: 90vh; border: 1px solid #eee">
-  <!-- 側邊欄 -->
-  <!-- <el-aside width="20%" style="background-color: rgb(238, 241, 246)">
-    <el-menu :default-openeds="['1', '2']">
-      <el-submenu index="1">
-        <template slot="title"><i class="el-icon-menu"></i>我的行程</template>
-        <el-menu-item-group :index="1" title="即將到來行程">
-          <el-menu-item :index="1-1-i" v-for="(item, i) in incomingItineraries" :key="item.id">{{ item.name }}</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group :index="2" title="過往行程">
-          <el-menu-item :index="1-2-i" v-for="(item, i) in historyItineraries" :key="item.id">{{ item.name }}</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title"><i class="el-icon-setting"></i>設定</template>
-        <el-menu-item-group title="帳戶安全">
-          <el-menu-item index="2-1">會員資訊</el-menu-item>
-          <el-menu-item index="2-2">更改密碼</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="社群網路">
-          <el-menu-item index="2-3">我的追蹤清單</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-    </el-menu>
-  </el-aside> -->
-
-  <MemberAside v-if="flag == true" :myItineraries="myItineraries"></MemberAside>
-  
-  <!-- 主顯示欄 -->
-  <!-- <el-container>
-    <el-main>
-      <el-divider content-position="center">即將到來的行程</el-divider>
-      <el-carousel :interval="4000" type="card" height="30vh">
-        <el-carousel-item v-model="incomingItineraries" v-for="item in incomingItineraries" :key="item">
-          <div style="width: auto; height: 100%;" @click="checkDetail">
-            <img :fit="cover" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;" class="card_img">
-            <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
-          </div>
-        </el-carousel-item>
-      </el-carousel>
-      <el-divider content-position="center">過往行程</el-divider>
-      <el-carousel :interval="4000" type="card" height="30vh">
-        <el-carousel-item v-model="historyItineraries" v-for="item in historyItineraries" :key="item">
-          <div style="width: auto; height: 100%;" @click="checkDetail">
-            <img :fit="cover" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;" class="card_img">
-            <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
-          </div>
-        </el-carousel-item>
-      </el-carousel>
-    </el-main>
-  </el-container> -->
+  <!-- 會員頁面側邊欄 -->
+  <MemberAside
+    v-if="flag == true" 
+    :incomingItineraries="incomingItineraries" 
+    :historyItineraries="historyItineraries"
+    v-on:changeToCarousel="changeView"
+    v-on:checkDetail="checkDetail">
+  </MemberAside>
+  <keep-alive>
+    <component :is="view" v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
+  </keep-alive>
+  <!-- 所有行程幻燈片 -->
+  <!-- <MemberItineraryCarousel v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries"></MemberItineraryCarousel> -->
 
   <!-- 詳細行程 -->
-  <!-- <el-container>
-    <el-main>
-      <el-container style="margin-bottom: 20px;">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
-          <el-breadcrumb-item>個人檔案</el-breadcrumb-item>
-          <el-breadcrumb-item>即將到來的行程</el-breadcrumb-item>
-          <el-breadcrumb-item>我的行程</el-breadcrumb-item>
-          <el-breadcrumb-item>我的旅行</el-breadcrumb-item>
-          <el-breadcrumb-item>第一天</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-container>
-      <el-tabs type="border-card">
-        <el-tab-pane label="第一天">
-          <el-divider content-position="left">我的行程</el-divider>
-          <el-table
-            :data="tableData"
-            height="400"
-            border
-            style="width: 100%">
-            <el-table-column
-              prop="date"
-              label="日期"
-              width="120"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="景點"
-              width="180"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地址"
-              align="center">
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="第二天">
-          <el-divider content-position="left">我的行程</el-divider>
-          <el-table
-            :data="tableData"
-            height="400"
-            border
-            style="width: 100%">
-            <el-table-column
-              prop="date"
-              label="日期"
-              width="120"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="景點"
-              width="180"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地址"
-              align="center">
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="第三天">
-          <el-divider content-position="left">我的行程</el-divider>
-          <el-table
-            :data="tableData"
-            height="400"
-            border
-            style="width: 100%">
-            <el-table-column
-              prop="date"
-              label="日期"
-              width="120"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="景點"
-              width="180"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地址"
-              align="center">
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
-    </el-main>
-  </el-container> -->
+  <!-- <MemberDetailItinerary v-if="flag == true" :itinerary="checkDetail"></MemberDetailItinerary> -->
 
 </el-container>
 </template>
 
 <script>
 import MemberAside from '../components/MemberAside'
+import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
+import MemberDetailItinerary from '../components/MemberDetailItinerary'
 import { apiGetItineraries } from '../../utils/api'
 export default {
   components: {
-    MemberAside
+    MemberAside,
+    MemberItineraryCarousel: MemberItineraryCarousel,
+    MemberDetailItinerary: MemberDetailItinerary
   },
   data() {
     return {
@@ -168,37 +42,8 @@ export default {
       incomingItineraries: [],
       historyItineraries: [],
       flag: false,
-      // test
-      tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-08',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }],
-        height: "65vh",
+      view: 'MemberItineraryCarousel',
+      itinerary: Object,
     }
   },
   created() {
@@ -206,7 +51,7 @@ export default {
     let self = this;
     apiGetItineraries(token)
       .then(function(res){
-        // console.log(res.data.data);
+        console.log(res.data.data);
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
@@ -215,7 +60,7 @@ export default {
         self.month = currentDate.getMonth() + 1;
         self.day = currentDate.getDate();
         self.compareCurrentTime(currentDate);
-        // self.flag = true;
+        self.flag = true;
       })
       .catch(function (error) {
         console.log(error);
@@ -234,8 +79,12 @@ export default {
         }
       }
     },
-    checkDetail: function(){
-      alert("???");
+    checkDetail: function(itinerary){
+      this.changeView('MemberDetailItinerary');
+      this.itinerary = itinerary;
+    },
+    changeView: function(viewName){
+      this.view = viewName;
     }
   },
 
