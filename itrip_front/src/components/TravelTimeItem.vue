@@ -64,7 +64,7 @@ export default {
 
             if(mins >= 60) {
                 let hours = Math.floor(mins / 60);
-                let remainingMins = Math.floor(mins % hours);
+                let remainingMins = Math.floor(mins % 60);
                 return hours + '小時 ' + remainingMins + '分 ';  
             }
             else if(mins == 0) {
@@ -93,10 +93,7 @@ export default {
     .fa-walking {
         font-size: 25px;
     }
-    
     .fa-angle-double-down {
         font-size: 23px;
     }
-        
-    
 </style>

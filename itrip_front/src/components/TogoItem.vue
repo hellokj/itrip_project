@@ -17,7 +17,7 @@
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
                     <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
                     <div class="iNumber-container">
-                        <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment('01:00', 'HH:mm')" format="HH:mm" />
+                        <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment(stopTimeString, 'HH:mm')" format="HH:mm" />
                         <a-dropdown :trigger="['click']">
                         <a class="ant-dropdown-link">
                             <i class="fas fa-ellipsis-h"></i>
@@ -68,6 +68,7 @@ export default {
             this.mins = parseInt(timeString.split(':')[1]);
             this.togo.stopTime.hrs = this.hrs;
             this.togo.stopTime.mins = this.mins;
+            this.$emit('updateStopTime');
         },
         moment,
     },
@@ -82,6 +83,11 @@ export default {
             }
             return src  
         },
+        stopTimeString: function() {
+            let string = '';
+            string = this.togo.stopTime.hrs.toString().padStart(2, '0') + ':' + this.togo.stopTime.mins.toString().padStart(2, 0);
+            return string;
+        }
     }
 }
 </script>

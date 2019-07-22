@@ -43,17 +43,18 @@
             <template slot="title">
                 {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-                <virtual-list :size="150" :remain="4">
+          <virtual-list :size="150" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
-                <transition-group type="transition" name="flip-list">
-                  <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
+                <transition-group type="transition" name="flip-list" :key="update">
+                  <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
                     <div class="big-container">
                       <div class="trip-time-container">
                         <p class="my-0 startTime">{{getStartTime(index)}}</p>
                         <div class="circleNum"><b>{{index + 1}}</b></div>
                         <p class="my-0 endTime">{{getEndTime(index)}}</p>
                       </div>
-                      <TogoItem :togo="togo" 
+                      <TogoItem :togo="togo"
+                      @updateStopTime="updateStopTime"
                       @deleteTogo="$emit('deleteTogo', index)"
                       @getNearby="getNearby"/>
                     </div>
@@ -62,8 +63,8 @@
                   </div>
                 </transition-group>
             </draggable> 
-              </virtual-list>
-          </b-tab>    
+          </virtual-list>
+        </b-tab>    
       </b-tabs>
     </div>
   </div>
@@ -96,6 +97,7 @@ export default {
           min: 0
         },
         isScrollbarShown: false,
+        update: 0,
       }
     },
     components: {
@@ -187,8 +189,13 @@ export default {
             hr += Math.floor(min / 60);
             min %= 60;
         }
+        if(hr + this.togos[index].stopTime.hrs >= 24) {
+          alert('時間超出本日範圍!');
+          throw 'DAY LIMIT EXCEEDED';
+        }
         hr += this.togos[index].stopTime.hrs;
-        return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
+        
+        return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
       closeTab: function(x) {
         for (let i = 0; i < this.tabs.length; i++) {
@@ -200,6 +207,9 @@ export default {
       },
       getNearby: function(togo) {
         this.$emit('getNearby', togo);
+      },
+      updateStopTime: function() {
+        this.update++;
       }
     },
     watch: {
