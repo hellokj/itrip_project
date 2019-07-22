@@ -21,15 +21,11 @@ import store from './store'
 import eventBus from '../utils/eventBus.js'
 import 'ant-design-vue/dist/antd.css'
 import Antd from 'ant-design-vue'
-import {MediaQueries} from 'vue-media-queries';
+import {MediaQueries} from 'vue-media-queries'
 
 const mediaQueries = new MediaQueries();
  
 Vue.use(mediaQueries);
-
-
-
-
 Vue.use(ElementUI);
 // configure language
 locale.use(lang)

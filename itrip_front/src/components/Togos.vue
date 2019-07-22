@@ -15,8 +15,8 @@
         style="width:200px;"/>
       </div>
       <div class="mt-2 mr-1 save-trip">
-        <el-button><i class="fas fa-save" @click="saveTrip">   儲存</i></el-button>
-        <el-button><i class="fas fa-file-pdf"></i>   另存為PDF</el-button>
+        <el-button @click="saveTrip"><i class="fas fa-save">   儲存</i></el-button>
+        <el-button @click="saveTripAsPdf"><i class="fas fa-file-pdf"></i>   另存為PDF</el-button>
       </div>
     </div>
     <div class="tab-container">
@@ -189,6 +189,8 @@ export default {
             min %= 60;
         }
         if(hr + this.togos[index].stopTime.hrs >= 24) {
+          this.togos[index].stopTime.hrs = 1
+          this.updateStopTime();
           alert('時間超出本日範圍!');
           throw 'DAY LIMIT EXCEEDED';
         }
@@ -209,6 +211,9 @@ export default {
       },
       updateStopTime: function() {
         this.update++;
+      },
+      saveTripAsPdf: function() {
+        this.$bus.$emit('save-trip');
       }
     },
     watch: {
@@ -238,7 +243,7 @@ export default {
     display: flex;
     flex-direction: column; 
     border: none;
-    background: rgb(250,250,250);;
+    background: rgb(250,250,250);
     color:black;
     height:100%;
     width: 100%;

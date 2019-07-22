@@ -10,7 +10,7 @@
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
         :page="page" :togos-changeOrder="updateTogos"
-        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage" />
+        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" md="6" lg="6" xl="5"
@@ -32,13 +32,25 @@
       class="px-0 map-col" cols="12" lg="3" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(1200) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected">
-        <Map 
-          id="map"
-          class="map"
-          :spots="spots" :togos="togos[page]" :routes="routes" 
-          :page="page" :perPage="perPage" :spotPage="spotPage" 
-          :centerSpot="centerSpot"/>
+        <b-col  class="px-0">
+          <div class="big-image-container">
+            <vue-load-image v-if="spots.length > 0">
+                <img ref="image" class="big-image" slot="image" :src="getImage(0)">
+                <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
+                <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
+            </vue-load-image>
+          </div>
+          <Map 
+            id="map"
+            class="map"
+            :spots="spots" :togos="togos[page]" :routes="routes" 
+            :page="page" :perPage="perPage" :spotPage="spotPage" 
+            :centerSpot="centerSpot"/>
+        </b-col>
       </b-col>
+    </b-row>
+    <b-row>
+      <ItineraryPdf :togos="togos"/>
     </b-row>
   </b-container>
 </template>
@@ -50,8 +62,10 @@ import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
+import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
+import VueLoadImage from 'vue-load-image'
 
 export default {
   name: 'trip',
@@ -59,7 +73,9 @@ export default {
       Togos,
       Spots,
       Map,
-      MobileHeader
+      MobileHeader,
+      ItineraryPdf,
+      'vue-load-image': VueLoadImage
   },
   props: {
     param: Object,
@@ -268,7 +284,6 @@ export default {
     },
     changePage(p) {
       this.page = p;
-      console.log(this.page);
     },
     reverseCoordinates: function(tmpCoordinates) {
       for (let i = 0; i < tmpCoordinates.length; i++) {
@@ -325,6 +340,15 @@ export default {
         sortBy: 'ig_post_num'
       }
       this.paramProp = data;
+    },
+    getImage: function(index) {
+      if(this.spots[index] !== undefined) {
+        console.log(this.spots[index].images[0])
+        return this.spots[index].images[0];
+      }
+      else {
+        return null;
+      }
     }
   },
   watch: {
@@ -347,12 +371,10 @@ export default {
     this.$bus.$on('toggle', event => {
         this.toggle(event.id)
     });
- },
-
+  },
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
-    
   }
 }
 </script>
@@ -360,8 +382,21 @@ export default {
 <style scoped>
   .trip {
     height: 100%;
- 
     background: rgb(250,250,250);
+  }
+  .map-col {
+    height: 100%;
+  }
+  .big-image-container {
+    background: rgb(250,250,250);
+    padding-top: 50px;
+    padding-bottom: 50px;
+    height: 40vh;
+    width: 100%;
+  }
+  .big-image {
+    width: 100%;
+    height: auto;
   }
   @media screen and (max-width: 768px) {
   .trip {
