@@ -2,15 +2,15 @@
 <el-container style="height: 90vh; border: 1px solid #eee">
   <!-- 會員頁面側邊欄 -->
   <MemberAside
-    v-if="flag == true" 
     :incomingItineraries="incomingItineraries" 
     :historyItineraries="historyItineraries"
     v-on:changeToCarousel="changeView"
     v-on:checkDetail="checkDetail">
   </MemberAside>
-  <keep-alive>
-    <component :is="view" v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
-  </keep-alive>
+  <component :is="view" :title="title" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
+  <!-- <keep-alive>
+    
+  </keep-alive> -->
   <!-- 所有行程幻燈片 -->
   <!-- <MemberItineraryCarousel v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries"></MemberItineraryCarousel> -->
 
@@ -27,7 +27,7 @@ import MemberDetailItinerary from '../components/MemberDetailItinerary'
 import { apiGetItineraries } from '../../utils/api'
 export default {
   components: {
-    MemberAside,
+    MemberAside: MemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
     MemberDetailItinerary: MemberDetailItinerary
   },
@@ -44,6 +44,7 @@ export default {
       flag: false,
       view: 'MemberItineraryCarousel',
       itinerary: Object,
+      title: "",
     }
   },
   created() {
@@ -61,6 +62,9 @@ export default {
         self.day = currentDate.getDate();
         self.compareCurrentTime(currentDate);
         self.flag = true;
+        // console.log("new date", currentDate);
+        // console.log("history", self.historyItineraries);
+        // console.log("incoming", self.incomingItineraries);
       })
       .catch(function (error) {
         console.log(error);
@@ -70,8 +74,10 @@ export default {
     compareCurrentTime: function(currentDate){
       // 判斷行程 為 即將開始 或 過往行程
       for (let i = 0; i < this.myItineraries.length; i++){
-        let date = new Date(Number(this.myItineraries[i].startDate.year), Number(this.myItineraries[i].startDate.month), Number(this.myItineraries[i].startDate.day));
+        let date = new Date(Number(this.myItineraries[i].startDate.year), Number(this.myItineraries[i].startDate.month)-1, Number(this.myItineraries[i].startDate.day));
         let d = currentDate.getTime() - date.getTime();
+        // console.log("date", date);
+        // console.log("d", d);
         if (d > 0){
           this.historyItineraries.push(this.myItineraries[i]);
         }else {
@@ -82,6 +88,11 @@ export default {
     checkDetail: function(itinerary){
       this.changeView('MemberDetailItinerary');
       this.itinerary = itinerary;
+      if (this.historyItineraries.includes(this.itinerary)){
+        this.title = "歷史行程";
+      } else {
+        this.title = "即將到來行程";
+      }
     },
     changeView: function(viewName){
       this.view = viewName;

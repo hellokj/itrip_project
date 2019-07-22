@@ -87,7 +87,7 @@ export default {
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
-        tripDate: "",
+        tripDate: new Date(),
         togos_prop: this.togos,
         startTime: '08:00',
         editMode: true,
