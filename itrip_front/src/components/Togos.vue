@@ -148,10 +148,6 @@ export default {
         }
         return false;
       },
-      // child method
-      deleteTogo(){
-        this.$emit('deleteTogo');
-      },
       onEnd: function(evt) {
         this.oldIndex = evt.oldIndex;
         this.newIndex = evt.newIndex;
@@ -193,7 +189,7 @@ export default {
         hr += this.togos[index].stopTime.hrs;
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
       },
-       closeTab: function(x) {
+      closeTab: function(x) {
         for (let i = 0; i < this.tabs.length; i++) {
           if (x > 0 && this.tabs[i] === x) {
             this.tabs.splice(i, 1)

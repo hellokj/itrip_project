@@ -12,10 +12,10 @@
                 </div>
                 <div class="info-col">
                     <div class="spot-header">
-                        <a-tag style="width:50px;text-align:center;">{{category}}</a-tag>
+                        <a-tag class="main-tag" style="text-align:center;">{{category}}</a-tag>
                     </div>
                     <div class="name-container">   
-                        <p class="mb-2 p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
+                        <p class="p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
                     <div class="tags" v-if="sortBy === 'ig_post_num'">
@@ -196,6 +196,9 @@ export default {
         justify-content: flex-start;
         overflow: hidden;
     }
+    .main-tag {
+        width: 50px;
+    }
     .p-name {
         font-size:18px;
     }
@@ -269,6 +272,8 @@ export default {
     }
     .el-tag {
         font-size: 15px;
+        height:auto;
+        width: auto;
     }
     .el-tag:hover {
         cursor: pointer;
@@ -289,7 +294,7 @@ export default {
         font-size: 22px;
     }
     .fb-checkins-tag {
-        width: 35%;
+        width: 40%;
         font-size: 15px;
     }
   @media only screen and (max-width: 768px){
@@ -308,6 +313,7 @@ export default {
     }
     .p-name {
         font-size: 15px;
+        margin-bottom: 0px;
     }
     .address {
         font-size:10px;
@@ -336,6 +342,10 @@ export default {
         padding: 0px;
         align-self:flex-end;
     }
+    .main-tag {
+        width: 40px;
+        font-size: 10px;
+    }
     .fa-bookmark {
         font-size: 15px;
     }
@@ -352,6 +362,18 @@ export default {
     }
     .picture-container {
         height: 100px;
+    }
+    .fa-instagram {
+        font-size: 15px;
+    }
+    .ig-post-num-tag {
+        font-size: 10px;
+    }
+    .fb-checkins-tag {
+        font-size: 10px;
+    }
+    .el-tag {
+        font-size: 10px;
     }
 }
 </style>

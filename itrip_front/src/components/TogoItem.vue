@@ -60,10 +60,6 @@ export default {
         }
     },
     methods: {
-       moment,
-        deleteTogo() {
-            this.$emit('deleteTogo');
-        },
         getAddress() {
             return getAddress(this.togo.address);
         },
@@ -73,6 +69,7 @@ export default {
             this.togo.stopTime.hrs = this.hrs;
             this.togo.stopTime.mins = this.mins;
         },
+        moment,
     },
     computed: {
         srcFunc: function() {

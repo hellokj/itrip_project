@@ -27,7 +27,8 @@ export default {
       param: {},
       mobileMode: false,
       windowWidth: 0,
-      atHome: true
+      atHome: true,
+      isAuthorized: this.$store.state.isAuthorized,
     }
   },
   methods: {
