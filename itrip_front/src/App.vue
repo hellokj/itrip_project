@@ -3,7 +3,7 @@
     <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <div id="nav"></div>
-    <router-view :param="param" :region="region" :type="type" @toggle="toggle"/>
+    <router-view :param="param" :region="region" :type="type" @toggle="toggle" @search-click="Search"/>
   </div>
 </template>
 

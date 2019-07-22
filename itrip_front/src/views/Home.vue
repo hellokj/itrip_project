@@ -10,9 +10,8 @@
             <router-link  to="/"><b>首頁</b></router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
-            <router-link  to="/trip">旅遊</router-link>
+            <router-link  to="/trip/#/trip">旅遊</router-link>
           </b-col>
-
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
             <button class="btn-login">登入</button>
           </b-col>
@@ -26,17 +25,18 @@
             <b-form-datalist id="input-list" v-bind:options="options"></b-form-datalist>
           </b-col>
           <b-col class="p-0" cols="1" sm="1" md="1" >
-            <span width="30px;"><img  
-             src="../assets/home/Search.svg" /></span>
+            <span class="search-icon" width="30px;"><img @click="handleSearch" 
+             src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
           </b-col>
         </b-row>
         <b-row class="mt-2" align-h="center">
-          <b-col class="key-word" cols="11" sm="7" md="7" >
-            <p style="display: inline-block; margin-right: 2rem;" @click="clickKeyWord" :key="keyWord" v-for="keyWord in keyWords">{{ keyWord }}</p>
+          <b-col cols="11" sm="7" md="7" >
+            <p class="key-word" style="display: inline-block; margin-right: 2rem;" @click="clickKeyWord" :key="keyWord" v-for="keyWord in keyWords">{{ keyWord }}</p>
           </b-col>
         </b-row>
       </b-container>
     </div>
+    <div>{{window.width +", "+ window.height}}</div>
 
   </div>
 
@@ -52,10 +52,23 @@ export default {
       slide: 0,
       sliding: null,
       selected: null,
-      options: ["購物", "景點", "交通"],
+      options: ["美食", "購物", "景點", "交通", "住宿", "娛樂"],
+      types: {'美食':'gourmet', '購物':'shopping', '景點':'scenic spot', '交通':'transportation', '住宿':'lodging', '娛樂':'entertainment'},
       keyWords: ["雙心石滬", "老梅石槽", "九份"],
       SearchHover: false,
+      params: {},
+      window: {
+        width: 0,
+        height: 0
+      },
     }
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize();
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     onSlideStart(slide) {
@@ -66,8 +79,28 @@ export default {
     },
     toggle: function(toggle){
       console.log(toggle);
+    },
+    handleSearch: function() {
+      alert(this.selected);
+
+      if (options.indexOf(this.selected) !== -1){
+        this.params = makeParams(null, null, this.selected, null);  // type 
+      } else {
+        this.params = makeParams(null, null, null, this.selected);  // name
+      }
+      this.$emit('search-click', this.params);
+      
+    },
+    handleResize() {
+      this.window.width = window.innerWidth;
+      this.window.height = window.innerHeight;
     }
   },
+  watch: {
+    window: function() {
+      alert(this.window.width + ", " + this.window.height)
+    }
+  }
 }
 </script>
 
@@ -102,6 +135,10 @@ export default {
 
   .key-word {
     color: rgb(30, 206, 162);
+    cursor: pointer;
   }
 
+  .search-icon{
+    cursor: pointer;
+  }
 </style>
