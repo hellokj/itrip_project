@@ -1,7 +1,7 @@
 <template>
     <header class="header">
         <div class="logo">
-            <img src="./Logo.svg" alt="iTripLogo">
+            <img src="./Logo.svg" alt="iTripLogo" @click="toHome">
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
@@ -17,8 +17,9 @@
                 <input  
                 class="input_name"
                 type="text"
-                placeholder="景點名稱"
-                v-model="input_name" />
+                placeholder="想去哪?"
+                v-model="input_name"
+                style="text-align:center;" />
             </div>
             <div class="trees">
                 <!-- Select Type -->
@@ -30,7 +31,8 @@
                 :sort-value-by="sortValueBy"
                 :default-expand-level="0"
                 placeholder="種類"
-                v-model="selected_type"/>
+                v-model="selected_type"
+                style="text-align:center;" />
                 
                 <treeselect
                 class="input_region"
@@ -41,6 +43,7 @@
                 :default-expand-level="0"
                 placeholder="地區"
                 v-model="selected_region"
+                style="text-align:center;" 
                 @select="setCity"
                 />  
             </div>
@@ -56,7 +59,7 @@
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
             </div>
-            <ProfileButton class="profileButton" v-model="$store.state.isAuthorized" v-on:button-click="checkState"></ProfileButton>
+            <ProfileButton class="profileButton" v-model="$store.state.isAuthorized"></ProfileButton>
         </div> 
     </header>
 </template>
@@ -117,13 +120,6 @@ export default {
                 this.$bus.$emit('toggle', {id: 'Spots'});
             }
         },
-        checkState(){
-            if (this.$store.state.isAuthorized){
-                this.$emit('logOut-click');
-            }else {
-                this.$emit('logIn-click');
-            }
-        },
         setCity(node) {
             this.selected_city = node.parentId;
         },
@@ -142,6 +138,9 @@ export default {
                 }
             }
         },
+        toHome: function(){
+            this.$router.push({path: '/'});
+        }
     },
 }
 </script>
@@ -158,7 +157,7 @@ export default {
         margin: 0px;
         background: rgb(255,208,129);
         background: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%);
-        height: 80px;
+        height: 10vh;
         display: flex;
         font-family: logoFont;
         justify-content: space-between;
@@ -172,6 +171,7 @@ export default {
         align-items: center;
         justify-content: flex-end;
         flex: 0 1 auto;
+        padding-right: 20px;
 
     }
     .searchbar {

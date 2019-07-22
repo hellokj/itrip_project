@@ -1,9 +1,11 @@
 <template>
   <div id="app">
-    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" v-on:logIn-click="LogIn" v-on:logOut-click="LogOut"/>
+    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <div id="nav"></div>
-    <router-view :param="param" :region="region" :type="type" @toggle="toggle" @search-click="Search"/>
+    <transition name="router-anim" enter-active-class="animated fadeIn" >
+      <router-view :param="param" :region="region" :type="type" @search-click="Search"/>
+    </transition>
   </div>
 </template>
 
@@ -44,8 +46,6 @@ export default {
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
     }
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize();
   },
   mounted() {
     let vm = this;
@@ -89,6 +89,8 @@ export default {
 }
 </script>
 <style scoped>
+@import "https://cdn.jsdelivr.net/npm/animate.css@3.5.1";
+
 @font-face {
   font-family: logoFont;
   src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
@@ -119,17 +121,15 @@ export default {
       display: none;
     }
 
-  @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 768px) {
     .mobileHeader {
       display: flex;
       justify-content: center;
+      }
     }
-  }
   .modal {
     width: 40%;
     height: auto;
     text-align: center;
   }
-
-
 </style>

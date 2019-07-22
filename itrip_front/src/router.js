@@ -15,7 +15,7 @@ export default new Router({
     {
       path: '/trip',
       name: 'trip',
-      component: () => import(/* webpackChunkName: "about" */ './views/Trip.vue')
+      component: () => import(/* webpackChunkName: "about" */ './views/Trip.vue'),
     },
     {
       path: '/about',

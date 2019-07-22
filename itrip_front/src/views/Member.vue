@@ -1,63 +1,36 @@
 <template>
 <el-container style="height: 90vh; border: 1px solid #eee">
-  <el-aside width="20%" style="background-color: rgb(238, 241, 246)">
-    <el-menu :default-openeds="['']">
-      <el-submenu index="2">
-        <template slot="title"><i class="el-icon-menu"></i>我的行程</template>
-        <el-menu-item-group title="即將到來行程">
-          <!-- <template slot="title">歷史行程</template> -->
-          <!-- 行程列表可以用 v-for 跑 -->
-          <el-menu-item index="2-1">行程1</el-menu-item>
-          <el-menu-item index="2-2">行程2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="過往行程">
-          <el-menu-item index="2-3">行程3</el-menu-item>
-        </el-menu-item-group>        
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title"><i class="el-icon-setting"></i>設定</template>
-        <el-menu-item-group title="帳戶安全">
-          <el-menu-item index="3-1">會員資訊</el-menu-item>
-          <el-menu-item index="3-2">更改密碼</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="社群網路">
-          <el-menu-item index="3-3">我的追蹤清單</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-    </el-menu>
-  </el-aside>
-  
-  <el-container>
-    <el-main>
-      <el-divider content-position="center">即將到來的行程</el-divider>
-      <el-carousel :interval="4000" type="card" height="30vh">
-        <!-- 即將到來行程陣列 -->
-        <el-carousel-item v-model="incomingItineraries" v-for="item in incomingItineraries" :key="item">
-          <div style="width: auto; height: 100%;">
-            <img :fit="cover" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;">
-            <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
-          </div>
-        </el-carousel-item>
-      </el-carousel>
-      <el-divider content-position="center">過往行程</el-divider>
-      <el-carousel :interval="4000" type="card" height="30vh">
-        <!-- 過去行程陣列 -->
-        <el-carousel-item v-model="historyItineraries" v-for="item in historyItineraries" :key="item">
-          <div style="width: auto; height: 100%;">
-            <img :fit="cover" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;">
-            <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
-          </div>
-        </el-carousel-item>
-      </el-carousel>
-    </el-main>
-  </el-container>
+  <!-- 會員頁面側邊欄 -->
+  <MemberAside
+    v-if="flag == true" 
+    :incomingItineraries="incomingItineraries" 
+    :historyItineraries="historyItineraries"
+    v-on:changeToCarousel="changeView"
+    v-on:checkDetail="checkDetail">
+  </MemberAside>
+  <keep-alive>
+    <component :is="view" v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
+  </keep-alive>
+  <!-- 所有行程幻燈片 -->
+  <!-- <MemberItineraryCarousel v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries"></MemberItineraryCarousel> -->
+
+  <!-- 詳細行程 -->
+  <!-- <MemberDetailItinerary v-if="flag == true" :itinerary="checkDetail"></MemberDetailItinerary> -->
 
 </el-container>
 </template>
 
 <script>
+import MemberAside from '../components/MemberAside'
+import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
+import MemberDetailItinerary from '../components/MemberDetailItinerary'
 import { apiGetItineraries } from '../../utils/api'
 export default {
+  components: {
+    MemberAside,
+    MemberItineraryCarousel: MemberItineraryCarousel,
+    MemberDetailItinerary: MemberDetailItinerary
+  },
   data() {
     return {
       date: { // 判定 行程時間 現在時間
@@ -68,6 +41,9 @@ export default {
       myItineraries: [],
       incomingItineraries: [],
       historyItineraries: [],
+      flag: false,
+      view: 'MemberItineraryCarousel',
+      itinerary: Object,
     }
   },
   created() {
@@ -75,7 +51,7 @@ export default {
     let self = this;
     apiGetItineraries(token)
       .then(function(res){
-        // console.log(res.data.data);
+        console.log(res.data.data);
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
@@ -84,6 +60,7 @@ export default {
         self.month = currentDate.getMonth() + 1;
         self.day = currentDate.getDate();
         self.compareCurrentTime(currentDate);
+        self.flag = true;
       })
       .catch(function (error) {
         console.log(error);
@@ -101,6 +78,13 @@ export default {
           this.incomingItineraries.push(this.myItineraries[i]);
         }
       }
+    },
+    checkDetail: function(itinerary){
+      this.changeView('MemberDetailItinerary');
+      this.itinerary = itinerary;
+    },
+    changeView: function(viewName){
+      this.view = viewName;
     }
   },
 
@@ -124,7 +108,6 @@ export default {
   .card_text {
     z-index: 2;
     display: block;
-    padding: 0 16px 16px;
     position: absolute;
     left: 0;
     right: 0;
@@ -132,5 +115,11 @@ export default {
     font-size: 16px;
     line-height: 20px;
     color: #fff;
+    background-color: black;
+    text-align: center;
+  }
+
+  .card_img {
+    padding: 3px;
   }
 </style>

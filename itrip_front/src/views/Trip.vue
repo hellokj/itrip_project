@@ -1,52 +1,57 @@
 <template>
   <b-container class="trip" fluid>
-    <b-row class="trip-row">
-      <b-col class="px-0 togos-col" cols="12" md="3" order="2" order-md="1">
+    <b-row class="trip-row" fluid>
+      <b-col
+        class="px-0 togos-col" cols="12" lg="5" xl="3"
+        :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
+      :value="selected">
         <Togos
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
-        :page="page" v-on:deleteTogo="deleteTogo" v-on:change-page="changePage" 
-        v-on:togos-changeOrder="updateTogos" @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip"/>
+        :page="page" :deleteTogo="deleteTogo" :change-page="changePage" :togos-changeOrder="updateTogos"
+        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby"/>
       </b-col>
-      <b-col class="px-0 spots-col" cols="12" md="3" order="1" order-md="2">
+      <b-col 
+      class="px-0 spots-col" cols="12" lg="4" xl="5"
+      :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
+      :value="selected">
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" 
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos" :isMapShown="isMapShown"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
-          @sort-spot="callGetSpotApi"/> 
+          @get-nearby="callNearbyApi"
+          @sort-spot="callGetSpotApi"
+          @click-view-map="clickViewMap"/> 
       </b-col>
-      <b-col class="px-0 map-col" cols="12" md="6" order="3">
+      <b-col
+      v-if="isMapShown"
+      class="px-0 map-col" cols="12" lg="4" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(768) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      :value="selected">
         <Map 
           id="map"
           class="map"
-          bigMap="!showSpots" :spots="spots" :togos="togos[page]" :routes="routes" 
-          :page="page" :perPage="perPage" :spotPage="spotPage" :centerSpot="centerSpot"/>
+          :spots="spots" :togos="togos[page]" :routes="routes" 
+          :page="page" :perPage="perPage" :spotPage="spotPage" 
+          :centerSpot="centerSpot"/>
       </b-col>
     </b-row>
-      <!-- <div id="Togos" class="Togos" :class="{'display': isDisplayArr[0]}" v-show=" isDisplayArr[0]">
-        
-      </div>
-      <div id="Spots" class="Spots" :class="{'display': isDisplayArr[1]}" v-show=" isDisplayArr[1]">
-        
-      </div>
-      <div id="Map" class="Map"  :class="{'displayMap': isDisplayArr[2]}" v-show=" isDisplayArr[2]">
-        
-      </div> -->
   </b-container>
 </template>
 
 <script>
 // @ is an alias to /src
+import Vue from 'vue'
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
 
 export default {
   name: 'trip',
@@ -83,7 +88,9 @@ export default {
       travelInfos: [],
       paginator: {},
       centerSpot: {},
-      isDisplayArr: [true, true, true],
+      selected: 1,
+      isMapShown: true,
+      paramProp: ''
     }
   },
   methods: {
@@ -186,9 +193,9 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: async function(data=null, page=1, sort='checkins') {
+    callGetSpotApi: function(data=null, page=1, sort='ig_post_num') {
       let self = this;
-      if(data == null) data=this.param;
+      if(data == null) data=this.paramProp;
       data.page = page;
       data.sortBy = sort;
       self.spotPage = page;
@@ -198,6 +205,38 @@ export default {
       .then(function (res) {
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+    },
+    callNearbyApi: function(data=null, page=1, sort='ig_post_num') {
+      let self = this;
+      if(data == null) data=this.paramProp;
+      data.page = page;
+      data.sortBy = sort;
+      self.spotPage = page;
+      
+      // call get nearby api
+      apiGetNearby(data)
+      .then(function (res) {
+        let tmp = res.data.data;
+        self.spots = res.data.data.resultList;
+        self.paginator = {
+          "nearby": true,
+          "spotCount": tmp["spotCount"],
+          "perPage": tmp["perPage"],
+          "currentPage": tmp["currentPage"],
+          "pageCount": tmp["pageCount"],
+          "slNo": tmp["slNo"],
+          "hasPrevPage": tmp["hasPrevPage"],
+          "hasNextPage": tmp["hasNextPage"],
+          "prev": tmp["prev"],
+          "next": tmp["next"]
+        }
       })
       .catch(function (error) {
         console.log(error);
@@ -258,7 +297,7 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
-      if(index === undefined && this.togos[this.page].length > 0) {
+      if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
         this.centerSpot = this.togos[this.page][0]
         return;
       }
@@ -269,19 +308,39 @@ export default {
       let components = ['Togos', 'Spots', 'Map'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
-          if(toggle)
-          document.getElementById(toggle).style.setProperty('display', 'flex', 'important');
-        }
-        else {
-          document.getElementById(toggle).style.setProperty('display', 'none', 'important');
+          this.selected = i;
+          return;
         }
       }
     },
+    clickViewMap: function() {
+      this.isMapShown = !this.isMapShown;
+    },
+    getNearby: function(spot) {
+      let data = {
+        id: spot._id,
+        distance: 1000,
+        limit: 10,
+        order: -1,
+        sortBy: 'ig_post_num'
+      }
+      this.paramProp = data;
+    }
   },
   watch: {
     param: function(newVal) {
+      this.paramProp = newVal;
+    },
+    paramProp: function(newVal) {
+      if(Object.keys(newVal).includes('distance')) {
+        this.callNearbyApi(newVal);
+        return;
+      }
       this.callGetSpotApi(newVal);
     },
+    togos: function(newVal) {
+      console.log(this.togos);
+    }
  },
   created () {
     // [註冊監聽事件]
@@ -301,12 +360,13 @@ export default {
 <style scoped>
   .trip {
     height: 100%;
-    padding-left: 150px;
-    padding-right: 150px;
-    background: #f2f2f2;
+ 
+    background: rgb(250,250,250);
   }
   @media screen and (max-width: 768px) {
   .trip {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
     padding-left: 0px;
     padding-right: 0px;
   }
@@ -314,18 +374,8 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-  }
-  .Spots {
-      width: 100%;
-      display: flex;
-  }
-  .Togos {
-      width: 100%;
-      display: none;
-  }
-  .Map {
-      width: 100%;
-      display: none;
+    margin-left: 0px;
+    margin-right: 0px;
   }
 }
 </style>

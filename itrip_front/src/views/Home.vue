@@ -10,7 +10,7 @@
             <router-link  to="/"><b>首頁</b></router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
-            <router-link  to="/trip/#/trip">旅遊</router-link>
+            <router-link  to="/trip">旅遊</router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
             <button class="btn-login">登入</button>
@@ -25,7 +25,7 @@
             <b-form-datalist id="input-list" v-bind:options="options"></b-form-datalist>
           </b-col>
           <b-col class="p-0" cols="1" sm="1" md="1" >
-            <span class="search-icon" width="30px;"><img @click="handleSearch" 
+            <span class="search-icon" width="30px;"><img @click.native="handleSearch" 
              src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
           </b-col>
         </b-row>
@@ -88,6 +88,7 @@ export default {
       } else {
         this.params = makeParams(null, null, null, this.selected);  // name
       }
+      this.$router.push({path: '/trip'});
       this.$emit('search-click', this.params);
       
     },

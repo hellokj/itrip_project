@@ -14,8 +14,9 @@
         placeholder="選擇日期"
         style="width:200px;"/>
       </div>
-      <div class="mt-2 mr-4 save-trip">
+      <div class="mt-2 mr-1 save-trip">
         <el-button><i class="fas fa-save" @click="saveTrip">   儲存</i></el-button>
+        <el-button><i class="fas fa-file-pdf"></i>   另存為PDF</el-button>
       </div>
     </div>
     <div class="tab-container">
@@ -40,7 +41,7 @@
           </div>
           <b-tab v-for="i in tabs" :key="'tab' + i">
             <template slot="title">
-                {{ 'Day' + (i+1) }}<i class="fas fa-times" @click="closeTab(i)"></i>
+                {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
                 <virtual-list :size="150" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
@@ -52,7 +53,9 @@
                         <div class="circleNum"><b>{{index + 1}}</b></div>
                         <p class="my-0 endTime">{{getEndTime(index)}}</p>
                       </div>
-                      <TogoItem :togo="togo" @deleteTogo="$emit('deleteTogo', index)"/>
+                      <TogoItem :togo="togo" 
+                      @deleteTogo="$emit('deleteTogo', index)"
+                      @getNearby="getNearby"/>
                     </div>
                     <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
                       />
@@ -84,9 +87,7 @@ export default {
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
-        tripDate: {
-          date: ""
-        },
+        tripDate: "",
         togos_prop: this.togos,
         startTime: '08:00',
         editMode: true,
@@ -200,6 +201,9 @@ export default {
           }
         }
       },
+      getNearby: function(togo) {
+        this.$emit('getNearby', togo);
+      }
     },
     watch: {
       travelInfo: {
@@ -219,7 +223,6 @@ export default {
         this.startTimeOb.hr = parseInt(tmp[0])
         this.startTimeOb.min = parseInt(tmp[1])
       },
-     
     },
 }
 </script>
@@ -227,10 +230,9 @@ export default {
 <style lang="scss" scoped>
   .MyTrip {
     display: flex;
-    flex-direction: column;
-    flex: 0 0 auto;
+    flex-direction: column; 
     border: none;
-    background: #f2f2f2;
+    background: rgb(250,250,250);;
     color:black;
     height:100%;
     width: 100%;
@@ -248,6 +250,8 @@ export default {
   .sortable {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .tripName, .tripDate {
     margin-left: 11px;
@@ -274,6 +278,8 @@ export default {
   .big-container {
     display: flex;
     flex-direction: row;
+    align-self: center;
+    width: auto;
   }
   .fa-times {
     padding-left: 20px;
@@ -335,12 +341,6 @@ export default {
   @media only screen and (max-width: 780px) {
     .MyTrip {
       width: 100%;
-    }
-    .big-container {
-      flex-direction: column;
-    }
-    .trip-time-container {
-      flex-direction: row;
     }
   }
 </style>

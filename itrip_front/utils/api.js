@@ -28,8 +28,12 @@ const apiGetItineraries = (token) => {
 
 // spot api
 const apiGetSpots = (data) => {
-    return spotRequest.get('/get', { params: data });
+  return spotRequest.get('/get', { params: data });
 };
+
+const apiGetNearby = (data) => {
+  return spotRequest.get('/getNearby', { params: data });
+}
 
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
@@ -39,7 +43,7 @@ let headers = {
 
 // routing api
 const apiGetRoutes = (data, mode) => {
-    return routingRequest.post('/directions/' + mode + '/geojson', data, { headers: headers});
+  return routingRequest.post('/directions/' + mode + '/geojson', data, { headers: headers});
 };
 
 // itinerary api
@@ -49,7 +53,6 @@ const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
     "Content-Type": "application/json",
     "x-access-token": token
   }
-  console.log(startDate);
   let date = startDate.split('-');
   let data = {
     startDate: {
@@ -65,6 +68,7 @@ const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
   return itineraryRequest.post('/save', data, { headers: headers });
 };
 
+// Auth api
 const apiLogIn = (authData) => {
   return AuthRequest.post('logIn/', authData);
 }
@@ -75,6 +79,7 @@ const apiSignUp = (user) => {
 
 export {
     apiGetSpots,
+    apiGetNearby,
     apiGetRoutes,
     apiGetItineraries,
     apiLogIn,

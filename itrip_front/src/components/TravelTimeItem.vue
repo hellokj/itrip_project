@@ -4,18 +4,26 @@
             <b-col class="select">
                 <b-row>
                     <b-col cols="2" style="display:flex;justify-content:center;">
-                        
                         <i class="fas fa-angle-double-down"></i>
                     </b-col>
                     <b-col>
-                        <b-row>
-                            <select class="my-0 mx-3" v-model="current" v-on:change="onModesChange">
-                                <option :key="index" v-for="(mode, index) in modes" :value="mode.value">
-                                    {{mode.text}}
-                                </option>
-                            </select>  
-                            <p class="mb-0 py-0" style="font-size:15px;padding-top:10px;text-align:left;">約 {{formatTime(travelTime)}}</p>
+                        <b-row style="width:auto;">
+                            <a-dropdown :trigger="['click']">
+                                <a class="ant-dropdown-link">
+                                <i :class="modes[current].class"></i>
+                                <a-icon type="down" />
+                                </a>
+                                <a-menu slot="overlay">
+                                    <a-menu-item :key="index" v-for="(mode, index) in modes" :value="mode.value" @click="onModesChange(index)">
+                                        <i :class="modes[index].class"></i>
+                                    </a-menu-item>
+                                </a-menu>
+                            </a-dropdown>
+                            <p class="ml-2 py-0 my-0" style="font-size:15px;padding-top:10px;text-align:left;">約 {{formatTime(travelTime)}}</p>
                         </b-row>
+                    </b-col>
+                    <b-col cols="2" class="pl-0" style="display:flex;justify-content:center;">
+                        <i class="fas fa-angle-double-down"></i>
                     </b-col>
                 </b-row> 
             </b-col>
@@ -42,7 +50,8 @@ export default {
         }
     },
     methods: {
-        onModesChange() {
+        onModesChange(index) {
+            this.current = index;
             this.$emit('changeMode', this.index, this.modes[this.current].apiName);
         },
         carryTimeUnit(time) {
@@ -69,16 +78,25 @@ export default {
 }
 </script>
 
-<style scoped lang="sass">
-    .fa-angle-double-down
-        font-size: 20px
-        padding-top: 5px
-    select 
-        option
-            font-family: 'Font Awesome\ 5 Free', monospace
-            font-weight: 900
-        font-family: 'Font Awesome\ 5 Free', monospace
-        font-weight: 900
-        font-size: 20px
-        margin-top: 10px
+<style scoped>
+    .travelTime-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;     
+    }
+    .fa-car-alt {
+        font-size: 25px;
+    }
+    .fa-biking {
+        font-size: 25px;
+    }
+    .fa-walking {
+        font-size: 25px;
+    }
+    
+    .fa-angle-double-down {
+        font-size: 23px;
+    }
+        
+    
 </style>
