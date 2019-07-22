@@ -10,7 +10,7 @@
         </el-breadcrumb>
       </el-container>
       <el-tabs type="border-card" v-model="index">
-        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="day">
+        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index">
           <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
           <el-table
             :data="day"
@@ -43,8 +43,8 @@
           </el-table>
         </el-tab-pane>
         
-        <el-tab-pane label="查看地圖">
-          
+        <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
+          <Map></Map>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -52,7 +52,11 @@
 
 <script>
 import {getAddress} from "../../utils/checker"
+import Map from "../components/Map"
 export default {
+  components: {
+    Map
+  },
   props: {
     itinerary: Object,
     title: String,
