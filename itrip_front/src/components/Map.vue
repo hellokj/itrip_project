@@ -152,12 +152,11 @@ export default {
   },
   watch: {
     togos: function(newVal, oldVal) {
-      let togoIcon = L.AwesomeMarkers.icon({
-        icon: 'star',
-        markerColor: 'orange',
-        prefix: 'fa',
-        html: this.togos.length
-      });
+      let togoIcon = L.divIcon({
+      html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
+      iconSize: [20, 20],
+      className: 'myDivIcon'
+    });
       this.togoIcons.push(togoIcon);
       this.updateMarkers();
     },
@@ -182,13 +181,17 @@ export default {
     },
     centerSpot: function(newVal, oldVal) {
       let oldIndex = oldVal.index;
-      let newIndex = this.centerSpot.index;
-      let location = this.centerSpot.location
+      let newIndex = newVal.index;
+      let location = newVal.location
       this.center =  L.latLng(location.coordinates[1], location.coordinates[0]);
-      // reset old index color
-      this.$set(this.icons[oldIndex].options, 'markerColor', 'darkblue');
-      // change new index color
-      this.$set(this.icons[newIndex].options, 'markerColor', 'red');
+      if(this.icons[oldIndex] !== undefined) {
+        // reset old index color
+        this.$set(this.icons[oldIndex].options, 'markerColor', 'darkblue');
+      }
+      if(this.icons[newIndex] !== undefined) {
+        // change new index color
+        this.$set(this.icons[newIndex].options, 'markerColor', 'red');
+      }
     }
   },
   computed: {

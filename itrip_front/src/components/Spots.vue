@@ -19,7 +19,7 @@
           :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :togos="togos" :sortBy="sortBy"
           @add-spot="$emit('add-spot', spot)" 
           @mouseOver="$emit('hoverSpotItem', index, spot)"
-          @mouseOut="$emit('hoverSpotItem')"
+          @mouseOut="$emit('hoverSpotItem', null, spot)"
           @show-link="Show"
           @edit-form="EditSpot"/>
         <v-pagination 
@@ -31,7 +31,7 @@
                 style="display:flex;justify-content:center;"></v-pagination>
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
       </virtual-list>
-    <modal name='link-window' resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
+    <modal name='link-window' :resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
     <b-modal id='edit-form' ref="edit-spot-modal" title="編輯景點資料" width="40%" height="40%"><EditSpotModal :spot="selectedSpot"/></b-modal>
     </div>
   </div>

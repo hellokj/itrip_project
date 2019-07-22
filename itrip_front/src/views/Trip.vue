@@ -9,8 +9,8 @@
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
-        :page="page" :deleteTogo="deleteTogo" :change-page="changePage" :togos-changeOrder="updateTogos"
-        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby"/>
+        :page="page" :togos-changeOrder="updateTogos"
+        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage" />
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" lg="4" xl="5"
@@ -113,7 +113,6 @@ export default {
         this.fixTravelInfo(index);
       }
       this.togos[this.page].splice(index, 1);
-      console.log(document.getElementsByClassName("togos-col").style);
     },
     fixTravelInfo(index) {
       if(index == 0) {
@@ -269,6 +268,7 @@ export default {
     },
     changePage(p) {
       this.page = p;
+      console.log(this.page);
     },
     reverseCoordinates: function(tmpCoordinates) {
       for (let i = 0; i < tmpCoordinates.length; i++) {
@@ -292,7 +292,7 @@ export default {
           });
         }
         else {
-          this.routes = [];
+          this.routes = {};
         }
       }
     },
@@ -301,8 +301,8 @@ export default {
         this.centerSpot = this.togos[this.page][0]
         return;
       }
-      this.centerSpot = spot;
-      this.$set(this.centerSpot, 'index', index);
+        this.centerSpot = spot;
+        this.$set(this.centerSpot, 'index', index);
     },
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map'];

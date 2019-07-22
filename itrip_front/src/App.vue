@@ -3,7 +3,9 @@
     <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <div id="nav"></div>
-    <router-view :param="param" :region="region" :type="type"/>
+    <transition name="router-anim" enter-active-class="animated fadeIn" >
+      <router-view :param="param" :region="region" :type="type" @search-click="Search"/>
+    </transition>
   </div>
 </template>
 
@@ -25,7 +27,8 @@ export default {
       param: {},
       mobileMode: false,
       windowWidth: 0,
-      atHome: true
+      atHome: true,
+      isAuthorized: this.$store.state.isAuthorized,
     }
   },
   methods: {
@@ -87,6 +90,8 @@ export default {
 }
 </script>
 <style scoped>
+@import "https://cdn.jsdelivr.net/npm/animate.css@3.5.1";
+
 @font-face {
   font-family: logoFont;
   src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
