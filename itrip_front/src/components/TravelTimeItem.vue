@@ -93,10 +93,7 @@ export default {
     .fa-walking {
         font-size: 25px;
     }
-    
     .fa-angle-double-down {
         font-size: 23px;
     }
-        
-    
 </style>

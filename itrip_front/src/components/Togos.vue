@@ -46,7 +46,7 @@
           <virtual-list :size="150" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
-                  <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto >
+                  <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
                     <div class="big-container">
                       <div class="trip-time-container">
                         <p class="my-0 startTime">{{getStartTime(index)}}</p>
@@ -188,8 +188,13 @@ export default {
             hr += Math.floor(min / 60);
             min %= 60;
         }
+        if(hr + this.togos[index].stopTime.hrs >= 24) {
+          alert('時間超出本日範圍!');
+          throw 'DAY LIMIT EXCEEDED';
+        }
         hr += this.togos[index].stopTime.hrs;
-        return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
+        
+        return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
       closeTab: function(x) {
         for (let i = 0; i < this.tabs.length; i++) {
