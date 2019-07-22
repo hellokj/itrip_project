@@ -9,8 +9,8 @@
           <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
         </el-breadcrumb>
       </el-container>
-      <el-tabs type="border-card" v-model="itinerary">
-        <el-tab-pane label="第一天" v-for="day in days" :key="day">
+      <el-tabs type="border-card" v-model="index">
+        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="day">
           <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
           <el-table
             :data="day"
@@ -20,13 +20,13 @@
             <el-table-column
               prop="time"
               label="出發時間"
-              :width="auto"
+              width="120"
               align="center">
             </el-table-column>
             <el-table-column
-              prop="start"
+              prop="name"
               label="景點"
-              :width="auto"
+              width="200"
               align="center">
             </el-table-column>
             <el-table-column
@@ -35,7 +35,7 @@
               align="center">
             </el-table-column>
             <el-table-column
-              prop="stayTime"
+              prop='stopTime'
               label="停留時間"
               width="120"
               align="center">
@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import {getAddress} from "../../utils/checker"
 export default {
   props: {
     itinerary: Object,
@@ -59,24 +60,49 @@ export default {
   data() {
     return {
       days: [], // 每天的行程 裡面存放 景點object
-      day: "第1天"
+      dayAmount: "第2天"
     }
   },
   methods: {
     changeToCarousel: function(){
       this.$emit("changeToCarousel", "MemberItineraryCarousel");
     },
+    dayFormat: function(index){
+      return "day " + (index+1);
+    },
+    addressFormat: function(address){
+      return getAddress(address);
+    },
+    stopTimeFormat: function(hrs, mins){
+      console.log('hrs', hrs);
+      console.log('mins', mins);
+      if (mins == 'undefined' || mins == 'null'){
+        return hrs + "小時"
+      };
+      if (hrs == 'undefined' || hrs == 'null'){
+        return mins + "分鐘"
+      };
+      return hrs + "小時" + mins + "分鐘";
+    }
   },
   created() {
     console.log("itinerary", this.itinerary);
     // console.log("length", this.itinerary.travelInfos.length);
     // console.log("travelInfos", this.itinerary.travelInfos);
-    for (let i = 0; i < this.itinerary.travelInfos.length; i++){
+    for (let i = 0; i < this.itinerary.togos.length; i++){
       // 天數
       let tmpDay = [];
-      for (let j = 0; j < this.itinerary.travelInfos[i].length; j++){
+      for (let j = 0; j < this.itinerary.togos[i].length; j++){
         // 每天的行程
-        tmpDay.push(this.itinerary.travelInfos[i][j]);
+        let name = this.itinerary.togos[i][j].name;
+        let address = this.addressFormat(this.itinerary.togos[i][j].address);
+        let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
+        let tmpTogo = {
+          stopTime: stopTime,
+          name: name,
+          address: address
+        };
+        tmpDay.push(tmpTogo);
       }
       this.days.push(tmpDay);
     }

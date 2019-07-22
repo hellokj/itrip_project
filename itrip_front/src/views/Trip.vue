@@ -103,6 +103,7 @@ export default {
       apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
+        alert("儲存成功");
       }))
       .catch(function (error) {
         console.log(error);

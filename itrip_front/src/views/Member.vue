@@ -64,7 +64,7 @@ export default {
         self.flag = true;
         // console.log("new date", currentDate);
         // console.log("history", self.historyItineraries);
-        // console.log("incoming", self.incomingItineraries);
+        console.log("incoming", self.incomingItineraries);
       })
       .catch(function (error) {
         console.log(error);
