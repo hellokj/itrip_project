@@ -24,5 +24,21 @@ export default {
 </script>
 
 <style>
+  .card_text {
+    z-index: 2;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 16px;
+    line-height: 20px;
+    color: #fff;
+    background-color: black;
+    text-align: center;
+  }
 
+  .card_img {
+    padding: 3px;
+  }
 </style>

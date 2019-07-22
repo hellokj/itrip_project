@@ -114,7 +114,8 @@ export default {
     methods: {
       saveTrip() {
         if (this.$store.state.isAuthorized == false){
-          this.$message("請先登入");
+          // this.$message("請先登入");
+          alert("請先登入");
           this.$store.dispatch("updateFormState", {
             isLogIn: true,
             isSignUp: false,
