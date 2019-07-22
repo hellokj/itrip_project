@@ -286,7 +286,7 @@ export default {
         height: auto;
     }
     .ig-post-num-tag {
-        width: 40%;
+        width: 140px;
         font-size: 15px;
     }
     .fa-instagram {
@@ -294,7 +294,7 @@ export default {
         font-size: 22px;
     }
     .fb-checkins-tag {
-        width: 40%;
+        width: 140px;
         font-size: 15px;
     }
   @media only screen and (max-width: 768px){

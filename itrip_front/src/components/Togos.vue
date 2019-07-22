@@ -43,17 +43,18 @@
             <template slot="title">
                 {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-                <virtual-list :size="150" :remain="4">
+          <virtual-list :size="150" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
-                <transition-group type="transition" name="flip-list">
-                  <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto>
+                <transition-group type="transition" name="flip-list" :key="update">
+                  <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop" overflow:auto >
                     <div class="big-container">
                       <div class="trip-time-container">
                         <p class="my-0 startTime">{{getStartTime(index)}}</p>
                         <div class="circleNum"><b>{{index + 1}}</b></div>
                         <p class="my-0 endTime">{{getEndTime(index)}}</p>
                       </div>
-                      <TogoItem :togo="togo" 
+                      <TogoItem :togo="togo"
+                      @updateStopTime="updateStopTime"
                       @deleteTogo="$emit('deleteTogo', index)"
                       @getNearby="getNearby"/>
                     </div>
@@ -62,8 +63,8 @@
                   </div>
                 </transition-group>
             </draggable> 
-              </virtual-list>
-          </b-tab>    
+          </virtual-list>
+        </b-tab>    
       </b-tabs>
     </div>
   </div>
@@ -87,7 +88,7 @@ export default {
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
-        tripDate: "",
+        tripDate: new Date(),
         togos_prop: this.togos,
         startTime: '08:00',
         editMode: true,
@@ -96,6 +97,7 @@ export default {
           min: 0
         },
         isScrollbarShown: false,
+        update: 0,
       }
     },
     components: {
@@ -199,6 +201,9 @@ export default {
       },
       getNearby: function(togo) {
         this.$emit('getNearby', togo);
+      },
+      updateStopTime: function() {
+        this.update++;
       }
     },
     watch: {

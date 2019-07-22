@@ -2,7 +2,7 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid>
       <b-col
-        class="px-0 togos-col" cols="12" lg="5" xl="3"
+        class="px-0 togos-col" cols="12" md="5" lg="5" xl="4"
         :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
@@ -13,7 +13,7 @@
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage" />
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" lg="4" xl="5"
+      class="px-0 spots-col" cols="12" md="6" lg="6" xl="5"
       :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
@@ -29,8 +29,8 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="px-0 map-col" cols="12" lg="4" order=displayOrders[2] order-md="3"
-      :style="[($resize && !$mq.above(768) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      class="px-0 map-col" cols="12" lg="3" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(1200) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected">
         <Map 
           id="map"

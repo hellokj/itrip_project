@@ -64,7 +64,7 @@ export default {
 
             if(mins >= 60) {
                 let hours = Math.floor(mins / 60);
-                let remainingMins = Math.floor(mins % hours);
+                let remainingMins = Math.floor(mins % 60);
                 return hours + '小時 ' + remainingMins + '分 ';  
             }
             else if(mins == 0) {
