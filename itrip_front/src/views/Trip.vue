@@ -344,7 +344,7 @@ export default {
     },
     getImage: function(index) {
       if(this.spots[index] !== undefined) {
-        console.log(this.spots[index].images[0])
+        // console.log(this.spots[index].images[0])
         return this.spots[index].images[0];
       }
       else {
@@ -370,7 +370,12 @@ export default {
   created () {
     // [註冊監聽事件]
     this.$bus.$on('toggle', event => {
-        this.toggle(event.id)
+      this.toggle(event.id)
+    });
+    this.$bus.$on('modifyItinerary', (event) => {
+      this.togos = event.itinerary.togos;
+      this.travelInfos = event.itinerary.travelInfos;
+      alert("you got it");
     });
   },
   beforeDestroy: function() {

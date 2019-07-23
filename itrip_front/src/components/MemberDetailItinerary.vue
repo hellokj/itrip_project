@@ -11,7 +11,10 @@
       </el-container>
       <el-tabs type="border-card" v-model="index">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index">
-          <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+          <el-container>
+            <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+            <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button class="modify_button">
+          </el-container>
           <el-table
             :data="day"
             height="400"
@@ -107,9 +110,15 @@ export default {
           tmpDay.push(tmpTogo);
         }
         this.days.push(tmpDay);
+        this.days.push(tmpDay);
+        this.days.push(tmpDay);
       }
       // console.log("days", this.days);
-    }
+    },
+    modifyItinerary: function(itinerary){
+      this.$bus.$emit("modifyItinerary", {itinerary: itinerary});
+      this.$router.push({path: '/trip'});
+    },
   },
   created() {
     this.resetDetailInfo();
@@ -134,5 +143,19 @@ export default {
     -webkit-transition: color .2s cubic-bezier(.645,.045,.355,1);
     transition: color .2s cubic-bezier(.645,.045,.355,1);
     color: #303133;
+  }
+
+  .el-divider--horizontal {
+    display: block;
+    height: 1px;
+    width: 90%;
+    margin: 24px 0;
+  }
+
+  .modify_button {
+    margin-bottom: 10px;
+    width: 120px;
+    border-radius: 10px;
+    text-align: center;
   }
 </style>

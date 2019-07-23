@@ -7,13 +7,13 @@
       v-for="(dayRoutes, index) in travelInfos"
       :key="index"
       :lat-lngs="travelInfos[index].routes"
-      :color="color"
+      :color="colors[index % 7]"
       :opacity="opacity"
       :weight="weight"
       :visible='true'>
     </l-polyline>
     <l-marker
-      v-for="(togo, index) in itinerary.togos[0]"
+      v-for="togo in itinerary.togos[0]"
       :icon="icon"
       :key="togo._id"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])">
@@ -54,6 +54,7 @@ export default {
       }),
       // polyline options
       color: "black",
+      colors: ["#f7534a", "#f7bd4a", "#f7f74a", "#87f74a", "#4af1f7", "#4a5bf7", "#bd4af7"],
       opacity: 0.6,
       weight: 7,
     }
