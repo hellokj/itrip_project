@@ -116,8 +116,10 @@ export default {
       // console.log("days", this.days);
     },
     modifyItinerary: function(itinerary){
-      this.$bus.$emit("modifyItinerary", {itinerary: itinerary});
       this.$router.push({path: '/trip'});
+      this.$bus.$emit('modifyItinerary', {itinerary: itinerary});
+      console.log("modified", this.itinerary);
+      alert("QQ start driving bus");
     },
   },
   created() {

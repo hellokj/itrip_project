@@ -11,7 +11,8 @@
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
         :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos"/>
+        @zoom-togos="zoomTogos"
+        :key="update"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" lg="6" xl="4"
@@ -111,7 +112,8 @@ export default {
       selected: 1,
       isMapShown: true,
       paramProp: '',
-      selectedSpot: 0
+      selectedSpot: 0,
+      update: 0,
     }
   },
   methods: {
@@ -121,10 +123,11 @@ export default {
       //memberId, startDate, name, dayNum, togos, travelInfos
       let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
+      let self = this;
       apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
-        alert("儲存成功");
+        self.alert("儲存成功");
       }))
       .catch(function (error) {
         console.log(error);
@@ -389,23 +392,40 @@ export default {
       deep: true,
     },
     togos: function(newVal) {
-      console.log(this.togos);
+      // console.log(this.togos);
+      this.update++;
+    },
+    travelInfos: function(newVal){
+
     }
- },
+},
   created () {
     // [註冊監聽事件]
+    let self = this;
     this.$bus.$on('toggle', event => {
-      this.toggle(event.id)
+      this.toggle(event.id);
     });
-    this.$bus.$on('modifyItinerary', (event) => {
-      this.togos = event.itinerary.togos;
-      this.travelInfos = event.itinerary.travelInfos;
-      alert("you got it");
+    this.$bus.$on('modifyItinerary', event => {
+      self.togos = event.itinerary.togos;
+      self.travelInfos = event.itinerary.travelInfos;
+      // self.$nextTick(() => {
+      //   self.alert("you got it");
+      // });
+      self.alert("you got it");
+      console.log("callback tripItinerary togos", self.togos);
+      console.log("callback tripItinerary travelInfos", self.travelInfos);
     });
+    console.log("created tripItinerary togos", this.togos);
+    console.log("created tripItinerary travelInfos", this.travelInfos);
+  },
+  mounted() {
+    console.log("mounted tripItinerary togos", this.togos);
+    console.log("mounted tripItinerary travelInfos", this.travelInfos);
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
+    this.$bus.$off('modifyItinerary');
   }
 }
 </script>
