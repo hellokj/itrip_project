@@ -7,8 +7,6 @@
           <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
           <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fab fa-facebook-square"></i>  臉書打卡王</b-dropdown-item-button>
       </b-dropdown>
-      <div class="space"></div>
-      <el-button class="view-map" round @click="clickViewMap"><i class="fas fa-map-marker-alt"></i>  {{viewMapString}}</el-button>
     </div>
     
     <div class="vld-parent result-container">
@@ -75,7 +73,6 @@ export default {
         sortString: 'IG Tag熱度',
         url: '',
         isLoading: false,
-        viewMapString: '關閉地圖',
         selectedSpot: {},
       }
     },
@@ -100,13 +97,6 @@ export default {
             this.isLoading = false
         },2000)
       },
-      clickViewMap() {
-        this.$emit('click-view-map');
-        if(this.viewMapString === '關閉地圖') this.viewMapString = '檢視地圖';
-        else {
-          this.viewMapString = '關閉地圖';
-        }
-      }
     },
     watch: {
       spots: function() {
@@ -123,16 +113,16 @@ export default {
       },
       currentPage: function(newVal) {
         if(Object.keys(this.paginator).includes('nearby')) {
-          this.$emit('get-nearby', null, newVal);
+          this.$emit('get-nearby',  newVal);
           return;
         }
-        this.$emit('get-spot', null, newVal);
+        this.$emit('get-spot', newVal);
       },
       sortBy: function(newVal) {
         // alert(this.sortBy)
         let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度'}
         this.sortString = choices[newVal];
-        this.$emit('sort-spot', null, 1, newVal);
+        this.$emit('sort-spot', newVal);
       },
     },
 }
@@ -156,7 +146,7 @@ export default {
   }
   .view-map {
     height: 40px;
-    align-self: center;
+    align-self: flex-end;
     margin-right: 10px;
   }
   .space {
@@ -172,9 +162,6 @@ export default {
     .tag-container {
       flex-wrap: wrap;
       justify-content: center;
-    }
-    .view-map {
-      display: none;
     }
   } 
 </style>

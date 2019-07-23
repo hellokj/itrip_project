@@ -15,7 +15,10 @@
                         <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
                     </div>
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
-                    <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;">停留時間</p>
+                    <div class="row">
+                        <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
+                        <i class="fas fa-comment-alt" ></i>
+                    </div>
                     <div class="iNumber-container">
                         <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment(stopTimeString, 'HH:mm')" format="HH:mm" />
                         <a-dropdown :trigger="['click']">
@@ -25,6 +28,9 @@
                         <a-menu slot="overlay">
                             <a-menu-item @click="$emit('getNearby', togo)">
                                 <i class="fas fa-map-marked-alt"></i>  附近景點
+                            </a-menu-item>
+                            <a-menu-item @click="$emit('getNearby', togo)">
+                                <i class="far fa-comment-alt"></i> 文字筆記
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown> 
@@ -87,6 +93,12 @@ export default {
             let string = '';
             string = this.togo.stopTime.hrs.toString().padStart(2, '0') + ':' + this.togo.stopTime.mins.toString().padStart(2, 0);
             return string;
+        },
+        memo: function() {
+            if(Object.keys(this.togo).includes('memo') && this.togo.memo.length > 0) {
+                return this.togo.memo;
+            }
+            return null;
         }
     }
 }
@@ -118,7 +130,7 @@ export default {
         justify-content: center;
     }
     .info-col {
-        width: 68%;
+        width: 170px;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
@@ -130,6 +142,7 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        overflow: hidden;
     }
     .iNumber-container {
         display: flex;
@@ -137,7 +150,14 @@ export default {
         width: 100%;
         padding-top: 5px;
         justify-content: space-between;
-
+    }
+    .row {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        padding-top: 5px;
+        padding-left: 10px;
+        justify-content: space-between;
     }
     p {
         width:80%;
@@ -187,7 +207,10 @@ export default {
         font-size: 12px;
         cursor: pointer;
     }
-    @media only screen and (max-width: 780px) {
+    @media only screen and (max-width: 768px) {
+    .picture-container {
+        width: 100px;
+    }
     .spot-picture{
         width: 100px;
         height: 90px;
@@ -209,4 +232,5 @@ export default {
         font-size: 10px;
     }
   }
+
 </style>

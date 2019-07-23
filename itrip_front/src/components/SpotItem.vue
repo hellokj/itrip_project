@@ -18,14 +18,18 @@
                         <p class="p-name">{{spotIndex}}.<b>{{spot.name}}</b></p>
                     </div>
                     <p class="address">{{ getAddress() }}</p>
-                    <div class="tags" v-if="sortBy === 'ig_post_num'">
+                    <div class="tags-row" v-if="sortBy === 'ig_post_num'">
                         <i class="fab fa-instagram"></i>
-                        <el-tag
-                            class="mx-1 el-tag"
-                            v-for="(t, index) in spot.ig_tag"
-                            :key="index" effect="plain" size="mini" type="danger" @click="link('ig', t)">
-                            #{{t}}
-                        </el-tag>
+                        <div class="my-0 tags">
+                            <el-tag
+                                class="mx-1 el-tag"
+                                v-for="(t, index) in spot.ig_tag"
+                                :key="index" effect="plain" size="mini" type="danger" @click="link('ig', t)">
+                                #{{t}}
+                            </el-tag> 
+                        </div>
+                       
+                        <i class="pt-1 fas fa-ellipsis-h" style="color:#db4e35"></i>
                     </div>
                     <a-tag v-if="sortBy === 'ig_post_num'" class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i><b>   {{spot.ig_post_num}}</b> 次<b>TAG</b></a-tag>
                     <a-tag v-if="sortBy === 'checkins'" class="mt-2 fb-checkins-tag" color="#3b5998"><i class="fas fa-map-marker"></i><b>   {{spot.checkins}}</b> 次<b>打卡</b></a-tag>
@@ -189,8 +193,14 @@ export default {
         width: 160px;
         height: 150px;
     }
-    .tags {
+    .tags-row {
         width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        overflow: hidden;
+    }
+    .tags {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
@@ -297,6 +307,9 @@ export default {
         width: 140px;
         font-size: 15px;
     }
+    .fa-ellipsis-h {
+        display: none;
+    }
   @media only screen and (max-width: 768px){
     .card-container {
         width: 100%;
@@ -374,6 +387,17 @@ export default {
     }
     .el-tag {
         font-size: 10px;
+    }
+}
+@media only screen and (max-width: 767px){
+    .tags {
+        width: 37%;
+    }
+    .tags-row {
+        margin-top:5px;
+    }
+    .fa-ellipsis-h {
+        display: block;
     }
 }
 </style>

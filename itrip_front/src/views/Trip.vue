@@ -1,20 +1,22 @@
 <template>
   <b-container class="trip" fluid>
-    <b-row class="trip-row" fluid>
+    <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" md="5" lg="5" xl="4"
-        :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
+        class="px-0 togos-col" cols="12"  lg="5" xl="3"
+        :style="[($resize && !$mq.above(769) && selected != 0) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
-        :page="page" :togos-changeOrder="updateTogos"
-        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"/>
+        :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
+        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
+        @zoom-togos="zoomTogos"
+        :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" md="6" lg="6" xl="5"
-      :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
+      class="px-0 spots-col" cols="12" lg="6" xl="4"
+      :style="[($resize && !$mq.above(769) && selected != 1) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
           id="spots"
@@ -22,23 +24,26 @@
           :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos" :isMapShown="isMapShown"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
-          @get-spot="callGetSpotApi"
-          @get-nearby="callNearbyApi"
-          @sort-spot="callGetSpotApi"
-          @click-view-map="clickViewMap"/> 
+          @get-spot="getSpot"
+          @get-nearby="getNearby"
+          @sort-spot="sortSpot"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="px-0 map-col" cols="12" lg="3" order=displayOrders[2] order-md="3"
-      :style="[($resize && !$mq.above(1200) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      class="px-0 map-col" cols="12" lg="4" xl="3" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(769) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected">
-        <b-col  class="px-0">
-          <div class="big-image-container">
-            <vue-load-image v-if="spots.length > 0">
-                <img ref="image" class="big-image" slot="image" :src="getImage(0)">
-                <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
-                <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
-            </vue-load-image>
+        <b-col style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
+          <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
+            <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
+              <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
+               <vue-load-image  style="width:100%;height:100%;">
+                  <img ref="image" class="big-image" slot="image" :src="item">
+                  <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
+                  <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
+                </vue-load-image>
+              </el-carousel-item>
+            </el-carousel>
           </div>
           <Map 
             id="map"
@@ -106,7 +111,9 @@ export default {
       centerSpot: {},
       selected: 1,
       isMapShown: true,
-      paramProp: ''
+      paramProp: '',
+      selectedSpot: 0,
+      update: 0,
     }
   },
   methods: {
@@ -116,10 +123,11 @@ export default {
       //memberId, startDate, name, dayNum, togos, travelInfos
       let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
+      let self = this;
       apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
-        alert("儲存成功");
+        self.alert("儲存成功");
       }))
       .catch(function (error) {
         console.log(error);
@@ -209,12 +217,12 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: function(data=null, page=1, sort='ig_post_num') {
+    callGetSpotApi: function(data=null) {
       let self = this;
-      if(data == null) data=this.paramProp;
-      data.page = page;
-      data.sortBy = sort;
-      self.spotPage = page;
+      if(data == null) {
+        data=this.paramProp;
+      }
+      self.spotPage = data.page;
       
       // call get spots api
       apiGetSpots(data)
@@ -229,12 +237,10 @@ export default {
         // always executed
       });
     },
-    callNearbyApi: function(data=null, page=1, sort='ig_post_num') {
+    callNearbyApi: function(data=null) {
       let self = this;
       if(data == null) data=this.paramProp;
-      data.page = page;
-      data.sortBy = sort;
-      self.spotPage = page;
+      self.spotPage = data.page;
       
       // call get nearby api
       apiGetNearby(data)
@@ -315,10 +321,15 @@ export default {
     hoverSpotItem: function(index, spot) {
       if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
         this.centerSpot = this.togos[this.page][0]
+        this.centerSpot.zoom = 8;
         return;
       }
         this.centerSpot = spot;
+        this.centerSpot.zoom = 15;
         this.$set(this.centerSpot, 'index', index);
+        if(index != null) {
+          this.selectedSpot = index;
+        }
     },
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map'];
@@ -342,40 +353,79 @@ export default {
       }
       this.paramProp = data;
     },
-    getImage: function(index) {
-      if(this.spots[index] !== undefined) {
-        console.log(this.spots[index].images[0])
-        return this.spots[index].images[0];
+    getImages: function(index) {
+      if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
+        return this.spots[index].images;
       }
       else {
-        return null;
+        return ['111'];
       }
+    },
+    zoomTogos: function() {
+      this.centerSpot = this.togos[this.page][0];
+      this.centerSpot.zoom = 8;
+    },
+    sortSpot: function(sortBy) {
+      this.paramProp.page = 1;
+      this.paramProp.sortBy = sortBy;
+    },
+    getSpot: function(page) {
+      console.log(page);
+      this.paramProp.page = page;
+    },
+    getNearby: function(page) {
+      this.paramProp.page = page;
     }
   },
   watch: {
     param: function(newVal) {
       this.paramProp = newVal;
     },
-    paramProp: function(newVal) {
-      if(Object.keys(newVal).includes('distance')) {
-        this.callNearbyApi(newVal);
-        return;
-      }
-      this.callGetSpotApi(newVal);
+    paramProp: {
+      handler: function(newVal, oldVal) {
+        if(Object.keys(newVal).includes('distance')) {
+          this.callNearbyApi(newVal);
+          return;
+        }
+        this.callGetSpotApi(newVal);
+      },
+      deep: true,
     },
     togos: function(newVal) {
-      console.log(this.togos);
+      // console.log(this.togos);
+      this.update++;
+    },
+    travelInfos: function(newVal){
+
     }
- },
+},
   created () {
     // [註冊監聽事件]
+    let self = this;
     this.$bus.$on('toggle', event => {
-        this.toggle(event.id)
+      this.toggle(event.id);
     });
+    this.$bus.$on('modifyItinerary', event => {
+      self.togos = event.itinerary.togos;
+      self.travelInfos = event.itinerary.travelInfos;
+      // self.$nextTick(() => {
+      //   self.alert("you got it");
+      // });
+      self.alert("you got it");
+      console.log("callback tripItinerary togos", self.togos);
+      console.log("callback tripItinerary travelInfos", self.travelInfos);
+    });
+    console.log("created tripItinerary togos", this.togos);
+    console.log("created tripItinerary travelInfos", this.travelInfos);
+  },
+  mounted() {
+    console.log("mounted tripItinerary togos", this.togos);
+    console.log("mounted tripItinerary travelInfos", this.travelInfos);
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
+    this.$bus.$off('modifyItinerary');
   }
 }
 </script>
@@ -386,20 +436,28 @@ export default {
     background: rgb(250,250,250);
   }
   .map-col {
-    height: 100%;
+    height: 90vh;
   }
   .big-image-container {
-    background: rgb(250,250,250);
-    padding-top: 50px;
-    padding-bottom: 50px;
-    height: 40vh;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    background: #f2f2f2;
+    height: 50%;
     width: 100%;
   }
   .big-image {
     width: 100%;
+    height: 100%;
+  }
+  .preloader {
+    width: 100%;
+    height: 100%;
+  }
+  .picNotFound {
+    width: 100%;
     height: auto;
   }
-  @media screen and (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .trip {
     -webkit-overflow-scrolling: touch;
     overflow-x: auto;
@@ -414,4 +472,17 @@ export default {
     margin-right: 0px;
   }
 }
+@media screen and (min-width: 1680px) {
+  .trip {
+    padding-left: 200px;
+    padding-right: 200px;
+  }
+}
+@media screen and (min-width: 2560px) {
+  .trip {
+    padding-left: 400px;
+    padding-right: 400px;
+  }
+}
+
 </style>

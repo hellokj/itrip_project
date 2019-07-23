@@ -2,11 +2,16 @@
   <div class="MyTrip">
     <div class="py-3 info-container">
       <div class="tripName">
-      <p class="pt-2 mr-2">旅行名稱</p>
-      <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
+        <div style="width:100%;">
+          旅行名稱
+          <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
+        </div>
+        <div>
+          <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
+        </div>
       </div>
       <div class="tripDate">
-        <p class="px-0 mx-0 mb-0 pt-2 mr-2 pTripDate">開始日期</p>
+        <p class="px-0 mx-0 mb-0 pt-2 mr-1 pTripDate">開始日期</p>
         <el-date-picker
         class="ml-0 iDatePicker"
         v-model="tripDate"
@@ -98,6 +103,7 @@ export default {
         },
         isScrollbarShown: false,
         update: 0,
+        viewMapString: '檢視地圖',
       }
     },
     components: {
@@ -215,7 +221,14 @@ export default {
       },
       saveTripAsPdf: function() {
         this.$bus.$emit('save-trip');
-      }
+      },
+      clickViewMap() {
+        this.$emit('click-view-map');
+        if(this.viewMapString === '關閉地圖') this.viewMapString = '檢視地圖';
+        else {
+          this.viewMapString = '關閉地圖';
+        }
+      },
     },
     watch: {
       travelInfo: {
@@ -231,10 +244,14 @@ export default {
         this.togos_prop = this.togos;
       },
       startTime: function() {
-        let tmp = this.startTime.split(':')
-        this.startTimeOb.hr = parseInt(tmp[0])
-        this.startTimeOb.min = parseInt(tmp[1])
+        let tmp = this.startTime.split(':');
+        this.startTimeOb.hr = parseInt(tmp[0]);
+        this.startTimeOb.min = parseInt(tmp[1]);
       },
+    },
+    mounted() {
+      console.log("Togos togos", this.togos);
+      console.log("Togos travelInfos", this.travelInfos);
     },
 }
 </script>
@@ -265,12 +282,22 @@ export default {
     align-items: center;
     justify-content: center;
   }
-  .tripName, .tripDate {
+  .tripName {
+    margin-right: 11px;
     margin-left: 11px;
     margin-top: 4px;
     display: flex;
     flex-direction: row;
     font-size: 16px;
+    justify-content: space-between;
+  }
+  .tripDate {
+    margin-left: 11px;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    font-size: 16px;
+    justify-content: flex-start;
   }
   .iTripName {
      width:200px;
@@ -349,8 +376,17 @@ export default {
     display: flex;
     flex-direction: row;
   }
+  .view-map {
+    height: 40px;
+    align-self: center;
+    margin-right: 10px;
+  }
+  .fa-map-marked-alt {
+    font-size: 20px;
+    cursor: pointer;
+  }
 
-  @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 768px) {
     .MyTrip {
       width: 100%;
     }

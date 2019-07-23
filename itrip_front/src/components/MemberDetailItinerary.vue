@@ -11,7 +11,10 @@
       </el-container>
       <el-tabs type="border-card" v-model="index">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index">
-          <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+          <el-container>
+            <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+            <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button>
+          </el-container>
           <el-table
             :data="day"
             height="400"
@@ -44,7 +47,8 @@
         </el-tab-pane>
         
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
-          <Map></Map>
+          <!-- 第一天旅遊資訊 -->
+          <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -52,10 +56,10 @@
 
 <script>
 import {getAddress} from "../../utils/checker"
-import Map from "../components/Map"
+import MemberMap from '../components/MemberMap'
 export default {
   components: {
-    Map
+    MemberMap,
   },
   props: {
     itinerary: Object,
@@ -64,7 +68,6 @@ export default {
   data() {
     return {
       days: [], // 每天的行程 裡面存放 景點object
-      dayAmount: "第2天"
     }
   },
   methods: {
@@ -78,39 +81,54 @@ export default {
       return getAddress(address);
     },
     stopTimeFormat: function(hrs, mins){
-      console.log('hrs', hrs);
-      console.log('mins', mins);
       if (mins == 'undefined' || mins == 'null'){
         return hrs + "小時"
-      };
+      }
       if (hrs == 'undefined' || hrs == 'null'){
         return mins + "分鐘"
-      };
+      }
       return hrs + "小時" + mins + "分鐘";
-    }
+    },
+    resetDetailInfo: function(){
+      this.days = [];
+      console.log("itinerary", this.itinerary);
+      // console.log("length", this.itinerary.travelInfos.length);
+      // console.log("travelInfos", this.itinerary.travelInfos);
+      for (let i = 0; i < this.itinerary.togos.length; i++){
+        // 天數
+        let tmpDay = [];
+        for (let j = 0; j < this.itinerary.togos[i].length; j++){
+          // 每天的行程
+          let name = this.itinerary.togos[i][j].name;
+          let address = this.addressFormat(this.itinerary.togos[i][j].address);
+          let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
+          let tmpTogo = {
+            stopTime: stopTime,
+            name: name,
+            address: address
+          };
+          tmpDay.push(tmpTogo);
+        }
+        this.days.push(tmpDay);
+        this.days.push(tmpDay);
+        this.days.push(tmpDay);
+      }
+      // console.log("days", this.days);
+    },
+    modifyItinerary: function(itinerary){
+      this.$router.push({path: '/trip'});
+      this.$bus.$emit('modifyItinerary', {itinerary: itinerary});
+      console.log("modified", this.itinerary);
+      alert("QQ start driving bus");
+    },
   },
   created() {
-    console.log("itinerary", this.itinerary);
-    // console.log("length", this.itinerary.travelInfos.length);
-    // console.log("travelInfos", this.itinerary.travelInfos);
-    for (let i = 0; i < this.itinerary.togos.length; i++){
-      // 天數
-      let tmpDay = [];
-      for (let j = 0; j < this.itinerary.togos[i].length; j++){
-        // 每天的行程
-        let name = this.itinerary.togos[i][j].name;
-        let address = this.addressFormat(this.itinerary.togos[i][j].address);
-        let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
-        let tmpTogo = {
-          stopTime: stopTime,
-          name: name,
-          address: address
-        };
-        tmpDay.push(tmpTogo);
-      }
-      this.days.push(tmpDay);
+    this.resetDetailInfo();
+  },
+  watch: {
+    itinerary: function(){
+      this.resetDetailInfo();
     }
-    console.log("days", this.days);
   },
 }
 </script>
@@ -127,5 +145,19 @@ export default {
     -webkit-transition: color .2s cubic-bezier(.645,.045,.355,1);
     transition: color .2s cubic-bezier(.645,.045,.355,1);
     color: #303133;
+  }
+
+  .el-divider--horizontal {
+    display: block;
+    height: 1px;
+    width: 90%;
+    margin: 24px 0;
+  }
+
+  .modify_button {
+    margin-bottom: 10px;
+    width: 120px;
+    border-radius: 10px;
+    text-align: center;
   }
 </style>
