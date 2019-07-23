@@ -168,7 +168,6 @@ export default {
       let spot = this.spots[0];
       this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
       this.zoom = 12;
-
     },
     routes: {
       handler() {
@@ -184,14 +183,17 @@ export default {
       let newIndex = newVal.index;
       let location = newVal.location
       this.center =  L.latLng(location.coordinates[1], location.coordinates[0]);
-      if(this.icons[oldIndex] !== undefined) {
-        // reset old index color
-        this.$set(this.icons[oldIndex].options, 'markerColor', 'darkblue');
+      for(let i=0;i<this.icons.length;i++) {
+        if(this.icons[i] !== undefined) {
+          if(i == newIndex) {
+          this.$set(this.icons[i].options, 'markerColor', 'red');
+          }
+          else {
+            this.$set(this.icons[i].options, 'markerColor', 'darkblue');
+          }
+        }
       }
-      if(this.icons[newIndex] !== undefined) {
-        // change new index color
-        this.$set(this.icons[newIndex].options, 'markerColor', 'red');
-      }
+      this.zoom = this.centerSpot.zoom;
     }
   },
   computed: {
@@ -211,7 +213,7 @@ export default {
 <style scope >
   .map{
     width: auto;
-    height: 45vh;
+    height: 43vh;
   }
   .icon::before {
     display: inline-block;
@@ -220,9 +222,11 @@ export default {
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
   }
-  @media only screen and (max-width: 780px) {
+  @media only screen and (max-width: 767px) {
     #map {
-      width: 100%
+      width: 100%;
+      height: 80%;
+      margin-bottom: 70px;
     }
   }
 </style>

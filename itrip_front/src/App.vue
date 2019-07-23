@@ -2,6 +2,7 @@
   <div id="app">
     <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
+    <TabletHeader v-if="!atHome" class="tabletHeader"/>
     <div id="nav"></div>
     <transition name="router-anim" enter-active-class="animated fadeIn" >
       <router-view :param="param" :region="region" :type="type" @search-click="Search"/>
@@ -12,12 +13,14 @@
 <script>
 import Header from './components/layout/Header'
 import MobileHeader from './components/layout/MobileHeader'
+import TabletHeader from './components/layout/TabletHeader'
 
 export default {
   name:'app',
   components: {
     Header,
     MobileHeader,
+    TabletHeader
   },
   data() {
     return {
@@ -119,18 +122,27 @@ export default {
   }
 
   .mobileHeader {
-      display: none;
-    }
+    display: none;
+  }
+  .tabletHeader {
+    display: none;
+  }
 
-  @media only screen and (max-width: 768px) {
-    .mobileHeader {
-      display: flex;
-      justify-content: center;
-      }
-    }
   .modal {
     width: 40%;
     height: auto;
     text-align: center;
   }
+  @media only screen and (max-width: 768px) {
+    .mobileHeader {
+      display: flex;
+      justify-content: center;
+    }
+  }
+   /* @media only screen and (min-width:768px) and (max-width: 1200px) {
+     .tabletHeader {
+      display: flex;
+      justify-content: center;
+    }
+   } */
 </style>
