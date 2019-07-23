@@ -1,7 +1,7 @@
 <template>
     <header class="header">
         <div class="logo">
-            <img src="./Logo.svg" alt="iTripLogo" @click="toHome">
+            <img src="./itripLogo.svg" alt="iTripLogo" @click="toHome">
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
