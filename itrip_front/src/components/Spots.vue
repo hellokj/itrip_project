@@ -113,16 +113,16 @@ export default {
       },
       currentPage: function(newVal) {
         if(Object.keys(this.paginator).includes('nearby')) {
-          this.$emit('get-nearby', null, newVal);
+          this.$emit('get-nearby',  newVal);
           return;
         }
-        this.$emit('get-spot', null, newVal);
+        this.$emit('get-spot', newVal);
       },
       sortBy: function(newVal) {
         // alert(this.sortBy)
         let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度'}
         this.sortString = choices[newVal];
-        this.$emit('sort-spot', null, 1, newVal);
+        this.$emit('sort-spot', newVal);
       },
     },
 }

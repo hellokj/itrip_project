@@ -23,9 +23,9 @@
           :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos" :isMapShown="isMapShown"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
-          @get-spot="callGetSpotApi"
-          @get-nearby="callNearbyApi"
-          @sort-spot="callGetSpotApi"/> 
+          @get-spot="getSpot"
+          @get-nearby="getNearby"
+          @sort-spot="sortSpot"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
@@ -36,7 +36,7 @@
           <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
-               <vue-load-image v-if="spots.length > 0" style="width:100%;height:100%;">
+               <vue-load-image  style="width:100%;height:100%;">
                   <img ref="image" class="big-image" slot="image" :src="item">
                   <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                   <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
@@ -214,12 +214,12 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: function(data=null, page=1, sort='ig_post_num') {
+    callGetSpotApi: function(data=null) {
       let self = this;
-      if(data == null) data=this.paramProp;
-      data.page = page;
-      data.sortBy = sort;
-      self.spotPage = page;
+      if(data == null) {
+        data=this.paramProp;
+      }
+      self.spotPage = data.page;
       
       // call get spots api
       apiGetSpots(data)
@@ -234,12 +234,10 @@ export default {
         // always executed
       });
     },
-    callNearbyApi: function(data=null, page=1, sort='ig_post_num') {
+    callNearbyApi: function(data=null) {
       let self = this;
       if(data == null) data=this.paramProp;
-      data.page = page;
-      data.sortBy = sort;
-      self.spotPage = page;
+      self.spotPage = data.page;
       
       // call get nearby api
       apiGetNearby(data)
@@ -357,24 +355,38 @@ export default {
         return this.spots[index].images;
       }
       else {
-        return null;
+        return ['111'];
       }
     },
     zoomTogos: function() {
       this.centerSpot = this.togos[this.page][0];
       this.centerSpot.zoom = 8;
+    },
+    sortSpot: function(sortBy) {
+      this.paramProp.page = 1;
+      this.paramProp.sortBy = sortBy;
+    },
+    getSpot: function(page) {
+      console.log(page);
+      this.paramProp.page = page;
+    },
+    getNearby: function(page) {
+      this.paramProp.page = page;
     }
   },
   watch: {
     param: function(newVal) {
       this.paramProp = newVal;
     },
-    paramProp: function(newVal) {
-      if(Object.keys(newVal).includes('distance')) {
-        this.callNearbyApi(newVal);
-        return;
-      }
-      this.callGetSpotApi(newVal);
+    paramProp: {
+      handler: function(newVal, oldVal) {
+        if(Object.keys(newVal).includes('distance')) {
+          this.callNearbyApi(newVal);
+          return;
+        }
+        this.callGetSpotApi(newVal);
+      },
+      deep: true,
     },
     togos: function(newVal) {
       console.log(this.togos);
@@ -407,8 +419,8 @@ export default {
     height: 90vh;
   }
   .big-image-container {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 25px;
+    padding-bottom: 25px;
     background: #f2f2f2;
     height: 50%;
     width: 100%;
@@ -416,6 +428,14 @@ export default {
   .big-image {
     width: 100%;
     height: 100%;
+  }
+  .preloader {
+    width: 100%;
+    height: 100%;
+  }
+  .picNotFound {
+    width: 100%;
+    height: auto;
   }
 @media screen and (max-width: 768px) {
   .trip {
