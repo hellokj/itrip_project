@@ -195,9 +195,6 @@ export default {
     }
   },
   computed: {
-    findSpot(){
-      return this.spots.find(spot=>spot.id==this.$route.params.num);
-    },
     isRouteArr() {
       if(this.routesArr.length == 0) return false;
       else {
@@ -208,7 +205,7 @@ export default {
 }
 </script>
 
-<style scope >
+<style scoped>
   .map{
     width: auto;
     height: 100vh;
