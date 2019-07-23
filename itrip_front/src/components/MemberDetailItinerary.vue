@@ -44,7 +44,8 @@
         </el-tab-pane>
         
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
-          <Map></Map>
+          <!-- 第一天旅遊資訊 -->
+          <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -52,10 +53,10 @@
 
 <script>
 import {getAddress} from "../../utils/checker"
-import Map from "../components/Map"
+import MemberMap from '../components/MemberMap'
 export default {
   components: {
-    Map
+    MemberMap,
   },
   props: {
     itinerary: Object,
@@ -64,7 +65,6 @@ export default {
   data() {
     return {
       days: [], // 每天的行程 裡面存放 景點object
-      dayAmount: "第2天"
     }
   },
   methods: {
@@ -78,39 +78,46 @@ export default {
       return getAddress(address);
     },
     stopTimeFormat: function(hrs, mins){
-      console.log('hrs', hrs);
-      console.log('mins', mins);
       if (mins == 'undefined' || mins == 'null'){
         return hrs + "小時"
-      };
+      }
       if (hrs == 'undefined' || hrs == 'null'){
         return mins + "分鐘"
-      };
+      }
       return hrs + "小時" + mins + "分鐘";
+    },
+    resetDetailInfo: function(){
+      this.days = [];
+      console.log("itinerary", this.itinerary);
+      // console.log("length", this.itinerary.travelInfos.length);
+      // console.log("travelInfos", this.itinerary.travelInfos);
+      for (let i = 0; i < this.itinerary.togos.length; i++){
+        // 天數
+        let tmpDay = [];
+        for (let j = 0; j < this.itinerary.togos[i].length; j++){
+          // 每天的行程
+          let name = this.itinerary.togos[i][j].name;
+          let address = this.addressFormat(this.itinerary.togos[i][j].address);
+          let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
+          let tmpTogo = {
+            stopTime: stopTime,
+            name: name,
+            address: address
+          };
+          tmpDay.push(tmpTogo);
+        }
+        this.days.push(tmpDay);
+      }
+      // console.log("days", this.days);
     }
   },
   created() {
-    console.log("itinerary", this.itinerary);
-    // console.log("length", this.itinerary.travelInfos.length);
-    // console.log("travelInfos", this.itinerary.travelInfos);
-    for (let i = 0; i < this.itinerary.togos.length; i++){
-      // 天數
-      let tmpDay = [];
-      for (let j = 0; j < this.itinerary.togos[i].length; j++){
-        // 每天的行程
-        let name = this.itinerary.togos[i][j].name;
-        let address = this.addressFormat(this.itinerary.togos[i][j].address);
-        let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
-        let tmpTogo = {
-          stopTime: stopTime,
-          name: name,
-          address: address
-        };
-        tmpDay.push(tmpTogo);
-      }
-      this.days.push(tmpDay);
+    this.resetDetailInfo();
+  },
+  watch: {
+    itinerary: function(){
+      this.resetDetailInfo();
     }
-    console.log("days", this.days);
   },
 }
 </script>

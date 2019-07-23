@@ -1,8 +1,8 @@
 <template>
   <el-carousel :interval="4000" type="card" height="30vh">
-    <el-carousel-item v-model="itineraries" v-for="item in itineraries" :key="item">
+    <el-carousel-item v-model="itineraries" v-for="(item, index) in itineraries" :key="index">
       <div style="width: auto; height: 100%;" @click="checkDetail(item)">
-        <img :fit="cover" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;" class="card_img">
+        <img fit="fit" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;" class="card_img">
         <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
       </div>
     </el-carousel-item>

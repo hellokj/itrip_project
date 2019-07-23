@@ -2,7 +2,7 @@
 <el-container style="height: 90vh; border: 1px solid #eee">
   <!-- 會員頁面側邊欄 -->
   <MemberAside
-    :incomingItineraries="incomingItineraries" 
+    :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
     v-on:changeToCarousel="changeView"
     v-on:checkDetail="checkDetail">
@@ -116,21 +116,4 @@ export default {
     background-color: #d3dce6;
   }
 
-  .card_text {
-    z-index: 2;
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    font-size: 16px;
-    line-height: 20px;
-    color: #fff;
-    background-color: black;
-    text-align: center;
-  }
-
-  .card_img {
-    padding: 3px;
-  }
 </style>
