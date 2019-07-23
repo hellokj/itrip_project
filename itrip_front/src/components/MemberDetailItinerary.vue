@@ -13,7 +13,7 @@
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index">
           <el-container>
             <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
-            <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button class="modify_button">
+            <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button>
           </el-container>
           <el-table
             :data="day"
@@ -116,8 +116,10 @@ export default {
       // console.log("days", this.days);
     },
     modifyItinerary: function(itinerary){
-      this.$bus.$emit("modifyItinerary", {itinerary: itinerary});
       this.$router.push({path: '/trip'});
+      this.$bus.$emit('modifyItinerary', {itinerary: itinerary});
+      console.log("modified", this.itinerary);
+      alert("QQ start driving bus");
     },
   },
   created() {

@@ -244,10 +244,14 @@ export default {
         this.togos_prop = this.togos;
       },
       startTime: function() {
-        let tmp = this.startTime.split(':')
-        this.startTimeOb.hr = parseInt(tmp[0])
-        this.startTimeOb.min = parseInt(tmp[1])
+        let tmp = this.startTime.split(':');
+        this.startTimeOb.hr = parseInt(tmp[0]);
+        this.startTimeOb.min = parseInt(tmp[1]);
       },
+    },
+    mounted() {
+      console.log("Togos togos", this.togos);
+      console.log("Togos travelInfos", this.travelInfos);
     },
 }
 </script>
