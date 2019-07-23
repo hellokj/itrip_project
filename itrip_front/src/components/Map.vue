@@ -208,7 +208,7 @@ export default {
 <style scoped>
   .map{
     width: auto;
-    height: 100vh;
+    height: 45vh;
   }
   .icon::before {
     display: inline-block;

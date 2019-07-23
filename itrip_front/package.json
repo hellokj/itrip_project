@@ -19,6 +19,8 @@
     "core-js": "^2.6.5",
     "element-ui": "^2.10.1",
     "express": "^4.17.1",
+    "html2canvas": "^1.0.0-rc.3",
+    "jspdf": "^1.5.3",
     "leaflet": "^1.5.1",
     "leaflet-routing-machine": "^3.2.12",
     "leaflet.awesome-markers": "^2.0.5",
