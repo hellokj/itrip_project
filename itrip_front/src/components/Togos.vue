@@ -249,10 +249,6 @@ export default {
         this.startTimeOb.min = parseInt(tmp[1]);
       },
     },
-    mounted() {
-      console.log("Togos togos", this.togos);
-      console.log("Togos travelInfos", this.travelInfos);
-    },
 }
 </script>
 

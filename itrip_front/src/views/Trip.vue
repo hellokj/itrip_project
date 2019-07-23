@@ -21,7 +21,7 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos" :isMapShown="isMapShown"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="getSpot"

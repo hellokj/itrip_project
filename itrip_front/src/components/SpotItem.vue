@@ -76,7 +76,6 @@ export default {
         index: Number,
         perPage: Number,
         currentPage: Number,
-        togos: Array,
         sortBy: String,
     },
     methods: {
@@ -145,7 +144,7 @@ export default {
                 case 'entertainment': return '娛樂'
             }
         },
-    }
+    },
 }
 </script>
 
@@ -250,10 +249,11 @@ export default {
         font-size: 25px;
         cursor: pointer;
         padding-right: 5px;
+        color: #eb6e34;
         
     }
     .fa-bookmark:hover {
-        color:dimgray;
+        color:#eb8c34;
     }
     .icons {
         width: 50%;

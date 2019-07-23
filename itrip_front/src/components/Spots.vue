@@ -14,12 +14,13 @@
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :togos="togos" :sortBy="sortBy"
+          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :sortBy="sortBy"
           @add-spot="$emit('add-spot', spot)" 
           @mouseOver="$emit('hoverSpotItem', index, spot)"
           @mouseOut="$emit('hoverSpotItem', null, spot)"
           @show-link="Show"
-          @edit-form="EditSpot"/>
+          @edit-form="EditSpot"
+          @is-in-togos="isInTogos"/>
         <v-pagination 
                 v-if="isScrollbarShown"
                 v-model="currentPage"
@@ -97,6 +98,13 @@ export default {
             this.isLoading = false
         },2000)
       },
+      isInTogos(_id) {
+        let tmpArr = this.togos.filter(function(togo) {
+          return togo._id === _id;
+        })
+        if(tmpArr.length > 0) return true;
+        return false;
+      }
     },
     watch: {
       spots: function() {
