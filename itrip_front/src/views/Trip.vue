@@ -1,20 +1,21 @@
 <template>
   <b-container class="trip" fluid>
-    <b-row class="trip-row" fluid>
+    <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" md="5" lg="5" xl="4"
-        :style="[$resize && (!$mq.above(768) && (selected != 0)) ? { display: 'none' }:{ display: 'flex'}]"
+        class="px-0 togos-col" cols="12"  lg="5" xl="3"
+        :style="[($resize && !$mq.above(769) && selected != 0) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" 
-        :page="page" :togos-changeOrder="updateTogos"
-        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"/>
+        :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
+        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
+        @zoom-togos="zoomTogos"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" md="6" lg="6" xl="5"
-      :style="[$resize && (!$mq.above(768) && (selected != 1)) ? { display: 'none' }:{ display: 'flex'}]"
+      class="px-0 spots-col" cols="12" lg="6" xl="4"
+      :style="[($resize && !$mq.above(769) && selected != 1) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
           id="spots"
@@ -24,21 +25,24 @@
           @add-spot="addSpotToTrip"
           @get-spot="callGetSpotApi"
           @get-nearby="callNearbyApi"
-          @sort-spot="callGetSpotApi"
-          @click-view-map="clickViewMap"/> 
+          @sort-spot="callGetSpotApi"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="px-0 map-col" cols="12" lg="3" order=displayOrders[2] order-md="3"
-      :style="[($resize && !$mq.above(1200) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      class="px-0 map-col" cols="12" lg="4" xl="3" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(769) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected">
-        <b-col  class="px-0">
-          <div class="big-image-container">
-            <vue-load-image v-if="spots.length > 0">
-                <img ref="image" class="big-image" slot="image" :src="getImage(0)">
-                <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
-                <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
-            </vue-load-image>
+        <b-col style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
+          <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
+            <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
+              <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
+               <vue-load-image v-if="spots.length > 0" style="width:100%;height:100%;">
+                  <img ref="image" class="big-image" slot="image" :src="item">
+                  <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
+                  <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
+                </vue-load-image>
+              </el-carousel-item>
+            </el-carousel>
           </div>
           <Map 
             id="map"
@@ -106,7 +110,8 @@ export default {
       centerSpot: {},
       selected: 1,
       isMapShown: true,
-      paramProp: ''
+      paramProp: '',
+      selectedSpot: 0
     }
   },
   methods: {
@@ -315,10 +320,15 @@ export default {
     hoverSpotItem: function(index, spot) {
       if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
         this.centerSpot = this.togos[this.page][0]
+        this.centerSpot.zoom = 8;
         return;
       }
         this.centerSpot = spot;
+        this.centerSpot.zoom = 15;
         this.$set(this.centerSpot, 'index', index);
+        if(index != null) {
+          this.selectedSpot = index;
+        }
     },
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map'];
@@ -342,14 +352,17 @@ export default {
       }
       this.paramProp = data;
     },
-    getImage: function(index) {
-      if(this.spots[index] !== undefined) {
-        // console.log(this.spots[index].images[0])
-        return this.spots[index].images[0];
+    getImages: function(index) {
+      if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
+        return this.spots[index].images;
       }
       else {
         return null;
       }
+    },
+    zoomTogos: function() {
+      this.centerSpot = this.togos[this.page][0];
+      this.centerSpot.zoom = 8;
     }
   },
   watch: {
@@ -391,20 +404,20 @@ export default {
     background: rgb(250,250,250);
   }
   .map-col {
-    height: 100%;
+    height: 90vh;
   }
   .big-image-container {
-    background: rgb(250,250,250);
     padding-top: 50px;
     padding-bottom: 50px;
-    height: 40vh;
+    background: #f2f2f2;
+    height: 50%;
     width: 100%;
   }
   .big-image {
     width: 100%;
-    height: auto;
+    height: 100%;
   }
-  @media screen and (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .trip {
     -webkit-overflow-scrolling: touch;
     overflow-x: auto;
@@ -419,4 +432,17 @@ export default {
     margin-right: 0px;
   }
 }
+@media screen and (min-width: 1680px) {
+  .trip {
+    padding-left: 200px;
+    padding-right: 200px;
+  }
+}
+@media screen and (min-width: 2560px) {
+  .trip {
+    padding-left: 400px;
+    padding-right: 400px;
+  }
+}
+
 </style>

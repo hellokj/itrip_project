@@ -118,7 +118,7 @@ export default {
         justify-content: center;
     }
     .info-col {
-        width: 68%;
+        width: 170px;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
@@ -130,6 +130,7 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        overflow: hidden;
     }
     .iNumber-container {
         display: flex;
@@ -187,7 +188,10 @@ export default {
         font-size: 12px;
         cursor: pointer;
     }
-    @media only screen and (max-width: 780px) {
+    @media only screen and (max-width: 768px) {
+    .picture-container {
+        width: 100px;
+    }
     .spot-picture{
         width: 100px;
         height: 90px;
@@ -209,4 +213,5 @@ export default {
         font-size: 10px;
     }
   }
+
 </style>
