@@ -7,7 +7,9 @@
           <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
         </div>
         <div>
-          <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
+          <el-tooltip content="查看行程路徑" placement="right-start" effect="light" style="width:auto;" open-delay="0">
+              <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
+          </el-tooltip>
         </div>
       </div>
       <div class="tripDate">
