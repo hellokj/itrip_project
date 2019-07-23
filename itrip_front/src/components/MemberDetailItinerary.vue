@@ -117,13 +117,15 @@ export default {
     },
     modifyItinerary: function(itinerary){
       this.$router.push({path: '/trip'});
-      this.$bus.$emit('modifyItinerary', {itinerary: itinerary});
       console.log("modified", this.itinerary);
       alert("QQ start driving bus");
     },
   },
   created() {
     this.resetDetailInfo();
+  },
+  beforeDestroy() {
+    this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
   },
   watch: {
     itinerary: function(){
