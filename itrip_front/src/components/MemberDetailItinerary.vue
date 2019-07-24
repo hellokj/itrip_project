@@ -110,8 +110,6 @@ export default {
           tmpDay.push(tmpTogo);
         }
         this.days.push(tmpDay);
-        this.days.push(tmpDay);
-        this.days.push(tmpDay);
       }
       // console.log("days", this.days);
     },
