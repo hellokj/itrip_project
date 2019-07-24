@@ -166,7 +166,7 @@ export default {
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
       newTab: function() {
-        this.tabs.push(++this.tabCounter);
+        this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
       getStartTime: function(index) {
