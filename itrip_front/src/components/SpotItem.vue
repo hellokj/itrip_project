@@ -66,22 +66,17 @@ export default {
     components: {
         'vue-load-image': VueLoadImage
     },
-    data() {
-        return {
-            markClass: 'far fa-bookmark',
-        }
-    },
     props: {
         spot: Object,
         index: Number,
         perPage: Number,
         currentPage: Number,
         sortBy: String,
+        isInTogos: Boolean,
     },
     methods: {
         clickAdd: function(spot) {
             this.$emit('add-spot', spot);
-            this.markClass = 'fas fa-bookmark';
         },
         getAddress: function(){
            return getAddress(this.spot.address)
@@ -144,6 +139,12 @@ export default {
                 case 'entertainment': return '娛樂'
             }
         },
+        markClass: function() {
+            if(this.isInTogos) return 'fas fa-bookmark';
+        else {
+            return 'far fa-bookmark';
+        }
+        }
     },
 }
 </script>

@@ -14,7 +14,7 @@
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :sortBy="sortBy"
+          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :sortBy="sortBy" :isInTogos="isInTogos(spot._id)"
           @add-spot="$emit('add-spot', spot)" 
           @mouseOver="$emit('hoverSpotItem', index, spot)"
           @mouseOut="$emit('hoverSpotItem', null, spot)"
@@ -31,7 +31,7 @@
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
       </virtual-list>
     <modal name='link-window' :resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
-    <b-modal id='edit-form' ref="edit-spot-modal" title="編輯景點資料" width="40%" height="40%"><EditSpotModal :spot="selectedSpot"/></b-modal>
+    <modal name='edit-form' ref="edit-spot-modal" width="45%" height="55%"><EditSpotModal :spot="selectedSpot" @close="closeModal" /></modal>
     </div>
   </div>
 </template>
@@ -90,7 +90,11 @@ export default {
       },
       EditSpot(spot) {
         this.selectedSpot = spot;
-        this.$refs['edit-spot-modal'].show()
+        this.$modal.show('edit-form');
+      },
+      closeModal(name) {
+        console.log('!')
+        this.$modal.hide(name);
       },
       showLoading(){
         this.isLoading = true;
@@ -99,6 +103,7 @@ export default {
         },2000)
       },
       isInTogos(_id) {
+        if(this.togos === undefined) return false;
         let tmpArr = this.togos.filter(function(togo) {
           return togo._id === _id;
         })

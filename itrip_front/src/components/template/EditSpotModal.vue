@@ -1,56 +1,43 @@
 <template>
-  <form class="form" ref="form" @submit.stop.prevent="onSubmit">
-    <b-row>
-      <b-col>
-        <p>ID:  {{spot._id}}</p>
-        <b-row>
-          <b-col class="px-0" cols="1" style="justify-content:center;">
-            <p class="mt-2 mb-0" style="text-align:center;">名稱:</p>
-          </b-col>
-          <b-col class="px-0 mr-5" cols="4">
-            <el-input
-              class="name-input"
-              v-model="name"
-            ></el-input>
-          </b-col>
-          <b-col class="px-0" cols="1" style="justify-content:center;">
-             <p class="mt-2 mb-0" style="text-align:center;">類別:</p>
-          </b-col>
-          <b-col class="px-0" cols="3">
-            <el-input
-              class="category-input"
-              v-model="category"
-            ></el-input>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col class="px-0 mt-4 " cols="1">
-             <p class="mb-0" style="text-align:center;">TAG:</p>
-          </b-col>
-          <b-col class="px-0 mt-3" cols="10">
-            <b-form-input
-              id="ig-tag-input"
-              v-model="tags"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-        <b-row :key="index" v-for="index in images.length">
-          <b-col class="px-0 mt-4 " cols="1">
-             <p class="mb-0" style="text-align:center;">照片{{index}}</p>
-          </b-col>
-          <b-col class="px-0 mt-3" cols="10">
-            <b-form-input
-              id="ig-image-input"
-              v-model="images[index-1]"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-      </b-col>
-    </b-row>
-  </form>
+  <el-form class="el-form" ref="form" label-width="120px" size="medium">
+    <div class="row" style="width:100%;display:flex;justify-content:center;">
+      <h4 class="my-0">幫助我們讓資料更完善:)</h4>
+    </div>
+    <el-divider></el-divider>
+    <el-form-item class="my-0" label="ID: ">
+      <p class="my-0">{{spot._id}}</p>
+    </el-form-item>
+    <el-form-item class="my-0" label="景點名稱: ">
+      <el-input v-model="name" style="width:200px;"></el-input>
+    </el-form-item>
+    <el-form-item class="my-0" label="景點類別: ">
+      <el-input v-model="category" style="width:200px;"></el-input>
+    </el-form-item>
+    <el-form-item class="my-0" label="地址: ">
+      <el-input v-model="address" style="width:400px;"></el-input>
+    </el-form-item>
+    <el-form-item class="my-0" label="TAGS: ">
+      <el-input v-model="tags" style="width:400px;"></el-input>
+    </el-form-item>
+    <div class="pic" :key="index" v-for="index in images.length">
+      <el-form-item class="my-1" label="照片">
+        <el-input v-model="images[index-1]"></el-input>
+      </el-form-item>
+    </div>
+    <el-divider></el-divider>
+    <div class="flex" style="display:flex;flex-direction:row;justify-content:space-between;">
+      <el-button class="mt-2" type="danger" round>刪除此景點</el-button>
+      <div class="pr-3 row" style="display:flex;flex-direction:row;">
+        <el-button @click="$emit('close', 'edit-form')">取消</el-button>
+        <el-button type="primary" @click="onSubmit">送出</el-button>
+      </div>
+    </div>
+</el-form>
 </template>
 
 <script>
+import {getAddress} from '../../../utils/checker.js'
+
 export default {
   props: {
     spot: Object,
@@ -59,13 +46,32 @@ export default {
     return {
       name: this.spot.name,
       category: this.spot.category,
-      tags: this.spot.ig_tag,
-      images: this.spot.images,
     }
   },
   methods: {
     onSubmit(event) {
-      console.log('event');
+      console.log(event);
+    }
+  },
+  computed: {
+    address: function() {
+      return getAddress(this.spot.address);
+    },
+    images: function() {
+      if(!Object.keys(this.spot).includes('images')) {
+        return ['', '', '']
+      }
+      return this.spot.images;
+    },
+    tags: function() {
+      let s = '';
+      for(let i=0;i<this.spot.ig_tag.length;i++) {
+        s += this.spot.ig_tag[i];
+        if(i != this.spot.ig_tag.length - 1) {
+          s += ',';
+        }
+      }
+      return s;
     }
   },
   watch: {
@@ -87,8 +93,9 @@ export default {
 </script>
 
 <style scoped>
-  .form {
-    margin: 10px;
+  .el-form {
+    height: 100%;
+    margin:10px;
   }
 </style>
 

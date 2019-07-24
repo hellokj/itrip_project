@@ -463,8 +463,8 @@ export default {
 }
 @media screen and (min-width: 1680px) {
   .trip {
-    padding-left: 200px;
-    padding-right: 200px;
+    padding-left: 100px;
+    padding-right: 100px;
   }
 }
 @media screen and (min-width: 2560px) {
