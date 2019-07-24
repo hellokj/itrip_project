@@ -14,12 +14,12 @@
       <el-input v-model="category" style="width:200px;"></el-input>
     </el-form-item>
     <el-form-item class="my-0" label="地址: ">
-      <el-input v-model="address" style="width:400px;"></el-input>
+      <el-input v-model="getAddress" style="width:400px;"></el-input>
     </el-form-item>
     <el-form-item class="my-0" label="TAGS: ">
       <el-input v-model="tags" style="width:400px;"></el-input>
     </el-form-item>
-    <div class="pic" :key="index" v-for="index in images.length">
+    <div class="pic" :key="index" v-for="index in getImages.length">
       <el-form-item class="my-1" label="照片">
         <el-input v-model="images[index-1]"></el-input>
       </el-form-item>
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import {apiUpdateSpot} from '../../../utils/api.js'
 import {getAddress} from '../../../utils/checker.js'
 
 export default {
@@ -44,51 +45,61 @@ export default {
   },
   data() {
     return {
+      _id: this.spot._id,
       name: this.spot.name,
       category: this.spot.category,
+      address: this.spot.address,
+      images: this.spot.images,
+      tags: this.spot.ig_tag,
+      data: {id: this.spot._id},
+      isChanged: false,
     }
   },
   methods: {
     onSubmit(event) {
-      console.log(event);
+      let self = this;
+      if(this.isChanged) {
+        apiUpdateSpot(this.data).then((function (res) {
+          alert("資料已送出審核，感謝您!");
+          self.$emit('refresh', null);
+          self.$emit('close', 'edit-form');
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+      }
     }
   },
   computed: {
-    address: function() {
+    getAddress: function() {
       return getAddress(this.spot.address);
     },
-    images: function() {
-      if(!Object.keys(this.spot).includes('images')) {
-        return ['', '', '']
+    getImages: function() {
+      if(!Object.keys(this.spot).includes('images') || this.spot.images.length == 0) {
+        this.images = ['', '', ''];
       }
-      return this.spot.images;
-    },
-    tags: function() {
-      let s = '';
-      for(let i=0;i<this.spot.ig_tag.length;i++) {
-        s += this.spot.ig_tag[i];
-        if(i != this.spot.ig_tag.length - 1) {
-          s += ',';
-        }
-      }
-      return s;
+      this.images = this.spot.images;
+      return this.images;
     }
   },
   watch: {
     name: function() {
-      console.log('name changed!');
+      this.isChanged = true;
+      this.data.name = this.name;
     },
     category: function() {
-      console.log('cat changed!');
+      this.isChanged = true;
+      this.data.category = this.category;
     },
     tags: function() {
-      console.log('tag changed!');
+      this.isChanged = true;
+      this.data.tags = this.tags.split(',');
     },
     images: function() {
-      console.log('image changed!');
+      this.isChanged = true;
+      this.data.images = this.images;
     }
-
-  }
+  },
 };
 </script>
 

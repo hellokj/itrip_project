@@ -35,6 +35,11 @@ const apiGetNearby = (data) => {
   return spotRequest.get('/getNearby', { params: data });
 }
 
+const apiUpdateSpot = (data) => {
+  console.log('!')
+  return spotRequest.post('/update', data);
+}
+
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
     'Authorization': ORS_API_KEY,
@@ -80,6 +85,7 @@ const apiSignUp = (user) => {
 export {
     apiGetSpots,
     apiGetNearby,
+    apiUpdateSpot,
     apiGetRoutes,
     apiGetItineraries,
     apiLogIn,

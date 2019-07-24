@@ -26,7 +26,8 @@
           @add-spot="addSpotToTrip"
           @get-spot="getSpot"
           @get-nearby="getNearby"
-          @sort-spot="sortSpot"/> 
+          @sort-spot="sortSpot"
+          @refresh="callGetSpotApi"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
