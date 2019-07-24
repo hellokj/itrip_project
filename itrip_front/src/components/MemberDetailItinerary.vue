@@ -10,7 +10,7 @@
         </el-breadcrumb>
       </el-container>
       <el-tabs type="border-card" v-model="index">
-        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index">
+        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container>
             <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
             <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button>
@@ -91,7 +91,7 @@ export default {
     },
     resetDetailInfo: function(){
       this.days = [];
-      console.log("itinerary", this.itinerary);
+      // console.log("itinerary", this.itinerary);
       // console.log("length", this.itinerary.travelInfos.length);
       // console.log("travelInfos", this.itinerary.travelInfos);
       for (let i = 0; i < this.itinerary.togos.length; i++){

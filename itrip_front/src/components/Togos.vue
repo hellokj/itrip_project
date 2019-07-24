@@ -119,6 +119,7 @@ export default {
       travelInfo: Array,
       page: Number,
       dayNum: Number,
+      itinerary: Object,
     },
     methods: {
       saveTrip() {
@@ -241,6 +242,20 @@ export default {
       },
       updatePage: function(){
         this.update++;
+      },
+      updateTabs: async function(){
+        let self = this;
+        if (self.itinerary != undefined){
+          await this.$nextTick(function() {
+            if (self.itinerary.travelInfos != undefined){
+              for (let i = 0; i < self.itinerary.travelInfos.length - 1; i++){
+                self.newTab();
+              };
+              self.tripName = self.itinerary.name;
+              self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+            }
+          });
+        }
       }
     },
     watch: {
@@ -263,28 +278,17 @@ export default {
       },
     },
     created() {
-      let self = this;
-      this.$bus.$on('modifyItinerary', event => {
-        self.togos_prop = event.itinerary.togos;
-        self.travelInfos = event.itinerary.travelInfos;
-        console.log("我是info", self.travelInfos);
-      });
-      console.log("我是info", this.travelInfos);
+
     },
     beforeMount() {
-      for(let i=1;i<this.dayNum;i++) {
-        this.tabs.push(i)
+      for(let i = 1; i < this.dayNum; i++) {
+        this.tabs.push(i);
       }
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
-      console.log("我是info", this.travelInfos);
-      for (let i = 0; i < this.travelInfos.length - 2; i++){
-        this.newTab();
-      }
-      console.log("我是info", this.travelInfos);
     },
-    beforeDestroy: function(){
-      this.$bus.$off('modifyItinerary');
+    mounted() {
+      this.updateTabs();
     },
 }
 </script>
@@ -333,8 +337,8 @@ export default {
     justify-content: flex-start;
   }
   .iTripName {
-     width:200px;
-     text-align: center;
+    width:200px;
+    text-align: center;
   }
   .trip-time-container {
     display: flex;
