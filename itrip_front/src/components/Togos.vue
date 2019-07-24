@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="tab-container">
-      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;">
+      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
           <template slot="tabs">
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
           </template>
@@ -88,7 +88,7 @@ export default {
         tabtitle: '',
         oldIndex: '',
         newIndex: '',
-        travelInfos: this.travelInfo,
+        travelInfos: Array,
         tabCounter: 0,
         tabs: [0],
         currentPage: 0,
@@ -229,6 +229,9 @@ export default {
           this.viewMapString = '關閉地圖';
         }
       },
+      updatePage: function(){
+        this.update++;
+      }
     },
     watch: {
       travelInfo: {
@@ -248,6 +251,25 @@ export default {
         this.startTimeOb.hr = parseInt(tmp[0]);
         this.startTimeOb.min = parseInt(tmp[1]);
       },
+    },
+    created() {
+      let self = this;
+      this.$bus.$on('modifyItinerary', event => {
+        self.togos_prop = event.itinerary.togos;
+        self.travelInfos = event.itinerary.travelInfos;
+        console.log("我是info", self.travelInfos);
+      });
+      console.log("我是info", this.travelInfos);
+    },
+    beforeMount() {
+      console.log("我是info", this.travelInfos);
+      for (let i = 0; i < this.travelInfos.length - 2; i++){
+        this.newTab();
+      }
+      console.log("我是info", this.travelInfos);
+    },
+    beforeDestroy: function(){
+      this.$bus.$off('modifyItinerary');
     },
 }
 </script>

@@ -37,7 +37,7 @@
           <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
-               <vue-load-image  style="width:100%;height:100%;">
+                <vue-load-image  style="width:100%;height:100%;">
                   <img ref="image" class="big-image" slot="image" :src="item">
                   <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                   <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
@@ -127,7 +127,7 @@ export default {
       apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
-        self.alert("儲存成功");
+        alert("儲存成功");
       }))
       .catch(function (error) {
         console.log(error);
@@ -392,8 +392,7 @@ export default {
       deep: true,
     },
     togos: function(newVal) {
-      // console.log(this.togos);
-      this.update++;
+
     },
     travelInfos: function(newVal){
 
@@ -408,19 +407,9 @@ export default {
     this.$bus.$on('modifyItinerary', event => {
       self.togos = event.itinerary.togos;
       self.travelInfos = event.itinerary.travelInfos;
-      // self.$nextTick(() => {
-      //   self.alert("you got it");
-      // });
-      self.alert("you got it");
-      console.log("callback tripItinerary togos", self.togos);
-      console.log("callback tripItinerary travelInfos", self.travelInfos);
     });
-    console.log("created tripItinerary togos", this.togos);
-    console.log("created tripItinerary travelInfos", this.travelInfos);
   },
   mounted() {
-    console.log("mounted tripItinerary togos", this.togos);
-    console.log("mounted tripItinerary travelInfos", this.travelInfos);
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]

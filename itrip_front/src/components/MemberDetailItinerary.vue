@@ -117,8 +117,6 @@ export default {
     },
     modifyItinerary: function(itinerary){
       this.$router.push({path: '/trip'});
-      console.log("modified", this.itinerary);
-      alert("QQ start driving bus");
     },
   },
   created() {

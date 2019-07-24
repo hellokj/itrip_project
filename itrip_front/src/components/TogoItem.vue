@@ -67,8 +67,8 @@ import VueLoadImage from 'vue-load-image'
 export default {
     name: "TogoItem",
     components: {
-       VNumberSmarty,
-       'vue-load-image': VueLoadImage
+        VNumberSmarty,
+        'vue-load-image': VueLoadImage
     },
     props: {
         togo: Object,
