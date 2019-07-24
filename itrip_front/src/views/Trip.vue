@@ -8,10 +8,10 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" 
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum"
         :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos"
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay"
         :key="update"/>
       </b-col>
       <b-col 
@@ -114,6 +114,7 @@ export default {
       paramProp: '',
       selectedSpot: 0,
       update: 0,
+      dayNum: 1,
     }
   },
   methods: {
@@ -138,6 +139,14 @@ export default {
         this.fixTravelInfo(index);
       }
       this.togos[this.page].splice(index, 1);
+    },
+    addNewDay() {
+      this.togos.push([]);
+      this.dayNum++;
+    },
+    removeDay(index) {
+      this.togos.splice(index, 1);
+      this.dayNum--;
     },
     fixTravelInfo(index) {
       if(index == 0) {
@@ -395,10 +404,7 @@ export default {
       // console.log(this.togos);
       this.update++;
     },
-    travelInfos: function(newVal){
-
-    }
-},
+  },
   created () {
     // [註冊監聽事件]
     let self = this;

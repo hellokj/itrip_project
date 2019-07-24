@@ -7,7 +7,7 @@
           <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
         </div>
         <div>
-          <el-tooltip content="查看行程路徑" placement="right-start" effect="light" style="width:auto;" open-delay="0">
+          <el-tooltip content="查看行程路徑" placement="right-start" effect="light" style="width:auto;">
               <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
           </el-tooltip>
         </div>
@@ -118,6 +118,7 @@ export default {
       togos: Array,
       travelInfo: Array,
       page: Number,
+      dayNum: Number,
     },
     methods: {
       saveTrip() {
@@ -166,6 +167,7 @@ export default {
       },
       newTab: function() {
         this.tabs.push(++this.tabCounter);
+        this.$emit('add-new-day');
       },
       getStartTime: function(index) {
         if(index == 0) {
@@ -214,6 +216,12 @@ export default {
             this.tabCounter--;
           }
         }
+        for(let i=1;i<this.tabCounter;i++) {
+          if(this.tabs[i] != i) {
+            this.tabs[i] = i;
+          }
+        }
+        this.$emit('remove-day', x)
       },
       getNearby: function(togo) {
         this.$emit('getNearby', togo);
@@ -250,6 +258,13 @@ export default {
         this.startTimeOb.hr = parseInt(tmp[0]);
         this.startTimeOb.min = parseInt(tmp[1]);
       },
+    },
+    beforeMount() {
+      for(let i=1;i<this.dayNum;i++) {
+        this.tabs.push(i)
+      }
+      this.currentPage = this.page;
+      this.tabCounter = this.dayNum;
     },
 }
 </script>

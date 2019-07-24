@@ -31,7 +31,7 @@
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
       </virtual-list>
     <modal name='link-window' :resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
-    <modal name='edit-form' ref="edit-spot-modal" width="45%" height="55%"><EditSpotModal :spot="selectedSpot" @close="closeModal" /></modal>
+    <modal name='edit-form' ref="edit-spot-modal" :resizable="true" width="45%" height="550px"><EditSpotModal :spot="selectedSpot" @close="closeModal" /></modal>
     </div>
   </div>
 </template>
@@ -93,7 +93,6 @@ export default {
         this.$modal.show('edit-form');
       },
       closeModal(name) {
-        console.log('!')
         this.$modal.hide(name);
       },
       showLoading(){

@@ -1,6 +1,6 @@
 <template>
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
-        <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}" shadow="hover">
+        <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}">
             <div class="card-container">
                 <i :class="markClass"  @click="clickAdd(spot)"></i>         
                 <div class="picture-container">
@@ -176,6 +176,10 @@ export default {
         height: 100%;
         display: flex;
         width: 100%;
+        
+    }
+    .el-card:hover {
+        box-shadow: 0 0 12px #6e6868;
     }
     .spot-header {
         display: flex;
