@@ -12,7 +12,7 @@ const spotSchema = new Schema({
     name: String,
     checkins: Number,
     location: Object,
-    category_list: Array,
+    category: String,
     hours: Array,
     price_range: String,
     about: String,
@@ -44,9 +44,13 @@ spotSchema.statics.get = function(_id) {
 }
 
 // update spot info
-spotSchema.statics.updateSpot = function(_id, changes) {
-    return this.updateOne({_id: _id}, {$set:changes});
-    
+spotSchema.statics.updateSpot = function(changes) {
+    return this.replaceOne({_id: changes._id}, changes);
+}
+
+// delete spot
+spotSchema.statics.deleteSpot = function(_id) {
+    return this.deleteOne({_id: _id});
 }
 
 // get nearby places sort by distance

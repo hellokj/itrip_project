@@ -63,8 +63,8 @@ const updateSpot = async(req, res, next) => {
     // get spot's address from req and get region name
     let _id = req.body.id;
     // get spot object by id
-    // let spot = (await Spot.get(_id));
-    let newVal = {};
+    let spot = (await Spot.get(_id));
+    let newVal = spot;
     let name = req.body.name;
     let category = req.body.category;
     let tags = req.body.tags;
@@ -79,18 +79,27 @@ const updateSpot = async(req, res, next) => {
         let igPostNum = 0;
         for(let i=0;i<tags.length;i++) {
             igPostNum += await getIgPostNum(tags[i]).then((res)=> {
+                console.log('New post num: ' + res);
                 return res
             });
         }
         newVal.ig_post_num = igPostNum;
     }
-    await Spot.updateSpot(_id, newVal);
+    console.log('Update: ', newVal);
+    await Spot.updateSpot(newVal);
     res.json({status: -1, msg:'success', data: newVal});
 }
 
+const deleteSpot = async(req, res, next) => {
+    // get spot's address from req and get region name
+    let _id = req.body.id;
+    await Spot.deleteSpot(_id);
+    res.json({status: -1, msg:'success'});
+}
 
 module.exports = {
     getSpots,
     getNearbySpots,
-    updateSpot
+    updateSpot,
+    deleteSpot
 }

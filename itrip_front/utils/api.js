@@ -36,9 +36,15 @@ const apiGetNearby = (data) => {
 }
 
 const apiUpdateSpot = (data) => {
-  console.log('!')
   return spotRequest.post('/update', data);
 }
+
+const apiDeleteSpot = (data) => {
+  return spotRequest.post('/delete', data);
+}
+
+
+
 
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
@@ -86,6 +92,7 @@ export {
     apiGetSpots,
     apiGetNearby,
     apiUpdateSpot,
+    apiDeleteSpot,
     apiGetRoutes,
     apiGetItineraries,
     apiLogIn,

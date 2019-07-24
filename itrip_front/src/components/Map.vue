@@ -23,7 +23,6 @@
         MarkerPopover(
           :name="spots[index].name"
           :address="spots[index].address"
-          :images="spots[index].images"
         )
     l-marker(
       v-for="(togo, index) in togos"

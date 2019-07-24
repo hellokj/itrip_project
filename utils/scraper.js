@@ -9,8 +9,11 @@ const Scraper = async function(keyword) {
     let url = baseUrl + k;
     let html = await rp(url);
     let $ = cheerio.load(html);
-    let obj = parseInt($('h3').text().match(/\d+/)[0]);
-    return obj;
+    let obj = $('h3').text().match(/\d+/)
+    if(obj !== null) {
+        return parseInt(obj[0]);
+    }
+    return 0;
 };
 
 module.exports = Scraper;
