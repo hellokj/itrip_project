@@ -1,5 +1,5 @@
 <template>
-  <el-form class="el-form" ref="form" label-width="120px" size="medium">
+  <el-form class="pb-2 el-form" ref="form" label-width="120px" size="medium">
     <div class="row" style="width:100%;display:flex;justify-content:center;">
       <h4 class="my-0">幫助我們讓資料更完善:)</h4>
     </div>
@@ -11,7 +11,14 @@
       <el-input v-model="name" style="width:200px;"></el-input>
     </el-form-item>
     <el-form-item class="my-0" label="景點類別: ">
-      <el-input v-model="category" style="width:200px;"></el-input>
+      <el-radio-group v-model="category">
+        <el-radio label="美食"></el-radio>
+        <el-radio label="購物"></el-radio>
+        <el-radio label="住宿"></el-radio>
+        <el-radio label="景點"></el-radio>
+        <el-radio label="交通"></el-radio>
+        <el-radio label="娛樂"></el-radio>
+      </el-radio-group>
     </el-form-item>
     <el-form-item class="my-0" label="地址: ">
       <el-input v-model="getAddress" style="width:400px;"></el-input>
@@ -38,6 +45,8 @@
 <script>
 import {apiUpdateSpot} from '../../../utils/api.js'
 import {getAddress} from '../../../utils/checker.js'
+import {catTranslation} from '../../../utils/translation.js'
+
 
 export default {
   props: {
@@ -47,7 +56,7 @@ export default {
     return {
       _id: this.spot._id,
       name: this.spot.name,
-      category: this.spot.category,
+      category: this.getCat,
       address: this.spot.address,
       images: this.spot.images,
       tags: this.spot.ig_tag,
@@ -63,11 +72,13 @@ export default {
           alert("資料已送出審核，感謝您!");
           self.$emit('refresh', null);
           self.$emit('close', 'edit-form');
-      }))
-      .catch(function (error) {
+      })).catch(function (error) {
         console.log(error);
       });
       }
+    },
+    getKeyByValue(object, value) {
+      return Object.keys(object).find(key => object[key] === value);
     }
   },
   computed: {
@@ -80,6 +91,9 @@ export default {
       }
       this.images = this.spot.images;
       return this.images;
+    },
+    getCat: function() {
+      return catTranslation[this.spot.category];
     }
   },
   watch: {
@@ -89,7 +103,8 @@ export default {
     },
     category: function() {
       this.isChanged = true;
-      this.data.category = this.category;
+      this.data.category = this.getKeyByValue(this.catTranslation, this.category);
+      console.log(this.data)
     },
     tags: function() {
       this.isChanged = true;
