@@ -8,7 +8,7 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum"
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
         :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
         @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay"
@@ -116,6 +116,7 @@ export default {
       selectedSpot: 0,
       update: 0,
       dayNum: 1,
+      itinerary: {}
     }
   },
   methods: {
@@ -412,6 +413,7 @@ export default {
       this.toggle(event.id);
     });
     this.$bus.$on('modifyItinerary', event => {
+      self.itinerary = event.itinerary;
       self.togos = event.itinerary.togos;
       self.travelInfos = event.itinerary.travelInfos;
     });

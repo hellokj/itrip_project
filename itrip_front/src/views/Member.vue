@@ -52,7 +52,7 @@ export default {
     let self = this;
     apiGetItineraries(token)
       .then(function(res){
-        console.log(res.data.data);
+        // console.log(res.data.data);
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
@@ -64,7 +64,7 @@ export default {
         self.flag = true;
         // console.log("new date", currentDate);
         // console.log("history", self.historyItineraries);
-        console.log("incoming", self.incomingItineraries);
+        // console.log("incoming", self.incomingItineraries);
       })
       .catch(function (error) {
         console.log(error);

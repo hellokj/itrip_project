@@ -4,16 +4,16 @@
     <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
     <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
     <l-polyline
-      v-for="(dayRoutes, index) in travelInfos"
+      v-for="(day, index) in itinerary.travelInfos"
       :key="index"
-      :lat-lngs="travelInfos[index].routes"
+      :lat-lngs="getDayRoutes(day)"
       :color="colors[index % 7]"
       :opacity="opacity"
       :weight="weight"
       :visible='true'>
     </l-polyline>
     <l-marker
-      v-for="togo in itinerary.togos[0]"
+      v-for="togo in getTotalTogos(itinerary)"
       :icon="icon"
       :key="togo._id"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])">
@@ -64,7 +64,6 @@ export default {
     travelInfos: Array
   },
   mounted() {
-    console.log("watch infos", this.travelInfos);
   },
   methods: {
     getLatLng: function(lat, lng) {
@@ -76,10 +75,26 @@ export default {
     centerUpdate(center) {
       this.currentCenter = center;
     },
+    getDayRoutes: function(day){
+      let dayRoutes = [];
+      for(let i = 0; i < day[0].routes.length; i++){
+        dayRoutes.push(day[0].routes[i]);
+      }
+      return dayRoutes;
+    },
+    getTotalTogos: function(itinerary){
+      let totalTogos = [];
+      // 天數
+      for (let i = 0;  i < itinerary.togos.length; i++){
+        for (let j = 0; j < itinerary.togos[i].length; j++){
+          totalTogos.push(itinerary.togos[i][j]);
+        }
+      }
+      return totalTogos;
+    }
   },
   watch: {
     travelInfos: function(){
-      console.log("watch infos", this.travelInfos);
     },
   },
   computed: {
