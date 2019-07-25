@@ -55,7 +55,7 @@ export default {
       if (!PasswordChecker(value)){
         callback(new Error('密碼長度需至少6個字，且包含至少一個大寫字母'));
       } else {
-        if (EmailChecker(this.signUpForm.password)){
+        if (PasswordChecker(this.signUpForm.password)){
           this.$refs.signUpForm.validateField('checkPass');
         }
         callback();
@@ -110,7 +110,7 @@ export default {
         email: this.signUpForm.email,
         password: this.signUpForm.password
       }
-      // 註冊還沒寫完
+      
       apiSignUp(data)
       .then(function(res) {
         if (res.data.status == 200){

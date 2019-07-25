@@ -6,12 +6,13 @@ const errorHandler = require('../utils/errorHandler');
 const getMember = (req, res, next) => {
   // 給予token 取得member資訊
   let memberDecoded = req.decoded;
+  console.log("decoded", req.decoded);
   res.json({status: -1, msg:'success', data: memberDecoded});
 }
 
 const modifyProfile = (req, res, next) => {
   // 更改自己的會員資訊(密碼)
-  res.json({status: -1, msg:'success', data: memberDecoded});
+  res.json({status: -1, msg:'success', data: "??"});
 };
 
 const followMember = (req, res, next) => {
