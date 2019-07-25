@@ -49,9 +49,10 @@
           <Map 
             id="map"
             class="map"
+            :key="updateMap"
             :spots="spots" :togos="togos[page]" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage" 
-            :centerSpot="centerSpot"/>
+            :centerSpot="centerSpot" :selectedSpot="selectedSpot"/>
         </b-col>
       </b-col>
     </b-row>
@@ -116,7 +117,8 @@ export default {
       selectedSpot: 0,
       update: 0,
       dayNum: 1,
-      itinerary: {}
+      itinerary: {},
+      updateMap:0,
     }
   },
   methods: {
@@ -381,7 +383,6 @@ export default {
       this.paramProp.sortBy = sortBy;
     },
     getSpot: function(page) {
-      console.log(page);
       this.paramProp.page = page;
     },
     getNearby: function(page) {
@@ -402,9 +403,9 @@ export default {
       },
       deep: true,
     },
-    togos: function(newVal) {
-
-    },
+    selectedSpot: function(newVal, oldVal) {
+      this.updateMap++;
+    }
   },
   created () {
     // [註冊監聽事件]
