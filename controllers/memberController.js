@@ -11,7 +11,6 @@ const getMember = (req, res, next) => {
 }
 
 const modifyProfile = async (req, res, next) => {
-  console.log("?????", req.body);
   let _id = req.decoded.memberId;
   let email = req.body.memberInfo.account;
   let url = req.body.memberInfo.url;
@@ -21,6 +20,7 @@ const modifyProfile = async (req, res, next) => {
   
   // 更改自己的會員資訊(密碼)
   let member = await Member.findMember(email, url, originPassword);
+  console.log("found member", member);
   if (member !== null){
     // 找到後更新
     let newMember = member;
@@ -33,10 +33,8 @@ const modifyProfile = async (req, res, next) => {
     return res.json({status: -1, msg:'success', data: newMember});
   }else {
     // 沒找到
-    if(user == null) {
-      Response(errorHandler.INVALID_EMAIL_OR_PASSWORD, null, res);
-      return;
-    }
+    Response(errorHandler.INVALID_EMAIL_OR_PASSWORD, null, res);
+    return;
   }
 };
 

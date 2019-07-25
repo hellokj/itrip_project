@@ -30,6 +30,4 @@ memberSchema.statics.updateMemberInfo = function(_id, changes) {
     return this.replaceOne({_id: _id}, changes);
 }
 
-
-
 module.exports = mongoose.model('Member', memberSchema);
