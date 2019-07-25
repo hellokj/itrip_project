@@ -38,8 +38,8 @@
                                     title="文字筆記"
                                     width="300"
                                     trigger="click">
-                                   <i class="far fa-comment-alt" slot="reference"> 文字筆記</i> 
-                                   <el-input
+                                    <i class="far fa-comment-alt" slot="reference"> 文字筆記</i> 
+                                    <el-input
                                         type="textarea"
                                         :placeholder="placeholder"
                                         v-model="togo.memo"

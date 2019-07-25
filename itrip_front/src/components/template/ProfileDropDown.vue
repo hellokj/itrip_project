@@ -14,6 +14,7 @@
   .el-dropdown-link {
     cursor: pointer;
     color: #FFFFFF;
+    font-size: 15px;
   }
   .el-icon-arrow-down {
     font-size: 12px;
@@ -34,7 +35,10 @@
         this.$router.push({path: '/member'});
       },
       setting: function(){
-        // 還沒想到要做怎樣
+        // 導向會員頁面
+        // 再開啟會員資訊元件
+        this.$router.push({path: '/member'});
+        this.$bus.$emit("setMemberInfo");
       },
       logOut: function(){
         this.$store.dispatch('updateAuthorized', false);

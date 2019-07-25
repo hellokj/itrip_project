@@ -69,6 +69,43 @@ const areas = {
 
 const types = {'美食':'gourmet', '購物':'shopping', '景點':'scenic spot', '交通':'transportation', '住宿':'lodging', '娛樂':'entertainment'};
 
+const area_pics = {
+    "北部":{
+    '台北市': 'https://img.appledaily.com.tw/images/twapple/640pix/20160916/_Other/20160916vicsky_01.jpg',
+    '新北市':'https://www.taiwan.net.tw/att/1/big_scenic_spots/pic_290_8.jpg',
+    '基隆市':
+    'https://cdn.walkerland.com.tw/images/upload/poi/p83880/m35474/cfe3697a349e529db06cea4525d488eebe2d7f2e.jpg',
+    '桃園市':
+    'https://i1.wp.com/taiwantour.info/wp-content/uploads/2018/02/1519194889-c94c08242b171ae1b1fc54dff2f5c6cc.jpg?fit=600%2C400&ssl=1',
+    '新竹縣':
+    'https://cdntwrunning.biji.co/800_db5a86e80407007c12a7fde66f1b57a9.jpg' 
+    },
+    '中部':{
+    '苗栗縣':'https://i4.achangpro.com/img.nanai.tw/pixnet/e5f35d383866d880051af1379ac37407.jpg',
+    '台中市':'https://www.funtime.com.tw/blog/wp-content/uploads/2016/09/183-1024x648.jpg',
+    '彰化縣':'https://img.ikiwi.tw/uploads/20171222205234_47.jpg',
+    '南投縣':'https://i0.wp.com/blog.tripbaa.com/wp-content/uploads/2017/11/8627416075_2393b6d3b3_b_d1.jpg?fit=1024%2C683&ssl=1'
+    },
+    '南部':{
+    '雲林縣':'https://image.cache.storm.mg/styles/smg-800x533-fp/s3/media/image/2018/03/19/20180319-040857_U10330_M392901_106c.jpg?itok=G4E2_t4b',
+    '嘉義縣' : 'https://travelimg.yamedia.tw/20180811/20180812191239556.jpg',
+    '台南市' : 'https://i0.wp.com/blog.tripbaa.com/wp-content/uploads/2018/01/4-4.jpg?fit=960%2C639&ssl=1',
+    '高雄市' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThb-5dqscfsmyBmWuZ4EHixsmqyV_L0dURNnqPmj35eHFjNLqx',
+    '屏東縣' : 'https://www.taiwan.net.tw/att/1/big_scenic_spots/pic_421_15.jpg' 
+    },
+    '東部':{
+    '宜蘭縣' : 'https://i2.achangpro.com/img.bobowin.blog/uploads/20180105212137_2.jpg',
+    '花蓮縣' : 'https://gsimg.asiayo.com/ay-image-upload/1556183794966_%E5%A4%A7%E9%BC%BB%E5%B1%B1%E6%AD%A5%E9%81%93.jpg',
+    '台東縣' : 'https://d2j3coy501s4ze.cloudfront.net/images/22264/700/c4c23259940137cf572a3d290d565368591f1584_587d9b31caccd.jpeg'
+    },
+    '離島':{
+    '澎湖縣' : 'https://i2.wp.com/img.journey.tw/20180415140944_25.jpg?resize=1100%2C733&ssl=1',
+    '金門縣' : 'https://b.blog.xuite.net/b/2/d/e/12584724/blog_32120/txt/66780927/49.jpg',
+    '連江縣' : 'https://www.taiwan.net.tw/att/1/big_scenic_spots/pic_196_7.jpg'
+    }
+    
+    };
+
 const getAreas = () => {
     let areaArr = Object.keys(areas);
     return areaArr.map((v)=>({
@@ -88,6 +125,10 @@ const getTypes = () => {
         id: types[v],
         label: v
     }));
+}
+
+const getAreaPics = () => {
+    return area_pics;
 }
 
 const paramsHelper = (params, values) => {
@@ -130,5 +171,6 @@ const makeParams = (city = null, region = null, _category = null, _name = null, 
 export {
     getAreas,
     getTypes,
-    makeParams
+    makeParams,
+    getAreaPics
 }

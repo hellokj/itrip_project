@@ -10,7 +10,7 @@ const routingRequest = axios.create({
   baseURL: 'https://api.openrouteservice.org/v2/'
 });
 // logIn signUp相關的 api
-const AuthRequest = axios.create({
+const authRequest = axios.create({
   baseURL: SERVER_IP + '/api/auth/'
 });
 
@@ -18,6 +18,11 @@ const AuthRequest = axios.create({
 const itineraryRequest = axios.create({
   baseURL: SERVER_IP + '/api/itinerary/'
 });
+
+// member api
+const memberRequest = axios.create({
+  baseURL: SERVER_IP + '/api/member/'
+})
 
 const apiGetItineraries = (token) => {
   let headers = {
@@ -59,13 +64,17 @@ const apiGetRoutes = (data, mode) => {
 
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
+const apiSaveTrip = (_id, startDate, name, dayNum, togos, travelInfos, token) => {
   let headers = {
     "Content-Type": "application/json",
     "x-access-token": token
   }
+  if (_id == ""){
+    _id = new Date().getTime();
+  }
   let date = startDate.split('-');
   let data = {
+    _id: _id,
     startDate: {
       year: parseInt(date[0]),
       month: parseInt(date[1]),
@@ -81,11 +90,28 @@ const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
 
 // Auth api
 const apiLogIn = (authData) => {
-  return AuthRequest.post('logIn/', authData);
+  return authRequest.post('/logIn', authData);
 }
 
 const apiSignUp = (user) => {
-  return AuthRequest.post('signUp/', user);
+  return authRequest.post('/signUp', user);
+}
+
+// Member api
+const apiGetMember = (userToken) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": userToken
+  }
+  return memberRequest.post('/getMember', {}, { headers: headers });
+}
+
+const apiModifyProfile = (memberInfo, userToken) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": userToken
+  }
+  return memberRequest.post('/modifyProfile', { memberInfo: memberInfo }, { headers: headers });
 }
 
 export {
@@ -95,7 +121,9 @@ export {
     apiDeleteSpot,
     apiGetRoutes,
     apiGetItineraries,
+    apiGetMember,
     apiLogIn,
     apiSignUp,
+    apiModifyProfile,
     apiSaveTrip
 }

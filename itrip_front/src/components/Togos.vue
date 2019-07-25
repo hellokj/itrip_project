@@ -247,8 +247,8 @@ export default {
         let self = this;
         if (self.itinerary != undefined){
           await this.$nextTick(function() {
-            if (self.itinerary.travelInfos != undefined){
-              for (let i = 0; i < self.itinerary.travelInfos.length - 1; i++){
+            if (self.itinerary.togos != undefined){
+              for (let i = 0; i < self.itinerary.togos.length - 1; i++){
                 self.newTab();
               };
               self.tripName = self.itinerary.name;
@@ -278,7 +278,7 @@ export default {
       },
     },
     created() {
-
+      
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
