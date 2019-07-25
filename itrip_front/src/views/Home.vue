@@ -16,8 +16,7 @@
             <router-link class="btn-trip" to="/trip">旅遊</router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
-            <!-- <button class="btn-login">登入</button> -->
-            <ProfileButton class="btn-login"></ProfileButton>
+            <button class="btn-login">登入</button>
           </b-col>
         </b-row>
       </b-container>
@@ -29,7 +28,7 @@
           </b-col>
           <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
             <span class="search-icon" width="30px;"><img @click.native="handleSearch" 
-              src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
+             src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
           </b-col>
         </b-row>
         <b-row class="mt-2" align-h="center">
@@ -147,12 +146,17 @@
 import {getAreas, getTypes, makeParams, getAreaPics} from '../../utils/area.js'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
 import HomeSearch from '../components/HomeSearch'
+import ProfileButton from '../components/ProfileButton'
+import ProfileDropDown from '../components/template/ProfileDropDown'
 
 // path for images: ../assets/home/XXXX.svg
 export default {
   name: 'home',
   components: {
-    HomeSearch
+    HomeSearch,
+    ProfileButton,
+    ProfileDropDown,
+  
   },
   data() {
     return {
