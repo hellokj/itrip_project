@@ -10,7 +10,7 @@ const routingRequest = axios.create({
   baseURL: 'https://api.openrouteservice.org/v2/'
 });
 // logIn signUp相關的 api
-const AuthRequest = axios.create({
+const authRequest = axios.create({
   baseURL: SERVER_IP + '/api/auth/'
 });
 
@@ -18,6 +18,11 @@ const AuthRequest = axios.create({
 const itineraryRequest = axios.create({
   baseURL: SERVER_IP + '/api/itinerary/'
 });
+
+// member api
+const memberRequest = axios.create({
+  baseURL: SERVER_IP + '/api/member/'
+})
 
 const apiGetItineraries = (token) => {
   let headers = {
@@ -35,6 +40,17 @@ const apiGetNearby = (data) => {
   return spotRequest.get('/getNearby', { params: data });
 }
 
+const apiUpdateSpot = (data) => {
+  return spotRequest.post('/update', data);
+}
+
+const apiDeleteSpot = (data) => {
+  return spotRequest.post('/delete', data);
+}
+
+
+
+
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
     'Authorization': ORS_API_KEY,
@@ -48,13 +64,17 @@ const apiGetRoutes = (data, mode) => {
 
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
+const apiSaveTrip = (_id, startDate, name, dayNum, togos, travelInfos, token) => {
   let headers = {
     "Content-Type": "application/json",
     "x-access-token": token
   }
+  if (_id == ""){
+    _id = new Date().getTime();
+  }
   let date = startDate.split('-');
   let data = {
+    _id: _id,
     startDate: {
       year: parseInt(date[0]),
       month: parseInt(date[1]),
@@ -70,18 +90,30 @@ const apiSaveTrip = (startDate, name, dayNum, togos, travelInfos, token) => {
 
 // Auth api
 const apiLogIn = (authData) => {
-  return AuthRequest.post('logIn/', authData);
+  return authRequest.post('/logIn', authData);
 }
 
 const apiSignUp = (user) => {
-  return AuthRequest.post('signUp/', user);
+  return authRequest.post('/signUp', user);
+}
+
+// Member api
+const apiGetMember = (userToken) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": userToken
+  }
+  return memberRequest.post('/getMember', {}, { headers: headers });
 }
 
 export {
     apiGetSpots,
     apiGetNearby,
+    apiUpdateSpot,
+    apiDeleteSpot,
     apiGetRoutes,
     apiGetItineraries,
+    apiGetMember,
     apiLogIn,
     apiSignUp,
     apiSaveTrip

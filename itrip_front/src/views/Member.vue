@@ -5,7 +5,9 @@
     :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
     v-on:changeToCarousel="changeView"
-    v-on:checkDetail="checkDetail">
+    v-on:checkDetail="checkDetail"
+    v-on:checkFollowing="changeView('MemberFollowingList')"
+    v-on:setMemberInfo="changeView('MemberInfos')">
   </MemberAside>
   <component :is="view" :title="title" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
   <!-- <keep-alive>
@@ -24,12 +26,16 @@
 import MemberAside from '../components/MemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
 import MemberDetailItinerary from '../components/MemberDetailItinerary'
+import MemberInfos from '../components/MemberInfos'
+import MemberFollowingList from '../components/MemberFollowingList'
 import { apiGetItineraries } from '../../utils/api'
 export default {
   components: {
     MemberAside: MemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
-    MemberDetailItinerary: MemberDetailItinerary
+    MemberDetailItinerary: MemberDetailItinerary,
+    MemberInfos: MemberInfos,
+    MemberFollowingList: MemberFollowingList
   },
   data() {
     return {
@@ -42,7 +48,7 @@ export default {
       incomingItineraries: [],
       historyItineraries: [],
       flag: false,
-      view: 'MemberItineraryCarousel',
+      view: 'MemberInfos',
       itinerary: Object,
       title: "",
     }
@@ -52,7 +58,7 @@ export default {
     let self = this;
     apiGetItineraries(token)
       .then(function(res){
-        console.log(res.data.data);
+        // console.log(res.data.data);
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
@@ -64,10 +70,14 @@ export default {
         self.flag = true;
         // console.log("new date", currentDate);
         // console.log("history", self.historyItineraries);
-        console.log("incoming", self.incomingItineraries);
+        // console.log("incoming", self.incomingItineraries);
       })
       .catch(function (error) {
         console.log(error);
+      });
+      // 接收開啟會員資訊
+      this.$bus.$on("setMemberInfo", event => {
+        self.changeView("MemberInfos");
       });
   },
   methods: {
@@ -97,6 +107,9 @@ export default {
     changeView: function(viewName){
       this.view = viewName;
     }
+  },
+  beforeDestroy() {
+    this.$bus.$off('setMemberInfo');
   },
 
 };

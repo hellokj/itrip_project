@@ -17,7 +17,10 @@
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
                     <div class="row">
                         <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
-                        <i class="fas fa-comment-alt" ></i>
+                        <el-tooltip placement="right-start" effect="light" style="width:auto;">
+                            <i class="fas fa-comment-alt" v-if="memo != null"></i>
+                            <h6 slot="content">{{showMemo()}}</h6>
+                        </el-tooltip>
                     </div>
                     <div class="iNumber-container">
                         <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment(stopTimeString, 'HH:mm')" format="HH:mm" />
@@ -29,8 +32,21 @@
                             <a-menu-item @click="$emit('getNearby', togo)">
                                 <i class="fas fa-map-marked-alt"></i>  附近景點
                             </a-menu-item>
-                            <a-menu-item @click="$emit('getNearby', togo)">
-                                <i class="far fa-comment-alt"></i> 文字筆記
+                            <a-menu-item>
+                                <el-popover
+                                    placement="top"
+                                    title="文字筆記"
+                                    width="300"
+                                    trigger="click">
+                                    <i class="far fa-comment-alt" slot="reference"> 文字筆記</i> 
+                                    <el-input
+                                        type="textarea"
+                                        :placeholder="placeholder"
+                                        v-model="togo.memo"
+                                        maxlength="30"
+                                        show-word-limit>
+                                    </el-input>
+                                </el-popover>
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown> 
@@ -51,8 +67,8 @@ import VueLoadImage from 'vue-load-image'
 export default {
     name: "TogoItem",
     components: {
-       VNumberSmarty,
-       'vue-load-image': VueLoadImage
+        VNumberSmarty,
+        'vue-load-image': VueLoadImage
     },
     props: {
         togo: Object,
@@ -75,6 +91,9 @@ export default {
             this.togo.stopTime.hrs = this.hrs;
             this.togo.stopTime.mins = this.mins;
             this.$emit('updateStopTime');
+        },
+        showMemo() {
+            return this.togo.memo;
         },
         moment,
     },
@@ -99,6 +118,9 @@ export default {
                 return this.togo.memo;
             }
             return null;
+        },
+        placeholder: function() {
+            return '在『' + this.togo.name + '』一定要做的事';
         }
     }
 }
@@ -205,6 +227,9 @@ export default {
         padding-right: 20px;
         margin-top: 20px;
         font-size: 12px;
+        cursor: pointer;
+    }
+    .fa-comment-alt {
         cursor: pointer;
     }
     @media only screen and (max-width: 768px) {

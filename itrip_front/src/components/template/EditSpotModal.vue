@@ -1,94 +1,154 @@
 <template>
-  <form class="form" ref="form" @submit.stop.prevent="onSubmit">
-    <b-row>
-      <b-col>
-        <p>ID:  {{spot._id}}</p>
-        <b-row>
-          <b-col class="px-0" cols="1" style="justify-content:center;">
-            <p class="mt-2 mb-0" style="text-align:center;">名稱:</p>
-          </b-col>
-          <b-col class="px-0 mr-5" cols="4">
-            <el-input
-              class="name-input"
-              v-model="name"
-            ></el-input>
-          </b-col>
-          <b-col class="px-0" cols="1" style="justify-content:center;">
-             <p class="mt-2 mb-0" style="text-align:center;">類別:</p>
-          </b-col>
-          <b-col class="px-0" cols="3">
-            <el-input
-              class="category-input"
-              v-model="category"
-            ></el-input>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col class="px-0 mt-4 " cols="1">
-             <p class="mb-0" style="text-align:center;">TAG:</p>
-          </b-col>
-          <b-col class="px-0 mt-3" cols="10">
-            <b-form-input
-              id="ig-tag-input"
-              v-model="tags"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-        <b-row :key="index" v-for="index in images.length">
-          <b-col class="px-0 mt-4 " cols="1">
-             <p class="mb-0" style="text-align:center;">照片{{index}}</p>
-          </b-col>
-          <b-col class="px-0 mt-3" cols="10">
-            <b-form-input
-              id="ig-image-input"
-              v-model="images[index-1]"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-      </b-col>
-    </b-row>
-  </form>
+  <el-form class="pb-2 el-form" ref="form" label-width="120px" size="medium">
+    <div class="row" style="width:100%;display:flex;justify-content:center;">
+      <h4 class="my-0">幫助我們讓資料更完善:)</h4>
+    </div>
+    <el-divider></el-divider>
+    <el-form-item class="my-0" label="ID: ">
+      <p class="my-0">{{spot._id}}</p>
+    </el-form-item>
+    <el-form-item class="my-0" label="名稱: ">
+      <el-input v-model="name" style="width:200px;"></el-input>
+    </el-form-item>
+    <el-form-item class="my-0" label="類別: ">
+      <el-radio-group v-model="category">
+        <el-radio label="美食"></el-radio>
+        <el-radio label="購物"></el-radio>
+        <el-radio label="住宿"></el-radio>
+        <el-radio label="景點"></el-radio>
+        <el-radio label="交通"></el-radio>
+        <el-radio label="娛樂"></el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item class="my-0" label="地址: ">
+      <el-input v-model="getAddress" style="width:400px;"></el-input>
+    </el-form-item>
+    <el-form-item class="my-0" label="TAGS: ">
+      <el-input v-model="tags" style="width:400px;"></el-input>
+    </el-form-item>
+    <div class="pic" :key="index" v-for="index in getImages.length">
+      <el-form-item class="my-1" label="照片">
+        <el-input v-model="getImages[index-1]"></el-input>
+      </el-form-item>
+    </div>
+    <el-divider></el-divider>
+    <div class="flex" style="display:flex;flex-direction:row;justify-content:space-between;">
+      <el-button @click="deleteSpot" class="mt-2" type="danger" round>刪除此景點</el-button>
+      <div class="pr-3 row" style="display:flex;flex-direction:row;">
+        <el-button @click="$emit('close', 'edit-form')">取消</el-button>
+        <el-button type="primary" @click="onSubmit">送出</el-button>
+      </div>
+    </div>
+</el-form>
 </template>
 
 <script>
+import {apiUpdateSpot, apiDeleteSpot} from '../../../utils/api.js'
+import {getAddress} from '../../../utils/checker.js'
+import {catTranslation} from '../../../utils/translation.js'
+import { MessageBox } from 'element-ui'
+import { Message } from 'element-ui'
+
+
 export default {
   props: {
     spot: Object,
   },
   data() {
     return {
+      _id: this.spot._id,
       name: this.spot.name,
-      category: this.spot.category,
-      tags: this.spot.ig_tag,
+      category: catTranslation[this.spot.category],
       images: this.spot.images,
+      address: this.spot.address,
+      tags: this.spot.ig_tag.toString(),
+      data: {id: this.spot._id},
+      isChanged: false,
     }
   },
   methods: {
     onSubmit(event) {
-      console.log('event');
+      let self = this;
+      if(this.isChanged) {
+        apiUpdateSpot(this.data).then((function (res) {
+          console.log(self.data);
+          Message({
+            type: 'success',
+            message: '資料已送出審核!'
+          });
+          self.$emit('refresh', null);
+          self.$emit('close', 'edit-form');
+      })).catch(function (error) {
+        console.log(error);
+      });
+      }
+    },
+    deleteSpot() {
+      let self = this;
+      MessageBox.confirm('這將會刪除此景點，確定繼續嗎?', 'Warning', {
+          confirmButtonText: '確認',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let obj = {id: self.spot._id};
+          apiDeleteSpot(obj).then((function (res) {
+              self.$emit('refresh', null);
+              self.$emit('close', 'edit-form');
+              Message({
+                type: 'success',
+                message: '景點刪除成功!'
+              });
+          })).catch(function (error) {
+            console.log(error);
+          });
+        }).catch(() => {
+          Message({
+            type: 'info',
+            message: '刪除取消!'
+          });          
+        });
+    },
+    getKeyByValue(object, value) {
+      return Object.keys(object).find(key => object[key] === value);
     }
+  },
+  computed: {
+    getAddress: function() {
+      return getAddress(this.spot.address);
+    },
+    getImages: function() {
+      if(this.images === undefined || this.spot.images.length == 0) {
+        this.spot.images = [' ',' ',' '];
+        this.images = this.spot.images;
+      };
+      return this.images;
+    },
   },
   watch: {
     name: function() {
-      console.log('name changed!');
+      this.isChanged = true;
+      this.data.name = this.name;
     },
-    category: function() {
-      console.log('cat changed!');
+    category: function(newVal) {
+      this.isChanged = true;
+      this.data.category = this.getKeyByValue(catTranslation, newVal);
     },
     tags: function() {
-      console.log('tag changed!');
+      this.isChanged = true;
+      this.data.tags = this.tags.split(',');
     },
     images: function() {
-      console.log('image changed!');
+      this.isChanged = true;
+      this.data.images = this.images;
     }
-
-  }
-};
+  },
+}
 </script>
 
 <style scoped>
-  .form {
-    margin: 10px;
+  .el-form {
+    height: 100%;
+    margin:10px;
   }
 </style>
 

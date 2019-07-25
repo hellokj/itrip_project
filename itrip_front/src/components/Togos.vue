@@ -7,7 +7,9 @@
           <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
         </div>
         <div>
-          <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
+          <el-tooltip content="查看行程路徑" placement="right-start" effect="light" style="width:auto;">
+              <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
+          </el-tooltip>
         </div>
       </div>
       <div class="tripDate">
@@ -25,7 +27,7 @@
       </div>
     </div>
     <div class="tab-container">
-      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;">
+      <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
           <template slot="tabs">
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
           </template>
@@ -88,7 +90,7 @@ export default {
         tabtitle: '',
         oldIndex: '',
         newIndex: '',
-        travelInfos: this.travelInfo,
+        travelInfos: Array,
         tabCounter: 0,
         tabs: [0],
         currentPage: 0,
@@ -116,6 +118,8 @@ export default {
       togos: Array,
       travelInfo: Array,
       page: Number,
+      dayNum: Number,
+      itinerary: Object,
     },
     methods: {
       saveTrip() {
@@ -163,7 +167,8 @@ export default {
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
       newTab: function() {
-        this.tabs.push(++this.tabCounter);
+        this.tabs.push(this.tabCounter++);
+        this.$emit('add-new-day');
       },
       getStartTime: function(index) {
         if(index == 0) {
@@ -212,6 +217,12 @@ export default {
             this.tabCounter--;
           }
         }
+        for(let i=1;i<this.tabCounter;i++) {
+          if(this.tabs[i] != i) {
+            this.tabs[i] = i;
+          }
+        }
+        this.$emit('remove-day', x)
       },
       getNearby: function(togo) {
         this.$emit('getNearby', togo);
@@ -229,6 +240,23 @@ export default {
           this.viewMapString = '關閉地圖';
         }
       },
+      updatePage: function(){
+        this.update++;
+      },
+      updateTabs: async function(){
+        let self = this;
+        if (self.itinerary != undefined){
+          await this.$nextTick(function() {
+            if (self.itinerary.togos != undefined){
+              for (let i = 0; i < self.itinerary.togos.length - 1; i++){
+                self.newTab();
+              };
+              self.tripName = self.itinerary.name;
+              self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+            }
+          });
+        }
+      }
     },
     watch: {
       travelInfo: {
@@ -249,9 +277,18 @@ export default {
         this.startTimeOb.min = parseInt(tmp[1]);
       },
     },
+    created() {
+      
+    },
+    beforeMount() {
+      for(let i = 1; i < this.dayNum; i++) {
+        this.tabs.push(i);
+      }
+      this.currentPage = this.page;
+      this.tabCounter = this.dayNum;
+    },
     mounted() {
-      console.log("Togos togos", this.togos);
-      console.log("Togos travelInfos", this.travelInfos);
+      this.updateTabs();
     },
 }
 </script>
@@ -300,8 +337,8 @@ export default {
     justify-content: flex-start;
   }
   .iTripName {
-     width:200px;
-     text-align: center;
+    width:200px;
+    text-align: center;
   }
   .trip-time-container {
     display: flex;

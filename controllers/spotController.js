@@ -3,6 +3,7 @@ const NilChecker = require('../utils/nilChecker');
 const FieldChecker = require('../utils/fieldChecker');
 const Response = require('../utils/responseHandler');
 const errorHandler = require('../utils/errorHandler');
+const getIgPostNum = require('../utils/scraper');
 
 
 const getSpots = async(req, res, next) => {
@@ -39,7 +40,7 @@ const getNearbySpots = async(req, res, next) => {
     let page = req.query.page;
     let limit = req.query.limit;
     let order = req.query.order;
-    let region = FieldChecker(spot.address, ['town', 'state_district', 'suburb']);
+    let region = FieldChecker.fieldChecker(spot.address, ['town', 'state_district', 'suburb']);
     if(region == null) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
         return;
@@ -58,7 +59,47 @@ const getNearbySpots = async(req, res, next) => {
     Response(null, nearby, res);
 }
 
+const updateSpot = async(req, res, next) => {
+    // get spot's address from req and get region name
+    let _id = req.body.id;
+    // get spot object by id
+    let spot = (await Spot.get(_id));
+    let newVal = spot;
+    let name = req.body.name;
+    let category = req.body.category;
+    let tags = req.body.tags;
+    let images = req.body.images;
+    // init changes ar
+    if(name !== undefined) newVal.name = name;
+    if(category !== undefined) newVal.category = category;
+    if(images !== undefined) newVal.images = images;
+
+    if(tags !== undefined) {
+        newVal.ig_tag = tags;
+        let igPostNum = 0;
+        for(let i=0;i<tags.length;i++) {
+            igPostNum += await getIgPostNum(tags[i]).then((res)=> {
+                console.log('New post num: ' + res);
+                return res
+            });
+        }
+        newVal.ig_post_num = igPostNum;
+    }
+    console.log('Update: ', newVal);
+    await Spot.updateSpot(newVal);
+    res.json({status: -1, msg:'success', data: newVal});
+}
+
+const deleteSpot = async(req, res, next) => {
+    // get spot's address from req and get region name
+    let _id = req.body.id;
+    await Spot.deleteSpot(_id);
+    res.json({status: -1, msg:'success'});
+}
+
 module.exports = {
     getSpots,
-    getNearbySpots
+    getNearbySpots,
+    updateSpot,
+    deleteSpot
 }

@@ -8,10 +8,10 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" 
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
         :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos"
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay"
         :key="update"/>
       </b-col>
       <b-col 
@@ -21,12 +21,13 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos" :isMapShown="isMapShown"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="getSpot"
           @get-nearby="getNearby"
-          @sort-spot="sortSpot"/> 
+          @sort-spot="sortSpot"
+          @refresh="callGetSpotApi"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
@@ -37,7 +38,7 @@
           <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
-               <vue-load-image  style="width:100%;height:100%;">
+                <vue-load-image  style="width:100%;height:100%;">
                   <img ref="image" class="big-image" slot="image" :src="item">
                   <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                   <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
@@ -48,9 +49,10 @@
           <Map 
             id="map"
             class="map"
+            :key="updateMap"
             :spots="spots" :togos="togos[page]" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage" 
-            :centerSpot="centerSpot"/>
+            :centerSpot="centerSpot" :selectedSpot="selectedSpot"/>
         </b-col>
       </b-col>
     </b-row>
@@ -114,6 +116,9 @@ export default {
       paramProp: '',
       selectedSpot: 0,
       update: 0,
+      dayNum: 1,
+      itinerary: {},
+      updateMap:0,
     }
   },
   methods: {
@@ -123,11 +128,17 @@ export default {
       //memberId, startDate, name, dayNum, togos, travelInfos
       let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
+      let _id = "";
+      if (this.itinerary._id != undefined){
+        _id = this.itinerary._id;
+      }
       let self = this;
-      apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
+      // console.log("itinerary", this.itinerary);
+      // console.log("_id", _id);
+      apiSaveTrip(_id, date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
-        self.alert("儲存成功");
+        alert("儲存成功");
       }))
       .catch(function (error) {
         console.log(error);
@@ -138,6 +149,14 @@ export default {
         this.fixTravelInfo(index);
       }
       this.togos[this.page].splice(index, 1);
+    },
+    addNewDay() {
+      this.togos.push([]);
+      this.dayNum++;
+    },
+    removeDay(index) {
+      this.togos.splice(index, 1);
+      this.dayNum--;
     },
     fixTravelInfo(index) {
       if(index == 0) {
@@ -370,7 +389,6 @@ export default {
       this.paramProp.sortBy = sortBy;
     },
     getSpot: function(page) {
-      console.log(page);
       this.paramProp.page = page;
     },
     getNearby: function(page) {
@@ -391,14 +409,10 @@ export default {
       },
       deep: true,
     },
-    togos: function(newVal) {
-      // console.log(this.togos);
-      this.update++;
-    },
-    travelInfos: function(newVal){
-
+    selectedSpot: function(newVal, oldVal) {
+      this.updateMap++;
     }
-},
+  },
   created () {
     // [註冊監聽事件]
     let self = this;
@@ -406,21 +420,12 @@ export default {
       this.toggle(event.id);
     });
     this.$bus.$on('modifyItinerary', event => {
+      self.itinerary = event.itinerary;
       self.togos = event.itinerary.togos;
       self.travelInfos = event.itinerary.travelInfos;
-      // self.$nextTick(() => {
-      //   self.alert("you got it");
-      // });
-      self.alert("you got it");
-      console.log("callback tripItinerary togos", self.togos);
-      console.log("callback tripItinerary travelInfos", self.travelInfos);
     });
-    console.log("created tripItinerary togos", this.togos);
-    console.log("created tripItinerary travelInfos", this.travelInfos);
   },
   mounted() {
-    console.log("mounted tripItinerary togos", this.togos);
-    console.log("mounted tripItinerary travelInfos", this.travelInfos);
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
@@ -474,8 +479,8 @@ export default {
 }
 @media screen and (min-width: 1680px) {
   .trip {
-    padding-left: 200px;
-    padding-right: 200px;
+    padding-left: 100px;
+    padding-right: 100px;
   }
 }
 @media screen and (min-width: 2560px) {

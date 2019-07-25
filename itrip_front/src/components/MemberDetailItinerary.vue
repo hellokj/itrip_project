@@ -10,10 +10,11 @@
         </el-breadcrumb>
       </el-container>
       <el-tabs type="border-card" v-model="index">
-        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index">
+        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container>
             <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
-            <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button>
+            <el-link icon="el-icon-edit modify_button" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+            <!-- <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button> -->
           </el-container>
           <el-table
             :data="day"
@@ -94,6 +95,7 @@ export default {
       console.log("itinerary", this.itinerary);
       // console.log("length", this.itinerary.travelInfos.length);
       // console.log("travelInfos", this.itinerary.travelInfos);
+
       for (let i = 0; i < this.itinerary.togos.length; i++){
         // 天數
         let tmpDay = [];
@@ -110,20 +112,18 @@ export default {
           tmpDay.push(tmpTogo);
         }
         this.days.push(tmpDay);
-        this.days.push(tmpDay);
-        this.days.push(tmpDay);
       }
       // console.log("days", this.days);
     },
     modifyItinerary: function(itinerary){
       this.$router.push({path: '/trip'});
-      this.$bus.$emit('modifyItinerary', {itinerary: itinerary});
-      console.log("modified", this.itinerary);
-      alert("QQ start driving bus");
     },
   },
   created() {
     this.resetDetailInfo();
+  },
+  beforeDestroy() {
+    this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
   },
   watch: {
     itinerary: function(){
@@ -155,9 +155,7 @@ export default {
   }
 
   .modify_button {
-    margin-bottom: 10px;
-    width: 120px;
-    border-radius: 10px;
+    margin: auto;
     text-align: center;
   }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="travelTime-item">
-        <b-row>
+        <b-row >
             <b-col class="select">
                 <b-row>
                     <b-col cols="2" style="display:flex;justify-content:center;">
@@ -10,8 +10,7 @@
                         <b-row style="width:auto;">
                             <a-dropdown :trigger="['click']">
                                 <a class="ant-dropdown-link">
-                                <i :class="modes[current].class"></i>
-                                <a-icon type="down" />
+                                <i id="modes" :class="modes[current].class"></i>
                                 </a>
                                 <a-menu slot="overlay">
                                     <a-menu-item :key="index" v-for="(mode, index) in modes" :value="mode.value" @click="onModesChange(index)">
@@ -95,5 +94,9 @@ export default {
     }
     .fa-angle-double-down {
         font-size: 23px;
+    }
+    #modes:hover {
+        border: 1px solid #34c0eb;
+        box-shadow: 0 0 5px #34c0eb;
     }
 </style>

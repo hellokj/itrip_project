@@ -12,18 +12,23 @@
     :opacity="opacity"
     :weight="weight")
     l-marker(
+      ref="marker"
       @mouseover="mouseOver"
       @mouseout="mouseOut"
+      @add="openPopup($event, index, selectedSpot)"
       :icon="icons[index]"
       v-for="(spot, index) in spots"
       v-if="!isContains(index)"
       :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
     )
+      l-popup(
+        :options="{autoClose: false, closeOnClick: false}")
+          .name {{ spots[index].name }}
+          .addr {{ Address(index) }}
       l-tooltip
         MarkerPopover(
           :name="spots[index].name"
           :address="spots[index].address"
-          :images="spots[index].images"
         )
     l-marker(
       v-for="(togo, index) in togos"
@@ -39,6 +44,7 @@ import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover' 
 import Vue from 'vue'
 import L from "leaflet"
+import {getAddress} from '../../utils/checker.js'
 
 export default {
   name: 'Map',
@@ -55,9 +61,9 @@ export default {
   },
   data() {
     return {
-      zoom: 8,
-      currentZoom: 8,
-      zoomControlPosition: "topright",
+      zoom: 15,
+      currentZoom: 15,
+      zoomControlPosition: "center",
       visible: false,
       currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
@@ -83,7 +89,9 @@ export default {
     page: Number,
     perPage: Number,
     spotPage: Number,
-    centerSpot: Object
+    centerSpot: Object,
+    selectedSpot: Number,
+    updateMap: Number
   },
   mounted() {
     this.updateMarkers();
@@ -132,12 +140,6 @@ export default {
       lat = lat / spots.length;
       return [lng, lat];
     },
-    calculateZoom: function(){
-
-    },
-    setZoom: function(){
-      
-    },
     resetRoutesArr: function(){
       if(this.routes[this.currentPage] === undefined) {
         this.routesArr = [];
@@ -148,6 +150,19 @@ export default {
     isContains: function(index) {
       if(this.togos !== undefined && this.spots[index] !== undefined && this.togos.some(e => e._id === this.spots[index]._id)) return true;
       return false;
+    },
+    openPopup: function(event, index, selectedSpot) {
+      this.$nextTick( ()=> {
+        if(index === selectedSpot) {
+          event.target.openPopup();
+        }
+      });
+    },
+    getPopupContent(index) {
+      return this.spots[index].name;
+    },
+    Address(index) {
+      return getAddress(this.spots[index].address);
     }
   },
   watch: {
@@ -194,7 +209,7 @@ export default {
         }
       }
       this.zoom = this.centerSpot.zoom;
-    }
+    },
   },
   computed: {
     isRouteArr() {
@@ -202,7 +217,7 @@ export default {
       else {
         return true;
       }
-    }
+    },
   },
 }
 </script>

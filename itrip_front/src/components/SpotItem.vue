@@ -1,14 +1,15 @@
 <template>
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
-        <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}" shadow="hover">
+        <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}">
             <div class="card-container">
-                <i :class="markClass"  @click="clickAdd(spot)"></i>         
-                <div class="picture-container">
+                        
+                <div class="picture-container" style="position:relative;">
                     <vue-load-image>
                         <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
                         <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                         <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
                     </vue-load-image>
+                    <i :class="markClass"  @click="clickAdd(spot)" style="position:absolute;z-index:1;padding:3px;"></i> 
                 </div>
                 <div class="info-col">
                     <div class="spot-header">
@@ -66,23 +67,17 @@ export default {
     components: {
         'vue-load-image': VueLoadImage
     },
-    data() {
-        return {
-            markClass: 'far fa-bookmark',
-        }
-    },
     props: {
         spot: Object,
         index: Number,
         perPage: Number,
         currentPage: Number,
-        togos: Array,
         sortBy: String,
+        isInTogos: Boolean,
     },
     methods: {
         clickAdd: function(spot) {
             this.$emit('add-spot', spot);
-            this.markClass = 'fas fa-bookmark';
         },
         getAddress: function(){
            return getAddress(this.spot.address)
@@ -145,7 +140,13 @@ export default {
                 case 'entertainment': return '娛樂'
             }
         },
-    }
+        markClass: function() {
+            if(this.isInTogos) return 'fas fa-bookmark';
+        else {
+            return 'far fa-bookmark';
+        }
+        }
+    },
 }
 </script>
 
@@ -164,7 +165,6 @@ export default {
         height: 160px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
     }
     .card-container {
         display: flex;
@@ -176,6 +176,10 @@ export default {
         height: 100%;
         display: flex;
         width: 100%;
+        
+    }
+    .el-card:hover {
+        box-shadow: 0 0 12px #6e6868;
     }
     .spot-header {
         display: flex;
@@ -250,10 +254,11 @@ export default {
         font-size: 25px;
         cursor: pointer;
         padding-right: 5px;
-        
+        color: #ffaa00;
+        text-shadow: 0 0 5px white; 
     }
     .fa-bookmark:hover {
-        color:dimgray;
+        color:#eb8c34;
     }
     .icons {
         width: 50%;

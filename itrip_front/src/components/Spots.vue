@@ -14,12 +14,13 @@
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
-          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :togos="togos" :sortBy="sortBy"
+          :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :sortBy="sortBy" :isInTogos="isInTogos(spot._id)"
           @add-spot="$emit('add-spot', spot)" 
           @mouseOver="$emit('hoverSpotItem', index, spot)"
           @mouseOut="$emit('hoverSpotItem', null, spot)"
           @show-link="Show"
-          @edit-form="EditSpot"/>
+          @edit-form="EditSpot"
+          @is-in-togos="isInTogos"/>
         <v-pagination 
                 v-if="isScrollbarShown"
                 v-model="currentPage"
@@ -30,7 +31,8 @@
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
       </virtual-list>
     <modal name='link-window' :resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
-    <b-modal id='edit-form' ref="edit-spot-modal" title="編輯景點資料" width="40%" height="40%"><EditSpotModal :spot="selectedSpot"/></b-modal>
+    <modal name='edit-form' ref="edit-spot-modal" :resizable="true" width="45%" height="580px"><EditSpotModal :spot="selectedSpot" @close="closeModal" 
+    @refresh="$emit('refresh', null)"/></modal>
     </div>
   </div>
 </template>
@@ -89,7 +91,10 @@ export default {
       },
       EditSpot(spot) {
         this.selectedSpot = spot;
-        this.$refs['edit-spot-modal'].show()
+        this.$modal.show('edit-form');
+      },
+      closeModal(name) {
+        this.$modal.hide(name);
       },
       showLoading(){
         this.isLoading = true;
@@ -97,6 +102,14 @@ export default {
             this.isLoading = false
         },2000)
       },
+      isInTogos(_id) {
+        if(this.togos === undefined) return false;
+        let tmpArr = this.togos.filter(function(togo) {
+          return togo._id === _id;
+        })
+        if(tmpArr.length > 0) return true;
+        return false;
+      }
     },
     watch: {
       spots: function() {

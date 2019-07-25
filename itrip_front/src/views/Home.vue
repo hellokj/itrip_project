@@ -16,7 +16,8 @@
             <router-link class="btn-trip" to="/trip">旅遊</router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
-            <button class="btn-login">登入</button>
+            <!-- <button class="btn-login">登入</button> -->
+            <ProfileButton class="btn-login"></ProfileButton>
           </b-col>
         </b-row>
       </b-container>
@@ -28,7 +29,7 @@
           </b-col>
           <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
             <span class="search-icon" width="30px;"><img @click.native="handleSearch" 
-             src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
+              src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
           </b-col>
         </b-row>
         <b-row class="mt-2" align-h="center">

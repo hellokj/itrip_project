@@ -1,7 +1,5 @@
 <template lang='pug'>
 .layout
-  .image
-    img(:src="imgSrc")
   .content
     .name {{ name }}
     .addr {{ addr }}
@@ -14,15 +12,12 @@
     props: {
       name: String,
       address: Object,
-      images: Array
     },
     mounted() {
-      this.imgSrc = String(this.images[0]);
       this.addr = this.getAddress();
     },
     data() {
       return {
-        imgSrc: '',
         addr: ''
       }
     },
@@ -50,9 +45,4 @@
 <style scope lang="sass">
 .content
   display: inline-block
-.image
-  display: inline-block
-img
-  height: 50px
-  width: 50px
 </style>

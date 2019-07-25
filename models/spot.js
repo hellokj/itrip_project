@@ -12,14 +12,16 @@ const spotSchema = new Schema({
     name: String,
     checkins: Number,
     location: Object,
-    category_list: Array,
+    category: String,
     hours: Array,
     price_range: String,
     about: String,
     to_be_deleted: Boolean,
     address: Object,
     is_permanently_closed: Boolean,
-    images: Array
+    images: Array,
+    ig_post_num: Number,
+    ig_tag: Array
     },
     { collection: 'Places_from_fb'});
 
@@ -41,18 +43,28 @@ spotSchema.statics.get = function(_id) {
     return spot;
 }
 
+// update spot info
+spotSchema.statics.updateSpot = function(changes) {
+    return this.replaceOne({_id: changes._id}, changes);
+}
+
+// delete spot
+spotSchema.statics.deleteSpot = function(_id) {
+    return this.deleteOne({_id: _id});
+}
+
 // get nearby places sort by distance
 spotSchema.statics.getNearby = function(location, distance, sortBy, page, limit, order) {
     let aggregate = this.aggregate([{
         $geoNear: {
-           near: { 
-             type: "Point",
-             coordinates: [parseFloat(location['lon']), parseFloat(location['lat'])]
-           },
-           distanceField: "dist.calculated",
-           maxDistance: distance,
-           spherical: true
-          }
+            near: { 
+            type: "Point",
+            coordinates: [parseFloat(location['lon']), parseFloat(location['lat'])]
+        },
+        distanceField: "dist.calculated",
+        maxDistance: distance,
+        spherical: true
+        }
     }]);
     return this.aggregatePaginate(aggregate, Options(sortBy, page, limit, order), 
             function(err, results) {
