@@ -2,13 +2,14 @@
     <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
         <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}">
             <div class="card-container">
-                <i :class="markClass"  @click="clickAdd(spot)"></i>         
-                <div class="picture-container">
+                        
+                <div class="picture-container" style="position:relative;">
                     <vue-load-image>
                         <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
                         <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                         <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
                     </vue-load-image>
+                    <i :class="markClass"  @click="clickAdd(spot)" style="position:absolute;z-index:1;padding:3px;"></i> 
                 </div>
                 <div class="info-col">
                     <div class="spot-header">
@@ -164,7 +165,6 @@ export default {
         height: 160px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
     }
     .card-container {
         display: flex;
@@ -254,8 +254,8 @@ export default {
         font-size: 25px;
         cursor: pointer;
         padding-right: 5px;
-        color: #eb6e34;
-        
+        color: #ffaa00;
+        text-shadow: 0 0 5px white; 
     }
     .fa-bookmark:hover {
         color:#eb8c34;

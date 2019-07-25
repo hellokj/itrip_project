@@ -1,31 +1,19 @@
-var request = require("request");
-var cheerio = require("cheerio");
-var fs = require('fs');
+const rp = require('request-promise');
+const cheerio = require('cheerio');
+
 
 let baseUrl = "https://ingram.life/tag/"
 
-let keyword = encodeURI('咖啡')
+const Scraper = async function(keyword) {
+    let k = encodeURI(keyword);
+    let url = baseUrl + k;
+    let html = await rp(url);
+    let $ = cheerio.load(html);
+    let obj = $('h3').text().match(/\d+/)
+    if(obj !== null) {
+        return parseInt(obj[0]);
+    }
+    return 0;
+};
 
-const getPostNum = () => {
-    let num;
-    request({
-        url: baseUrl + keyword,
-        method: "GET"
-        }, function(error, response, body) {
-            if (error || !body) {
-            return;
-            }
-        var $ = cheerio.load(body);
-        var result = [];
-        var titles = $("h3");
-        for(var i=0;i<titles.length;i++) {
-            
-            result.push($(titles[i]).text());
-        }
-        num =  JSON.stringify(result).match(/(\d+)/);
-    });
-    return num;
-}
-
-let result = getPostNum();
-console.log(result);
+module.exports = Scraper;

@@ -12,14 +12,16 @@ const spotSchema = new Schema({
     name: String,
     checkins: Number,
     location: Object,
-    category_list: Array,
+    category: String,
     hours: Array,
     price_range: String,
     about: String,
     to_be_deleted: Boolean,
     address: Object,
     is_permanently_closed: Boolean,
-    images: Array
+    images: Array,
+    ig_post_num: Number,
+    ig_tag: Array
     },
     { collection: 'Places_from_fb'});
 
@@ -39,6 +41,16 @@ spotSchema.statics.getSpots = function(city, region, category, name, sortBy, pag
 spotSchema.statics.get = function(_id) {
     let spot = this.findOne({_id:_id});
     return spot;
+}
+
+// update spot info
+spotSchema.statics.updateSpot = function(changes) {
+    return this.replaceOne({_id: changes._id}, changes);
+}
+
+// delete spot
+spotSchema.statics.deleteSpot = function(_id) {
+    return this.deleteOne({_id: _id});
 }
 
 // get nearby places sort by distance

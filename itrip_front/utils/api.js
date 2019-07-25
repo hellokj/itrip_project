@@ -40,6 +40,17 @@ const apiGetNearby = (data) => {
   return spotRequest.get('/getNearby', { params: data });
 }
 
+const apiUpdateSpot = (data) => {
+  return spotRequest.post('/update', data);
+}
+
+const apiDeleteSpot = (data) => {
+  return spotRequest.post('/delete', data);
+}
+
+
+
+
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
     'Authorization': ORS_API_KEY,
@@ -98,6 +109,8 @@ const apiGetMember = (userToken) => {
 export {
     apiGetSpots,
     apiGetNearby,
+    apiUpdateSpot,
+    apiDeleteSpot,
     apiGetRoutes,
     apiGetItineraries,
     apiGetMember,

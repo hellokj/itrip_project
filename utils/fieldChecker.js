@@ -8,4 +8,13 @@ const fieldChecker = (body, array) => {
     return null;
 }
 
-module.exports = fieldChecker;
+const fieldCheckerForUpdate = (body, params) => {
+    let key_list = Object.keys(body);
+    for(let i=0;i<key_list.length;i++) {
+        if(params[key_list[i]] !== undefined && params[key_list[i]] !== body[key_list[i]]) {
+            body[key_list[i]] = params[key_list[i]]
+        }
+    }
+}
+
+module.exports = {fieldChecker, fieldCheckerForUpdate}
