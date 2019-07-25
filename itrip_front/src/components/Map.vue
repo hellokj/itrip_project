@@ -63,7 +63,7 @@ export default {
     return {
       zoom: 15,
       currentZoom: 15,
-      zoomControlPosition: "topright",
+      zoomControlPosition: "center",
       visible: false,
       currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
