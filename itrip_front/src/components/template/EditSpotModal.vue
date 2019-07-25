@@ -61,7 +61,7 @@ export default {
       category: catTranslation[this.spot.category],
       images: this.spot.images,
       address: this.spot.address,
-      tags: this.spot.ig_tag.toString(),
+      tags: '',
       data: {id: this.spot._id},
       isChanged: false,
     }
@@ -123,6 +123,9 @@ export default {
       };
       return this.images;
     },
+    getTags: function() {
+      
+    },
   },
   watch: {
     name: function() {
@@ -133,15 +136,21 @@ export default {
       this.isChanged = true;
       this.data.category = this.getKeyByValue(catTranslation, newVal);
     },
-    tags: function() {
+    tags: function(newVal) {
       this.isChanged = true;
-      this.data.tags = this.tags.split(',');
+      this.data.tags = newVal.split(',');
     },
     images: function() {
       this.isChanged = true;
       this.data.images = this.images;
     }
   },
+  created: function(){
+    if(this.ig_tag === undefined || this.spot.ig_tag.length == 0) {
+        this.spot.ig_tag = [""];
+        this.tags = this.spot.ig_tag.toString();
+      };
+  }
 }
 </script>
 

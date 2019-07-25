@@ -29,7 +29,7 @@
                             <i class="fas fa-ellipsis-h"></i>
                         </a>
                         <a-menu slot="overlay">
-                            <a-menu-item @click="$emit('getNearby', togo)">
+                            <a-menu-item @click="$emit('getNearby', togo, null)">
                                 <i class="fas fa-map-marked-alt"></i>  附近景點
                             </a-menu-item>
                             <a-menu-item>

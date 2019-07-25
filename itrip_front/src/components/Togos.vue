@@ -224,8 +224,8 @@ export default {
         }
         this.$emit('remove-day', x)
       },
-      getNearby: function(togo) {
-        this.$emit('getNearby', togo);
+      getNearby: function(togo, page) {
+        this.$emit('getNearby', togo, null);
       },
       updateStopTime: function() {
         this.update++;

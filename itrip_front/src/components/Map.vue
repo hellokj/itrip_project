@@ -1,42 +1,22 @@
-<template lang="pug">
-#map(class="map")
-  l-map(:zoom='zoom', :center='center', style='height: 100%', :options="{zoomControl: false}"
-    ,@update:center="centerUpdate"
-    ,@update:zoom="zoomUpdate")
-    l-tile-layer(:url="url", :attribution="attribution", dragging="false")
-    l-control-zoom(:position="zoomControlPosition")
-    l-polyline(
-    v-if="isRouteArr"
-    :lat-lngs="routesArr"
-    :color="color"
-    :opacity="opacity"
-    :weight="weight")
-    l-marker(
-      ref="marker"
-      @mouseover="mouseOver"
-      @mouseout="mouseOut"
-      @add="openPopup($event, index, selectedSpot)"
-      :icon="icons[index]"
-      v-for="(spot, index) in spots"
-      v-if="!isContains(index)"
-      :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-    )
-      l-popup(
-        :options="{autoClose: false, closeOnClick: false}")
-          .name {{ spots[index].name }}
-          .addr {{ Address(index) }}
-      l-tooltip
-        MarkerPopover(
-          :name="spots[index].name"
-          :address="spots[index].address"
-        )
-    l-marker(
-      v-for="(togo, index) in togos"
-      :icon="togoIcons[index]"
-      :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
-    )
+<template>
+  <div class="map" id="map">
+    <l-map :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
+      <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
+      <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
+      <l-polyline v-if="isRouteArr" :lat-lngs="routesArr" :color="color" :opacity="opacity" :weight="weight"></l-polyline>
+      <l-marker ref="marker" :key="spot._id" @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)" :icon="icons[index]" v-for="(spot, index) in spots" v-if="!isContains(index)" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])">
+        <l-popup :options="{autoClose: false, closeOnClick: false}">
+          <div class="name"><b>{{ spots[index].name }}</b></div>
+          <div class="addr">{{ Address(index) }}</div>
+        </l-popup>
+        <l-tooltip>
+          <MarkerPopover :name="spots[index].name" :address="spots[index].address"></MarkerPopover>
+        </l-tooltip>
+      </l-marker>
+      <l-marker :key="togo._id" v-for="(togo, index) in togos" :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"></l-marker>
+    </l-map>
+  </div>
 </template>
-
 <script>
 import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom } from 'vue2-leaflet';
 import { Icon, divIcon }  from 'leaflet'
@@ -63,7 +43,7 @@ export default {
     return {
       zoom: 15,
       currentZoom: 15,
-      zoomControlPosition: "center",
+      zoomControlPosition: "topright",
       visible: false,
       currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
