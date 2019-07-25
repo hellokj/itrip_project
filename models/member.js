@@ -25,6 +25,11 @@ memberSchema.statics.findMember = function(email, url, password) {
     return member;
 }
 
+// update member info
+memberSchema.statics.updateMemberInfo = function(_id, changes) {
+    return this.replaceOne({_id: _id}, changes);
+}
+
 
 
 module.exports = mongoose.model('Member', memberSchema);
