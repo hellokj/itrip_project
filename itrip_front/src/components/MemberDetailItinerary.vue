@@ -14,12 +14,12 @@
           <el-container>
             <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
             <el-link icon="el-icon-edit" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-            <!-- <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button> -->
           </el-container>
           <el-table
             :data="day"
             height="400"
             border
+            default-expand-all
             style="width: 100%">
             <el-table-column
               prop="time"
@@ -34,6 +34,11 @@
               align="center">
             </el-table-column>
             <el-table-column
+              prop="traffic"
+              label="交通方式/時間"
+              align="center">
+            </el-table-column>
+            <el-table-column
               prop="address"
               label="地址"
               align="center">
@@ -44,15 +49,19 @@
               width="120"
               align="center">
             </el-table-column>
+            <el-table-column
+              prop="memo"
+              label="備忘錄"
+              width="70"
+              align="center">
+              <i class="far fa-comment-alt memo" v-if="true" @click="showMemo"></i>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
-        
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
-          <!-- 第一天旅遊資訊 -->
           <el-container>
             <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
             <el-link icon="el-icon-edit" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-            <!-- <el-button class="modify_button" @click="modifyItinerary(itinerary)">編輯行程 <i class="fas fa-pencil-alt"></i></el-button> -->
           </el-container>
           <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
         </el-tab-pane>
@@ -97,7 +106,7 @@ export default {
     },
     resetDetailInfo: function(){
       this.days = [];
-      console.log("itinerary", this.itinerary);
+      // console.log("itinerary", this.itinerary);
       // console.log("length", this.itinerary.travelInfos.length);
       // console.log("travelInfos", this.itinerary.travelInfos);
 
@@ -123,6 +132,9 @@ export default {
     modifyItinerary: function(itinerary){
       this.$router.push({path: '/trip'});
     },
+    showMemo: function(){
+      
+    }
   },
   created() {
     this.resetDetailInfo();
@@ -163,5 +175,9 @@ export default {
     margin: auto;
     text-align: center;
     float: right;
+  }
+
+  .memo:hover {
+    cursor: pointer;
   }
 </style>
