@@ -26,4 +26,5 @@ memberSchema.statics.findMember = function(email, url, password) {
 }
 
 
+
 module.exports = mongoose.model('Member', memberSchema);

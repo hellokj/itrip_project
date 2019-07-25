@@ -13,4 +13,15 @@ const itinerarySchema = new Schema({
     popularity: Number,
 });
 
+itinerarySchema.statics.get = function(_id){
+    let itinerary;
+    itinerary = this.findOne({_id: _id});
+    return itinerary;
+}
+
+// update itinerary info
+itinerarySchema.statics.updateItinerary = function(_id, changes) {
+    return this.replaceOne({_id: _id}, changes);
+}
+
 module.exports = mongoose.model('Itinerary', itinerarySchema);

@@ -21,6 +21,9 @@ export default {
       this.$emit("checkDetail", itinerary);
     }
   },
+  created() {
+    
+  },
 }
 </script>
 

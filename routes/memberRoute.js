@@ -4,8 +4,7 @@ const router = express.Router();
 
 const memberController = require('../controllers/memberController');
 
-router.post('/modifyItinerary', memberController.modifyItinerary);
-router.post('/setProfile', memberController.setProfile);
-router.post('/reviewItineraries', memberController.reviewItineraries);
+router.post('/getMember', memberController.getMember);
+router.post('/modifyProfile', memberController.modifyProfile);
 
 module.exports = router;

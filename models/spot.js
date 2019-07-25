@@ -45,14 +45,14 @@ spotSchema.statics.get = function(_id) {
 spotSchema.statics.getNearby = function(location, distance, sortBy, page, limit, order) {
     let aggregate = this.aggregate([{
         $geoNear: {
-           near: { 
-             type: "Point",
-             coordinates: [parseFloat(location['lon']), parseFloat(location['lat'])]
-           },
-           distanceField: "dist.calculated",
-           maxDistance: distance,
-           spherical: true
-          }
+            near: { 
+            type: "Point",
+            coordinates: [parseFloat(location['lon']), parseFloat(location['lat'])]
+        },
+        distanceField: "dist.calculated",
+        maxDistance: distance,
+        spherical: true
+        }
     }]);
     return this.aggregatePaginate(aggregate, Options(sortBy, page, limit, order), 
             function(err, results) {

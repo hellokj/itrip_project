@@ -125,8 +125,14 @@ export default {
       //memberId, startDate, name, dayNum, togos, travelInfos
       let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
+      let _id = "";
+      if (this.itinerary._id != undefined){
+        _id = this.itinerary._id;
+      }
       let self = this;
-      apiSaveTrip(date, name, this.togos.length, this.togos, this.travelInfos, token)
+      // console.log("itinerary", this.itinerary);
+      // console.log("_id", _id);
+      apiSaveTrip(_id, date, name, this.togos.length, this.togos, this.travelInfos, token)
       .then((function (res) {
         console.log(res);
         alert("儲存成功");
