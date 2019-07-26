@@ -8,10 +8,10 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :baseTimes="baseTimes" :dayNum="dayNum" :itinerary="itinerary"
         :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay"
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes"
         :key="update"/>
       </b-col>
       <b-col 
@@ -108,6 +108,7 @@ export default {
       changedElementValue: null,
       // travelTime format:
       // { start: , dest: ,duration: , time: , mode:}
+      baseTimes: [],
       travelInfos: [],
       paginator: {},
       centerSpot: {},
@@ -135,9 +136,9 @@ export default {
       let self = this;
       // console.log("itinerary", this.itinerary);
       // console.log("_id", _id);
-      apiSaveTrip(_id, date, name, this.togos.length, this.togos, this.travelInfos, token)
+      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
       .then((function (res) {
-        console.log(res);
+        console.log("res", res);
         alert("儲存成功");
       }))
       .catch(function (error) {
@@ -285,6 +286,12 @@ export default {
       .then(function () {
         // always executed
       });
+    },
+    changeBaseTimes(startTimeOb, page){
+      console.log("startTimeOb", startTimeOb);
+      console.log("page", page);
+      this.baseTimes[page] = startTimeOb;
+      console.log("baseTimes", this.baseTimes);
     },
     changeMode(index, mode) {
       this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);

@@ -24,11 +24,7 @@
         <el-input v-model="memberInfo.reCheckPwd" clearable show-password></el-input>
       </el-form-item>
     </el-form>
-<<<<<<< HEAD
     <el-button type="warning" round @click="modifyProfile(packMemberInfo)" native-type="submit">修改</el-button>
-=======
-    <el-button type="warning" round @click="modifyProfile(packMemberInfo)">修改</el-button>
->>>>>>> 529265a44d3030ca6304686b303bbf69fc248fdf
     <el-button round @click="reset">取消</el-button>
   </el-card>
 </el-container>

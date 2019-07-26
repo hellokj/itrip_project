@@ -9,6 +9,7 @@ const save = async (req, res, next) => {
     let startDate = req.body.startDate;
     let name = req.body.name;
     let dayNum = req.body.dayNum;
+    let startTimes = req.body.startTimes;
     let togos = req.body.togos;
     let travelInfos = req.body.travelInfos;
 
@@ -24,6 +25,7 @@ const save = async (req, res, next) => {
         startDate: startDate,
         name: name,
         dayNum: dayNum,
+        startTimes: startTimes,
         togos: togos,
         travelInfos: travelInfos
     });

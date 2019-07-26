@@ -64,7 +64,7 @@ const apiGetRoutes = (data, mode) => {
 
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-const apiSaveTrip = (_id, startDate, name, dayNum, togos, travelInfos, token) => {
+const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfos, token) => {
   let headers = {
     "Content-Type": "application/json",
     "x-access-token": token
@@ -80,11 +80,13 @@ const apiSaveTrip = (_id, startDate, name, dayNum, togos, travelInfos, token) =>
       month: parseInt(date[1]),
       day: parseInt(date[2])
     },
+    startTimes: startTimes,
     name: name,
     dayNum: dayNum,
     togos: togos,
     travelInfos: travelInfos
   }
+  console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
 };
 
