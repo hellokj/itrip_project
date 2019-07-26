@@ -93,6 +93,22 @@ export default {
     modifyProfile: function(memberInfo){
       if (isValidate){
         console.log("我是memberInfo", memberInfo);
+
+      let self = this;
+      // console.log("我是memberInfo", memberInfo);
+      if (memberInfo == {}){
+        return;
+      }else {
+        apiModifyProfile(memberInfo)
+        .then(function(res){
+          // success
+          // console.log(res);
+          self.msg = "修改成功"
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
       }
     },
     reset: function(){
@@ -107,6 +123,9 @@ export default {
     apiGetMember(this.$store.state.userToken)
       .then(function(res){
         console.log("apiGetMember", res);
+
+        console.log("apiGetMember", res);
+        // console.log("apiGetMember", res);
         self.memberInfo.name = res.data.data.name;
         self.memberInfo.account = res.data.data.account;
         self.memberInfo.url = res.data.data.url;
@@ -124,6 +143,9 @@ export default {
         account: this.memberInfo.account,
         url: this.memberInfo.url,
         originPassword: this.memberInfo.originPassword,
+        password: this.memberInfo.password,
+        reCheckPwd: this.memberInfo.reCheckPwd,
+
         password: this.memberInfo.password,
         reCheckPwd: this.memberInfo.reCheckPwd,
       }

@@ -1,13 +1,16 @@
 <template>
   <div style="margin:0px; padding:0px;">
 
+    <!-- Scroll to Top Button-->
+    <button class="btn-scroll-to-top" @click="ScrollToTop" style="position: fixed; right: 50px; bottom: 50px; z-index: 20;">Top</button>
+    
     <!-- Index Area -->
     <div class="index-area" style="width:100%; height:60vh; z-index: 10">
       <!-- nav region -->
       <b-container class="nav-bar mt-0 mb-3 mx-auto">
         <b-row style="height: 100px;">
           <b-col align-self="center" cols="2">
-            <img href="/trip" class="bg" src="../assets/home/Logo.svg" style="width: auto;" />
+            <img href="/trip" class="bg" src="../assets/home/Logo.svg" style="width: 100px;" />
           </b-col>
           <b-col class="col-home text-start" offset="2" offset-sm="2"  offset-md="4" offset-lg="6" offset-xl="7" cols="2" sm="2" md="2" lg="1">
             <router-link class="btn-home" to="/">首頁</router-link>
@@ -21,28 +24,36 @@
         </b-row>
       </b-container>
       <!-- search region -->
-      <b-container>
-        <b-row align-h="center" align-v="center" style="margin-top: 15vh;">
-          <b-col class="p-0" cols="10" sm="6" md="6" >
-            <HomeSearch class="home-search" style="display: absolute; z-index: 1;"></HomeSearch>
-          </b-col>
-          <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
-            <span class="search-icon" width="30px;"><img @click.native="handleSearch" 
-             src="../assets/home/Search.svg" /><a href="http://google.com.tw" /></span>
-          </b-col>
-        </b-row>
-        <b-row class="mt-2" align-h="center">
-          <b-col cols="11" sm="7" md="7" >
-            <p class="key-word" style="display: inline-block; margin-right: 2rem;"  :key="keyWord" v-for="keyWord in keyWords">{{ keyWord }}</p>
-          </b-col>
-        </b-row>
-      </b-container>
+      <div class="container pt-3 pb-3" style="margin-top: 15vh; border-radius: 10px; background-color: rgba(0, 0, 0, 30%); overflow: visible;">
+        <b-container >
+          <b-row align-h="center" align-v="center" >
+            <b-col class="p-0" cols="10" sm="6" md="6" >
+              <HomeSearch class="home-search" style="display: absolute; z-index: 1;"></HomeSearch>
+            </b-col>
+            <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
+              <span class="search-icon" ><img style="width: 50px;" @click.native="handleSearch" 
+              src="../assets/home/Search.svg"/></span>
+            </b-col>
+          </b-row>
+          <b-row class="mt-2" align-h="center">
+            <b-col cols="11" sm="7" md="7" >
+              <p class="key-word" style="display: inline-block; margin-right: 2rem;"  :key="keyWord" v-for="keyWord in keyWords">{{ keyWord }}</p>
+            </b-col>
+          </b-row>
+        </b-container>
+      </div>
     </div>
 
     <!-- Recommend Area -->
     <div class="recommend-area" style="z-index: 0;">
+
       <!-- IG景點推薦 -->
-      <b-container class="mt-3">
+      <b-container class="mt-3" style="position: relative">
+
+        <!-- Scroll Button -->
+        <button class="btn-ig-right" @click="ScrollIgRight">></button>
+        <button class="btn-ig-left" @click="ScrollIgLeft">&lt;</button>
+
         <b-row class="mb-3">
           <p class="col title-ig mb-0" style="font-size: 28px">IG熱門景點</p>
         </b-row>
@@ -124,7 +135,7 @@
       <b-container fluid>
         <b-row class="mt-5 footer-row">
           <b-col class="footer-col-one" sm="12" md="6" lg="6" style="align-content: flex-start;">
-            <img src="../assets/home/itripLogoWhite.svg" alt="logo" style="width: auto;">
+            <img src="../assets/home/itripLogoWhite.svg" @click="ScrollToTop" alt="logo" style="width: auto;">
           </b-col>
           <b-col class="footer-col-two" sm="12" md="3" lg="3">
             <router-link class="footer-home" to="/">首頁</router-link>
@@ -180,6 +191,7 @@ export default {
     this.callGetSpotApi(params_food, "self.food_recommend");
     console.log(params_ig);
     console.log(params_food);
+    
   },
   methods: {
  
@@ -217,6 +229,13 @@ export default {
         // always executed
       });
     },
+
+    ScrollToTop: function(){
+      window.scrollTo(0, 0);
+    },
+    ScrollIgRight: function(){
+      window.scrollBy(0, 0);
+    }
   },
   watch: {
     ig_recommend: function(){
@@ -228,6 +247,8 @@ export default {
 </script>
 
 <style scoped>
+
+  /* smoothly scroll */
   * {
     padding-top: 0px;
   }
@@ -406,6 +427,70 @@ export default {
   .footer-col-one {
     padding-left: 10%;
   }
+
+  /* Scroll Bottom */
+  .btn-scroll-to-top {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 30px;
+    color: #FFF;
+    background-color: rgba(255, 111, 75, 40%);
+    box-shadow: 0 0 5px rgb(73, 72, 72);
+    font-size: 20px;
+    outline: none;
+  }
+
+  .btn-scroll-to-top:hover {
+    background-color: rgba(255, 111, 75, 100%);
+  }
+
+  .btn-ig-right {
+    border: none;
+    background-color: rgba(29, 27, 36, 0.226);
+    width: 40px;
+    height: 40px;
+    border-radius: 25px;
+    color: rgb(206, 206, 206);
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute; 
+    right: -30px; 
+    top: 50%; 
+    z-index: 20;
+  }
+
+  .btn-ig-right:hover {
+    background-color: rgba(29, 27, 36, 0.479);
+    color: rgb(212, 212, 212);
+  }
+
+  .btn-ig-left {
+    border: none;
+    background-color: rgba(29, 27, 36, 0.226);
+    width: 40px;
+    height: 40px;
+    border-radius: 25px;
+    color: rgb(206, 206, 206);
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute; 
+    left: -30px; 
+    top: 50%; 
+    z-index: 20;
+  }
+
+  .btn-ig-left:hover {
+    background-color: rgba(29, 27, 36, 0.479);
+    color: rgb(212, 212, 212);
+  }
+  /* Scroll Bottom */
+
+
   @media only screen and (max-width: 770px) {
     .spot-img {
       width: 100%;
@@ -435,9 +520,10 @@ export default {
       text-align: center;
       padding: 0;
     }
+
+    .btn-scroll-to-top {
+      background-color: rgba(255, 111, 75, 100%);
+    }
   }
-
-
-
 
 </style>

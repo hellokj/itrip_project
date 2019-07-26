@@ -264,6 +264,7 @@ export default {
       },
       page: function(){
         this.currentPage = this.page;
+        this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
       },
       togos: function() {
         this.togos_prop = this.togos;
@@ -272,7 +273,11 @@ export default {
         let tmp = this.startTime.split(':');
         this.startTimeOb.hr = parseInt(tmp[0]);
         this.startTimeOb.min = parseInt(tmp[1]);
+        this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
       },
+    },
+    created() {
+      this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {

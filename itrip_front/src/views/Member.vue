@@ -48,7 +48,7 @@ export default {
       incomingItineraries: [],
       historyItineraries: [],
       flag: false,
-      view: 'MemberInfos',
+      view: 'MemberItineraryCarousel',
       itinerary: Object,
       title: "",
     }
