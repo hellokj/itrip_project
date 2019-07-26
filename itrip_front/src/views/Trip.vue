@@ -2,26 +2,27 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12"  lg="5" xl="3"
+        class="px-0 togos-col" cols="12" md="4" lg="4" xl="4"
         :style="[($resize && !$mq.above(769) && selected != 0) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :baseTimes="baseTimes" :dayNum="dayNum" :itinerary="itinerary"
-        :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
+        :page="page" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
         @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes"
         :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" lg="6" xl="4"
+      class="px-0 spots-col" cols="12" md="5" lg="5" xl="5"
       :style="[($resize && !$mq.above(769) && selected != 1) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
           id="spots"
           class="spots"
           :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown"
+          @filter-spot="filterSpot"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="getSpot"
@@ -31,10 +32,10 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="px-0 map-col" cols="12" lg="4" xl="3" order=displayOrders[2] order-md="3"
+      class="map-col" cols="12" md="3" lg="3" xl="3" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(769) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
-      :value="selected">
-        <b-col style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
+      :value="selected" no-gutters>
+        <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
           <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
@@ -45,6 +46,12 @@
                 </vue-load-image>
               </el-carousel-item>
             </el-carousel>
+          </div>
+          <div class="row" style="display:flex;justify-content:center;">
+            <el-checkbox-group v-model="checkList">
+              <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
+              <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
+            </el-checkbox-group>
           </div>
           <Map 
             id="map"
@@ -120,6 +127,7 @@ export default {
       dayNum: 1,
       itinerary: {},
       updateMap:0,
+      checkList:['景點圖標'],
     }
   },
   methods: {
@@ -242,6 +250,7 @@ export default {
       if(data == null) {
         data=this.paramProp;
       }
+
       self.spotPage = data.page;
       
       // call get spots api
@@ -262,6 +271,7 @@ export default {
       if(data == null) data=this.paramProp;
       self.spotPage = data.page;
       
+      console.log(data);
       // call get nearby api
       apiGetNearby(data)
       .then(function (res) {
@@ -345,11 +355,11 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
-      if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
-        this.centerSpot = this.togos[this.page][0]
-        this.centerSpot.zoom = 8;
-        return;
-      }
+      // if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
+      //   this.centerSpot = this.togos[this.page][0]
+      //   this.centerSpot.zoom = 8;
+      //   return;
+      // }
         this.centerSpot = spot;
         this.centerSpot.zoom = 15;
         this.$set(this.centerSpot, 'index', index);
@@ -373,7 +383,7 @@ export default {
       if(spot !== null) {
           let data = {
             id: spot._id,
-            distance: 1000,
+            distance: 10000,
             limit: 10,
             order: -1,
             sortBy: 'ig_post_num',
@@ -395,8 +405,9 @@ export default {
       }
     },
     zoomTogos: function() {
+      this.centerSpot.type = 'togos';
       this.centerSpot = this.togos[this.page][0];
-      this.centerSpot.zoom = 8;
+      this.centerSpot.zoom = 10;
     },
     sortSpot: function(sortBy) {
       this.paramProp.page = 1;
@@ -412,7 +423,10 @@ export default {
       else {
         this.callGetSpotApi();
       }
-    }
+    },
+    filterSpot: function(checkedCategories) {
+      this.$set(this.paramProp, 'categories', checkedCategories);
+    },
   },
   watch: {
     param: function(newVal) {
@@ -446,6 +460,13 @@ export default {
     });
   },
   mounted() {
+    let data = {
+      limit: 10,
+      order: -1,
+      page: 1,
+      sortBy: 'ig_post_num'
+    };
+    this.paramProp = data;
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
@@ -461,13 +482,14 @@ export default {
     background: rgb(250,250,250);
   }
   .map-col {
-    height: 90vh;
+    height: 87vh;
+    border-right: 2px solid rgb(230, 230, 230);
   }
   .big-image-container {
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: 15px;
+    padding-bottom: 15px;
     background: #f2f2f2;
-    height: 50%;
+    height: 45%;
     width: 100%;
   }
   .big-image {
@@ -499,14 +521,8 @@ export default {
 }
 @media screen and (min-width: 1280px) {
   .trip {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-}
-@media screen and (min-width: 1680px) {
-  .trip {
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 50px;
+    padding-right: 50px;
   }
 }
 @media screen and (min-width: 2560px) {
@@ -515,5 +531,4 @@ export default {
     padding-right: 400px;
   }
 }
-
 </style>

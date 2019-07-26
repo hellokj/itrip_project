@@ -269,6 +269,7 @@ export default {
         margin-top:10px;
         margin-left: 50px;
         font-family: logoFont;
+        cursor: pointer;
     }
 
     

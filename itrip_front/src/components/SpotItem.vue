@@ -396,7 +396,7 @@ export default {
 }
 @media only screen and (max-width: 767px){
     .tags {
-        width: 37%;
+        width: 100%;
     }
     .tags-row {
         margin-top:5px;

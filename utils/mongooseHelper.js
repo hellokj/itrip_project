@@ -11,7 +11,7 @@ const myCustomLabels = {
     meta: 'paginator'
 };
 
-const Options = (sortBy, page, limit, order) => {
+const Options = (sortBy, page, limit, order, requestType) => {
     if(sortBy == 'checkins') {
         return {
             page: page,
@@ -27,6 +27,13 @@ const Options = (sortBy, page, limit, order) => {
             sort: { ig_post_num: order},
             customLabels: myCustomLabels
         };
+    }
+    else {
+        return {
+            page: page,
+            limit: limit,
+            customLabels: myCustomLabels
+        };  
     }
   }
 const QueryHelper = (name, city, region) => {
@@ -47,8 +54,8 @@ const QueryHelper = (name, city, region) => {
 };
 
 // query for place search => shortening
-const Place_query = (schema, city, region, category, name, sortBy, page, limit, order) => {
-    console.log(city, region, category, name, sortBy, page, limit, order);
+const Place_query = (schema, city, region, categories, name, sortBy, page, limit, order) => {
+    console.log(city, region, categories, name, sortBy, page, limit, order);
     if(name != undefined) {
         return schema.paginate(QueryHelper(name, city, region), Options(sortBy, page, limit, order),
          function(err, result) {
@@ -56,7 +63,7 @@ const Place_query = (schema, city, region, category, name, sortBy, page, limit, 
         });
     }
     if(region === undefined) {
-        if(category == undefined) {
+        if(categories == undefined) {
             return schema.paginate(
                 {$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}]}, 
                 Options(sortBy, page, limit, order), 
@@ -64,14 +71,14 @@ const Place_query = (schema, city, region, category, name, sortBy, page, limit, 
                     return result;
             });   
         }
-        return schema.paginate({$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}], category: category}, 
+        return schema.paginate({$or: [{"address.city": city}, {"address.state": city}, {"address.county": city}], category: {$in: categories}}, 
             Options(sortBy, page, limit, order), 
             function(err, result) {
                 return result;
         });   
     }
     else {
-        if(category == undefined) {
+        if(categories === undefined) {
             return schema.paginate(
                 {$and:[
                     {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
@@ -85,7 +92,7 @@ const Place_query = (schema, city, region, category, name, sortBy, page, limit, 
         {$and:[
             {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
             {$or: [{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]}], 
-                category: category},
+                category: {$in: categories}},
                 Options(sortBy, page, limit, order), 
             function(err, result) {
                 return result;
