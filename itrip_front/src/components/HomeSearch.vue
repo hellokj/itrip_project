@@ -25,13 +25,12 @@
         </div>
 
         <!-- associative search -->
-        <div class="container" v-if="(inputTextFocus||isMobile)">
+        <div class="container" v-if="inputTextFocus && associateControl">
           <b-row>
             <b-col cols="12 m-0 p-0" style="height: auto;" :key="k" v-for="(v, k) in searchResults">
               <div class="searchResultItem"><p class="searchName">{{ v.name }}</p><p class="searchTags" :key="_k" v-for='(_t, _k) in v["ig_tag"]'>{{"#" + _t}}</p></div>
             </b-col>
           </b-row>
-
         </div>
     </b-container>
 
@@ -54,8 +53,10 @@ export default {
         mobileClickFocus: false,
         isMobile: false,
         regionControl: true,
+        associateControl: false,
         params: {},
-        searchResults: []
+        searchResults: [],
+
       }
     },
     created(){
@@ -77,6 +78,7 @@ export default {
           apiGetSpots(params)
           .then(function (res) {
             self.searchResults = res.data.data.resultList;
+            if( newVal === '' ) self.searchResults = [];
           })
           .catch(function (error) {
             console.log(error);
@@ -86,8 +88,10 @@ export default {
           });
         }
 
-        if( newVal === '' ) this.searchResults = [];
-      }
+        if( newVal === '' ) this.associateControl = false;
+        else this.associateControl = true;
+      },
+
     }
 }
 
