@@ -1,15 +1,12 @@
 <template>
   <div class="MyTrip">
-    <div class="py-3 info-container">
+    <div class="py-3 px-2 info-container">
       <div class="tripName">
         <div style="width:100%;">
           旅行名稱
           <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
         </div>
         <div>
-          <el-tooltip content="查看行程路徑" placement="right-start" effect="light" style="width:auto;">
-              <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
-          </el-tooltip>
         </div>
       </div>
       <div class="tripDate">
@@ -19,7 +16,7 @@
         v-model="tripDate"
         type="date"
         placeholder="選擇日期"
-        style="width:200px;"/>
+        style="width:150px;"/>
       </div>
       <div class="mt-2 mr-1 save-trip">
         <el-button @click="saveTrip"><i class="fas fa-save">   儲存</i></el-button>
@@ -50,11 +47,11 @@
             <template slot="title">
                 {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-          <virtual-list :size="150" :remain="4">
+          <virtual-list :size="170" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
-                    <div class="big-container">
+                    <div class="pl-3 big-container">
                       <div class="trip-time-container">
                         <p class="my-0 startTime">{{getStartTime(index)}}</p>
                         <div class="circleNum"><b>{{index + 1}}</b></div>
@@ -203,7 +200,7 @@ export default {
         if(hr + this.togos[index].stopTime.hrs >= 24) {
           this.togos[index].stopTime.hrs = 1
           this.updateStopTime();
-          alert('時間超出本日範圍!');
+          this.$message.error('時間超出本日範圍!');
           throw 'DAY LIMIT EXCEEDED';
         }
         hr += this.togos[index].stopTime.hrs;
@@ -277,9 +274,6 @@ export default {
         this.startTimeOb.min = parseInt(tmp[1]);
       },
     },
-    created() {
-      
-    },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
         this.tabs.push(i);
@@ -319,6 +313,9 @@ export default {
     align-items: center;
     justify-content: center;
   }
+  .el-card {
+    width: 100%;
+  }
   .tripName {
     margin-right: 11px;
     margin-left: 11px;
@@ -337,7 +334,7 @@ export default {
     justify-content: flex-start;
   }
   .iTripName {
-    width:200px;
+    width:150px;
     text-align: center;
   }
   .trip-time-container {

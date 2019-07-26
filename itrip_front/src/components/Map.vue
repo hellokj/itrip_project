@@ -9,11 +9,18 @@
           <div class="name"><b>{{ spots[index].name }}</b></div>
           <div class="addr">{{ Address(index) }}</div>
         </l-popup>
-        <l-tooltip>
+        <!-- <l-tooltip>
           <MarkerPopover :name="spots[index].name" :address="spots[index].address"></MarkerPopover>
-        </l-tooltip>
+        </l-tooltip> -->
       </l-marker>
-      <l-marker :key="togo._id" v-for="(togo, index) in togos" :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"></l-marker>
+      <l-marker :key="index" v-for="(togo, index) in togos" 
+      :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+      @add="openTogosPopup($event)">
+      <l-popup :options="{autoClose: false, closeOnClick: false}">
+        <div class="name"><b>{{ spots[index].name }}</b></div>
+        <div class="addr">{{ Address(index) }}</div>
+      </l-popup>
+      </l-marker>
     </l-map>
   </div>
 </template>
@@ -54,12 +61,13 @@ export default {
       togoIcons: [],
       spotsPerPage: 10,
        // polyline options
+      className: 'my_polyline',
       color: "#fc9d03",
       opacity: 0.6,
       weight: 7,
       routesArr: [],
       currentPage: 0,
-      currentTogoNum: 0
+      currentTogoNum: 0,
     }
   },
   props: {
@@ -71,7 +79,8 @@ export default {
     spotPage: Number,
     centerSpot: Object,
     selectedSpot: Number,
-    updateMap: Number
+    updateMap: Number,
+    isSpotIconShown: Boolean,
   },
   mounted() {
     this.updateMarkers();
@@ -136,6 +145,11 @@ export default {
         }
       });
     },
+    openTogosPopup: function(event) {
+      this.$nextTick( ()=> {
+          event.target.openPopup();
+      });
+    },
     getPopupContent(index) {
       return this.spots[index].name;
     },
@@ -143,14 +157,17 @@ export default {
       return getAddress(this.spots[index].address);
     },
     resetTogosIcon() {
-      for(let i=0;i<this.togos.length;i++) {
-        let togoIcon = L.divIcon({
-          html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
-          iconSize: [20, 20],
-          className: 'myDivIcon'
+      if(this.togos !== undefined) {
+        for(let i=0;i<this.togos.length;i++) {
+          let togoIcon = L.divIcon({
+            html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
+            iconSize: [20, 20],
+            className: 'myDivIcon'
         });
         this.togoIcons.push(togoIcon);
+        }
       }
+      
     }
   },
   watch: {
@@ -186,16 +203,6 @@ export default {
       let newIndex = newVal.index;
       let location = newVal.location
       this.center =  L.latLng(location.coordinates[1], location.coordinates[0]);
-      for(let i=0;i<this.icons.length;i++) {
-        if(this.icons[i] !== undefined) {
-          if(i == newIndex) {
-          this.$set(this.icons[i].options, 'markerColor', 'red');
-          }
-          else {
-            this.$set(this.icons[i].options, 'markerColor', 'darkblue');
-          }
-        }
-      }
       this.zoom = this.centerSpot.zoom;
     },
   },
@@ -221,6 +228,12 @@ export default {
     font-variant: normal;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
+  }
+  .my_polyline {
+    stroke: white;
+    fill: none;
+    stroke-dasharray: 10,10; 
+    stroke-width: 5;  
   }
   @media only screen and (max-width: 767px) {
     #map {

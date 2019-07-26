@@ -138,7 +138,6 @@ const paramsHelper = (params, values) => {
             result[params[i]] = values[i]
         }
     }
-    console.log(result);
     return result;
 }
 
@@ -169,6 +168,7 @@ const makeParams = (city = null, region = null, _category = null, _name = null, 
 }
 
 export {
+    types,
     getAreas,
     getTypes,
     makeParams,

@@ -54,9 +54,9 @@ spotSchema.statics.deleteSpot = function(_id) {
 }
 
 // get nearby places sort by distance
-spotSchema.statics.getNearby = function(location, category, distance, sortBy, page, limit, order) {
+spotSchema.statics.getNearby = function(location, categories, distance, sortBy, page, limit, order) {
     let aggregate;
-    if(category == null) {
+    if(categories == null) {
         aggregate = this.aggregate([{
             $geoNear: {
                near: { 
@@ -79,11 +79,11 @@ spotSchema.statics.getNearby = function(location, category, distance, sortBy, pa
                distanceField: "dist.calculated",
                maxDistance: distance,
                spherical: true,
-               query: {'category': category}
+               query: {'category': {$in: categories}}
             }
-        }]);
+        },{ "$sort": { "distance": 1, 'ig_post_num': -1 } }]);
     }
-    return this.aggregatePaginate(aggregate, Options(sortBy, page, limit, order), 
+    return this.aggregatePaginate(aggregate, Options(null, page, limit, order, 'nearby'), 
             function(err, results) {
                 return results;
             });

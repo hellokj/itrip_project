@@ -1,12 +1,21 @@
 <template>
   <div class="spotContainer">
-    <div class="tag-container">
-      <p class="mx-4 pt-3">搜尋結果 排序:</p>
-      <b-dropdown size="sm" class="m-2" v-model="sortBy">
-          <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
-          <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
-          <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fab fa-facebook-square"></i>  臉書打卡王</b-dropdown-item-button>
-      </b-dropdown>
+    <div class="tag-container" style="display:flex;flex-direction:column;">
+      <div class="sort-container" style="display:flex;flex-direction:row;">
+        <p class="mx-4 pt-3">搜尋結果 排序:</p>
+        <b-dropdown size="sm" class="m-2" v-model="sortBy">
+            <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
+            <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
+            <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fab fa-facebook-square"></i>  臉書打卡王</b-dropdown-item-button>
+        </b-dropdown>
+      </div>
+      <div class="ml-4 category-container" style="display:flex;flex-direction:column;">
+        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange">全部選取</el-checkbox>
+        <!-- <div style="margin: 15px 0;"></div> -->
+        <el-checkbox-group v-model="checkedCategories" @change="handleCheckedCategoryListChange">
+          <el-checkbox v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
+        </el-checkbox-group>
+      </div>
     </div>
     
     <div class="vld-parent result-container">
@@ -41,9 +50,13 @@
 import SpotItem from './SpotItem'
 import virtualList from 'vue-virtual-scroll-list'
 import vPagination from 'vue-plain-pagination'
-import VueLoading from 'vue-loading-overlay';
+import VueLoading from 'vue-loading-overlay'
 import EditSpotModal from './template/EditSpotModal'
-import 'vue-loading-overlay/dist/vue-loading.css';
+import 'vue-loading-overlay/dist/vue-loading.css'
+import {types} from '../../utils/area.js'
+
+const categoryList = ['美食','購物', '景點', '交通', '住宿', '娛樂'];
+const categoryIcons = ['fas fa-utensils', 'fas fa-shopping-bag', 'fas fa-binoculars', 'fas fa-bus-alt', 'fas fa-hotel', 'fas fa-glass-martini-alt'];
 
 export default {
     name: "Spots",
@@ -76,6 +89,11 @@ export default {
         url: '',
         isLoading: false,
         selectedSpot: {},
+        isIndeterminate: true,
+        checkAll: false,
+        checkedCategories: categoryList,
+        categories: categoryList,
+        categoryIcons: categoryIcons
       }
     },
     props: {
@@ -109,6 +127,15 @@ export default {
         })
         if(tmpArr.length > 0) return true;
         return false;
+      },
+      handleAllCategoryListChange(val) {
+        this.checkedCategories = val ? categoryList : [];
+        this.isIndeterminate = false;
+      },
+      handleCheckedCategoryListChange(value) {
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.categories.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.categories.length;
       }
     },
     watch: {
@@ -137,6 +164,13 @@ export default {
         this.sortString = choices[newVal];
         this.$emit('sort-spot', newVal);
       },
+      checkedCategories: function(newVal) {
+        let catArr = [];
+        for(let i=0;i<newVal.length;i++) {
+          catArr.push(types[newVal[i]]);
+        }
+        this.$emit('filter-spot', catArr);
+      }
     },
 }
 </script>
