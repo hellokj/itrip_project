@@ -4,7 +4,7 @@
       <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
       <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
       <l-polyline v-if="isRouteArr" :lat-lngs="routesArr" :color="color" :opacity="opacity" :weight="weight"></l-polyline>
-      <l-marker ref="marker" :key="spot._id" @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)" :icon="icons[index]" v-for="(spot, index) in spots" v-if="!isContains(index)" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])">
+      <l-marker ref="marker" :key="spot._id" @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)" :icon="icons[index]" v-for="(spot, index) in spots" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])">
         <l-popup :options="{autoClose: false, closeOnClick: false}">
           <div class="name"><b>{{ spots[index].name }}</b></div>
           <div class="addr">{{ Address(index) }}</div>
@@ -75,6 +75,8 @@ export default {
   },
   mounted() {
     this.updateMarkers();
+    this.resetTogosIcon();
+    this.resetRoutesArr();
   },
   methods: {
     updateMarkers() {
@@ -127,10 +129,6 @@ export default {
       }
       this.routesArr = this.routes[this.currentPage].routes;
     },
-    isContains: function(index) {
-      if(this.togos !== undefined && this.spots[index] !== undefined && this.togos.some(e => e._id === this.spots[index]._id)) return true;
-      return false;
-    },
     openPopup: function(event, index, selectedSpot) {
       this.$nextTick( ()=> {
         if(index === selectedSpot) {
@@ -143,6 +141,16 @@ export default {
     },
     Address(index) {
       return getAddress(this.spots[index].address);
+    },
+    resetTogosIcon() {
+      for(let i=0;i<this.togos.length;i++) {
+        let togoIcon = L.divIcon({
+          html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
+          iconSize: [20, 20],
+          className: 'myDivIcon'
+        });
+        this.togoIcons.push(togoIcon);
+      }
     }
   },
   watch: {

@@ -371,7 +371,7 @@ export default {
             order: -1,
             sortBy: 'ig_post_num',
             page: 1
-           }
+          }
           this.paramProp = data;
       }
       else {

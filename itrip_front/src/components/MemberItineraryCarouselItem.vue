@@ -2,7 +2,7 @@
   <el-carousel :interval="4000" type="card" height="30vh">
     <el-carousel-item v-model="itineraries" v-for="(item, index) in itineraries" :key="index">
       <div style="width: auto; height: 100%;" @click="checkDetail(item)">
-        <img fit="fit" :src='item.togos[0][0].images[0]' style="width: 100%; height: 100%;" class="card_img">
+        <img fit="fit" :src='imgSrc(item)' style="width: 100%; height: 100%;" class="card_img">
         <div class="ribbon">公開</div>
         <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
       </div>
@@ -11,6 +11,7 @@
 </template>
 
 <script>
+const blank = require('../assets/blank.jpg');
 export default {
   name: "MemberItineraryCarouselItem",
   props: {
@@ -19,7 +20,16 @@ export default {
   methods: {
     checkDetail: function(itinerary){
       this.$emit("checkDetail", itinerary);
+    },
+    imgSrc: function(itinerary){
+      if (itinerary.togos[0] == undefined){
+        return blank;
+      }else {
+        return String(itinerary.togos[0][0].images[0]);
+      }
     }
+  },
+  computed: {
   },
   created() {
     

@@ -24,7 +24,7 @@
         <el-input v-model="memberInfo.reCheckPwd" clearable show-password></el-input>
       </el-form-item>
     </el-form>
-    <el-button type="warning" round @click="modifyProfile(packMemberInfo)">修改</el-button>
+    <el-button type="warning" round @click="modifyProfile(packMemberInfo)" native-type="submit">修改</el-button>
     <el-button round @click="reset">取消</el-button>
   </el-card>
 </el-container>
@@ -91,8 +91,25 @@ export default {
   },
   methods: {
     modifyProfile: function(memberInfo){
+<<<<<<< HEAD
       if (isValidate){
         console.log("我是memberInfo", memberInfo);
+=======
+      let self = this;
+      // console.log("我是memberInfo", memberInfo);
+      if (memberInfo == {}){
+        return;
+      }else {
+        apiModifyProfile(memberInfo)
+        .then(function(res){
+          // success
+          // console.log(res);
+          self.msg = "修改成功"
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+>>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
       }
     },
     reset: function(){
@@ -100,13 +117,30 @@ export default {
       this.memberInfo.account = this.originInfo.account;
       this.memberInfo.name = this.originInfo.name;
       this.memberInfo.url = this.originInfo.url;
+<<<<<<< HEAD
+=======
+    },
+    validate: function(){
+      this.$refs["memberInfo"].validate((valid) => {
+        if (valid) {
+          alert('submit!');
+        } else {
+          // console.log('error submit!!');
+          return false;
+        }
+      });
+>>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
     }
   },
   created() {
     let self = this;
     apiGetMember(this.$store.state.userToken)
       .then(function(res){
+<<<<<<< HEAD
         console.log("apiGetMember", res);
+=======
+        // console.log("apiGetMember", res);
+>>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
         self.memberInfo.name = res.data.data.name;
         self.memberInfo.account = res.data.data.account;
         self.memberInfo.url = res.data.data.url;
@@ -118,14 +152,21 @@ export default {
   },
   computed: {
     packMemberInfo: function(){
+<<<<<<< HEAD
       // 在此判斷有無符合格式
+=======
+>>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
       let memberInfo = {
         name: this.memberInfo.name,
         account: this.memberInfo.account,
         url: this.memberInfo.url,
         originPassword: this.memberInfo.originPassword,
+<<<<<<< HEAD
         password: this.memberInfo.password,
         reCheckPwd: this.memberInfo.reCheckPwd,
+=======
+        password: this.memberInfo.password
+>>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
       }
       return memberInfo;
     }

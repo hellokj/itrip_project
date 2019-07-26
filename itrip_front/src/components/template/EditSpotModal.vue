@@ -146,10 +146,10 @@ export default {
     }
   },
   created: function(){
-    if(this.ig_tag === undefined || this.spot.ig_tag.length == 0) {
+    if(this.spot.ig_tag === undefined || this.spot.ig_tag.length == 0) {
         this.spot.ig_tag = [""];
-        this.tags = this.spot.ig_tag.toString();
-      };
+    }
+    this.tags = this.spot.ig_tag.toString();
   }
 }
 </script>
