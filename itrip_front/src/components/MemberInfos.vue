@@ -91,14 +91,6 @@ export default {
   },
   methods: {
     modifyProfile: function(memberInfo){
-<<<<<<< HEAD
-      if (isValidate){
-        console.log("我是memberInfo", memberInfo);
-=======
-<<<<<<< HEAD
-      if (isValidate){
-        console.log("我是memberInfo", memberInfo);
-=======
       let self = this;
       // console.log("我是memberInfo", memberInfo);
       if (memberInfo == {}){
@@ -113,8 +105,6 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
->>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
->>>>>>> 7f02f0a162ad2d6a3cd45d57b4e5b51bf68c6553
       }
     },
     reset: function(){
@@ -122,37 +112,13 @@ export default {
       this.memberInfo.account = this.originInfo.account;
       this.memberInfo.name = this.originInfo.name;
       this.memberInfo.url = this.originInfo.url;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-    },
-    validate: function(){
-      this.$refs["memberInfo"].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          // console.log('error submit!!');
-          return false;
-        }
-      });
->>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
->>>>>>> 7f02f0a162ad2d6a3cd45d57b4e5b51bf68c6553
     }
   },
   created() {
     let self = this;
     apiGetMember(this.$store.state.userToken)
       .then(function(res){
-<<<<<<< HEAD
-        console.log("apiGetMember", res);
-=======
-<<<<<<< HEAD
-        console.log("apiGetMember", res);
-=======
         // console.log("apiGetMember", res);
->>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
->>>>>>> 7f02f0a162ad2d6a3cd45d57b4e5b51bf68c6553
         self.memberInfo.name = res.data.data.name;
         self.memberInfo.account = res.data.data.account;
         self.memberInfo.url = res.data.data.url;
@@ -164,30 +130,14 @@ export default {
   },
   computed: {
     packMemberInfo: function(){
-<<<<<<< HEAD
       // 在此判斷有無符合格式
-=======
-<<<<<<< HEAD
-      // 在此判斷有無符合格式
-=======
->>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
->>>>>>> 7f02f0a162ad2d6a3cd45d57b4e5b51bf68c6553
       let memberInfo = {
         name: this.memberInfo.name,
         account: this.memberInfo.account,
         url: this.memberInfo.url,
         originPassword: this.memberInfo.originPassword,
-<<<<<<< HEAD
         password: this.memberInfo.password,
         reCheckPwd: this.memberInfo.reCheckPwd,
-=======
-<<<<<<< HEAD
-        password: this.memberInfo.password,
-        reCheckPwd: this.memberInfo.reCheckPwd,
-=======
-        password: this.memberInfo.password
->>>>>>> 438f22e101bdbe48cd56b7bd439e9f691837e0e3
->>>>>>> 7f02f0a162ad2d6a3cd45d57b4e5b51bf68c6553
       }
       return memberInfo;
     }
