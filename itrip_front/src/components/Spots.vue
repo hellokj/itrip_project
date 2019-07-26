@@ -126,7 +126,7 @@ export default {
       },
       currentPage: function(newVal) {
         if(Object.keys(this.paginator).includes('nearby')) {
-          this.$emit('get-nearby',  newVal);
+          this.$emit('get-nearby', null, newVal);
           return;
         }
         this.$emit('get-spot', newVal);

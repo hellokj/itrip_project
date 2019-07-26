@@ -37,6 +37,7 @@ const getNearbySpots = async(req, res, next) => {
     let distance = req.query.distance; // unit: meter
     let spot = (await Spot.get(_id));
     let sortBy = req.query.sortBy;
+    let category = req.query.category;
     let page = req.query.page;
     let limit = req.query.limit;
     let order = req.query.order;
@@ -53,7 +54,7 @@ const getNearbySpots = async(req, res, next) => {
     let loc = {lon: origin_lon, lat: origin_lat};
 
     // params: location, distance, sortBy, page, limit, order
-    let nearby = await Spot.getNearby(loc, distance, sortBy, page, limit, order);
+    let nearby = await Spot.getNearby(loc, category, distance, sortBy, page, limit, order);
 
     //nearby.shift()
     Response(null, nearby, res);
@@ -85,7 +86,6 @@ const updateSpot = async(req, res, next) => {
         }
         newVal.ig_post_num = igPostNum;
     }
-    console.log('Update: ', newVal);
     await Spot.updateSpot(newVal);
     res.json({status: -1, msg:'success', data: newVal});
 }

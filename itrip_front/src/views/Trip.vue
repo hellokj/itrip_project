@@ -27,7 +27,7 @@
           @get-spot="getSpot"
           @get-nearby="getNearby"
           @sort-spot="sortSpot"
-          @refresh="callGetSpotApi"/> 
+          @refresh="refresh"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
@@ -362,15 +362,22 @@ export default {
     clickViewMap: function() {
       this.isMapShown = !this.isMapShown;
     },
-    getNearby: function(spot) {
-      let data = {
-        id: spot._id,
-        distance: 1000,
-        limit: 10,
-        order: -1,
-        sortBy: 'ig_post_num'
+    getNearby: function(spot, page) {
+      if(spot !== null) {
+          let data = {
+            id: spot._id,
+            distance: 1000,
+            limit: 10,
+            order: -1,
+            sortBy: 'ig_post_num',
+            page: 1
+          }
+          this.paramProp = data;
       }
-      this.paramProp = data;
+      else {
+        this.paramProp.page = page;
+      }
+      
     },
     getImages: function(index) {
       if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
@@ -391,8 +398,13 @@ export default {
     getSpot: function(page) {
       this.paramProp.page = page;
     },
-    getNearby: function(page) {
-      this.paramProp.page = page;
+    refresh: function() {
+      if(Object.keys(this.paramProp).includes('distance')) {
+        this.callNearbyApi();
+      }
+      else {
+        this.callGetSpotApi();
+      }
     }
   },
   watch: {
@@ -403,9 +415,10 @@ export default {
       handler: function(newVal, oldVal) {
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
-          return;
         }
-        this.callGetSpotApi(newVal);
+        else {
+          this.callGetSpotApi(newVal);
+        }
       },
       deep: true,
     },
@@ -475,6 +488,12 @@ export default {
     flex-wrap: nowrap;
     margin-left: 0px;
     margin-right: 0px;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .trip {
+    padding-left: 0px;
+    padding-right: 0px;
   }
 }
 @media screen and (min-width: 1680px) {

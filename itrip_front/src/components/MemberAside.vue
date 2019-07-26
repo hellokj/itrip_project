@@ -1,9 +1,9 @@
 <template>
   <el-aside width="20%" style="background-color: rgb(238, 241, 246)">
     <el-menu :default-openeds="['0', '2']">
-      <el-menu-item index="0-0">瀏覽行程</el-menu-item>
+      <el-menu-item index="0-0" @click="changeToCarousel">瀏覽行程</el-menu-item>
       <el-submenu index="1">
-        <template slot="title"  @click="changeToCarousel"><i class="el-icon-menu"></i>我的行程</template>
+        <template slot="title"><i class="el-icon-menu"></i>我的行程</template>
         <el-menu-item-group :index="1" title="即將到來行程">
           <el-menu-item :index="'1-1-'+i" v-for="(item, i) in incomingItineraries" :key="item.id" @click="checkDetail(item)">
             <i class="fas fa-suitcase-rolling"></i>     {{ item.name }}</el-menu-item>
@@ -52,7 +52,7 @@ export default {
     },
     checkFollowing: function(){
       this.$emit("checkFollowing");
-    }
+    },
   },
   watch: {
 

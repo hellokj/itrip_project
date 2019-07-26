@@ -106,6 +106,14 @@ const apiGetMember = (userToken) => {
   return memberRequest.post('/getMember', {}, { headers: headers });
 }
 
+const apiModifyProfile = (memberInfo, userToken) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": userToken
+  }
+  return memberRequest.post('/modifyProfile', { memberInfo: memberInfo }, { headers: headers });
+}
+
 export {
     apiGetSpots,
     apiGetNearby,
@@ -116,5 +124,6 @@ export {
     apiGetMember,
     apiLogIn,
     apiSignUp,
+    apiModifyProfile,
     apiSaveTrip
 }
