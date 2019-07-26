@@ -1,17 +1,22 @@
 <template>
   <div class="spotContainer">
     <div class="tag-container" style="display:flex;flex-direction:column;">
-      <div class="sort-container" style="display:flex;flex-direction:row;">
-        <p class="mx-4 pt-3">搜尋結果 排序:</p>
-        <b-dropdown size="sm" class="m-2" v-model="sortBy">
-            <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
-            <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
-            <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fab fa-facebook-square"></i>  臉書打卡王</b-dropdown-item-button>
-        </b-dropdown>
+      <div class="sort-container" style="display:flex;flex-direction:row;justify-content:space-between;">
+        <div style="display:flex;flex-direction:row;">
+          <p class="ml-4 my-0" style="line-height:40px;">搜尋:    <b style="font-size:18px;">{{getQuery}}</b></p>
+          
+        </div>
+        <div style="display:flex;flex-direction:row;">
+          <p class="ml-4 my-0" style="line-height:40px;"> 排序:</p>
+          <b-dropdown size="sm" class="m-2" v-model="sortBy" style="height:30px;padding-right:10px;">
+              <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
+              <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
+              <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fab fa-facebook-square"></i>  臉書打卡王</b-dropdown-item-button>
+          </b-dropdown>  
+        </div>
       </div>
       <div class="ml-4 category-container" style="display:flex;flex-direction:column;">
         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange">全部選取</el-checkbox>
-        <!-- <div style="margin: 15px 0;"></div> -->
         <el-checkbox-group v-model="checkedCategories" @change="handleCheckedCategoryListChange">
           <el-checkbox v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
         </el-checkbox-group>
@@ -101,6 +106,8 @@ export default {
      paginator: Object,
      perPage: Number,
      togos: Array,
+     queryPlace: String,
+     queryName: String,
     },
     methods: {
       Show(Url){
@@ -136,6 +143,14 @@ export default {
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.categories.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.categories.length;
+      }
+    },
+    computed: {
+      getQuery: function() {
+        console.log(this.queryName, this.queryPlace);
+        if(this.queryName !== '') return this.queryName;
+        if(this.queryPlace !== '') return this.queryPlace;
+        return '全部';
       }
     },
     watch: {

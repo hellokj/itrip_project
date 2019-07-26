@@ -3,24 +3,27 @@
     <l-map :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
       <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
       <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
-      <l-polyline v-if="isRouteArr" :lat-lngs="routesArr" :color="color" :opacity="opacity" :weight="weight"></l-polyline>
-      <l-marker ref="marker" :key="spot._id" @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)" :icon="icons[index]" v-for="(spot, index) in spots" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])">
+      <l-polyline v-if="isRouteArr && checkList.includes('路徑指示')" :lat-lngs="routesArr" :color="color" :opacity="opacity" :weight="weight"></l-polyline>
+      <div class="spot-marker" :key="spot._id" v-for="(spot, index) in spots">
+        <l-marker ref="marker"  v-if="checkList.includes('景點圖標')"
+        :icon="icons[index]" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
+        @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)">
+          <l-popup :options="{autoClose: false, closeOnClick: false}">
+            <div class="name"><b>{{ spots[index].name }}</b></div>
+            <div class="addr">{{ Address(index) }}</div>
+          </l-popup>
+        </l-marker>
+      </div>
+      <div class="route-marker" :key="index" v-for="(togo, index) in togos" >
+        <l-marker v-if="checkList.includes('路徑指示')"
+        :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
+        @add="openTogosPopup($event)">
         <l-popup :options="{autoClose: false, closeOnClick: false}">
-          <div class="name"><b>{{ spots[index].name }}</b></div>
+          <div class="name"><b>{{index + 1}}. {{ spots[index].name }}</b></div>
           <div class="addr">{{ Address(index) }}</div>
         </l-popup>
-        <!-- <l-tooltip>
-          <MarkerPopover :name="spots[index].name" :address="spots[index].address"></MarkerPopover>
-        </l-tooltip> -->
-      </l-marker>
-      <l-marker :key="index" v-for="(togo, index) in togos" 
-      :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
-      @add="openTogosPopup($event)">
-      <l-popup :options="{autoClose: false, closeOnClick: false}">
-        <div class="name"><b>{{ spots[index].name }}</b></div>
-        <div class="addr">{{ Address(index) }}</div>
-      </l-popup>
-      </l-marker>
+        </l-marker>
+      </div>
     </l-map>
   </div>
 </template>
@@ -81,6 +84,7 @@ export default {
     selectedSpot: Number,
     updateMap: Number,
     isSpotIconShown: Boolean,
+    checkList: Array
   },
   mounted() {
     this.updateMarkers();
