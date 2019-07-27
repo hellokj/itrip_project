@@ -1,25 +1,44 @@
 <template>
-    <div id="exportBox">
-        <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos" overflow:auto>
-            <div class="big-container">
-                <!-- <div class="trip-time-container">
-                    <p class="my-0 startTime">{{getStartTime(index)}}</p>
-                    <div class="circleNum"><b>{{index + 1}}</b></div>
-                    <p class="my-0 endTime">{{getEndTime(index)}}</p>
-                </div> -->
-                <!-- <TogoItem :togo="togo"/> -->
-                <h1>{{togo.name}}</h1>
-                
-            </div>
-            <!-- <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
-                /> -->
-        </div>
-    </div>
+<div class="export-container">
+    <table id="table">
+        <thead>
+        <tr>
+            <th>出發時間</th>
+            <th>出發時間</th>
+            <th>出發時間</th>
+            <th>景點</th>
+            <th>交通方式/時間</th>
+            <th>地址</th>
+            <th>停留時間</th>
+            <th>備忘錄</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>Donna</td>
+            <td>Moore</td>
+            <td>dmoore0@furl.net</td>
+            <td>China</td>
+            <td>211.56.242.221</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Janice</td>
+            <td>Henry</td>
+            <td>jhenry1@theatlantic.com</td>
+            <td>Ukraine</td>
+            <td>38.36.7.199</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 </template>
 
 <script>
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import TogoItem from '../TogoItem';
 import TravelTimeItem from '../TravelTimeItem';
 
@@ -34,29 +53,34 @@ export default {
         }
     },
     methods: {
-        handleExport(quality=1) {
-            html2canvas(document.querySelector('#exportBox'), {scale: quality, useCORS: true, allowTaint : false}).then(canvas => {
-                let pdf = new jsPDF('p', 'mm', 'a4');
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 211, 298);
-                pdf.save(this.tripName + '.pdf');
-            });
-        }
+        generate: function() {
+        var head = [["ID", "Country", "Rank", "Capital"]];
+        var body = [
+            [1, "Denmark", 7.526, "Copenhagen"],
+            [2, "Switzerland", 	7.509, "Bern"],
+            [3, "Iceland", 7.501, "Reykjavík"],
+            [4, "Norway", 7.498, "Oslo"],
+            [5, "Finland", 7.413, "Helsinki"]
+        ];
+        var doc = new jsPDF();
+        doc.autoTable({head: head, body: body});
+        doc.autoTable({html: '#table', startY: 100});
+        doc.output("dataurlnewwindow");
+    }
+    },
+    created() {
+        this.$bus.$on('download', event => {
+            this.generate();
+        })
+    },
+    beforeDestroy: function() {
+        this.$bus.$off('download');
     },
     watch: {
         togos: function() {
-            //console.log(this.togos);
+            console.log(this.togos);
         }
     },
-    created () {
-        // [註冊監聽事件]
-        this.$bus.$on('save-trip', event => {
-            this.handleExport();
-        });
-    },
-    beforeDestroy: function() {
-      // [銷毀監聽事件]
-      this.$bus.$off('save-trip');
-    }
 };
 </script>
 

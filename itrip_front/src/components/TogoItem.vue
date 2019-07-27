@@ -152,7 +152,7 @@ export default {
         justify-content: center;
     }
     .info-col {
-        width: 100%;
+        width: 250px;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
