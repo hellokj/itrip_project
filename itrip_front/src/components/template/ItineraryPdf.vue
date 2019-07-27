@@ -4,8 +4,6 @@
         <thead>
         <tr>
             <th>出發時間</th>
-            <th>出發時間</th>
-            <th>出發時間</th>
             <th>景點</th>
             <th>交通方式/時間</th>
             <th>地址</th>
@@ -13,34 +11,18 @@
             <th>備忘錄</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>1</td>
-            <td>Donna</td>
-            <td>Moore</td>
-            <td>dmoore0@furl.net</td>
-            <td>China</td>
-            <td>211.56.242.221</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Janice</td>
-            <td>Henry</td>
-            <td>jhenry1@theatlantic.com</td>
-            <td>Ukraine</td>
-            <td>38.36.7.199</td>
-        </tr>
-        </tbody>
     </table>
 </div>
 
 </template>
 
 <script>
-import jsPDF from 'jspdf';
+import jsPDF from 'jspdf'
 import 'jspdf-autotable';
-import TogoItem from '../TogoItem';
-import TravelTimeItem from '../TravelTimeItem';
+import font from '../../../utils/msyh-normal.js'
+import TogoItem from '../TogoItem'
+import TravelTimeItem from '../TravelTimeItem'
+
 
 export default {
     name: 'ItineraryPdf',
@@ -54,17 +36,23 @@ export default {
     },
     methods: {
         generate: function() {
-        var head = [["ID", "Country", "Rank", "Capital"]];
+        var doc = new jsPDF();
+
+        // //不加這個中文會亂碼
+        console.log(doc.getFontList())
+        doc.addFileToVFS('mysh-normal.ttf', font);
+        doc.addFont('mysh-normal.ttf', 'msyh', 'normal');
+        doc.setFont('msyh');
+        var head = [["出發時間", "景點", "交通方式/時間", "地址", "停留時間", "備忘錄"]];
         var body = [
-            [1, "Denmark", 7.526, "Copenhagen"],
+            [1, "出發時間", 7.526, "Copenhagen"],
             [2, "Switzerland", 	7.509, "Bern"],
             [3, "Iceland", 7.501, "Reykjavík"],
             [4, "Norway", 7.498, "Oslo"],
             [5, "Finland", 7.413, "Helsinki"]
         ];
-        var doc = new jsPDF();
-        doc.autoTable({head: head, body: body});
-        doc.autoTable({html: '#table', startY: 100});
+        doc.autoTable({head: head, body: body, styles: { font: "msyh"}});
+        // doc.autoTable({html: '#table', startY: 100});
         doc.output("dataurlnewwindow");
     }
     },
