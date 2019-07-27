@@ -70,7 +70,7 @@
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
           <el-container>
             <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
-            <el-link icon="el-icon-edit" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+            <el-link icon="el-icon-edit" @click="modifyItinerary">編輯行程</el-link>
           </el-container>
           <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
         </el-tab-pane>
@@ -97,6 +97,7 @@ export default {
   },
   methods: {
     hasMemo: function(rowData){
+      // 目前都還沒有memo 所以上面寫反
       if (rowData.memo == undefined){
         return false;
       }
@@ -106,6 +107,7 @@ export default {
       return '<div style="font-weight: bold;">' + rowData.name + '</div>';
     },
     getContent: function(rowData){
+      // return '<div>' + rowData.memo + '</div>'
       return '<div>' + "這邊的OOXX很好吃，必吃" + '</div>'
     },
     changeToCarousel: function(){
@@ -194,7 +196,7 @@ export default {
             address: address,
             memo: memo
           };
-          console.log("tmpTogo", tmpTogo);
+          // console.log("tmpTogo", tmpTogo);
           tmpDay.push(tmpTogo);
         }
         for (let j = 0; j < this.itinerary.travelInfos[i].length; j++){ // 0 1 1
@@ -208,7 +210,7 @@ export default {
       }
       console.log("days", this.days);
     },
-    modifyItinerary: function(itinerary){
+    modifyItinerary: function(){
       this.$router.push({path: '/trip'});
     },
     calculateStartTime: function(lastStartTime, trafficDuration, stopTime){
@@ -247,9 +249,6 @@ export default {
         min: min
       };
       return nextStartTime;
-    },
-    showMemo: function(){
-      alert("???");
     }
   },
   created() {
