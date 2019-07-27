@@ -189,7 +189,6 @@ export default {
     addSpotToTrip(spot) {
       if (this.togos[this.page] === undefined){
         this.togos.push([]);
-        
       }
       spot.stopTime = {
         hrs: 1,
@@ -391,7 +390,6 @@ export default {
       else {
         this.paramProp.page = page;
       }
-      
     },
     getImages: function(index) {
       if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
@@ -446,6 +444,12 @@ export default {
     },
     selectedSpot: function(newVal, oldVal) {
       this.updateMap++;
+    },
+    itinerary: function(newVal, oldVal){
+      for (let i = 0; i < newVal.togos.length; i++){
+        this.togos[i] = newVal.togos[i];
+        this.travelInfos[i] = newVal.travelInfos[i];
+      };
     }
   },
   created () {
@@ -456,9 +460,10 @@ export default {
     });
     this.$bus.$on('modifyItinerary', event => {
       self.itinerary = event.itinerary;
-      self.togos = event.itinerary.togos;
-      self.travelInfos = event.itinerary.travelInfos;
     });
+  },
+  beforeMount() {
+    
   },
   mounted() {
     let data = {
