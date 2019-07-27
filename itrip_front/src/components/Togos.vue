@@ -75,8 +75,8 @@
 </template>
 
 <script>
-import TogoItem from './TogoItem';
-import TravelTimeItem from './TravelTimeItem';
+import TogoItem from './TogoItem'
+import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 
@@ -109,7 +109,8 @@ export default {
         TogoItem,
         TravelTimeItem,
         draggable,
-        'virtual-list': virtualList
+        'virtual-list': virtualList,
+        
     },
     props: {
       togos: Array,
@@ -228,7 +229,7 @@ export default {
         this.update++;
       },
       saveTripAsPdf: function() {
-        this.$bus.$emit('save-trip');
+        this.$bus.$emit('download');
       },
       clickViewMap() {
         this.$emit('click-view-map');

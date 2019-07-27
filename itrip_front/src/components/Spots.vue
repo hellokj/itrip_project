@@ -24,6 +24,7 @@
     </div>
     
     <div class="vld-parent result-container">
+      <div v-if="isResultNotFound" class="notFound"><p style="font-size: 30px;text-align: center;">查無資料!</p></div>
       <virtual-list :size="165" :remain="5" @change="showLoading">
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
@@ -98,7 +99,8 @@ export default {
         checkAll: false,
         checkedCategories: categoryList,
         categories: categoryList,
-        categoryIcons: categoryIcons
+        categoryIcons: categoryIcons,
+        isResultNotFound: false,
       }
     },
     props: {
@@ -155,9 +157,13 @@ export default {
     },
     watch: {
       spots: function() {
-        if(this.spots.length > 0) this.isScrollbarShown = true;
+        if(this.spots.length > 0) {
+          this.isScrollbarShown = true;
+          this.isResultNotFound = false;
+        } 
         else{
           this.isScrollbarShown = false;
+          this.isResultNotFound = true;
         }
       },
       paginator: function(){

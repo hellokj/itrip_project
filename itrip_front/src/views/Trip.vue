@@ -252,14 +252,17 @@ export default {
       if(data == null) {
         data=this.paramProp;
       }
-
       self.spotPage = data.page;
       
       // call get spots api
       apiGetSpots(data)
       .then(function (res) {
         self.spots = res.data.data.resultList;
+        if(self.spots.length == 0) {
+          return;
+        }
         self.paginator = res.data.data.paginator;
+
       })
       .catch(function (error) {
         console.log(error);
@@ -272,8 +275,6 @@ export default {
       let self = this;
       if(data == null) data=this.paramProp;
       self.spotPage = data.page;
-      
-      console.log(data);
       // call get nearby api
       apiGetNearby(data)
       .then(function (res) {
@@ -402,16 +403,16 @@ export default {
       }
     },
     zoomTogos: function() {
-      this.centerSpot.type = 'togos';
       this.centerSpot = this.togos[this.page][0];
-      this.centerSpot.zoom = 10;
+      this.$set( this.centerSpot, 'type', 'togos');
+      this.$set( this.centerSpot, 'zoom', 10);
     },
     sortSpot: function(sortBy) {
-      this.paramProp.page = 1;
-      this.paramProp.sortBy = sortBy;
+      this.$set( this.paramProp, 'page', 1);
+      this.$set( this.paramProp, 'sortBy', sortBy);
     },
     getSpot: function(page) {
-      this.paramProp.page = page;
+      this.$set( this.paramProp, 'page', page);
     },
     refresh: function() {
       if(Object.keys(this.paramProp).includes('distance')) {
