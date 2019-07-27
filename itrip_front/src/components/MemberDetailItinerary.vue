@@ -53,17 +53,17 @@
               label="備忘錄"
               width="70"
               align="center">
-              
-              <el-popover
-                placement="topright"
-                title="文字筆記"
+              <template slot-scope="scope" class="memo_popover">
+                <el-popover
+                placement="top-end"
                 width="200"
                 trigger="click"
-                v-model="showMemo"
-                content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-                <i class="far fa-comment-alt memo" v-if="true" slot="reference" @click.native="showMemo = true"></i>
-                gtd
+                :ref="`popover-${scope.$index}`">
+                <div class="popover-title" v-html="getTitle(scope.row)"></div>
+                <div class="popover-content" v-html="getContent(scope.row)"></div>
+                <i class="far fa-comment-alt memo" v-if="!hasMemo(scope.row)" slot="reference" @click.native.prevent="scope._self.$refs[`popover-${scope.$index}`].doClose()"></i>
               </el-popover>
+              </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
@@ -93,10 +93,21 @@ export default {
   data() {
     return {
       days: [], // 每天的行程 裡面存放 景點object
-      showMemo: false,
     }
   },
   methods: {
+    hasMemo: function(rowData){
+      if (rowData.memo == undefined){
+        return false;
+      }
+      return true;
+    },
+    getTitle: function(rowData){
+      return '<div style="font-weight: bold;">' + rowData.name + '</div>';
+    },
+    getContent: function(rowData){
+      return '<div>' + "這邊的OOXX很好吃，必吃" + '</div>'
+    },
     changeToCarousel: function(){
       this.$emit("changeToCarousel", "MemberItineraryCarousel");
     },
@@ -257,6 +268,10 @@ export default {
 </script>
 
 <style>
+  .memo_popover {
+    border-radius: 50px;
+  }
+
   .is-link:hover {
     color: #409EFF;
     cursor: pointer;
