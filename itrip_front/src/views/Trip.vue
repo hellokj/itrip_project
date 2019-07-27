@@ -21,7 +21,7 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown" :queryPlace="queryPlace" :queryName="queryName"
           @filter-spot="filterSpot"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
@@ -59,7 +59,7 @@
             :key="updateMap"
             :spots="spots" :togos="togos[page]" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage" 
-            :centerSpot="centerSpot" :selectedSpot="selectedSpot"/>
+            :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
       </b-col>
     </b-row>
@@ -126,8 +126,10 @@ export default {
       update: 0,
       dayNum: 1,
       itinerary: {},
-      updateMap:0,
-      checkList:['景點圖標'],
+      updateMap: 0,
+      checkList: ['景點圖標', '路徑指示'],
+      queryPlace: '',
+      queryName: '',
     }
   },
   methods: {
@@ -355,11 +357,6 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
-      // if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
-      //   this.centerSpot = this.togos[this.page][0]
-      //   this.centerSpot.zoom = 8;
-      //   return;
-      // }
         this.centerSpot = spot;
         this.centerSpot.zoom = 15;
         this.$set(this.centerSpot, 'index', index);
@@ -434,6 +431,10 @@ export default {
     },
     paramProp: {
       handler: function(newVal, oldVal) {
+        console.log(newVal);
+        if(newVal.city !== undefined) this.queryPlace = newVal.city;
+        if(newVal.region !== undefined) this.queryPlace = newVal.region;
+        if(newVal.name !== undefined) this.queryName = newVal.name;
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
         }
@@ -486,8 +487,8 @@ export default {
     border-right: 2px solid rgb(230, 230, 230);
   }
   .big-image-container {
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 50px;
+    padding-bottom: 50px;
     background: #f2f2f2;
     height: 45%;
     width: 100%;
