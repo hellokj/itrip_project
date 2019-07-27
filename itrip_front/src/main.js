@@ -24,7 +24,7 @@ import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
 
 const mediaQueries = new MediaQueries();
- 
+
 Vue.use(mediaQueries);
 Vue.use(ElementUI);
 // configure language

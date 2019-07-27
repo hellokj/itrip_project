@@ -11,9 +11,15 @@
       </el-container>
       <el-tabs type="border-card" v-model="index">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
-          <el-container>
-            <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
-            <el-link icon="el-icon-edit" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+          <el-container style="display: flex">
+            <el-container style="width: 70%">
+              <el-divider content-position="center">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+            </el-container>
+            <el-container style="width: 30%; ">
+              <!-- <i class="el-icon-lock lock" style="float: right"></i> -->
+              <el-link v-model="itinerary.isPublic" :icon="getLockIcon(itinerary)" @click="changeLockStatus(itinerary)" style="margin:0px auto;">{{ !getLockStatus(itinerary) ? "設為不公開" : "設為公開" }}</el-link>
+              <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+            </el-container>
           </el-container>
           <el-table
             :data="day"
@@ -21,9 +27,15 @@
             border
             style="width: 100%">
             <el-table-column
-              prop="startTimeFormat"
+              prop="index"
+              label="No."
+              width="50"
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="stayTimeFormat"
               label="出發時間"
-              width="120"
+              width="80"
               align="center">
             </el-table-column>
             <el-table-column
@@ -35,6 +47,7 @@
             <el-table-column
               prop="traffic"
               label="交通方式/時間"
+              width="130"
               align="center">
             </el-table-column>
             <el-table-column
@@ -43,9 +56,9 @@
               align="center">
             </el-table-column>
             <el-table-column
-              prop='stopTime'
+              prop='stopTimeFormat'
               label="停留時間"
-              width="120"
+              width="100"
               align="center">
             </el-table-column>
             <el-table-column
@@ -69,7 +82,7 @@
         </el-tab-pane>
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
           <el-container>
-            <el-divider content-position="left">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+            <el-divider content-position="center">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
             <el-link icon="el-icon-edit" @click="modifyItinerary">編輯行程</el-link>
           </el-container>
           <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
@@ -82,6 +95,7 @@
 import {getAddress} from "../../utils/checker"
 import MemberMap from '../components/MemberMap'
 import { duration } from 'moment';
+import { start } from 'repl';
 export default {
   components: {
     MemberMap,
@@ -96,6 +110,16 @@ export default {
     }
   },
   methods: {
+    changeLockStatus: function(itinerary){
+      itinerary.isPublic = !itinerary.isPublic;
+    },
+    getLockIcon: function(itinerary){
+      if (itinerary.isPublic == undefined || itinerary.isPublic == true){
+        // 預設公開
+        return "el-icon-unlock";
+      }
+      return "el-icon-lock";
+    },
     hasMemo: function(rowData){
       // 目前都還沒有memo 所以上面寫反
       if (rowData.memo == undefined){
@@ -134,7 +158,6 @@ export default {
       // to mins
       let mins = this.carryTimeUnit(duration);
       let remainingSec = Math.floor(duration % mins);
-
       if(mins >= 60) {
           let hours = Math.floor(mins / 60);
           let remainingMins = Math.floor(mins % 60);
@@ -160,10 +183,17 @@ export default {
       return hrs + "小時" + mins + "分鐘";
     },
     startTimeFormat: function(startTime){
-      if (startTime.min == 'undefined' || startTime.min == 'null'){
-        return startTime.hr + "點" + 0 + "分";
+      if (startTime.min.toString().length == 1){
+        return startTime.hr + "：0" + startTime.min;
       }
-      return startTime.hr + "點" + startTime.min + "分";
+      return startTime.hr + "：" + startTime.min;
+    },
+    stayTimeFormat: function(startTime, stopTime){
+      let endTime = {
+        hr: startTime.hr + stopTime.hrs,
+        min: startTime.min + stopTime.mins
+      };
+      return this.startTimeFormat(startTime) + " ~ " + this.startTimeFormat(endTime);
     },
     resetDetailInfo: function(){
       this.days = [];
@@ -180,9 +210,11 @@ export default {
         }
         for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3
           // 每天的行程
+          let index = j + 1;
           let name = this.itinerary.togos[i][j].name;
           let address = this.addressFormat(this.itinerary.togos[i][j].address);
-          let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
+          // let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
+          let stopTime = this.itinerary.togos[i][j].stopTime;
           let memo = this.itinerary.togos[i][j].memo;
           // let memo = "lalalalal";
           let startTime = baseTime;
@@ -190,6 +222,7 @@ export default {
             startTime = this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
           }
           let tmpTogo = {
+            index: index,
             startTime: startTime,
             stopTime: stopTime,
             name: name,
@@ -204,7 +237,9 @@ export default {
           tmpDay[j+1].startTime = this.calculateStartTime(tmpDay[j].startTime, this.itinerary.travelInfos[i][j].duration, this.itinerary.togos[i][j+1].stopTime);
         }
         for (let j = 0; j < this.itinerary.togos[i].length; j++){
+          tmpDay[j].stopTimeFormat = this.stopTimeFormat(tmpDay[j].stopTime.hrs, tmpDay[j].stopTime.mins)
           tmpDay[j].startTimeFormat = this.startTimeFormat(tmpDay[j].startTime);
+          tmpDay[j].stayTimeFormat = this.stayTimeFormat(tmpDay[j].startTime, tmpDay[j].stopTime);
         }
         this.days.push(tmpDay);
       }
@@ -212,6 +247,12 @@ export default {
     },
     modifyItinerary: function(){
       this.$router.push({path: '/trip'});
+    },
+    getLockStatus: function(itinerary){
+      if (itinerary.isPublic == undefined || itinerary.isPublic == true){
+        return true;
+      }
+      return false;
     },
     calculateStartTime: function(lastStartTime, trafficDuration, stopTime){
       let hr = 0;
@@ -263,6 +304,9 @@ export default {
       this.resetDetailInfo();
     }
   },
+  computed: {
+    
+  },
 }
 </script>
 
@@ -285,9 +329,9 @@ export default {
   }
 
   .el-divider--horizontal {
-    display: block;
+    display: flex;
     height: 1px;
-    width: 90%;
+    width: 100%;
     margin: 24px 0;
   }
 
@@ -295,6 +339,10 @@ export default {
     margin: auto;
     text-align: center;
     float: right;
+  }
+
+  .lock:hover {
+    cursor: pointer;
   }
 
   .memo:hover {

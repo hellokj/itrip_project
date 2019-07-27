@@ -39,10 +39,8 @@ export default {
   data() {
     return {
       zoom: 8,
-      currentZoom: 8,
       zoomControlPosition: "topright",
       visible: false,
-      currentCenter: L.latLng(23.583234, 121.2825975),
       center: L.latLng(23.583234, 121.2825975), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
@@ -70,10 +68,10 @@ export default {
       return L.latLng(lat, lng);
     },
     zoomUpdate(zoom) {
-      this.currentZoom = zoom;
+      this.zoom = zoom;
     },
     centerUpdate(center) {
-      this.currentCenter = center;
+      this.center = center;
     },
     getDayRoutes: function(day){
       let dayRoutes = [];
