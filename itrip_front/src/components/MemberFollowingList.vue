@@ -2,12 +2,42 @@
   <el-container class="info_container">
     <div class="info_title">我低追蹤清單</div>
     <el-divider></el-divider>
+    <el-container style="overflow: scroll; height: 80vh">
+      <el-col>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+      </el-col>
+      <el-col>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+      </el-col>
+      <el-col>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+      </el-col>
+      <el-col>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+        <MemberFollowingListItem></MemberFollowingListItem>
+      </el-col>
+    </el-container>
   </el-container>
 </template>
 
 <script>
+import MemberFollowingListItem from './template/MemberFollowingListItem'
 export default {
-  name: "MemberFollowingList"
+  name: "MemberFollowingList",
+  components: {
+    MemberFollowingListItem: MemberFollowingListItem
+  }
 }
 </script>
 

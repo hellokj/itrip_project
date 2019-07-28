@@ -94,12 +94,24 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
-          <el-container>
-            <el-divider 
-              content-position="center">
-              {{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}
-            </el-divider>
-            <el-link icon="el-icon-edit" @click="modifyItinerary">編輯行程</el-link>
+          <el-container style="display: flex">
+            <el-container style="width: 70%">
+              <el-divider 
+                content-position="center">
+                {{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}
+              </el-divider>
+            </el-container>
+            <el-container style="width: 30%; ">
+              <!-- <i class="el-icon-lock lock" style="float: right"></i> -->
+              <el-link 
+                v-model="itinerary.isPublic" 
+                :icon="getLockIcon()" 
+                @click="changeLockStatus" 
+                style="margin:0px auto;">
+                {{ getLockStatus() ? "設為不公開" : "設為公開" }}
+              </el-link>
+              <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+            </el-container>
           </el-container>
           <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
         </el-tab-pane>
