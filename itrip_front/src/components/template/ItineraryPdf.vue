@@ -19,7 +19,9 @@ export default {
     },
     data() {
         return {
-            tripName: '我的旅行',
+            tripName: '',
+            tripDate: '',
+            dateString: '',
         }
     },
     methods: {
@@ -30,15 +32,16 @@ export default {
             doc.addFileToVFS('mysh-normal.ttf', font);
             doc.addFont('mysh-normal.ttf', 'msyh', 'normal');
             doc.setFont('msyh');
+            doc.text('旅行名稱: ' + this.tripName + '  出發日期: ' + this.dateString, 14, 10);
             for(let i=0;i<this.togos.length;i++) {
                 let finalY;
                 if(i > 0) {
                     finalY = doc.previousAutoTable.finalY;
                 }
                 else {
-                    finalY = 0;
+                    finalY = 20;
                 }
-                var head = [["時間", "景點", "交通方式/時間", "地址", "停留時間", "備忘錄"]];
+                var head = [["時間", "景點", "地址",  "備忘錄"]];
                 var body = this.makeBody(i);
                 doc.text('-Day ' + (i + 1) + '-', 14, finalY + 15);
                 doc.autoTable({
@@ -58,11 +61,10 @@ export default {
             let day = [];
             for(let j=0;j<this.togos[dayIndex].length;j++) {
                 let spot = [];
-                spot.push(" ");
+                let travelTime = [];
+                spot.push(this.stayTimeFormat(dayIndex, j));
                 spot.push(this.togos[dayIndex][j].name);
-                spot.push(" ");
                 spot.push(getAddress(this.togos[dayIndex][j].address));
-                spot.push(this.stopTimeFormat(this.togos[dayIndex][j].stopTime.hrs, this.togos[dayIndex][j].stopTime.mins));
                 if(this.togos[dayIndex][j].memo !== undefined) {
                     spot.push(this.togos[dayIndex][j].memo);
                 }
@@ -70,22 +72,63 @@ export default {
                     spot.push(" ");
                 }
                 day.push(spot);
+                if(j < this.togos[dayIndex].length - 1) {
+                    let travelInfo = this.travelInfos[dayIndex][j];
+                    travelTime.push('');
+                    travelTime.push('');
+                    travelTime.push('↓' + this.trafficFormat(travelInfo.mode, travelInfo.duration) + '↓');
+                    day.push(travelTime);
+                }
             }
             return day;
         },
-        stopTimeFormat: function(hrs, mins) {
-            if (mins == 'undefined' || mins == 'null'){
-                return hrs
-            }
-            if (hrs == 'undefined' || hrs == 'null'){
-                return mins
-            }
-            if(hrs > 0) return hrs + ' hr ' + mins + ' mins';
-            return mins + ' mins';
+        stayTimeFormat: function(dayIndex, index) {
+            let startTime = this.togos[dayIndex][index].startTime;
+            let endTime = this.togos[dayIndex][index].endTime;
+            
+            return startTime.hr.toString().padStart(2, '0') + ':' + startTime.min.toString().padStart(2, 0) + 
+            ' - ' + endTime.hr.toString().padStart(2, '0') + ':' + endTime.min.toString().padStart(2, 0)
         },
+        carryTimeUnit(time) {
+            return Math.floor(time / 60);
+        },
+        trafficTimeForamt: function(duration){
+            // to mins
+            let mins = this.carryTimeUnit(duration);
+            let remainingSec = Math.floor(duration % mins);
+            if(mins >= 60) {
+                let hours = Math.floor(mins / 60);
+                let remainingMins = Math.floor(mins % 60);
+                return hours + '小時 ' + remainingMins + '分 ';  
+            }
+            else if(mins == 0) {
+                return duration + '秒';
+            }
+            else {
+                return mins + '分 ';
+            }
+        },
+        trafficFormat: function(mode, duration){
+            if (mode == "driving-car"){
+                return "開車 / " + this.trafficTimeForamt(duration);
+            }
+            if (mode == "cycling-regular"){
+                return "單車 / " + this.trafficTimeForamt(duration);
+            }
+            if (mode == "foot-walking"){
+                return "走路 / " + this.trafficTimeForamt(duration);
+            }
+        },
+        getDateString: function() {
+            return this.tripDate.getFullYear() + "-" +  (this.tripDate.getMonth() + 1) + "-" + this.tripDate.getDate();
+        }
+        
     },
     created() {
         this.$bus.$on('download', event => {
+            this.tripName = event.tripName;
+            this.tripDate = event.tripDate;
+            this.dateString = this.getDateString();
             this.generate();
         })
     },
@@ -93,6 +136,9 @@ export default {
         this.$bus.$off('download');
     },
     watch: {
+        togos: function() {
+            console.log(this.togos)
+        },
         travelInfos: function() {
             console.log(this.travelInfos);
         }

@@ -62,8 +62,7 @@
                       @deleteTogo="$emit('deleteTogo', index)"
                       @getNearby="getNearby"/>
                     </div>
-                    <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
-                      />
+                    <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"/>
                   </div>
                 </transition-group>
             </draggable> 
@@ -239,7 +238,7 @@ export default {
         this.update++;
       },
       saveTripAsPdf: function() {
-        this.$bus.$emit('download');
+        this.$bus.$emit('download', {tripName: this.tripName, tripDate: this.tripDate});
       },
       clickViewMap() {
         this.$emit('click-view-map');
