@@ -282,6 +282,47 @@ export default {
       }
       console.log("days", this.days);
     },
+    // 修改過後的取出資料方式
+    resetItineraryData: function(itinerary){
+      this.days = [];
+      for (let i = 0; i < itinerary.dayNum; i++){ // 天數
+        let tmpDay = [];
+        for (let j = 0; j < itinerary.togos[i].length; j++){
+          let index = j + 1;
+          let name = itinerary.togos[i][j].name;
+          let address = this.addressFormat(itinerary.togos[i][j].address);
+          let stopTime = itinerary.togos[i][j].stopTime;
+          let stopTimeFormat = this.stopTimeFormat(itinerary.togos[i][j].stopTime);
+          let startTime = itinerary.togos[i][j].startTime;
+          let endTime = itinerary.togos[i][j].endTime;
+          let stayTimeFormat = this.stayTimeFormat();
+          let memo = itinerary.togos[i][j].memo;
+          let traffic = "";
+          if (itinerary.travelInfos[i] !== null){
+            if (itinerary.travelInfos[i] !== undefined){
+              for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
+                traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
+              }
+            }
+          }
+          let tmpTogo = {
+            index: index, // No.
+            name: name, // 景點名稱
+            address: address, // 地址
+            stopTime: stopTime, 
+            stopTimeFormat: stopTimeFormat, // 停留時間
+            startTime: startTime, 
+            endTime: endTime,
+            stayTimeFormat: stayTimeFormat, // 開始時間
+            memo: memo, // 備忘錄
+            traffic: traffic // 交通時間
+          }
+          tmpDay.push(tmpTogo);
+        }
+        this.days.push(tmpDay);
+        console.log("this days", this.days);
+      }
+    },
     modifyItinerary: function(){
       this.$router.push({path: '/trip'});
     },
@@ -332,9 +373,9 @@ export default {
   created() {
     console.log("itinerary create", this.itinerary);
     this.resetDetailInfo();
+    // this.resetItineraryData(this.itinerary);
   },
   beforeDestroy() {
-    console.log("MD beforeDestroy", this.itinerary);
     this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
   },
   watch: {

@@ -2,7 +2,7 @@
   <el-card class="following_card" shadow="hover">
     <el-popover
       placement="bottom-start"
-      :width="{width: auto}"
+      width="{width: auto}"
       v-model="visible">
       <p>確定要取消追蹤XXX嗎？</p>
       <div style="text-align: right; margin: 0">

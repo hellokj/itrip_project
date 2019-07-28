@@ -59,7 +59,7 @@ export default {
     let self = this;
     apiGetItineraries(token)
       .then(function(res){
-        // console.log(res.data.data);
+        console.log(res.data.data);
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
