@@ -149,7 +149,7 @@ export default {
     },
     computed: {
       getQuery: function() {
-        console.log(this.queryName, this.queryPlace);
+        //console.log(this.queryName, this.queryPlace);
         if(this.queryName !== '') return this.queryName;
         if(this.queryPlace !== '') return this.queryPlace;
         return '全部';

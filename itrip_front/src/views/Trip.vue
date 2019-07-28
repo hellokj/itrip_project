@@ -64,7 +64,7 @@
       </b-col>
     </b-row>
     <b-row>
-      <ItineraryPdf :togos="togos"/>
+      <ItineraryPdf :togos="togos" :travelInfos="travelInfos"/>
     </b-row>
   </b-container>
 </template>
@@ -148,7 +148,7 @@ export default {
       // console.log("_id", _id);
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
       .then((function (res) {
-        console.log("res", res);
+        //console.log("res", res);
         alert("儲存成功");
       }))
       .catch(function (error) {
@@ -207,7 +207,7 @@ export default {
     addTravelInfo(startOb, destOb) {
       // initialize travelInfos
       if(this.travelInfos[this.page] === undefined) {
-        this.travelInfos[this.page] = [];
+        this.$set(this.travelInfos, this.page, []);
       }
       // call get routes api
       this.callGetRoutesApi(this.travelInfos[this.page].length, startOb, destOb, 'driving-car');
@@ -451,6 +451,9 @@ export default {
         this.togos[i] = newVal.togos[i];
         this.travelInfos[i] = newVal.travelInfos[i];
       };
+    },
+    togos: function(newVal, oldVal) {
+      console.log(this.togos);
     }
   },
   created () {

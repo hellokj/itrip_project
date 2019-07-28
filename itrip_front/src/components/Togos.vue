@@ -169,9 +169,9 @@ export default {
         this.$emit('add-new-day');
       },
       getStartTime: function(index) {
-        if(index == 0) {
-          return this.startTime;
-        }
+        // if(index == 0) {
+        //   return this.startTime;
+        // }
         let hr = this.startTimeOb.hr;
         let min = this.startTimeOb.min;
 
@@ -187,6 +187,11 @@ export default {
           }
           hr += this.togos[i].stopTime.hrs;
         }
+        if(this.togos[index].startTime === undefined) {
+          this.togos[index].startTime = {};
+        }
+        this.togos[index].startTime.hr = hr;
+        this.togos[index].startTime.min = min;
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
       },
       getEndTime: function(index) {
@@ -205,6 +210,11 @@ export default {
           throw 'DAY LIMIT EXCEEDED';
         }
         hr += this.togos[index].stopTime.hrs;
+        if(this.togos[index].endTime === undefined) {
+          this.togos[index].endTime = {};
+        }
+        this.togos[index].endTime.hr = hr;
+        this.togos[index].endTime.min = min;
         
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
@@ -278,7 +288,7 @@ export default {
       },
     },
     created() {
-      console.log("itinerary", this.itinerary);
+      //console.log("itinerary", this.itinerary);
       this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
     },
     beforeMount() {
