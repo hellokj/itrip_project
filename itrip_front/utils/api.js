@@ -1,4 +1,6 @@
-import axios from 'axios';
+import axios from 'axios'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import {SERVER_IP, ORS_API_KEY} from '../src/config/config';
 
 // spot api
@@ -9,6 +11,7 @@ const spotRequest = axios.create({
 const routingRequest = axios.create({
   baseURL: 'https://api.openrouteservice.org/v2/'
 });
+
 // logIn signUp相關的 api
 const authRequest = axios.create({
   baseURL: SERVER_IP + '/api/auth/'
@@ -23,6 +26,21 @@ const itineraryRequest = axios.create({
 const memberRequest = axios.create({
   baseURL: SERVER_IP + '/api/member/'
 })
+
+const requestList = [spotRequest, routingRequest, authRequest, itineraryRequest, memberRequest];
+for(let i=0;i<requestList.length;i++) {
+  // before a request is made start the nprogress
+  requestList[i].interceptors.request.use(config => {
+    NProgress.start()
+    return config
+  })
+
+  // before a response is returned stop nprogress
+  requestList[i].interceptors.response.use(response => {
+    NProgress.done()
+    return response
+  })
+}
 
 const apiGetItineraries = (token) => {
   let headers = {

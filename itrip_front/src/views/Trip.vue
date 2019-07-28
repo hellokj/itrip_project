@@ -130,6 +130,7 @@ export default {
       checkList: ['景點圖標', '路徑指示'],
       queryPlace: '',
       queryName: '',
+      isAddSpotLocked: false,
     }
   },
   methods: {
@@ -187,22 +188,26 @@ export default {
       this.resetRoutes();
     },
     addSpotToTrip(spot) {
-      if (this.togos[this.page] === undefined){
+      if(!this.isAddSpotLocked) {
+        if (this.togos[this.page] === undefined){
         this.togos.push([]);
+        }
+        spot.stopTime = {
+          hrs: 1,
+          mins: 0
+        }
+        this.togos[this.page].push(spot);
+        let length = this.togos[this.page].length;
+        // only need to get travelInfo if length > 2
+        if(length > 1) {
+          this.addTravelInfo(this.togos[this.page][length - 2], spot);
+        }
+        if(window.innerWidth <= 768) {
+            this.$bus.$emit('toggle', {id: 'Togos'});
+        }
+        this.isAddSpotLocked = true;
       }
-      spot.stopTime = {
-        hrs: 1,
-        mins: 0
-      }
-      this.togos[this.page].push(spot);
-      let length = this.togos[this.page].length;
-      // only need to get travelInfo if length > 2
-      if(length > 1) {
-        this.addTravelInfo(this.togos[this.page][length - 2], spot);
-      }
-      if(window.innerWidth <= 768) {
-          this.$bus.$emit('toggle', {id: 'Togos'});
-      }
+      
     },
     addTravelInfo(startOb, destOb) {
       // initialize travelInfos
@@ -454,6 +459,13 @@ export default {
     },
     togos: function(newVal, oldVal) {
       console.log(this.togos);
+    },
+    isAddSpotLocked: function(newVal, oldVal) {
+      if(newVal) {
+        setTimeout(() => {
+            this.isAddSpotLocked = false
+        },1000)
+      }
     }
   },
   created () {
