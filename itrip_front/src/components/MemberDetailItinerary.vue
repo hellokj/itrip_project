@@ -13,11 +13,20 @@
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container style="display: flex">
             <el-container style="width: 70%">
-              <el-divider content-position="center">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+              <el-divider 
+                content-position="center">
+                {{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}
+              </el-divider>
             </el-container>
             <el-container style="width: 30%; ">
               <!-- <i class="el-icon-lock lock" style="float: right"></i> -->
-              <el-link v-model="itinerary.isPublic" :icon="getLockIcon(itinerary)" @click="changeLockStatus(itinerary)" style="margin:0px auto;">{{ !getLockStatus(itinerary) ? "設為不公開" : "設為公開" }}</el-link>
+              <el-link 
+                v-model="itinerary.isPublic" 
+                :icon="getLockIcon()" 
+                @click="changeLockStatus" 
+                style="margin:0px auto;">
+                {{ getLockStatus() ? "設為不公開" : "設為公開" }}
+              </el-link>
               <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
             </el-container>
           </el-container>
@@ -74,7 +83,11 @@
                 :ref="`popover-${scope.$index}`">
                 <div class="popover-title" v-html="getTitle(scope.row)"></div>
                 <div class="popover-content" v-html="getContent(scope.row)"></div>
-                <i class="far fa-comment-alt memo" v-if="!hasMemo(scope.row)" slot="reference" @click.native.prevent="scope._self.$refs[`popover-${scope.$index}`].doClose()"></i>
+                <i class="far fa-comment-alt memo" 
+                  v-if="!hasMemo(scope.row)" 
+                  slot="reference" 
+                  @click.native.prevent="scope._self.$refs[`popover-${scope.$index}`].doClose()">
+                </i>
               </el-popover>
               </template>
             </el-table-column>
@@ -82,7 +95,10 @@
         </el-tab-pane>
         <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
           <el-container>
-            <el-divider content-position="center">{{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</el-divider>
+            <el-divider 
+              content-position="center">
+              {{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}
+            </el-divider>
             <el-link icon="el-icon-edit" @click="modifyItinerary">編輯行程</el-link>
           </el-container>
           <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
@@ -110,15 +126,15 @@ export default {
     }
   },
   methods: {
-    changeLockStatus: function(itinerary){
-      itinerary.isPublic = !itinerary.isPublic;
+    changeLockStatus: function(){
+      this.itinerary.isPublic = !this.itinerary.isPublic;
     },
-    getLockIcon: function(itinerary){
-      if (itinerary.isPublic == undefined || itinerary.isPublic == true){
+    getLockIcon: function(){
+      if (this.itinerary.isPublic == undefined || this.itinerary.isPublic == true){
         // 預設公開
-        return "el-icon-unlock";
+        return "el-icon-lock";
       }
-      return "el-icon-lock";
+      return "el-icon-unlock";
     },
     hasMemo: function(rowData){
       // 目前都還沒有memo 所以上面寫反
@@ -196,8 +212,9 @@ export default {
       return this.startTimeFormat(startTime) + " ~ " + this.startTimeFormat(endTime);
     },
     resetDetailInfo: function(){
+      // 修改一下，應該改成dayNum，debug........
       this.days = [];
-      for (let i = 0; i < this.itinerary.togos.length; i++){ // 天數 3
+      for (let i = 0; i < this.itinerary.dayNum; i++){ // 天數 3
         let tmpDay = [];
         let baseTime;
         if (this.itinerary.startTimes !== undefined){
@@ -208,20 +225,23 @@ export default {
             min: 0
           };
         }
-        for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3
+        for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3 0 0 0 ...
           // 每天的行程
+          let tmpTogo = {};
           let index = j + 1;
           let name = this.itinerary.togos[i][j].name;
           let address = this.addressFormat(this.itinerary.togos[i][j].address);
-          // let stopTime = this.stopTimeFormat(this.itinerary.togos[i][j].stopTime.hrs, this.itinerary.togos[i][j].stopTime.mins);
           let stopTime = this.itinerary.togos[i][j].stopTime;
           let memo = this.itinerary.togos[i][j].memo;
           // let memo = "lalalalal";
           let startTime = baseTime;
-          if (j !== 0){
-            startTime = this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
+          if (j !== 0 && this.itinerary.travelInfos[i] !== null){
+            if (this.itinerary.travelInfos[i] !== undefined){
+              startTime = 
+                this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
+            }
           }
-          let tmpTogo = {
+          tmpTogo = {
             index: index,
             startTime: startTime,
             stopTime: stopTime,
@@ -232,14 +252,19 @@ export default {
           // console.log("tmpTogo", tmpTogo);
           tmpDay.push(tmpTogo);
         }
-        for (let j = 0; j < this.itinerary.travelInfos[i].length; j++){ // 0 1 1
-          tmpDay[j+1].traffic = this.trafficFormat(this.itinerary.travelInfos[i][j].mode, this.itinerary.travelInfos[i][j].duration);
-          tmpDay[j+1].startTime = this.calculateStartTime(tmpDay[j].startTime, this.itinerary.travelInfos[i][j].duration, this.itinerary.togos[i][j+1].stopTime);
-        }
-        for (let j = 0; j < this.itinerary.togos[i].length; j++){
-          tmpDay[j].stopTimeFormat = this.stopTimeFormat(tmpDay[j].stopTime.hrs, tmpDay[j].stopTime.mins)
-          tmpDay[j].startTimeFormat = this.startTimeFormat(tmpDay[j].startTime);
-          tmpDay[j].stayTimeFormat = this.stayTimeFormat(tmpDay[j].startTime, tmpDay[j].stopTime);
+        if (this.itinerary.travelInfos[i] !== null){
+          if (this.itinerary.travelInfos[i] !== undefined){
+            for (let j = 0; j < this.itinerary.travelInfos[i].length; j++){ // 0 1 1
+              tmpDay[j+1].traffic = this.trafficFormat(this.itinerary.travelInfos[i][j].mode, this.itinerary.travelInfos[i][j].duration);
+              tmpDay[j+1].startTime = 
+                this.calculateStartTime(tmpDay[j].startTime, this.itinerary.travelInfos[i][j].duration, this.itinerary.togos[i][j+1].stopTime);
+            }
+            for (let j = 0; j < this.itinerary.togos[i].length; j++){
+              tmpDay[j].stopTimeFormat = this.stopTimeFormat(tmpDay[j].stopTime.hrs, tmpDay[j].stopTime.mins)
+              tmpDay[j].startTimeFormat = this.startTimeFormat(tmpDay[j].startTime);
+              tmpDay[j].stayTimeFormat = this.stayTimeFormat(tmpDay[j].startTime, tmpDay[j].stopTime);
+            }
+          }
         }
         this.days.push(tmpDay);
       }
@@ -248,8 +273,8 @@ export default {
     modifyItinerary: function(){
       this.$router.push({path: '/trip'});
     },
-    getLockStatus: function(itinerary){
-      if (itinerary.isPublic == undefined || itinerary.isPublic == true){
+    getLockStatus: function(){
+      if (this.itinerary.isPublic == undefined || this.itinerary.isPublic == true){
         return true;
       }
       return false;
@@ -293,10 +318,11 @@ export default {
     }
   },
   created() {
-    console.log("itinerary", this.itinerary);
+    console.log("itinerary create", this.itinerary);
     this.resetDetailInfo();
   },
   beforeDestroy() {
+    console.log("MD beforeDestroy", this.itinerary);
     this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
   },
   watch: {

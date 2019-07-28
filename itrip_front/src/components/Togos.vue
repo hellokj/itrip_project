@@ -278,6 +278,7 @@ export default {
       },
     },
     created() {
+      console.log("itinerary", this.itinerary);
       this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
     },
     beforeMount() {

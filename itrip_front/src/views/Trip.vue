@@ -140,7 +140,7 @@ export default {
       let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
       let _id = "";
-      if (this.itinerary._id != undefined){
+      if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
         _id = this.itinerary._id;
       }
       let self = this;
@@ -461,6 +461,7 @@ export default {
     });
     this.$bus.$on('modifyItinerary', event => {
       self.itinerary = event.itinerary;
+      console.log("trip get", self.itinerary);
     });
   },
   beforeMount() {

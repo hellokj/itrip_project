@@ -4,21 +4,22 @@
   <MemberAside
     :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
-    v-on:changeToCarousel="changeView"
+    v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
     v-on:checkDetail="checkDetail"
     v-on:checkFollowing="changeView('MemberFollowingList')"
     v-on:setMemberInfo="changeView('MemberInfos')">
   </MemberAside>
-  <component :is="view" :title="title" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
+  <component 
+    :is="view" :title="title" 
+    :incomingItineraries="incomingItineraries" 
+    :historyItineraries="historyItineraries" 
+    :itinerary="itinerary" 
+    v-on:changeToCarousel="changeView('MemberItineraryCarousel')" 
+    v-on:checkDetail="checkDetail">
+  </component>
   <!-- <keep-alive>
     
   </keep-alive> -->
-  <!-- 所有行程幻燈片 -->
-  <!-- <MemberItineraryCarousel v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries"></MemberItineraryCarousel> -->
-
-  <!-- 詳細行程 -->
-  <!-- <MemberDetailItinerary v-if="flag == true" :itinerary="checkDetail"></MemberDetailItinerary> -->
-
 </el-container>
 </template>
 
@@ -75,6 +76,10 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
+      // 接收瀏覽所有行程資訊
+      this.$bus.$on("changeToCarousel", event => {
+        self.changeView("MemberItineraryCarousel");
+      });
       // 接收開啟會員資訊
       this.$bus.$on("setMemberInfo", event => {
         self.changeView("MemberInfos");
@@ -108,8 +113,12 @@ export default {
       this.view = viewName;
     }
   },
+  updated() {
+    
+  },
   beforeDestroy() {
     this.$bus.$off('setMemberInfo');
+    this.$bus.$off('changeView');
   },
 
 };

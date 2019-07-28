@@ -75,8 +75,10 @@ export default {
     },
     getDayRoutes: function(day){
       let dayRoutes = [];
-      for(let i = 0; i < day[0].routes.length; i++){
-        dayRoutes.push(day[0].routes[i]);
+      if (day !== null){
+        for(let i = 0; i < day[0].routes.length; i++){
+          dayRoutes.push(day[0].routes[i]);
+        }
       }
       return dayRoutes;
     },
