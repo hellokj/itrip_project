@@ -43,7 +43,7 @@
                                         type="textarea"
                                         :placeholder="placeholder"
                                         v-model="togo.memo"
-                                        maxlength="30"
+                                        maxlength="15"
                                         show-word-limit>
                                     </el-input>
                                 </el-popover>
