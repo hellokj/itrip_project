@@ -21,6 +21,8 @@ export default {
 
 <style scoped>
     .MobileHeader {
+        position: sticky;
+        top: 0;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;

@@ -2,7 +2,7 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" md="12" lg="4" xl="4"
+        class="px-0 togos-col" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
@@ -15,7 +15,7 @@
         :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" md="12" lg="5" xl="5"
+      class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
       :style="[($resize && !$mq.above(1025) && selected != 1 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots

@@ -23,12 +23,13 @@
       </div>
     </div>
     
-    <div class="vld-parent result-container" ref="list">
+    <div class="vld-parent result-container">
       <div v-if="isResultNotFound" class="notFound" style="height:50%;display:flex;flex-direction:column;justify-content:center;">
         <i class="fas fa-kiwi-bird" style="font-size:50px;text-align:center;">....</i>
-        <p style="font-size: 30px;text-align: center;">包欠，查不到!</p>
+        <p style="font-size: 30px;text-align: center;">抱歉，沒有結果!</p>
         </div>
-      <virtual-list :size="165" :remain="5" @change="showLoading" >
+        <div style="width: 100%; height: 70vh; overflow-y: scroll;" ref="spotslist">
+      <!-- <virtual-list :size="165" :remain="5" @change="showLoading" ref="list"> -->
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
@@ -47,7 +48,8 @@
                 :labels="paginationAnchorTexts"
                 style="display:flex;justify-content:center;"></v-pagination>
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
-      </virtual-list>
+      <!-- </virtual-list> -->
+      </div>
     <modal name='link-window' :resizable="true" width="90%" height="80%" ><iframe width="100%" height="100%" :src="url"></iframe></modal>
     <modal name='edit-form' ref="edit-spot-modal" :resizable="true" width="45%" height="580px"><EditSpotModal :spot="selectedSpot" @close="closeModal" 
     @refresh="$emit('refresh', null)"/></modal>
@@ -181,8 +183,12 @@ export default {
           return;
         }
         this.$emit('get-spot', newVal);
-        var elem = this.$refs["list"];
-        elem.scrollTo(0, 0);
+        var elem = this.$refs["spotslist"];
+        elem.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
       },
       sortBy: function(newVal) {
         // alert(this.sortBy)
@@ -209,7 +215,7 @@ export default {
     border-left: 1px solid rgb(230, 230, 230);
     background: rgb(250,250,250);
     color: black;
-    height: 90%;
+    height: 90vh;
     margin: 10px;
     width: 100%;
   }
