@@ -381,7 +381,6 @@ export default {
           this.selectedSpot = index;
         }  
       }
-       
     },
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map', 'Togos/Spots'];

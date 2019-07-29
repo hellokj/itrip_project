@@ -1,7 +1,17 @@
 <template>
 <el-container style="height: 90vh; border: 1px solid #eee">
   <!-- 會員頁面側邊欄 -->
+  <MobileMemberAside 
+    v-if="($resize && !$mq.above(1025))"
+    :incomingItineraries="incomingItineraries"
+    :historyItineraries="historyItineraries"
+    v-on:changeToCarousel="changeView('MobileMemberItineraryCarousel')"
+    v-on:checkDetail="checkDetail"
+    v-on:checkFollowing="changeView('MobileMemberFollowingList')"
+    v-on:setMemberInfo="changeView('MobileMemberInfos')">
+  </MobileMemberAside>
   <MemberAside
+    v-if="($resize && $mq.above(1025))"
     :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
     v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
@@ -9,7 +19,21 @@
     v-on:checkFollowing="changeView('MemberFollowingList')"
     v-on:setMemberInfo="changeView('MemberInfos')">
   </MemberAside>
-  <component 
+
+  <component
+    v-if="($resize && !$mq.above(1025))"
+    :is="view" :title="title"
+    :incomingItineraries="incomingItineraries" 
+    :historyItineraries="historyItineraries" 
+    :itinerary="itinerary"
+    v-on:changeToCarousel="changeView('MobileMemberItineraryCarousel')"
+    v-on:loading="loading"
+    v-on:loadingComplete="loadingComplete"
+    v-on:checkDetail="checkDetail">
+  </component>
+
+  <component
+    v-if="($resize && $mq.above(1025))"
     :is="view" :title="title"
     :incomingItineraries="incomingItineraries" 
     :historyItineraries="historyItineraries" 
@@ -21,9 +45,6 @@
   </component>
   <loading :active.sync="isLoading" :is-full-page="true">
   </loading>
-  <!-- <keep-alive>
-    
-  </keep-alive> -->
 </el-container>
 </template>
 
@@ -32,8 +53,11 @@ import VueLoading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 
 import MemberAside from '../components/MemberAside'
+import MobileMemberAside from '../components/MobileMemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
+import MobileMemberItineraryCarousel from "../components/MobileMemberItineraryCarousel"
 import MemberDetailItinerary from '../components/MemberDetailItinerary'
+import MobileMemberDetailItinerary from '../components/MobileMemberDetailItinerary'
 import MemberInfos from '../components/MemberInfos'
 import MemberFollowingList from '../components/MemberFollowingList'
 import { apiGetItineraries } from '../../utils/api'
@@ -41,9 +65,12 @@ import { setTimeout } from 'timers';
 export default {
   name: "Member",
   components: {
+    MobileMemberAside: MobileMemberAside,
     MemberAside: MemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
+    MobileMemberItineraryCarousel: MobileMemberItineraryCarousel,
     MemberDetailItinerary: MemberDetailItinerary,
+    MobileMemberDetailItinerary: MobileMemberDetailItinerary,
     MemberInfos: MemberInfos,
     MemberFollowingList: MemberFollowingList,
     loading: VueLoading
@@ -112,6 +139,7 @@ export default {
       }
     },
     checkDetail: function(itinerary){
+      let self = this;
       this.loading();
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){
@@ -120,8 +148,12 @@ export default {
         this.title = "即將到來行程";
       }
       setTimeout(()=>{
-        this.changeView('MemberDetailItinerary');
-      }, 1500);
+        if (self.$resize && self.$mq.above(1025)){
+          self.changeView('MemberDetailItinerary');
+        }else {
+          self.changeView('MobileMemberDetailItinerary');
+        }
+      }, 2000);
     },
     changeView: function(viewName){
       this.view = viewName;

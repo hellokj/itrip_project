@@ -1,5 +1,5 @@
 <template>
-  <el-carousel :interval="4000" type="card" height="30vh">
+  <el-carousel :autoplay="false" height="30vh" trigger="click" arrow="always" indicator-position="none">
     <el-carousel-item style="border: 3px solid #edb855" v-model="itineraries" v-for="(item, index) in itineraries" :key="index">
       <div style="width: auto; height: 100%;" @click="checkDetail(item)">
         <img fit="fit" :src='imgSrc(item)' style="width: 100%; height: 100%;" class="card_img">
