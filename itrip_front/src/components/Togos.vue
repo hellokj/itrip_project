@@ -18,9 +18,9 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:20px;"></i>
-          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="分享" class="fas fa-share-alt" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
+          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
         </div>
       </div>
       
@@ -47,7 +47,7 @@
           </div>
           <b-tab v-for="i in tabs" :key="'tab' + i">
             <template slot="title">
-                {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
+                {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
           <virtual-list :size="170" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">

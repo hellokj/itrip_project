@@ -2,7 +2,7 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" md="12" lg="4" xl="4"
+        class="px-0 togos-col" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
@@ -15,7 +15,7 @@
         :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" md="12" lg="5" xl="5"
+      class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
       :style="[($resize && !$mq.above(1025) && selected != 1 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
@@ -121,7 +121,7 @@ export default {
       travelInfos: [],
       paginator: {},
       centerSpot: {},
-      selected: 1,
+      selected: 3,
       isMapShown: true,
       paramProp: '',
       selectedSpot: 0,
@@ -129,7 +129,7 @@ export default {
       dayNum: 1,
       itinerary: {},
       updateMap:0,
-
+      windowWidth: 0,
       // query parameters
       qplace: this.$route.query.qplace,
       qname: this.$route.query.qname,
@@ -441,6 +441,9 @@ export default {
     filterSpot: function(checkedCategories) {
       this.$set(this.paramProp, 'categories', checkedCategories);
     },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
   },
   watch: {
     param: function(newVal) {
@@ -489,6 +492,15 @@ export default {
             this.isAddSpotLocked = false
         },1000)
       }
+    },
+    // watch window width
+    windowWidth: function(newVal, oldVal) {
+      if(newVal <= 768 && this.selected == 3) {
+        this.selected = 1;
+      }
+      if(newVal > 768 && newVal <= 1024 && (this.selected == 1 || this.selected == 0)) {
+        this.selected = 3;
+      }
     }
   },
   created () {
@@ -512,32 +524,9 @@ export default {
 
 
       this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
-      // let getSpotPromise = (data) => {
-      //   var spots = this.callGetSpotApi(makeParams(null, null, null, data));
-      //   return new Promise((resolve, reject) => {
-      //     if (spots){
-      //       resolve(spots);
-      //     } else {
-      //       reject(new Error(`Can not get spot`))
-      //     }
-      //   })
-      // }
-
-      // getSpotPromise(this.qspot)
-      // .then((spots)=>{
-      //   spots.map((val)=>{
-      //         if(val._id == this.qid) addSpotToTrip(val)
-      //       })
-      // })
-      // .catch(err => {
-      //   console.log(err);
-      // })
-      
-        
     }
-  },
-  beforeMount() {
-    
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
   },
   mounted() {
     let data = {
@@ -552,6 +541,9 @@ export default {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
+  },
+  destroy: function() {
+     window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>
