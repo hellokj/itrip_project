@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="ml-4 category-container" style="display:flex;flex-direction:column;">
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange">全部選取</el-checkbox>
+        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange" style="width:30px;">All</el-checkbox>
         <el-checkbox-group v-model="checkedCategories" @change="handleCheckedCategoryListChange">
           <el-checkbox v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
         </el-checkbox-group>
@@ -24,7 +24,10 @@
     </div>
     
     <div class="vld-parent result-container">
-      <div v-if="isResultNotFound" class="notFound"><p style="font-size: 30px;text-align: center;">查無資料!</p></div>
+      <div v-if="isResultNotFound" class="notFound" style="height:50%;display:flex;flex-direction:column;justify-content:center;">
+        <i class="fas fa-kiwi-bird" style="font-size:50px;text-align:center;">....</i>
+        <p style="font-size: 30px;text-align: center;">包欠，查不到!</p>
+        </div>
       <virtual-list :size="165" :remain="5" @change="showLoading">
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
