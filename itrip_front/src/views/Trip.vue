@@ -535,7 +535,8 @@ export default {
 
 <style scoped>
   .trip {
-    height: 100%;
+    height: 90vh;
+    overflow: hidden;
     background: rgb(250,250,250);
   }
   .map-col {

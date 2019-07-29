@@ -45,11 +45,12 @@
             placeholder="請輸入時間"
             style="width: 140px;"/>
           </div>
-          <b-tab v-for="i in tabs" :key="'tab' + i">
+          <b-tab v-for="i in tabs" :key="'tab' + i" style="heigh: 50vh; overflow-Y: scroll;">
             <template slot="title">
                 {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-          <virtual-list :size="170" :remain="4">
+            <div style="height: 60vh;">
+          <!-- <virtual-list :size="170" :remain="4"> -->
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
@@ -68,7 +69,8 @@
                   </div>
                 </transition-group>
             </draggable> 
-          </virtual-list>
+          <!-- </virtual-list> -->
+          </div>
         </b-tab>    
       </b-tabs>
     </div>
@@ -312,7 +314,7 @@ export default {
     border: none;
     background: rgb(250,250,250);
     color:black;
-    height:100%;
+    height:70vh;
     width: 100%;
     border-left: 2px solid rgb(230, 230, 230);
   }
@@ -436,6 +438,9 @@ export default {
   .fa-map-marked-alt {
     font-size: 20px;
     cursor: pointer;
+  }
+  .tab-container{
+    height: 500px;
   }
 
   @media only screen and (max-width: 768px) {
