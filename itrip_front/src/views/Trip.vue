@@ -172,7 +172,7 @@ export default {
       let self = this;
       apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
       .then((function (res) {
-        //console.log("res", res);
+        console.log(res);
       }))
       .catch(function (error) {
         console.log(error);
@@ -507,9 +507,9 @@ export default {
       }
     },
     itinerary: function(newVal, oldVal){
-      for (let i = 0; i < newVal.togos.length; i++){
-        this.togos[i] = newVal.togos[i];
-        this.travelInfos[i] = newVal.travelInfos[i];
+      for (let i=0;i<newVal.togos.length;i++){
+        this.$set(this.togos, i, newVal.togos[i]);
+        this.$set(this.travelInfos, i, newVal.travelInfos[i]);
       };
     },
     isAddSpotLocked: function(newVal, oldVal) {
@@ -552,6 +552,12 @@ export default {
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
   },
+  beforeMount() {
+    if(this.qviewId !== undefined) {
+      this.getSharedTrip(this.qviewId);
+      this.qviewId = '';
+    }
+  },
   mounted() {
     let data = {
       limit: 10,
@@ -569,9 +575,6 @@ export default {
       this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true)
     } else {
       this.paramProp = data;
-    }
-    if(this.qviewId !== undefined) {
-      this.getSharedTrip(this.qviewId);
     }
   },
   beforeDestroy: function() {

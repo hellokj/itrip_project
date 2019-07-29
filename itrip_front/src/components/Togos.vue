@@ -20,7 +20,26 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
           <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="分享" class="fas fa-share-alt" @click="shareTrip" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <!-- @click="shareTrip" -->
+          <el-dropdown placement="bottom-start">
+            <span class="el-dropdown-link">
+              <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i> 
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <social-sharing url="https://vuejs.org/" inline-template>
+                <div class="social-div">
+                  <network network="facebook">
+                    <el-dropdown-item><i class="fab fa-facebook-square"></i> Facebook</el-dropdown-item>
+                  </network>
+                  <network network="twitter">  
+                    <el-dropdown-item><i class="fab fa-twitter"></i> Twitter</el-dropdown-item>
+                  </network>  
+                </div>
+              </social-sharing>
+            </el-dropdown-menu>
+             
+          </el-dropdown>
+          
         </div>
       </div>
       
@@ -106,6 +125,7 @@ export default {
         isScrollbarShown: false,
         update: 0,
         viewMapString: '檢視地圖',
+        itineraryLoaded: false,
       }
     },
     components: {
@@ -279,18 +299,16 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      updateTabs: async function(){
+      updateTabs: function(){
         let self = this;
-        if (self.itinerary != undefined){
-          await this.$nextTick(function() {
-            if (self.itinerary.togos != undefined){
-              for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-                self.newTab();
-              };
-              self.tripName = self.itinerary.name;
-              self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-            }
-          });
+        if (self.itinerary != undefined){ 
+          if (self.itinerary.togos != undefined){
+            for (let i = 0; i < self.itinerary.togos.length - 1; i++){
+              self.newTab();
+            };
+            self.tripName = self.itinerary.name;
+            self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+          }
         }
       }
     },
@@ -300,6 +318,14 @@ export default {
           this.travelInfos = this.travelInfo;
         },
         immediate: true,
+      },
+      itinerary: {
+        handler: function() {
+          if(!this.itineraryLoaded) {
+            this.updateTabs();
+            this.itineraryLoaded = true;
+          }
+        }
       },
       page: function(){
         this.currentPage = this.page;
@@ -325,9 +351,6 @@ export default {
       }
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
-    },
-    mounted() {
-      this.updateTabs();
     },
 }
 </script>

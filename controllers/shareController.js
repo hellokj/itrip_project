@@ -29,7 +29,7 @@ const shareItineraries = async (req, res, next) => {
         togos: togos,
         travelInfos: travelInfos
     });
-    itinerary.save().then(() => Response(null, togos, res));
+    itinerary.save().then(() => res.json({status: -1, msg:'success', data: id}));
 }
 
 module.exports = {
