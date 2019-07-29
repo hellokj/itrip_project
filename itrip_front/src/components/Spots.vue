@@ -150,7 +150,7 @@ export default {
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.categories.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.categories.length;
-      }
+      },
     },
     computed: {
       getQuery: function() {

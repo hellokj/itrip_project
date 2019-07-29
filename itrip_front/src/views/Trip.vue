@@ -121,7 +121,7 @@ export default {
       travelInfos: [],
       paginator: {},
       centerSpot: {},
-      selected: 1,
+      selected: 3,
       isMapShown: true,
       paramProp: '',
       selectedSpot: 0,
@@ -129,7 +129,7 @@ export default {
       dayNum: 1,
       itinerary: {},
       updateMap:0,
-
+      windowWidth: 0,
       // query parameters
       qplace: this.$route.query.qplace,
       qname: this.$route.query.qname,
@@ -441,6 +441,9 @@ export default {
     filterSpot: function(checkedCategories) {
       this.$set(this.paramProp, 'categories', checkedCategories);
     },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
   },
   watch: {
     param: function(newVal) {
@@ -489,6 +492,15 @@ export default {
             this.isAddSpotLocked = false
         },1000)
       }
+    },
+    // watch window width
+    windowWidth: function(newVal, oldVal) {
+      if(newVal <= 768 && this.selected == 3) {
+        this.selected = 1;
+      }
+      if(newVal > 768 && newVal <= 1024 && (this.selected == 1 || this.selected == 0)) {
+        this.selected = 3;
+      }
     }
   },
   created () {
@@ -501,10 +513,20 @@ export default {
       self.itinerary = event.itinerary;
       console.log("trip get", self.itinerary);
     });
-    
-  },
-  beforeMount() {
-    
+    if (this.qname !== undefined){
+      this.callGetSpotApi(makeParams(null, null, null, this.qname));
+    } 
+    if (this.qplace !== undefined) {
+      this.callGetSpotApi(makeParams(null, this.qplace));
+    }
+    if (this.qspot !== undefined && this.qid !== undefined) {
+      alert(this.qspot + ", " + this.qid)
+
+
+      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
+    }
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
   },
   mounted() {
     let data = {
@@ -529,6 +551,9 @@ export default {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
+  },
+  destroy: function() {
+     window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>
