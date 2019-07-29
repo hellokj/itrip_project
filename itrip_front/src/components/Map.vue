@@ -8,9 +8,8 @@
         <l-marker ref="marker"  v-if="checkList.includes('景點圖標')"
         :icon="icons[index]" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
         @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)">
-          <l-popup :options="{autoClose: false, closeOnClick: false}">
+          <l-popup :options="{autoClose: false, closeOnClick: false}" style="width:auto;height:10px;">
             <div class="name"><b>{{ spots[index].name }}</b></div>
-            <div class="addr">{{ Address(index) }}</div>
           </l-popup>
         </l-marker>
       </div>
@@ -18,9 +17,8 @@
         <l-marker v-if="checkList.includes('路徑指示')"
         :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
         @add="openTogosPopup($event)">
-        <l-popup :options="{autoClose: false, closeOnClick: false}">
+        <l-popup :options="{autoClose: false, closeOnClick: false}" style="width:auto;height:10px;">
           <div class="name"><b>{{index + 1}}. {{ spots[index].name }}</b></div>
-          <div class="addr">{{ Address(index) }}</div>
         </l-popup>
         </l-marker>
       </div>
@@ -66,8 +64,8 @@ export default {
        // polyline options
       className: 'my_polyline',
       color: "#fc9d03",
-      opacity: 0.6,
-      weight: 7,
+      opacity: 0.7,
+      weight: 8,
       routesArr: [],
       currentPage: 0,
       currentTogoNum: 0,
@@ -99,7 +97,7 @@ export default {
           icon: '',
           markerColor: 'darkblue',
           prefix: 'fa',
-          text: ((i+1) + ((this.spotPage-1) *  this.perPage))
+          text: ((i+1) + ((this.spotPage-1) *  this.perPage)),
         }));
       }
     },
@@ -164,7 +162,7 @@ export default {
       if(this.togos !== undefined) {
         for(let i=0;i<this.togos.length;i++) {
           let togoIcon = L.divIcon({
-            html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
+            html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></p></i>',
             iconSize: [20, 20],
             className: 'myDivIcon'
         });
@@ -202,12 +200,16 @@ export default {
     spotPage: function() {
       this.updateMarkers();
     },
-    centerSpot: function(newVal, oldVal) {
-      let oldIndex = oldVal.index;
-      let newIndex = newVal.index;
-      let location = newVal.location
-      this.center =  L.latLng(location.coordinates[1], location.coordinates[0]);
-      this.zoom = this.centerSpot.zoom;
+    centerSpot: {
+       handler(newVal, oldVal) {
+        this.resetRoutesArr();
+        let oldIndex = oldVal.index;
+        let newIndex = newVal.index;
+        let location = newVal.location
+        this.center =  L.latLng(location.coordinates[1], location.coordinates[0]);
+        this.zoom = this.centerSpot.zoom;
+      },
+      deep: true
     },
   },
   computed: {
@@ -224,7 +226,7 @@ export default {
 <style scoped>
   .map{
     width: auto;
-    height: 43vh;
+    height: 50%;
   }
   .icon::before {
     display: inline-block;
@@ -235,11 +237,11 @@ export default {
   }
   .my_polyline {
     stroke: white;
-    fill: none;
+    fill: white;
     stroke-dasharray: 10,10; 
-    stroke-width: 5;  
+    stroke-width: 10;  
   }
-  @media only screen and (max-width: 767px) {
+  @media only screen and (max-width: 1024px) {
     #map {
       width: 100%;
       height: 80%;

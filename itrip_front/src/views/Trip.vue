@@ -2,8 +2,8 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" md="4" lg="4" xl="4"
-        :style="[($resize && !$mq.above(769) && selected != 0) ? { display: 'none' }:{ display: 'flex'}]"
+        class="px-0 togos-col" cols="12" md="12" lg="4" xl="4"
+        :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
         id="togos"
@@ -15,8 +15,8 @@
         :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" md="5" lg="5" xl="5"
-      :style="[($resize && !$mq.above(769) && selected != 1) ? { display: 'none' }:{ display: 'flex'}]"
+      class="px-0 spots-col" cols="12" md="12" lg="5" xl="5"
+      :style="[($resize && !$mq.above(1025) && selected != 1 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
           id="spots"
@@ -32,11 +32,11 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="map-col" cols="12" md="3" lg="3" xl="3" order=displayOrders[2] order-md="3"
-      :style="[($resize && !$mq.above(769) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
-      :value="selected" no-gutters>
+      class="map-col" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(1025) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      :value="selected" no-gutters fluid>
         <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
-          <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
+          <div class="big-image-container" :style="[($resize && !$mq.above(1025)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
                 <vue-load-image  style="width:100%;height:100%;">
@@ -362,19 +362,21 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
+      if(this.checkList.includes('景點圖標')) {
         this.centerSpot = spot;
-        this.centerSpot.zoom = 15;
+        this.$set(this.centerSpot, 'zoom', 12);
         this.$set(this.centerSpot, 'index', index);
         if(index != null) {
           this.selectedSpot = index;
-        }
+        }  
+      }
+       
     },
     toggle: function(toggle) {
-      let components = ['Togos', 'Spots', 'Map'];
+      let components = ['Togos', 'Spots', 'Map', 'Togos/Spots'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
           this.selected = i;
-          return;
         }
       }
     },
@@ -509,8 +511,8 @@ export default {
     border-right: 2px solid rgb(230, 230, 230);
   }
   .big-image-container {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 40px;
+    padding-bottom: 40px;
     background: #f2f2f2;
     height: 45%;
     width: 100%;

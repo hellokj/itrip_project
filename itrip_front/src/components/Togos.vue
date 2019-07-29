@@ -3,25 +3,27 @@
     <div class="py-3 px-2 info-container">
       <div class="tripName">
         <div style="width:100%;">
-          旅行名稱
+          名稱
           <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
         </div>
-        <div>
+      </div>
+      <div class="tripDate" style="display:flex;justify-content:space-between;">
+        <div class="ml-0 row">
+          <p class="px-0 mx-0 mb-0 mr-1 pTripDate" style="line-height:35px;">日期</p>
+          <el-date-picker
+          class="ml-0 iDatePicker"
+          v-model="tripDate"
+          type="date"
+          placeholder="選擇日期"
+          style="width:150px;"/>  
+        </div>
+        <div class="mt-2 mr-1 save-trip">
+          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:20px;"></i>
+          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="分享" class="fas fa-share-alt" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
         </div>
       </div>
-      <div class="tripDate">
-        <p class="px-0 mx-0 mb-0 pt-2 mr-1 pTripDate">開始日期</p>
-        <el-date-picker
-        class="ml-0 iDatePicker"
-        v-model="tripDate"
-        type="date"
-        placeholder="選擇日期"
-        style="width:150px;"/>
-      </div>
-      <div class="mt-2 mr-1 save-trip">
-        <el-button @click="saveTrip"><i class="fas fa-save">   儲存</i></el-button>
-        <el-button @click="saveTripAsPdf"><i class="fas fa-file-pdf"></i>   另存為PDF</el-button>
-      </div>
+      
     </div>
     <div class="tab-container">
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
@@ -29,7 +31,7 @@
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
           </template>
           <div class="trip-time">
-            <p>出發時間:</p>
+            <p class="mb-0 pt-1">出發時間:</p>
             <el-time-select
             class="ml-3 mr-4"
             v-model="startTime"
@@ -318,7 +320,9 @@ export default {
     opacity: 0;
   }
   .save-trip {
-    text-align: right;
+    width: 40%;
+    display: flex;
+    justify-content: space-around;
   }
   .info-container {
     border-bottom: 2px solid rgb(243, 243, 243);
@@ -414,10 +418,8 @@ export default {
     background: #333555;
   }
   .fa-save {
-    border:darkgray;
     color:darkred;
     cursor: pointer;
-    font-size: 15px;
   }
   .flip-list-move {
     transition: transform 0.5s;
