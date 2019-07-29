@@ -1,6 +1,6 @@
 <template>
   <div class="MyTrip">
-    <div class="py-3 m-0 info-container">
+    <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
           名稱
@@ -20,7 +20,7 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
           <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="分享" class="fas fa-share-alt" @click="shareTrip" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
         </div>
       </div>
       
@@ -148,6 +148,25 @@ export default {
           }
           this.$emit('saveTrip', this.tripName, this.tripDate);
         }
+      },
+      shareTrip() {
+        if (this.tripDate.date == ""){
+            // 預設今天日期
+            let date = new Date();
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            this.tripDate = year + "-" + month + "-" + day;
+        }
+        else {
+          //console.log(this.tripDate)
+          let date = new Date(Date.parse(this.tripDate));
+          let year = date.getFullYear();
+          let month = date.getMonth() + 1;
+          let day = date.getDate();
+          this.tripDate = year + "-" + month + "-" + day;
+        }
+        this.$emit('share', this.tripName, this.tripDate);
       },
       changePage(){
         this.$emit('change-page', this.currentPage);
