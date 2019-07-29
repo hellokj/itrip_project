@@ -72,7 +72,9 @@ export default {
     },
     methods: {
       sendPlaceToTripPage(place){
-        this.$router.push("/trip/?qplace=" + place);
+        var p = place;
+        if (place.indexOf('台') == 0) p = '臺' + place.substr(1, 2);
+        this.$router.push("/trip/?qplace=" + p);
       },
       sendNameToTripPage(name){
         this.$router.push("/trip/?qname=" + name);

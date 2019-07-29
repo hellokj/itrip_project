@@ -501,40 +501,7 @@ export default {
       self.itinerary = event.itinerary;
       console.log("trip get", self.itinerary);
     });
-    if (this.qname !== undefined){
-      this.callGetSpotApi(makeParams(null, null, null, this.qname));
-    } 
-    if (this.qplace !== undefined) {
-      this.callGetSpotApi(makeParams(null, this.qplace));
-    }
-    if (this.qspot !== undefined && this.qid !== undefined) {
-      alert(this.qspot + ", " + this.qid)
-
-
-      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
-      // let getSpotPromise = (data) => {
-      //   var spots = this.callGetSpotApi(makeParams(null, null, null, data));
-      //   return new Promise((resolve, reject) => {
-      //     if (spots){
-      //       resolve(spots);
-      //     } else {
-      //       reject(new Error(`Can not get spot`))
-      //     }
-      //   })
-      // }
-
-      // getSpotPromise(this.qspot)
-      // .then((spots)=>{
-      //   spots.map((val)=>{
-      //         if(val._id == this.qid) addSpotToTrip(val)
-      //       })
-      // })
-      // .catch(err => {
-      //   console.log(err);
-      // })
-      
-        
-    }
+    
   },
   beforeMount() {
     
@@ -546,7 +513,17 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    this.paramProp = data;
+
+    if (this.qname !== undefined) {
+      this.callGetSpotApi(makeParams(null, null, null, this.qname));
+    } else if (this.qplace !== undefined) {
+      this.callGetSpotApi(makeParams(null, this.qplace, null, null));
+    } else if (this.qspot !== undefined && this.qid !== undefined) {
+      alert(this.qspot + ", " + this.qid)
+      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true)
+    } else {
+      this.paramProp = data;
+    }
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]

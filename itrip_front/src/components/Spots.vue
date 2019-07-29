@@ -23,12 +23,12 @@
       </div>
     </div>
     
-    <div class="vld-parent result-container">
+    <div class="vld-parent result-container" ref="list">
       <div v-if="isResultNotFound" class="notFound" style="height:50%;display:flex;flex-direction:column;justify-content:center;">
         <i class="fas fa-kiwi-bird" style="font-size:50px;text-align:center;">....</i>
         <p style="font-size: 30px;text-align: center;">包欠，查不到!</p>
         </div>
-      <virtual-list :size="165" :remain="5" @change="showLoading">
+      <virtual-list :size="165" :remain="5" @change="showLoading" >
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
@@ -181,6 +181,8 @@ export default {
           return;
         }
         this.$emit('get-spot', newVal);
+        var elem = this.$refs["list"];
+        elem.scrollTo(0, 0);
       },
       sortBy: function(newVal) {
         // alert(this.sortBy)
