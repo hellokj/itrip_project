@@ -3,12 +3,10 @@ import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import { Icon }  from 'leaflet'
-
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
-
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -22,21 +20,26 @@ import eventBus from '../utils/eventBus.js'
 import 'ant-design-vue/dist/antd.css'
 import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
+import jsPDF from 'jspdf'
+
+
+
+
 
 const mediaQueries = new MediaQueries();
- 
+
 Vue.use(mediaQueries);
 Vue.use(ElementUI);
 // configure language
 locale.use(lang)
 Vue.use(Vuex);
+Vue.use(jsPDF);
 Vue.use(Antd);
 Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
 Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
 
 delete Icon.Default.prototype._getIconUrl;
-
 (function (d, s, id) {
   var js,
   fjs = d.getElementsByTagName(s)[0];

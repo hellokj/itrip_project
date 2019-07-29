@@ -4,38 +4,49 @@
   <MemberAside
     :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
-    v-on:changeToCarousel="changeView"
+    v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
     v-on:checkDetail="checkDetail"
     v-on:checkFollowing="changeView('MemberFollowingList')"
     v-on:setMemberInfo="changeView('MemberInfos')">
   </MemberAside>
-  <component :is="view" :title="title" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries" :itinerary="itinerary" v-on:changeToCarousel="changeView" v-on:checkDetail="checkDetail"></component>
+  <component 
+    :is="view" :title="title"
+    :incomingItineraries="incomingItineraries" 
+    :historyItineraries="historyItineraries" 
+    :itinerary="itinerary"
+    v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
+    v-on:loading="loading"
+    v-on:loadingComplete="loadingComplete"
+    v-on:checkDetail="checkDetail">
+  </component>
+  <loading :active.sync="isLoading" :is-full-page="true">
+  </loading>
   <!-- <keep-alive>
     
   </keep-alive> -->
-  <!-- 所有行程幻燈片 -->
-  <!-- <MemberItineraryCarousel v-if="flag == true" :incomingItineraries="incomingItineraries" :historyItineraries="historyItineraries"></MemberItineraryCarousel> -->
-
-  <!-- 詳細行程 -->
-  <!-- <MemberDetailItinerary v-if="flag == true" :itinerary="checkDetail"></MemberDetailItinerary> -->
-
 </el-container>
 </template>
 
 <script>
+import VueLoading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
+
 import MemberAside from '../components/MemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
 import MemberDetailItinerary from '../components/MemberDetailItinerary'
 import MemberInfos from '../components/MemberInfos'
 import MemberFollowingList from '../components/MemberFollowingList'
 import { apiGetItineraries } from '../../utils/api'
+import { setTimeout } from 'timers';
 export default {
+  name: "Member",
   components: {
     MemberAside: MemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
     MemberDetailItinerary: MemberDetailItinerary,
     MemberInfos: MemberInfos,
-    MemberFollowingList: MemberFollowingList
+    MemberFollowingList: MemberFollowingList,
+    loading: VueLoading
   },
   data() {
     return {
@@ -48,9 +59,10 @@ export default {
       incomingItineraries: [],
       historyItineraries: [],
       flag: false,
-      view: 'MemberInfos',
+      view: 'MemberItineraryCarousel',
       itinerary: Object,
       title: "",
+      isLoading: false,
     }
   },
   created() {
@@ -75,6 +87,10 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
+      // 接收瀏覽所有行程資訊
+      this.$bus.$on("changeToCarousel", event => {
+        self.changeView("MemberItineraryCarousel");
+      });
       // 接收開啟會員資訊
       this.$bus.$on("setMemberInfo", event => {
         self.changeView("MemberInfos");
@@ -96,20 +112,33 @@ export default {
       }
     },
     checkDetail: function(itinerary){
-      this.changeView('MemberDetailItinerary');
+      this.loading();
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){
         this.title = "歷史行程";
       } else {
         this.title = "即將到來行程";
       }
+      setTimeout(()=>{
+        this.changeView('MemberDetailItinerary');
+      }, 1500);
     },
     changeView: function(viewName){
       this.view = viewName;
+    },
+    loading: function(){
+      this.isLoading = true;
+    },
+    loadingComplete: function(){
+      this.isLoading = false;
     }
+  },
+  updated() {
+    
   },
   beforeDestroy() {
     this.$bus.$off('setMemberInfo');
+    this.$bus.$off('changeView');
   },
 
 };

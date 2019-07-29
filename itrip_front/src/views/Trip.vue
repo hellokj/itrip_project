@@ -2,26 +2,27 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12"  lg="5" xl="3"
-        :style="[($resize && !$mq.above(769) && selected != 0) ? { display: 'none' }:{ display: 'flex'}]"
+        class="px-0 togos-col" cols="12" md="12" lg="4" xl="4"
+        :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
-        :page="page" :togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
+        :page="page" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay"
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes"
         :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" lg="6" xl="4"
-      :style="[($resize && !$mq.above(769) && selected != 1) ? { display: 'none' }:{ display: 'flex'}]"
+      class="px-0 spots-col" cols="12" md="12" lg="5" xl="5"
+      :style="[($resize && !$mq.above(1025) && selected != 1 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown" :queryPlace="queryPlace" :queryName="queryName"
+          @filter-spot="filterSpot"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
           @get-spot="getSpot"
@@ -31,11 +32,11 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="px-0 map-col" cols="12" lg="4" xl="3" order=displayOrders[2] order-md="3"
-      :style="[($resize && !$mq.above(769) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
-      :value="selected">
-        <b-col style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
-          <div class="big-image-container" :style="[($resize && !$mq.above(769)) ? { display: 'none' }:{ display: 'block'}]">
+      class="map-col" order=displayOrders[2] order-md="3"
+      :style="[($resize && !$mq.above(1025) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
+      :value="selected" no-gutters fluid>
+        <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
+          <div class="big-image-container" :style="[($resize && !$mq.above(1025)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
                 <vue-load-image  style="width:100%;height:100%;">
@@ -46,18 +47,24 @@
               </el-carousel-item>
             </el-carousel>
           </div>
+          <div class="row" style="display:flex;justify-content:center;">
+            <el-checkbox-group v-model="checkList">
+              <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
+              <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
+            </el-checkbox-group>
+          </div>
           <Map 
             id="map"
             class="map"
             :key="updateMap"
             :spots="spots" :togos="togos[page]" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage" 
-            :centerSpot="centerSpot" :selectedSpot="selectedSpot"/>
+            :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
       </b-col>
     </b-row>
     <b-row>
-      <ItineraryPdf :togos="togos"/>
+      <ItineraryPdf :togos="togos" :travelInfos="travelInfos"/>
     </b-row>
   </b-container>
 </template>
@@ -110,6 +117,7 @@ export default {
       changedElementValue: null,
       // travelTime format:
       // { start: , dest: ,duration: , time: , mode:}
+      baseTimes: [],
       travelInfos: [],
       paginator: {},
       centerSpot: {},
@@ -129,6 +137,11 @@ export default {
       qid: this.$route.query.qid,
       qresult: null,
       qadded: false,
+      updateMap: 0,
+      checkList: ['景點圖標', '路徑指示'],
+      queryPlace: '',
+      queryName: '',
+      isAddSpotLocked: false,
     }
   },
   methods: {
@@ -139,15 +152,15 @@ export default {
       let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
       let _id = "";
-      if (this.itinerary._id != undefined){
+      if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
         _id = this.itinerary._id;
       }
       let self = this;
       // console.log("itinerary", this.itinerary);
       // console.log("_id", _id);
-      apiSaveTrip(_id, date, name, this.togos.length, this.togos, this.travelInfos, token)
+      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
       .then((function (res) {
-        console.log(res);
+        //console.log("res", res);
         alert("儲存成功");
       }))
       .catch(function (error) {
@@ -186,28 +199,31 @@ export default {
       this.resetRoutes();
     },
     addSpotToTrip(spot) {
-      if (this.togos[this.page] === undefined){
+      if(!this.isAddSpotLocked) {
+        if (this.togos[this.page] === undefined){
         this.togos.push([]);
-        
+        }
+        spot.stopTime = {
+          hrs: 1,
+          mins: 0
+        }
+        this.togos[this.page].push(spot);
+        let length = this.togos[this.page].length;
+        // only need to get travelInfo if length > 2
+        if(length > 1) {
+          this.addTravelInfo(this.togos[this.page][length - 2], spot);
+        }
+        if(window.innerWidth <= 768) {
+            this.$bus.$emit('toggle', {id: 'Togos'});
+        }
+        this.isAddSpotLocked = true;
       }
-      spot.stopTime = {
-        hrs: 1,
-        mins: 0
-      }
-      this.togos[this.page].push(spot);
-      let length = this.togos[this.page].length;
-      // only need to get travelInfo if length > 2
-      if(length > 1) {
-        this.addTravelInfo(this.togos[this.page][length - 2], spot);
-      }
-      if(window.innerWidth <= 768) {
-          this.$bus.$emit('toggle', {id: 'Togos'});
-      }
+      
     },
     addTravelInfo(startOb, destOb) {
       // initialize travelInfos
       if(this.travelInfos[this.page] === undefined) {
-        this.travelInfos[this.page] = [];
+        this.$set(this.travelInfos, this.page, []);
       }
       // call get routes api
       this.callGetRoutesApi(this.travelInfos[this.page].length, startOb, destOb, 'driving-car');
@@ -257,6 +273,9 @@ export default {
       apiGetSpots(data)
       .then(function (res) {
         self.spots = res.data.data.resultList;
+        if(self.spots.length == 0) {
+          return;
+        }
         self.paginator = res.data.data.paginator;
         if (byQuery) self.qresult = res.data.data.resultList;
       })
@@ -271,7 +290,6 @@ export default {
       let self = this;
       if(data == null) data=this.paramProp;
       self.spotPage = data.page;
-      
       // call get nearby api
       apiGetNearby(data)
       .then(function (res) {
@@ -296,6 +314,12 @@ export default {
       .then(function () {
         // always executed
       });
+    },
+    changeBaseTimes(startTimeOb, page){
+      console.log("startTimeOb", startTimeOb);
+      console.log("page", page);
+      this.baseTimes[page] = startTimeOb;
+      console.log("baseTimes", this.baseTimes);
     },
     changeMode(index, mode) {
       this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
@@ -349,24 +373,21 @@ export default {
       }
     },
     hoverSpotItem: function(index, spot) {
-      if(index === undefined && this.togos[this.page] !== undefined && this.togos[this.page].length > 0) {
-        this.centerSpot = this.togos[this.page][0]
-        this.centerSpot.zoom = 8;
-        return;
-      }
+      if(this.checkList.includes('景點圖標')) {
         this.centerSpot = spot;
-        this.centerSpot.zoom = 15;
+        this.$set(this.centerSpot, 'zoom', 12);
         this.$set(this.centerSpot, 'index', index);
         if(index != null) {
           this.selectedSpot = index;
-        }
+        }  
+      }
+       
     },
     toggle: function(toggle) {
-      let components = ['Togos', 'Spots', 'Map'];
+      let components = ['Togos', 'Spots', 'Map', 'Togos/Spots'];
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
           this.selected = i;
-          return;
         }
       }
     },
@@ -377,7 +398,7 @@ export default {
       if(spot !== null) {
           let data = {
             id: spot._id,
-            distance: 1000,
+            distance: 10000,
             limit: 10,
             order: -1,
             sortBy: 'ig_post_num',
@@ -388,7 +409,6 @@ export default {
       else {
         this.paramProp.page = page;
       }
-      
     },
     getImages: function(index) {
       if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
@@ -400,14 +420,15 @@ export default {
     },
     zoomTogos: function() {
       this.centerSpot = this.togos[this.page][0];
-      this.centerSpot.zoom = 8;
+      this.$set( this.centerSpot, 'type', 'togos');
+      this.$set( this.centerSpot, 'zoom', 10);
     },
     sortSpot: function(sortBy) {
-      this.paramProp.page = 1;
-      this.paramProp.sortBy = sortBy;
+      this.$set( this.paramProp, 'page', 1);
+      this.$set( this.paramProp, 'sortBy', sortBy);
     },
     getSpot: function(page) {
-      this.paramProp.page = page;
+      this.$set( this.paramProp, 'page', page);
     },
     refresh: function() {
       if(Object.keys(this.paramProp).includes('distance')) {
@@ -416,7 +437,10 @@ export default {
       else {
         this.callGetSpotApi();
       }
-    }
+    },
+    filterSpot: function(checkedCategories) {
+      this.$set(this.paramProp, 'categories', checkedCategories);
+    },
   },
   watch: {
     param: function(newVal) {
@@ -424,6 +448,10 @@ export default {
     },
     paramProp: {
       handler: function(newVal, oldVal) {
+        console.log(newVal);
+        if(newVal.city !== undefined) this.queryPlace = newVal.city;
+        if(newVal.region !== undefined) this.queryPlace = newVal.region;
+        if(newVal.name !== undefined) this.queryName = newVal.name;
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
         }
@@ -445,6 +473,22 @@ export default {
             this.qadded = true;
         }
       }
+    },
+    itinerary: function(newVal, oldVal){
+      for (let i = 0; i < newVal.togos.length; i++){
+        this.togos[i] = newVal.togos[i];
+        this.travelInfos[i] = newVal.travelInfos[i];
+      };
+    },
+    togos: function(newVal, oldVal) {
+      console.log(this.togos);
+    },
+    isAddSpotLocked: function(newVal, oldVal) {
+      if(newVal) {
+        setTimeout(() => {
+            this.isAddSpotLocked = false
+        },1000)
+      }
     }
   },
   created () {
@@ -455,8 +499,7 @@ export default {
     });
     this.$bus.$on('modifyItinerary', event => {
       self.itinerary = event.itinerary;
-      self.togos = event.itinerary.togos;
-      self.travelInfos = event.itinerary.travelInfos;
+      console.log("trip get", self.itinerary);
     });
     if (this.qname !== undefined){
       this.callGetSpotApi(makeParams(null, null, null, this.qname));
@@ -493,9 +536,17 @@ export default {
         
     }
   },
-  mounted() {
+  beforeMount() {
     
-
+  },
+  mounted() {
+    let data = {
+      limit: 10,
+      order: -1,
+      page: 1,
+      sortBy: 'ig_post_num'
+    };
+    this.paramProp = data;
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
@@ -511,13 +562,14 @@ export default {
     background: rgb(250,250,250);
   }
   .map-col {
-    height: 90vh;
+    height: 87vh;
+    border-right: 2px solid rgb(230, 230, 230);
   }
   .big-image-container {
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: 40px;
+    padding-bottom: 40px;
     background: #f2f2f2;
-    height: 50%;
+    height: 45%;
     width: 100%;
   }
   .big-image {
@@ -549,14 +601,8 @@ export default {
 }
 @media screen and (min-width: 1280px) {
   .trip {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-}
-@media screen and (min-width: 1680px) {
-  .trip {
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 50px;
+    padding-right: 50px;
   }
 }
 @media screen and (min-width: 2560px) {
@@ -565,5 +611,4 @@ export default {
     padding-right: 400px;
   }
 }
-
 </style>

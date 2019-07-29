@@ -141,12 +141,12 @@ export default {
       justify-content: center;
     }
   }
-   /* @media only screen and (min-width:768px) and (max-width: 1200px) {
+   @media only screen and (min-width:768px) and (max-width: 1024px) {
      .tabletHeader {
       display: flex;
       justify-content: center;
     }
-   } */
+   }
 
 
 </style>

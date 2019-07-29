@@ -17,7 +17,7 @@
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
                     <div class="row">
                         <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
-                        <el-tooltip placement="right-start" effect="light" style="width:auto;">
+                         <el-tooltip placement="right-start" effect="light" style="width:auto;">
                             <i class="fas fa-comment-alt" v-if="memo != null"></i>
                             <h6 slot="content">{{showMemo()}}</h6>
                         </el-tooltip>
@@ -43,7 +43,7 @@
                                         type="textarea"
                                         :placeholder="placeholder"
                                         v-model="togo.memo"
-                                        maxlength="30"
+                                        maxlength="15"
                                         show-word-limit>
                                     </el-input>
                                 </el-popover>
@@ -152,7 +152,7 @@ export default {
         justify-content: center;
     }
     .info-col {
-        width: 170px;
+        width: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;

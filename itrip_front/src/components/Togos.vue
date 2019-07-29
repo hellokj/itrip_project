@@ -1,30 +1,29 @@
 <template>
   <div class="MyTrip">
-    <div class="py-3 info-container">
+    <div class="py-3 px-2 info-container">
       <div class="tripName">
         <div style="width:100%;">
-          旅行名稱
+          名稱
           <el-input class="iTripName" placeholder="我的旅行" v-model="tripName"></el-input>
         </div>
-        <div>
-          <el-tooltip content="查看行程路徑" placement="right-start" effect="light" style="width:auto;">
-              <i class="fas fa-map-marked-alt" @click="$emit('zoom-togos')"></i>
-          </el-tooltip>
+      </div>
+      <div class="tripDate" style="display:flex;justify-content:space-between;">
+        <div class="ml-0 row">
+          <p class="px-0 mx-0 mb-0 mr-1 pTripDate" style="line-height:35px;">日期</p>
+          <el-date-picker
+          class="ml-0 iDatePicker"
+          v-model="tripDate"
+          type="date"
+          placeholder="選擇日期"
+          style="width:150px;"/>  
+        </div>
+        <div class="mt-2 mr-1 save-trip">
+          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:20px;"></i>
+          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="分享" class="fas fa-share-alt" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
         </div>
       </div>
-      <div class="tripDate">
-        <p class="px-0 mx-0 mb-0 pt-2 mr-1 pTripDate">開始日期</p>
-        <el-date-picker
-        class="ml-0 iDatePicker"
-        v-model="tripDate"
-        type="date"
-        placeholder="選擇日期"
-        style="width:200px;"/>
-      </div>
-      <div class="mt-2 mr-1 save-trip">
-        <el-button @click="saveTrip"><i class="fas fa-save">   儲存</i></el-button>
-        <el-button @click="saveTripAsPdf"><i class="fas fa-file-pdf"></i>   另存為PDF</el-button>
-      </div>
+      
     </div>
     <div class="tab-container">
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
@@ -32,7 +31,7 @@
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
           </template>
           <div class="trip-time">
-            <p>出發時間:</p>
+            <p class="mb-0 pt-1">出發時間:</p>
             <el-time-select
             class="ml-3 mr-4"
             v-model="startTime"
@@ -50,11 +49,11 @@
             <template slot="title">
                 {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-          <virtual-list :size="150" :remain="4">
+          <virtual-list :size="170" :remain="4">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
-                    <div class="big-container">
+                    <div class="pl-3 big-container">
                       <div class="trip-time-container">
                         <p class="my-0 startTime">{{getStartTime(index)}}</p>
                         <div class="circleNum"><b>{{index + 1}}</b></div>
@@ -65,8 +64,7 @@
                       @deleteTogo="$emit('deleteTogo', index)"
                       @getNearby="getNearby"/>
                     </div>
-                    <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"
-                      />
+                    <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"/>
                   </div>
                 </transition-group>
             </draggable> 
@@ -78,8 +76,8 @@
 </template>
 
 <script>
-import TogoItem from './TogoItem';
-import TravelTimeItem from './TravelTimeItem';
+import TogoItem from './TogoItem'
+import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 
@@ -112,7 +110,8 @@ export default {
         TogoItem,
         TravelTimeItem,
         draggable,
-        'virtual-list': virtualList
+        'virtual-list': virtualList,
+        
     },
     props: {
       togos: Array,
@@ -171,9 +170,9 @@ export default {
         this.$emit('add-new-day');
       },
       getStartTime: function(index) {
-        if(index == 0) {
-          return this.startTime;
-        }
+        // if(index == 0) {
+        //   return this.startTime;
+        // }
         let hr = this.startTimeOb.hr;
         let min = this.startTimeOb.min;
 
@@ -189,6 +188,11 @@ export default {
           }
           hr += this.togos[i].stopTime.hrs;
         }
+        if(this.togos[index].startTime === undefined) {
+          this.togos[index].startTime = {};
+        }
+        this.togos[index].startTime.hr = hr;
+        this.togos[index].startTime.min = min;
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0)
       },
       getEndTime: function(index) {
@@ -203,10 +207,15 @@ export default {
         if(hr + this.togos[index].stopTime.hrs >= 24) {
           this.togos[index].stopTime.hrs = 1
           this.updateStopTime();
-          alert('時間超出本日範圍!');
+          this.$message.error('時間超出本日範圍!');
           throw 'DAY LIMIT EXCEEDED';
         }
         hr += this.togos[index].stopTime.hrs;
+        if(this.togos[index].endTime === undefined) {
+          this.togos[index].endTime = {};
+        }
+        this.togos[index].endTime.hr = hr;
+        this.togos[index].endTime.min = min;
         
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
@@ -231,7 +240,7 @@ export default {
         this.update++;
       },
       saveTripAsPdf: function() {
-        this.$bus.$emit('save-trip');
+        this.$bus.$emit('download', {tripName: this.tripName, tripDate: this.tripDate});
       },
       clickViewMap() {
         this.$emit('click-view-map');
@@ -267,6 +276,7 @@ export default {
       },
       page: function(){
         this.currentPage = this.page;
+        this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
       },
       togos: function() {
         this.togos_prop = this.togos;
@@ -275,10 +285,12 @@ export default {
         let tmp = this.startTime.split(':');
         this.startTimeOb.hr = parseInt(tmp[0]);
         this.startTimeOb.min = parseInt(tmp[1]);
+        this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
       },
     },
     created() {
-      
+      //console.log("itinerary", this.itinerary);
+      this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -308,7 +320,9 @@ export default {
     opacity: 0;
   }
   .save-trip {
-    text-align: right;
+    width: 40%;
+    display: flex;
+    justify-content: space-around;
   }
   .info-container {
     border-bottom: 2px solid rgb(243, 243, 243);
@@ -318,6 +332,9 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+  }
+  .el-card {
+    width: 100%;
   }
   .tripName {
     margin-right: 11px;
@@ -337,7 +354,7 @@ export default {
     justify-content: flex-start;
   }
   .iTripName {
-    width:200px;
+    width:150px;
     text-align: center;
   }
   .trip-time-container {
@@ -401,10 +418,8 @@ export default {
     background: #333555;
   }
   .fa-save {
-    border:darkgray;
     color:darkred;
     cursor: pointer;
-    font-size: 15px;
   }
   .flip-list-move {
     transition: transform 0.5s;

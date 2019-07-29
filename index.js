@@ -10,8 +10,11 @@ const router = require('./routes');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+
 app.use(cors());
 app.use('/api', router);
 

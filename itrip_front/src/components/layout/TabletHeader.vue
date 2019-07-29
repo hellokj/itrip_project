@@ -1,5 +1,6 @@
 <template>
     <div class="TabletHeader">
+        <el-button @click="toggle('Togos/Spots')">行程表/列表模式</el-button>
         <el-button @click="toggle('Map')">地圖模式</el-button>
     </div>
     

@@ -112,16 +112,6 @@ export default {
       this.memberInfo.account = this.originInfo.account;
       this.memberInfo.name = this.originInfo.name;
       this.memberInfo.url = this.originInfo.url;
-    },
-    validate: function(){
-      this.$refs["memberInfo"].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          // console.log('error submit!!');
-          return false;
-        }
-      });
     }
   },
   created() {

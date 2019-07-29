@@ -11,11 +11,6 @@
 
 export default {
     name: "MobileHeader",
-    data() {
-      return {
-        
-      }
-    },
     methods: {
        toggle: function(id) {
            this.$bus.$emit('toggle', {id: id});

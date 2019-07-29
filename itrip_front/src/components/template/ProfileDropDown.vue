@@ -31,8 +31,9 @@
   export default {
     methods: {
       myProfile: function(){
-        // 導向會員頁面
+        // 導向瀏覽行程元件
         this.$router.push({path: '/member'});
+        this.$bus.$emit("changeToCarousel");
       },
       setting: function(){
         // 導向會員頁面

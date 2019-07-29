@@ -119,6 +119,7 @@ export default {
             if(window.innerWidth <= 768) {
                 this.$bus.$emit('toggle', {id: 'Spots'});
             }
+            this.input_name = '';
         },
         setCity(node) {
             this.selected_city = node.parentId;
@@ -269,6 +270,7 @@ export default {
         margin-top:10px;
         margin-left: 50px;
         font-family: logoFont;
+        cursor: pointer;
     }
 
     

@@ -5,10 +5,12 @@ const errorHandler = require('../utils/errorHandler');
 
 const save = async (req, res, next) => {
     let memberIds = [req.decoded.memberId];
+    let isPublic = req.body.isPublic;
     let _id = req.body._id;
     let startDate = req.body.startDate;
     let name = req.body.name;
     let dayNum = req.body.dayNum;
+    let startTimes = req.body.startTimes;
     let togos = req.body.togos;
     let travelInfos = req.body.travelInfos;
 
@@ -20,10 +22,12 @@ const save = async (req, res, next) => {
     let target = await Itinerary.get(_id);
     let itinerary = new Itinerary({
         _id: _id,
+        isPublic: isPublic,
         memberIds: memberIds,
         startDate: startDate,
         name: name,
         dayNum: dayNum,
+        startTimes: startTimes,
         togos: togos,
         travelInfos: travelInfos
     });

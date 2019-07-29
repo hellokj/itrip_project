@@ -19,7 +19,8 @@
             <router-link class="btn-trip" to="/trip">旅遊</router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
-            <button class="btn-login">登入</button>
+            <!-- <button class="btn-login">登入</button> -->
+            <ProfileButton style="width:max-content"></ProfileButton>
           </b-col>
         </b-row>
       </b-container>
@@ -198,7 +199,7 @@ export default {
     console.log(params_food);
   },
   methods: {
- 
+
     toggle: function(toggle){
       console.log(toggle);
     },

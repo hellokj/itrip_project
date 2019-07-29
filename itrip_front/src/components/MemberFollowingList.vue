@@ -2,12 +2,29 @@
   <el-container class="info_container">
     <div class="info_title">我低追蹤清單</div>
     <el-divider></el-divider>
+    <el-container style="overflow: scroll; height: 80vh">
+      <el-row>
+        <el-col :span="4" v-for="num in data" :key="num+'1'" :offset="1">
+          <MemberFollowingListItem></MemberFollowingListItem>
+        </el-col>
+      </el-row>
+    </el-container>
   </el-container>
 </template>
 
 <script>
+import MemberFollowingListItem from './template/MemberFollowingListItem'
 export default {
-  name: "MemberFollowingList"
+  name: "MemberFollowingList",
+  components: {
+    MemberFollowingListItem: MemberFollowingListItem
+  },
+  data() {
+    return {
+      i: 0,
+      data: Array(19).fill(this.i++),
+    }
+  },
 }
 </script>
 

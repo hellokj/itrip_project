@@ -9,14 +9,14 @@ const getIgPostNum = require('../utils/scraper');
 const getSpots = async(req, res, next) => {
     let city = req.query.city;
     let region = req.query.region;
-    let category = req.query.category;
+    let categories = req.query.categories;
     let name = req.query.name;
     let sortBy = req.query.sortBy;
     let order = req.query.order;
     let limit = req.query.limit;
     let page = req.query.page;
 
-    if(NilChecker(req.query, 8, ['city', 'region','category', 'name', 'order'])) {
+    if(NilChecker(req.query, 8, ['city', 'region','categories', 'name', 'order'])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
         return;
     }
@@ -24,7 +24,7 @@ const getSpots = async(req, res, next) => {
         order = -1;
     }
     //place, category, name, sortBy, page, limit, order
-    let spots = await Spot.getSpots(city, region, category, name, sortBy, page, limit, order);
+    let spots = await Spot.getSpots(city, region, categories, name, sortBy, page, limit, order);
 
     res.json({status: -1, msg:'success', data: spots});
     //Response(null, spots, res);
@@ -37,7 +37,7 @@ const getNearbySpots = async(req, res, next) => {
     let distance = req.query.distance; // unit: meter
     let spot = (await Spot.get(_id));
     let sortBy = req.query.sortBy;
-    let category = req.query.category;
+    let categories = req.query.categories;
     let page = req.query.page;
     let limit = req.query.limit;
     let order = req.query.order;
@@ -54,7 +54,7 @@ const getNearbySpots = async(req, res, next) => {
     let loc = {lon: origin_lon, lat: origin_lat};
 
     // params: location, distance, sortBy, page, limit, order
-    let nearby = await Spot.getNearby(loc, category, distance, sortBy, page, limit, order);
+    let nearby = await Spot.getNearby(loc, categories, distance, sortBy, page, limit, order);
 
     //nearby.shift()
     Response(null, nearby, res);
