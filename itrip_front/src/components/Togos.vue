@@ -190,6 +190,12 @@ export default {
           }
           hr += this.togos[i].stopTime.hrs;
         }
+        if(hr >= 24) {
+          this.togos.pop();
+          this.travelInfos.pop();
+          this.$message.error('時間超出本日範圍!');
+          throw 'DAY LIMIT EXCEEDED';
+        }
         if(this.togos[index].startTime === undefined) {
           this.togos[index].startTime = {};
         }
@@ -314,7 +320,7 @@ export default {
     border: none;
     background: rgb(250,250,250);
     color:black;
-    height: 90vh;
+    height:90vh;
     width: 100%;
     // border-left: 2px solid rgb(230, 230, 230);
     border-width: 3px;
