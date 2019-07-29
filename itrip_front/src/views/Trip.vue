@@ -535,7 +535,17 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    this.paramProp = data;
+
+    if (this.qname !== undefined) {
+      this.callGetSpotApi(makeParams(null, null, null, this.qname));
+    } else if (this.qplace !== undefined) {
+      this.callGetSpotApi(makeParams(null, this.qplace, null, null));
+    } else if (this.qspot !== undefined && this.qid !== undefined) {
+      alert(this.qspot + ", " + this.qid)
+      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true)
+    } else {
+      this.paramProp = data;
+    }
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
