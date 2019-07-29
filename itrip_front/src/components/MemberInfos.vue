@@ -130,14 +130,12 @@ export default {
   },
   computed: {
     packMemberInfo: function(){
-      // 在此判斷有無符合格式
       let memberInfo = {
         name: this.memberInfo.name,
         account: this.memberInfo.account,
         url: this.memberInfo.url,
         originPassword: this.memberInfo.originPassword,
-        password: this.memberInfo.password,
-        reCheckPwd: this.memberInfo.reCheckPwd,
+        password: this.memberInfo.password
       }
       return memberInfo;
     }

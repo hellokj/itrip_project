@@ -137,6 +137,7 @@ const paramsHelper = (params, values) => {
         if(values[i] != null && values[i] != "") {
             result[params[i]] = values[i]
         }
+
     }
     return result;
 }

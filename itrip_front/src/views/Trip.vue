@@ -79,7 +79,9 @@ import MobileHeader from '../components/layout/MobileHeader'
 import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
+import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
+import { Promise } from 'q';
 
 export default {
   name: 'trip',
@@ -126,6 +128,15 @@ export default {
       update: 0,
       dayNum: 1,
       itinerary: {},
+      updateMap:0,
+
+      // query parameters
+      qplace: this.$route.query.qplace,
+      qname: this.$route.query.qname,
+      qspot: this.$route.query.qspot,
+      qid: this.$route.query.qid,
+      qresult: null,
+      qadded: false,
       updateMap: 0,
       checkList: ['景點圖標', '路徑指示'],
       queryPlace: '',
@@ -251,7 +262,7 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: function(data=null) {
+    callGetSpotApi: function(data=null, byQuery=false) {
       let self = this;
       if(data == null) {
         data=this.paramProp;
@@ -266,7 +277,7 @@ export default {
           return;
         }
         self.paginator = res.data.data.paginator;
-
+        if (byQuery) self.qresult = res.data.data.resultList;
       })
       .catch(function (error) {
         console.log(error);
@@ -453,6 +464,16 @@ export default {
     selectedSpot: function(newVal, oldVal) {
       this.updateMap++;
     },
+    qresult: function(newVal) {
+
+      if (newVal  && !this.qadded) {
+        for(var i = 0; i < newVal.length; i++){
+          if (newVal[i]._id == this.qid)
+            this.addSpotToTrip(newVal[i])
+            this.qadded = true;
+        }
+      }
+    },
     itinerary: function(newVal, oldVal){
       for (let i = 0; i < newVal.togos.length; i++){
         this.togos[i] = newVal.togos[i];
@@ -480,6 +501,7 @@ export default {
       self.itinerary = event.itinerary;
       console.log("trip get", self.itinerary);
     });
+    
   },
   beforeMount() {
     
@@ -491,7 +513,17 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    this.paramProp = data;
+
+    if (this.qname !== undefined) {
+      this.callGetSpotApi(makeParams(null, null, null, this.qname));
+    } else if (this.qplace !== undefined) {
+      this.callGetSpotApi(makeParams(null, this.qplace, null, null));
+    } else if (this.qspot !== undefined && this.qid !== undefined) {
+      alert(this.qspot + ", " + this.qid)
+      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true)
+    } else {
+      this.paramProp = data;
+    }
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]

@@ -58,9 +58,9 @@
         <b-row class="mb-3">
           <p class="col title-ig mb-0" style="font-size: 28px">IG熱門景點</p>
         </b-row>
-        <b-row v-if="ig_recommend[0] != null" class="ig-recommend-scroll flex-nowrap" style="height: auto">
+        <b-row v-if="ig_recommend[0] != null" class="ig-recommend-scroll flex-nowrap" ref="igRecommend" style="height: auto">
           
-          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3">
+          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3" @click="addToTrip(ig_recommend[i - 1].name, ig_recommend[i - 1]._id)">
             <div class="spot-item-up-down">
               <div class="spot-item-up" style="overflow: hidden;">
                 <img class="spot-img" style="opacity: 0.85"  :src="ig_recommend[i - 1].images[0]" alt="pic">
@@ -81,13 +81,18 @@
         </b-row>
       </b-container>
       <!-- 美食推薦 -->
-      <b-container class="mt-3">
+      <b-container class="mt-3" style="position: relative">
+
+        <!-- Scroll Button -->
+        <button class="btn-ig-right" @click="ScrollFoodRight">></button>
+        <button class="btn-ig-left" @click="ScrollFoodLeft">&lt;</button>
+
         <b-row class="mb-3">
           <p class="col title-food mb-0" style="font-size: 28px">人氣美食</p>
         </b-row>
-        <b-row v-if="food_recommend[0] != null" class="food-recommend-scroll flex-nowrap" style="height: auto" >
+        <b-row v-if="food_recommend[0] != null" class="food-recommend-scroll flex-nowrap" ref="foodRecommend" style="height: auto" >
           
-          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3">
+          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3" @click="addToTrip(food_recommend[i - 1].name, food_recommend[i - 1]._id)">
             <div class="spot-item-up-down">
               <div class="spot-item-up" style="overflow: hidden; z-index: 1;">
                 <img class="spot-img" v-if="food_recommend[i - 1].images" :src="food_recommend[i - 1].images[0]" alt="pic">
@@ -192,7 +197,6 @@ export default {
     this.callGetSpotApi(params_food, "self.food_recommend");
     console.log(params_ig);
     console.log(params_food);
-    
   },
   methods: {
 
@@ -230,19 +234,51 @@ export default {
         // always executed
       });
     },
+    addToTrip(spot, id){
+      this.$router.push("/trip/?qspot=" + spot + "&qid=" + id);
+    },
 
     ScrollToTop: function(){
       window.scrollTo(0, 0);
     },
     ScrollIgRight: function(){
-      window.scrollBy(0, 0);
+      var elem = this.$refs["igRecommend"];
+      elem.scrollBy({
+        top: 0,
+        left: elem.clientWidth,   
+        behavior: "smooth" 
+      });
+    },
+    ScrollIgLeft: function(){
+      var elem = this.$refs["igRecommend"];
+      elem.scrollBy({
+        top: 0,
+        left: -elem.clientWidth,   
+        behavior: "smooth" 
+      });
+    },
+    ScrollFoodRight: function(){
+      var elem = this.$refs["foodRecommend"];
+      elem.scrollBy({
+        top: 0,
+        left: elem.clientWidth,   
+        behavior: "smooth" 
+      });
+    },
+    ScrollFoodLeft: function(){
+      var elem = this.$refs["foodRecommend"];
+      elem.scrollBy({
+        top: 0,
+        left: -elem.clientWidth,   
+        behavior: "smooth" 
+      });
     }
   },
   watch: {
     ig_recommend: function(){
       for(var i = 0; i < 4; i++)
       this.keyWords.push(this.ig_recommend[i].name);
-    }
+    },
   }
 }
 </script>
@@ -524,6 +560,14 @@ export default {
 
     .btn-scroll-to-top {
       background-color: rgba(255, 111, 75, 100%);
+    }
+
+    .btn-ig-right {
+      right: 20px;
+    }
+
+    .btn-ig-left {
+      left: 20px;
     }
   }
 
