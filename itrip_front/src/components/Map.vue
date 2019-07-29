@@ -1,6 +1,6 @@
 <template>
   <div class="map" id="map">
-    <l-map :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
+    <l-map ref="myMap" :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
       <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
       <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
       <l-polyline v-if="isRouteArr && checkList.includes('路徑指示')" :lat-lngs="routesArr" :color="color" :opacity="opacity" :weight="weight"></l-polyline>
@@ -17,9 +17,9 @@
         <l-marker v-if="checkList.includes('路徑指示')"
         :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
         @add="openTogosPopup($event)">
-        <l-popup :options="{autoClose: false, closeOnClick: false}" style="width:auto;height:10px;">
-          <div class="name"><b>{{index + 1}}. {{ spots[index].name }}</b></div>
-        </l-popup>
+        <!-- <l-popup class="togo-popup" :options="{autoClose: false, closeOnClick: false}" style="width:auto;height:10px;">
+          <div class="name"><b>{{index + 1}}. {{ togos[index].name }}</b></div>
+        </l-popup> -->
         </l-marker>
       </div>
     </l-map>
@@ -64,7 +64,7 @@ export default {
        // polyline options
       className: 'my_polyline',
       color: "#fc9d03",
-      opacity: 0.7,
+      opacity: 1,
       weight: 8,
       routesArr: [],
       currentPage: 0,
@@ -85,6 +85,8 @@ export default {
     checkList: Array
   },
   mounted() {
+    const map = this.$refs.myMap.mapObject;
+    map.addControl(new window.L.Control.Fullscreen());
     this.updateMarkers();
     this.resetTogosIcon();
     this.resetRoutesArr();
@@ -162,8 +164,8 @@ export default {
       if(this.togos !== undefined) {
         for(let i=0;i<this.togos.length;i++) {
           let togoIcon = L.divIcon({
-            html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></p></i>',
-            iconSize: [20, 20],
+            html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;">' + (i+1) + '</i>',
+            iconSize: [15, 45],
             className: 'myDivIcon'
         });
         this.togoIcons.push(togoIcon);
@@ -175,8 +177,8 @@ export default {
   watch: {
     togos: function(newVal, oldVal) {
       let togoIcon = L.divIcon({
-      html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
-      iconSize: [20, 20],
+      html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;">' + (this.togos.length) + '</i>',
+      iconSize: [15, 45],
       className: 'myDivIcon'
     });
       this.togoIcons.push(togoIcon);
@@ -241,6 +243,7 @@ export default {
     stroke-dasharray: 10,10; 
     stroke-width: 10;  
   }
+ 
   @media only screen and (max-width: 1024px) {
     #map {
       width: 100%;

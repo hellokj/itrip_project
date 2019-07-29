@@ -32,7 +32,7 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="map-col" order=displayOrders[2] order-md="3"
+      class="px-0 pl-3 map-col" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(1025) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected" no-gutters fluid>
         <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
@@ -377,11 +377,19 @@ export default {
         this.centerSpot = spot;
         this.$set(this.centerSpot, 'zoom', 12);
         this.$set(this.centerSpot, 'index', index);
-        if(index != null) {
-          this.selectedSpot = index;
-        }  
       }
-       
+      else {
+        if(this.togos[0] !== undefined) {
+          this.centerSpot = this.togos[0];  
+        }
+        else {
+          this.centerSpot = this.spots[0];
+        }
+        
+      }
+      if(index != null) {
+        this.selectedSpot = index;
+      }  
     },
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map', 'Togos/Spots'];
@@ -565,7 +573,7 @@ export default {
     background: rgb(250,250,250);
   }
   .map-col {
-    height: 87vh;
+    height: 90vh;
     border-right: 2px solid rgb(230, 230, 230);
   }
   .big-image-container {
