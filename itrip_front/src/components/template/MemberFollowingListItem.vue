@@ -37,7 +37,7 @@ export default {
   .following_card {
     opacity: 10%;
     height:max-content;
-    width: auto;
+    width: max-content;
     margin: 20px;
   }
 

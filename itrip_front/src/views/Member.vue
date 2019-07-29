@@ -10,13 +10,17 @@
     v-on:setMemberInfo="changeView('MemberInfos')">
   </MemberAside>
   <component 
-    :is="view" :title="title" 
+    :is="view" :title="title"
     :incomingItineraries="incomingItineraries" 
     :historyItineraries="historyItineraries" 
-    :itinerary="itinerary" 
-    v-on:changeToCarousel="changeView('MemberItineraryCarousel')" 
+    :itinerary="itinerary"
+    v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
+    v-on:loading="loading"
+    v-on:loadingComplete="loadingComplete"
     v-on:checkDetail="checkDetail">
   </component>
+  <loading :active.sync="isLoading" :is-full-page="true">
+  </loading>
   <!-- <keep-alive>
     
   </keep-alive> -->
@@ -24,19 +28,25 @@
 </template>
 
 <script>
+import VueLoading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
+
 import MemberAside from '../components/MemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
 import MemberDetailItinerary from '../components/MemberDetailItinerary'
 import MemberInfos from '../components/MemberInfos'
 import MemberFollowingList from '../components/MemberFollowingList'
 import { apiGetItineraries } from '../../utils/api'
+import { setTimeout } from 'timers';
 export default {
+  name: "Member",
   components: {
     MemberAside: MemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
     MemberDetailItinerary: MemberDetailItinerary,
     MemberInfos: MemberInfos,
-    MemberFollowingList: MemberFollowingList
+    MemberFollowingList: MemberFollowingList,
+    loading: VueLoading
   },
   data() {
     return {
@@ -52,6 +62,7 @@ export default {
       view: 'MemberItineraryCarousel',
       itinerary: Object,
       title: "",
+      isLoading: false,
     }
   },
   created() {
@@ -59,7 +70,7 @@ export default {
     let self = this;
     apiGetItineraries(token)
       .then(function(res){
-        console.log(res.data.data);
+        // console.log(res.data.data);
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
@@ -101,16 +112,25 @@ export default {
       }
     },
     checkDetail: function(itinerary){
-      this.changeView('MemberDetailItinerary');
+      this.loading();
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){
         this.title = "歷史行程";
       } else {
         this.title = "即將到來行程";
       }
+      setTimeout(()=>{
+        this.changeView('MemberDetailItinerary');
+      }, 1500);
     },
     changeView: function(viewName){
       this.view = viewName;
+    },
+    loading: function(){
+      this.isLoading = true;
+    },
+    loadingComplete: function(){
+      this.isLoading = false;
     }
   },
   updated() {

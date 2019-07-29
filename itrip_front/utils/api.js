@@ -93,6 +93,7 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
   let date = startDate.split('-');
   let data = {
     _id: _id,
+    isPublic: true,
     startDate: {
       year: parseInt(date[0]),
       month: parseInt(date[1]),

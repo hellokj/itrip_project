@@ -41,7 +41,7 @@ export default {
       zoom: 8,
       zoomControlPosition: "topright",
       visible: false,
-      center: L.latLng(23.583234, 121.2825975), // taiwan center point
+      center: L.latLng(23.516144859563916, 120.99538823374802), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -105,7 +105,7 @@ export default {
 
 <style scoped>
   .map{
-    width: auto;
-    height: 100vh;
+    width: 50vh;
+    height: 50vh;
   }
 </style>

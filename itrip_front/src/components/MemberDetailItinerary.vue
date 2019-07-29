@@ -113,7 +113,9 @@
               <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
             </el-container>
           </el-container>
-          <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
+          <el-container>
+            <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
+          </el-container>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -124,6 +126,7 @@ import {getAddress} from "../../utils/checker"
 import MemberMap from '../components/MemberMap'
 import { duration } from 'moment';
 import { start } from 'repl';
+import { setTimeout } from 'timers';
 export default {
   components: {
     MemberMap,
@@ -135,6 +138,7 @@ export default {
   data() {
     return {
       days: [], // 每天的行程 裡面存放 景點object
+      index: 0,
     }
   },
   methods: {
@@ -280,7 +284,7 @@ export default {
         }
         this.days.push(tmpDay);
       }
-      console.log("days", this.days);
+      // console.log("days", this.days);
     },
     // 修改過後的取出資料方式
     resetItineraryData: function(itinerary){
@@ -288,15 +292,16 @@ export default {
       for (let i = 0; i < itinerary.dayNum; i++){ // 天數
         let tmpDay = [];
         for (let j = 0; j < itinerary.togos[i].length; j++){
+          let togo = itinerary.togos[i][j];
           let index = j + 1;
-          let name = itinerary.togos[i][j].name;
-          let address = this.addressFormat(itinerary.togos[i][j].address);
-          let stopTime = itinerary.togos[i][j].stopTime;
-          let stopTimeFormat = this.stopTimeFormat(itinerary.togos[i][j].stopTime);
-          let startTime = itinerary.togos[i][j].startTime;
-          let endTime = itinerary.togos[i][j].endTime;
-          let stayTimeFormat = this.stayTimeFormat();
-          let memo = itinerary.togos[i][j].memo;
+          let name = togo.name;
+          let address = this.addressFormat(togo.address);
+          let stopTime = togo.stopTime;
+          let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
+          let startTime = togo.startTime;
+          let endTime = togo.endTime;
+          let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
+          let memo = togo.memo;
           let traffic = "";
           if (itinerary.travelInfos[i] !== null){
             if (itinerary.travelInfos[i] !== undefined){
@@ -317,10 +322,10 @@ export default {
             memo: memo, // 備忘錄
             traffic: traffic // 交通時間
           }
+          // console.log("tmpTogo", tmpTogo);
           tmpDay.push(tmpTogo);
         }
         this.days.push(tmpDay);
-        console.log("this days", this.days);
       }
     },
     modifyItinerary: function(){
@@ -371,9 +376,12 @@ export default {
     }
   },
   created() {
-    console.log("itinerary create", this.itinerary);
-    this.resetDetailInfo();
-    // this.resetItineraryData(this.itinerary);
+    // console.log("itinerary create", this.itinerary);
+    // this.resetDetailInfo();
+    this.resetItineraryData(this.itinerary);
+  },
+  mounted() {
+    this.$emit("loadingComplete");
   },
   beforeDestroy() {
     this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
