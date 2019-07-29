@@ -134,7 +134,12 @@ export default {
         display: flex;
         flex-direction: row;
     }
+    .el-card {
+        border:none;
+        box-shadow: 0 0 15px #d8cece;
+    }
     .el-card:hover {
+        box-shadow: none;
         border: 2px solid #ebb134;
         box-shadow: 0 0 5px #ebb134;
     }

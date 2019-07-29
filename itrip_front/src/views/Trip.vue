@@ -2,7 +2,7 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" md="12" lg="4" xl="4"
+        class="px-0" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
@@ -15,7 +15,7 @@
         :key="update"/>
       </b-col>
       <b-col 
-      class="px-0 spots-col" cols="12" md="12" lg="5" xl="5"
+      class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
       :style="[($resize && !$mq.above(1025) && selected != 1 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Spots
@@ -121,7 +121,7 @@ export default {
       travelInfos: [],
       paginator: {},
       centerSpot: {},
-      selected: 1,
+      selected: 3,
       isMapShown: true,
       paramProp: '',
       selectedSpot: 0,
@@ -129,7 +129,7 @@ export default {
       dayNum: 1,
       itinerary: {},
       updateMap:0,
-
+      windowWidth: 0,
       // query parameters
       qplace: this.$route.query.qplace,
       qname: this.$route.query.qname,
@@ -440,6 +440,9 @@ export default {
     filterSpot: function(checkedCategories) {
       this.$set(this.paramProp, 'categories', checkedCategories);
     },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
   },
   watch: {
     param: function(newVal) {
@@ -488,6 +491,15 @@ export default {
             this.isAddSpotLocked = false
         },1000)
       }
+    },
+    // watch window width
+    windowWidth: function(newVal, oldVal) {
+      if(newVal <= 768 && this.selected == 3) {
+        this.selected = 1;
+      }
+      if(newVal > 768 && newVal <= 1024 && (this.selected == 1 || this.selected == 0)) {
+        this.selected = 3;
+      }
     }
   },
   created () {
@@ -500,10 +512,20 @@ export default {
       self.itinerary = event.itinerary;
       console.log("trip get", self.itinerary);
     });
-    
-  },
-  beforeMount() {
-    
+    if (this.qname !== undefined){
+      this.callGetSpotApi(makeParams(null, null, null, this.qname));
+    } 
+    if (this.qplace !== undefined) {
+      this.callGetSpotApi(makeParams(null, this.qplace));
+    }
+    if (this.qspot !== undefined && this.qid !== undefined) {
+      alert(this.qspot + ", " + this.qid)
+
+
+      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
+    }
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
   },
   mounted() {
     let data = {
@@ -528,18 +550,24 @@ export default {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
+  },
+  destroy: function() {
+     window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>
 
 <style scoped>
   .trip {
-    height: 100%;
+    height: 90vh;
+    overflow: hidden;
     background: rgb(250,250,250);
   }
   .map-col {
     height: 87vh;
-    border-right: 2px solid rgb(230, 230, 230);
+    border-width: 3px;
+    border-style: solid;
+    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
   }
   .big-image-container {
     padding-top: 40px;
@@ -587,4 +615,27 @@ export default {
     padding-right: 400px;
   }
 }
+</style>
+<style>
+  /* custom scroll bar */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #fff; 
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 2.5px;
+    width: 10%;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(117, 117, 117); 
+  }
 </style>

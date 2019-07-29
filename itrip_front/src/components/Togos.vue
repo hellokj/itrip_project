@@ -1,6 +1,6 @@
 <template>
   <div class="MyTrip">
-    <div class="py-3 px-2 info-container">
+    <div class="py-3 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
           名稱
@@ -18,14 +18,14 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:20px;"></i>
-          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="分享" class="fas fa-share-alt" style="font-size:20px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
+          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
         </div>
       </div>
       
     </div>
-    <div class="tab-container">
+    <div class="tab-container" style="height: 75vh;">
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
           <template slot="tabs">
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
@@ -45,11 +45,12 @@
             placeholder="請輸入時間"
             style="width: 140px;"/>
           </div>
-          <b-tab v-for="i in tabs" :key="'tab' + i">
+          <b-tab v-for="i in tabs" :key="'tab' + i" style="heigh: 55vh; overflow-Y: scroll;">
             <template slot="title">
-                {{ 'Day' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
+                {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-          <virtual-list :size="170" :remain="4">
+            <div style="height: 65vh;">
+          <!-- <virtual-list :size="170" :remain="4"> -->
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
@@ -68,7 +69,8 @@
                   </div>
                 </transition-group>
             </draggable> 
-          </virtual-list>
+          <!-- </virtual-list> -->
+          </div>
         </b-tab>    
       </b-tabs>
     </div>
@@ -312,9 +314,13 @@ export default {
     border: none;
     background: rgb(250,250,250);
     color:black;
-    height:100%;
+    height: 90vh;
     width: 100%;
-    border-left: 2px solid rgb(230, 230, 230);
+    // border-left: 2px solid rgb(230, 230, 230);
+    border-width: 3px;
+    border-style: solid;
+    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
+    border-right: none;
   }
   .MyTrip .sortable-drag {
     opacity: 0;
@@ -325,7 +331,10 @@ export default {
     justify-content: space-around;
   }
   .info-container {
-    border-bottom: 2px solid rgb(243, 243, 243);
+    height: 15vh;
+    border-bottom: 3px solid rgb(243, 243, 243);
+    z-index: 3;
+    border-top: 3px solid transparent;
   }
   .sortable {
     display: flex;
@@ -436,6 +445,9 @@ export default {
   .fa-map-marked-alt {
     font-size: 20px;
     cursor: pointer;
+  }
+  .tab-container{
+    height: 500px;
   }
 
   @media only screen and (max-width: 768px) {

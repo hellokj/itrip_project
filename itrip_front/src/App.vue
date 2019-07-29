@@ -28,8 +28,6 @@ export default {
       region: '',
       type: '',
       param: {},
-      mobileMode: false,
-      windowWidth: 0,
       atHome: true,
       isAuthorized: this.$store.state.isAuthorized,
     }
@@ -73,14 +71,6 @@ export default {
     }
   },
   watch: {
-    windowWidth: function(newVal) {
-      if(newVal <= 780) {
-        this.mobileMode = true;
-      }
-      else {
-        this.mobileMode = false;
-      }
-    },
     $route (to, from){
         // console.log(to);
         if (to.name === "home") {
@@ -88,7 +78,7 @@ export default {
         } else {
           this.atHome = false;
         }
-    }
+    },
   }
 }
 </script>
@@ -137,13 +127,13 @@ export default {
     height: auto;
     text-align: center;
   }
-  @media only screen and (max-width: 768px) {
+  @media only screen and (max-width: 767px) {
     .mobileHeader {
       display: flex;
       justify-content: center;
     }
   }
-   @media only screen and (min-width:768px) and (max-width: 1024px) {
+   @media only screen and (min-width: 768px) and (max-width: 1024px) {
      .tabletHeader {
       display: flex;
       justify-content: center;
