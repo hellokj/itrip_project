@@ -486,6 +486,7 @@ export default {
       }
     },
     itinerary: function(newVal, oldVal){
+      console.log("????", newVal);
       for (let i = 0; i < newVal.togos.length; i++){
         this.togos[i] = newVal.togos[i];
         this.travelInfos[i] = newVal.travelInfos[i];

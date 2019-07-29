@@ -1,6 +1,13 @@
 <template>
   <el-main>
-    <TogoItem :togo="itinerary.togos[0][0]"></TogoItem>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+      <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+      <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+      <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+    </el-tabs>
+    <MobileMemberTogoItem :togo="itinerary.togos[0][0]"></MobileMemberTogoItem>
+    <TravelTimeItem :togo="itinerary.togos[0][0]" :travelTime="itinerary.travelInfos[0][0].duration" :index="0"></TravelTimeItem>
   </el-main>
 </template>
 
@@ -10,12 +17,14 @@ import MemberMap from '../components/MemberMap'
 import { duration } from 'moment';
 import { start } from 'repl';
 import { setTimeout } from 'timers';
-import TogoItem from '../components/TogoItem'
+import MobileMemberTogoItem from '../components/MobileMemberTogoItem'
+import TravelTimeItem from '../components/TravelTimeItem'
 export default {
   name: "MobileMemberDetailItinerary",
   components: {
     MemberMap,
-    TogoItem
+    MobileMemberTogoItem,
+    TravelTimeItem
   },
   props: {
     itinerary: Object,
