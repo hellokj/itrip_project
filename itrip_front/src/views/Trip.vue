@@ -2,7 +2,7 @@
   <b-container class="trip" fluid>
     <b-row class="trip-row" fluid align-h="center">
       <b-col
-        class="px-0 togos-col" cols="12" sm="12" md="6" lg="4" xl="4"
+        class="px-0" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected">
         <Togos
@@ -566,7 +566,9 @@ export default {
   }
   .map-col {
     height: 87vh;
-    border-right: 2px solid rgb(230, 230, 230);
+    border-width: 3px;
+    border-style: solid;
+    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
   }
   .big-image-container {
     padding-top: 40px;
@@ -614,4 +616,27 @@ export default {
     padding-right: 400px;
   }
 }
+</style>
+<style>
+  /* custom scroll bar */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #fff; 
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 2.5px;
+    width: 10%;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(117, 117, 117); 
+  }
 </style>
