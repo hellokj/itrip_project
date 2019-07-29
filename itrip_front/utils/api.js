@@ -22,6 +22,11 @@ const itineraryRequest = axios.create({
   baseURL: SERVER_IP + '/api/itinerary/'
 });
 
+// share api
+const shareRequest = axios.create({
+  baseURL: SERVER_IP + '/api/share/'
+});
+
 // member api
 const memberRequest = axios.create({
   baseURL: SERVER_IP + '/api/member/'
@@ -66,9 +71,6 @@ const apiDeleteSpot = (data) => {
   return spotRequest.post('/delete', data);
 }
 
-
-
-
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
     'Authorization': ORS_API_KEY,
@@ -105,9 +107,37 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     togos: togos,
     travelInfos: travelInfos
   }
-  console.log("data", data);
+  //console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
 };
+
+// share api
+const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
+  let date = startDate.split('-');
+  let id = new Date().getTime();
+  console.log(id);
+  let data = {
+    id: id,
+    startDate: {
+      year: parseInt(date[0]),
+      month: parseInt(date[1]),
+      day: parseInt(date[2])
+    },
+    name: name,
+    dayNum: dayNum,
+    togos: togos,
+    travelInfos: travelInfos
+  }
+  return shareRequest.post('/shareItineraries', data);
+};
+
+const apiGetSharedTrip = (id) => {
+  let data = {
+    id: id
+  }
+  return shareRequest.get('/getSharedItineraries', { params: data });
+};
+
 
 // Auth api
 const apiLogIn = (authData) => {
@@ -142,6 +172,8 @@ export {
     apiDeleteSpot,
     apiGetRoutes,
     apiGetItineraries,
+    apiShareTrip,
+    apiGetSharedTrip,
     apiGetMember,
     apiLogIn,
     apiSignUp,

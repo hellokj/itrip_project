@@ -52,8 +52,6 @@ export default {
                     styles: {overflow: 'linebreak', cellWidth: 'wrap', rowPageBreak: 'auto', halign: 'justify', font: 'msyh'},
                     columnStyles: {text: {cellWidth: 'auto'}}})
             }
-            
-            // doc.autoTable({html: '#table', styles: { font: "msyh"}});
             doc.output("dataurlnewwindow");
         },
         makeBody: function(dayIndex) {
@@ -134,14 +132,6 @@ export default {
     },
     beforeDestroy: function() {
         this.$bus.$off('download');
-    },
-    watch: {
-        togos: function() {
-            console.log(this.togos)
-        },
-        travelInfos: function() {
-            console.log(this.travelInfos);
-        }
     },
 };
 </script>

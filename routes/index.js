@@ -7,12 +7,14 @@ const authRoutes = require('./authRoute');
 const spotRoutes = require('./spotRoute');
 const itiRoutes = require('./itineraryRoute');
 const memberRoutes = require('./memberRoute');
+const shareRoutes = require('./shareRoute');
 
 // Auth controller
 const authController = require('../controllers/authController');
 
 router.use('/spot', spotRoutes);
 router.use('/auth', authRoutes);
+router.use('/share', shareRoutes);
 
 // 上面 => 不用驗證 
 router.use(authController.checkToken);
