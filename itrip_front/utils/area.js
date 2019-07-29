@@ -136,7 +136,13 @@ const paramsHelper = (params, values) => {
     for(let i=0;i<params.length;i++) {
         if(values[i] != null && values[i] != "") {
             result[params[i]] = values[i]
+
+            if(params[i] == "categories") {
+                var arr = [];
+                result[params[i]] = [values[i]]
+            }
         }
+
     }
     console.log(result);
     return result;
@@ -164,7 +170,7 @@ const makeParams = (city = null, region = null, _category = null, _name = null, 
         name = _category
     }        
     
-    return paramsHelper(['city', 'region', 'category', 'name', 'sortBy', 'page', 'limit', 'order'],
+    return paramsHelper(['city', 'region', 'categories', 'name', 'sortBy', 'page', 'limit', 'order'],
                         [_city, _region, _tmpcategory, _name, _sortBy, _page, _limit, _order]);
 }
 

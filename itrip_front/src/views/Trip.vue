@@ -72,7 +72,9 @@ import MobileHeader from '../components/layout/MobileHeader'
 import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
 import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
+import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
+import { Promise } from 'q';
 
 export default {
   name: 'trip',
@@ -119,6 +121,14 @@ export default {
       dayNum: 1,
       itinerary: {},
       updateMap:0,
+
+      // query parameters
+      qplace: this.$route.query.qplace,
+      qname: this.$route.query.qname,
+      qspot: this.$route.query.qspot,
+      qid: this.$route.query.qid,
+      qresult: null,
+      qadded: false,
     }
   },
   methods: {
@@ -236,7 +246,7 @@ export default {
         // always executed
       });
     },
-    callGetSpotApi: function(data=null) {
+    callGetSpotApi: function(data=null, byQuery=false) {
       let self = this;
       if(data == null) {
         data=this.paramProp;
@@ -248,6 +258,7 @@ export default {
       .then(function (res) {
         self.spots = res.data.data.resultList;
         self.paginator = res.data.data.paginator;
+        if (byQuery) self.qresult = res.data.data.resultList;
       })
       .catch(function (error) {
         console.log(error);
@@ -424,6 +435,16 @@ export default {
     },
     selectedSpot: function(newVal, oldVal) {
       this.updateMap++;
+    },
+    qresult: function(newVal) {
+
+      if (newVal  && !this.qadded) {
+        for(var i = 0; i < newVal.length; i++){
+          if (newVal[i]._id == this.qid)
+            this.addSpotToTrip(newVal[i])
+            this.qadded = true;
+        }
+      }
     }
   },
   created () {
@@ -437,8 +458,44 @@ export default {
       self.togos = event.itinerary.togos;
       self.travelInfos = event.itinerary.travelInfos;
     });
+    if (this.qname !== undefined){
+      this.callGetSpotApi(makeParams(null, null, null, this.qname));
+    } 
+    if (this.qplace !== undefined) {
+      this.callGetSpotApi(makeParams(null, this.qplace));
+    }
+    if (this.qspot !== undefined && this.qid !== undefined) {
+      alert(this.qspot + ", " + this.qid)
+
+
+      this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
+      // let getSpotPromise = (data) => {
+      //   var spots = this.callGetSpotApi(makeParams(null, null, null, data));
+      //   return new Promise((resolve, reject) => {
+      //     if (spots){
+      //       resolve(spots);
+      //     } else {
+      //       reject(new Error(`Can not get spot`))
+      //     }
+      //   })
+      // }
+
+      // getSpotPromise(this.qspot)
+      // .then((spots)=>{
+      //   spots.map((val)=>{
+      //         if(val._id == this.qid) addSpotToTrip(val)
+      //       })
+      // })
+      // .catch(err => {
+      //   console.log(err);
+      // })
+      
+        
+    }
   },
   mounted() {
+    
+
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]

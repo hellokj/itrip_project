@@ -4,11 +4,12 @@
 
     <b-container>
         <!-- {{searchResults}} -->
-        <input @blur="inputTextFocus = false" @focus="inputTextFocus = true" class="search-input" v-model="inputText" placeholder="輸入想去的地方、景點" type="text">
+        <input @blur="inputTextFocus = false"  @focus="inputTextFocus = true" class="search-input" v-model="inputText" placeholder="輸入想去的地方、景點" type="text">
 
         <!-- region with pics -->
-        <div class="container box-container region-auto" v-if="regionControl">
+        <div class="container box-container region-auto" v-if="regionControl && (inputTextFocus || blockRegionBlur)">
           <b-row class=" p-0">
+
             <b-col class="col-left p-0" md="3">
               <button class="btn-region" @mouseover="pick = 0" @click="mobileClickFocus=true">北部</button><br>
               <button class="btn-region" @mouseover="pick = 1" @click="pick=1">中部</button><br>
@@ -16,19 +17,27 @@
               <button class="btn-region" @mouseover="pick = 3" @click="pick=3">東部</button><br>
               <button class="btn-region" @mouseover="pick = 4" @click="pick=4">離島</button><br>
             </b-col>
+
             <b-col class=" p-0" md="9">
               <div class="col-right" style="position: relative;">
-                <button :key="index" v-for="(i, index) in areaPics[regions[pick]]" class="btn-county"><p class="county-text">{{index}}</p><img class="img-county" style="opacity: 0.8" :src="i"></button>
+                <button @mouseover="blockRegionBlur = true" @mouseleave="blockRegionBlur = false" :key="index" v-for="(i, index) in areaPics[regions[pick]]" class="btn-county" @click="sendPlaceToTripPage(index)">
+                  <p class="county-text">{{index}}</p>
+                  <img class="img-county" style="opacity: 0.8" :src="i">
+                </button>
               </div>
             </b-col>
+
           </b-row>
         </div>
 
         <!-- associative search -->
-        <div class="container" v-if="inputTextFocus && associateControl">
+        <div class="container" v-if="associateControl && (inputTextFocus || blockAssociateBlur)">
           <b-row>
             <b-col cols="12 m-0 p-0" style="height: auto;" :key="k" v-for="(v, k) in searchResults">
-              <div class="searchResultItem"><p class="searchName">{{ v.name }}</p><p class="searchTags" :key="_k" v-for='(_t, _k) in v["ig_tag"]'>{{"#" + _t}}</p></div>
+              <div class="searchResultItem"  @mouseover="blockAssociateBlur = true" @mouseleave="blockAssociateBlur = false" @click="sendNameToTripPage(v.name)">
+                  <p class="searchName">{{ v.name }}</p>
+                  <p class="searchTags" :key="_k" v-for='(_t, _k) in v["ig_tag"]'>{{"#" + _t}}</p>
+              </div>
             </b-col>
           </b-row>
         </div>
@@ -54,9 +63,19 @@ export default {
         isMobile: false,
         regionControl: true,
         associateControl: false,
+        blockRegionBlur: false,
+        blockAssociateBlur: false,
         params: {},
         searchResults: [],
 
+      }
+    },
+    methods: {
+      sendPlaceToTripPage(place){
+        this.$router.push("/trip/?qplace=" + place);
+      },
+      sendNameToTripPage(name){
+        this.$router.push("/trip/?qname=" + name);
       }
     },
     created(){
@@ -69,7 +88,7 @@ export default {
         this.regions = this.areaPics.keys();
       },
       inputText: function( newVal, oldVal ){
-        if( newVal) this.regionControl = false;
+        if( newVal ) this.regionControl = false;
         else this.regionControl = true;
 
         let self = this;
@@ -228,14 +247,14 @@ window
     outline: none;
   }
 
-  .region-auto {
+  /* .region-auto {
     display: none;
   }
   
  
   .search-input:focus + .region-auto {
     display: block;
-  }
+  } */
 
   .searchResultItem {
     width: 100%;
@@ -251,6 +270,7 @@ window
   }
 
   .searchName {
+    color: rgb(31, 31, 34);
     margin: 0px;
     font-size: 20px;
     flex-grow: 12;
