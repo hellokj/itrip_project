@@ -1,7 +1,7 @@
 <template>
 <div class="map">
   <l-map :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
-    <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
+    <l-tile-layer :url="url" :attribution="attribution" dragging="true"></l-tile-layer>
     <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
     <l-polyline
       v-for="(day, index) in itinerary.travelInfos"
@@ -41,7 +41,7 @@ export default {
       zoom: 8,
       zoomControlPosition: "topright",
       visible: false,
-      center: L.latLng(23.516144859563916, 120.99538823374802), // taiwan center point
+      center: L.latLng(23.516144859563916, 120.99792480468751), // taiwan center point
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -104,8 +104,12 @@ export default {
 </script>
 
 <style scoped>
-  .map{
-    width: 50vh;
-    height: 50vh;
+  .map {
+    margin: 0px auto;
+    width: 70%;
+    height: 60vh;
+    display:inline-block;
+    background-color:#eee;
+    box-shadow:0px 0px 9px #ffb061;
   }
 </style>

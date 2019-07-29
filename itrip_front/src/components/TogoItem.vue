@@ -17,7 +17,7 @@
                     <p class="address" style="text-align:left;">{{getAddress()}}</p>
                     <div class="row">
                         <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
-                         <el-tooltip placement="right-start" effect="light" style="width:auto;">
+                        <el-tooltip placement="right-start" effect="light" style="width:auto;">
                             <i class="fas fa-comment-alt" v-if="memo != null"></i>
                             <h6 slot="content">{{showMemo()}}</h6>
                         </el-tooltip>
@@ -134,7 +134,12 @@ export default {
         display: flex;
         flex-direction: row;
     }
+    .el-card {
+        border:none;
+        box-shadow: 0 0 15px #d8cece;
+    }
     .el-card:hover {
+        box-shadow: none;
         border: 2px solid #ebb134;
         box-shadow: 0 0 5px #ebb134;
     }

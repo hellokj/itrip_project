@@ -1,6 +1,6 @@
 <template>
-  <div class="spotContainer">
-    <div class="tag-container" style="display:flex;flex-direction:column;">
+  <div class="spotContainer" >
+    <div class="tag-container">
       <div class="sort-container" style="display:flex;flex-direction:row;justify-content:space-between;">
         <div style="display:flex;flex-direction:row;">
           <p class="ml-4 my-0" style="line-height:40px;">搜尋:    <b style="font-size:18px;">{{getQuery}}</b></p>
@@ -17,8 +17,8 @@
       </div>
       <div class="ml-4 category-container" style="display:flex;flex-direction:column;">
         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange" style="width:30px;">All</el-checkbox>
-        <el-checkbox-group v-model="checkedCategories" @change="handleCheckedCategoryListChange">
-          <el-checkbox v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
+        <el-checkbox-group class="checkbox-group" v-model="checkedCategories" @change="handleCheckedCategoryListChange">
+          <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
@@ -28,7 +28,7 @@
         <i class="fas fa-kiwi-bird" style="font-size:50px;text-align:center;">....</i>
         <p style="font-size: 30px;text-align: center;">抱歉，沒有結果!</p>
         </div>
-        <div style="width: 100%; height: 70vh; overflow-y: scroll;" ref="spotslist">
+        <div style="width: 100%; height: 75vh; padding-top: 10px; overflow-y: scroll;" ref="spotslist">
       <!-- <virtual-list :size="165" :remain="5" @change="showLoading" ref="list"> -->
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
@@ -211,17 +211,25 @@ export default {
   .spotContainer {
     display: flex;
     flex-direction: column;
-    border-right: 1px solid rgb(230, 230, 230);
-    border-left: 1px solid rgb(230, 230, 230);
+    /* border-right: 1px solid rgb(230, 230, 230); */
+    /* border-left: 1px solid rgb(230, 230, 230); */
     background: rgb(250,250,250);
     color: black;
     height: 90vh;
-    margin: 10px;
     width: 100%;
   }
   .tag-container {
+    height: 15vh;
+    width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction:column;
+    border-width: 3px;
+    border-style: solid;
+    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206)) 1 100%;
+    /* box-shadow: 0px 3px 5px #333; */
+    border-bottom: none;
+    box-shadow: 3px 2px 5px #c5c8ce;
+    z-index: 3;
   }
   .view-map {
     height: 40px;
@@ -232,6 +240,27 @@ export default {
     display: flex;
     flex: 1;
   }
+  .checkbox-group {
+    margin: 0;
+    margin-bottom: 10px;
+  }
+
+  .checkbox {
+    margin: 0px;
+    margin-right: 10px;
+    position: relative;
+  }
+
+  .checkbox::after {
+    position: absolute;
+    content: '';
+    left: calc(100% + 3px);
+    top: 2px;
+    width: 1px;
+    height: 20px;
+    background-color: rgb(182, 199, 255);
+  }
+
   @media only screen and (max-width: 768px) {
     .spotContainer {
       width: 100%;
