@@ -12,10 +12,10 @@
           <b-col align-self="center" cols="2">
             <img href="/trip" class="bg" src="../assets/home/Logo.svg" style="width: 100px;" />
           </b-col>
-          <b-col class="col-home text-start" offset="2" offset-sm="2"  offset-md="4" offset-lg="6" offset-xl="7" cols="2" sm="2" md="2" lg="1">
+          <b-col class="col-home text-start" offset="2" offset-sm="2"  offset-md="4" offset-lg="6" offset-xl="7" cols="2" sm="2" md="2" lg="1" style="white-space: nowrap; overflow: hidden;">
             <router-link class="btn-home" to="/">首頁</router-link>
           </b-col>
-          <b-col class="col-trip text-start" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
+          <b-col class="col-trip text-start" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center" style="white-space: nowrap; overflow: hidden;">
             <router-link class="btn-trip" to="/trip">旅遊</router-link>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
@@ -24,21 +24,30 @@
           </b-col>
         </b-row>
       </b-container>
+
+      <!-- big title -->
+      <div class="container">
+        <b-row align-h="center" align-v="center">
+          <b-col class="p-0" cols="12" style="text-align: center;"><h1 style="margin: 0px; font-size: 40px; color: #FFF;">跟著IG的粉絲一起旅行吧!</h1></b-col>
+          <b-col class="p-0" cols="12" style="text-align: center;"><p style="font-size: 23px; color: #FFF">打卡、分享、說走就走</p></b-col>
+        </b-row>
+      </div>
+
       <!-- search region -->
-      <div class="container pt-3 pb-3" style="margin-top: 15vh; border-radius: 10px; background-color: rgba(0, 0, 0, 30%); overflow: visible;">
+      <div class="container pt-3 pb-3" style=" border-radius: 10px; background-color: rgba(0, 0, 0, 30%); overflow: visible;">
         <b-container >
           <b-row align-h="center" align-v="center" >
-            <b-col class="p-0" cols="10" sm="6" md="6" >
+            <b-col class="p-0" cols="12" sm="6" md="6" >
               <HomeSearch class="home-search" style="display: absolute; z-index: 1;"></HomeSearch>
             </b-col>
-            <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
+            <!-- <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
               <span class="search-icon" ><img style="width: 50px;" @click.native="handleSearch" 
               src="../assets/home/Search.svg"/></span>
-            </b-col>
+            </b-col> -->
           </b-row>
           <b-row class="mt-2" align-h="center">
-            <b-col cols="11" sm="7" md="7" >
-              <p class="key-word" style="display: inline-block; margin-right: 2rem;"  :key="keyWord" v-for="keyWord in keyWords">{{ keyWord }}</p>
+            <b-col cols="12" sm="6" md="6" >
+              <p class="key-word" style="display: inline-block; margin-right: 2rem;" :key="keyWord" v-for="keyWord in keyWords" @click="sendNameToTripPage(keyWord)">{{ keyWord }}</p>
             </b-col>
           </b-row>
         </b-container>
@@ -60,21 +69,23 @@
         </b-row>
         <b-row v-if="ig_recommend[0] != null" class="ig-recommend-scroll flex-nowrap" ref="igRecommend" style="height: auto">
           
-          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3" @click="addToTrip(ig_recommend[i - 1].name, ig_recommend[i - 1]._id)">
+          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3">
             <div class="spot-item-up-down">
               <div class="spot-item-up" style="overflow: hidden;">
-                <img class="spot-img" style="opacity: 0.85"  :src="ig_recommend[i - 1].images[0]" alt="pic">
+                <img class="spot-img" :src="ig_recommend[i - 1].images[0]" alt="pic">
+                <button class="btn-spotItem-add" @click="addToTrip(ig_recommend[i - 1].name, ig_recommend[i - 1]._id)">加入行程</button><br>
               </div>
-              <div class="spot-item-down p-3">
-                <p class="mb-2" style="display: inline-block; font-size: 22px; color:#FFF;">{{ ig_recommend[i - 1].name }}</p>
-                <button class="btn-spotItem-add">加入行程</button><br>
-                <i style="display: inline-block;" class="fab fa-instagram fa-2x"></i>
-                <el-tag
-                  class="mx-1 el-tag"
-                  v-for="(t, index) in ig_recommend[i - 1].ig_tag"
-                  :key="index" effect="plain" size="medium" type="danger">
-                  #{{t}}
-                </el-tag>
+              <div class="spot-item-down">
+                <p class="spot-item-title" style="font-size: 20px; color:#FFF; width: 100%;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ ig_recommend[i - 1].name }}</p>
+                <!-- <i style="display: inline-block; margin: auto;" class="fab fa-instagram fa-2x" ></i> -->
+                <div v-for="(t, index) in ig_recommend[i - 1].ig_tag" :key="index" style="display: inline-block">
+                  <el-tag
+                    class="mx-1 el-tag"
+                    effect="plain" size="medium" type="danger"
+                    v-if="index <= 1" >
+                    #{{t}}
+                  </el-tag>
+                </div>
               </div>
             </div>
           </b-col>
@@ -92,22 +103,23 @@
         </b-row>
         <b-row v-if="food_recommend[0] != null" class="food-recommend-scroll flex-nowrap" ref="foodRecommend" style="height: auto" >
           
-          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3" @click="addToTrip(food_recommend[i - 1].name, food_recommend[i - 1]._id)">
+          <b-col :key="i" v-for="i in 10" class="spot-item mt-3 mb-3" cols="12" sm="6" md="6" lg="3">
             <div class="spot-item-up-down">
               <div class="spot-item-up" style="overflow: hidden; z-index: 1;">
                 <img class="spot-img" v-if="food_recommend[i - 1].images" :src="food_recommend[i - 1].images[0]" alt="pic">
+                <button class="btn-spotItem-add" @click="addToTrip(food_recommend[i - 1].name, food_recommend[i - 1]._id)">加入行程</button><br>
               </div>
-              <div class="spot-item-down p-3">
-                <p class="mb-2" style="display: inline-block; font-size: 22px; color:#FFF;">{{ food_recommend[i - 1].name }}</p>
-                <button class="btn-spotItem-add">加入行程</button><br>
-                <i style="display: inline-block;" class="fab fa-instagram fa-2x"></i>
-                <el-tag
-                  class="mx-1 el-tag"
-            
-                  v-for="(t, index) in food_recommend[i - 1].ig_tag"
-                  :key="index" effect="plain" size="medium" type="danger">
-                  #{{t}}
-                </el-tag>
+              <div class="spot-item-down">
+                <p class="spot-item-title" style="font-size: 20px; color:#FFF; width: 100%;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ food_recommend[i - 1].name }}</p>
+                <!-- <i class="fab fa-instagram fa-2x" style="display: block; padding-top: 22px;"></i> -->
+                <div v-for="(t, index) in food_recommend[i - 1].ig_tag" :key="index" style="display: inline-block">
+                  <el-tag
+                    class="mx-1 el-tag"
+                    effect="plain" size="medium" type="danger"
+                    v-if="index <= 1" >
+                    #{{t}}
+                  </el-tag>
+                </div>
               </div>
             </div>
           </b-col>
@@ -121,12 +133,13 @@
       <b-container fluid>
         <b-row class="mt-5 mb-5">
           <b-col class="mt-5" offset-md="0" offset-lg="4" offset-xl="3">
-            <h1 class="intro-title" style="color: #DA8E8E; font-size: 60px;">跟著ＩＧ的粉絲一起去旅行！</h1>
+            <h1 class="intro-title" style="color: #DA8E8E; font-size: 60px;">簡單找到IG熱門景點，輕鬆規劃!</h1>
           </b-col>
         </b-row>
         <b-row>
           <b-col class="p-0 mb-5 text-center" cols="12" md="12" lg="4" xl="3">
-            <button class="btn-intro">開始規劃</button>
+            <router-link style="color: #FFF;" to="/trip"><button class="btn-intro" style="outline: none;">計畫出遊</button></router-link>
+            
           </b-col>
           <b-col class="p-0 m-0" lg="8" xl="9">
             <img class="img-intro" src="../assets/home/webPageBig.svg" alt="pic">
@@ -145,7 +158,7 @@
           </b-col>
           <b-col class="footer-col-two" sm="12" md="3" lg="3">
             <router-link class="footer-home" to="/">首頁</router-link>
-            <router-link class="footer-trip" to="/">旅遊</router-link>
+            <router-link class="footer-trip" to="/trip">旅遊</router-link>
             <router-link class="footer-login" to="/">登入</router-link>
           </b-col>
           <b-col class="footer-col-three" sm="12" md="3" lg="3">
@@ -237,7 +250,9 @@ export default {
     addToTrip(spot, id){
       this.$router.push("/trip/?qspot=" + spot + "&qid=" + id);
     },
-
+    sendNameToTripPage(name){
+        this.$router.push("/trip/?qname=" + name);
+    },
     ScrollToTop: function(){
       window.scrollTo(0, 0);
     },
@@ -312,8 +327,10 @@ export default {
     background: rgb(117, 117, 117); 
   }
   .spot-img {
+    display: block;
     width: auto;
     height: 120%;
+    opacity: 0.8;
   }
   .nav-bar a {
     color: white;
@@ -377,17 +394,28 @@ export default {
     overflow-x: scroll;
   }
   .spot-item-up {
+    position: relative;
     border: none;
     border-radius: 10px 10px 0px 0px;
     width: 100%;
-    height: 180px;
+    height: 250px;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* opacity: 0.8; */
   }
 
   .spot-item-down {
+    position: relative;
     border: none;
     border-radius: 0px 0px 10px 10px;
     width: 100%;
+    height: 60px;
+    padding-left: 10px;
     background-image: linear-gradient(to bottom right, rgba(255,194,132,100%), rgba(255,131,59,100%), rgba(255,108,113,100%));
+    overflow: hidden;
+    transition: all 0.4s ease;
   }
 
   .spot-item-up-down:hover {
@@ -396,19 +424,51 @@ export default {
     align-self: flex-start;
   }
 
+  .spot-item-up-down:hover .spot-item-down {
+    height: 120px;
+  }
+
+  .spot-item-up-down:hover .spot-item-up {
+    height: 190px;
+    opacity: 0.5;
+  }
+  .spot-item-up-down:hover .spot-img {
+    opacity: 0.7;
+  }
+  .spot-item-up-down:hover .spot-item-title {
+    margin-bottom: 12px;
+  }
+
+  .spot-item-title {
+    padding-left: 10px;
+    margin-bottom: 16px;
+    margin-top: 15px;
+  }
+
   .btn-spotItem-add {
+    position: absolute;
+    bottom: -70px;
+    right: calc(50% - 70px);
     float: right;
-    width: 80px;
-    height: 36px;
+    width: 140px;
+    height: 60px;
+    font-size: 22px;
     border: 2px solid #FFF;
     color: #FFF;
-    border-radius: 10px;
+    border-radius: 30px;
     background-color: transparent;
+    transition: all 0.4s ease;
+    z-index: 25;
+  }
+
+  .spot-item-up-down:hover .btn-spotItem-add {
+    bottom: 50px;
   }
 
   .btn-spotItem-add:hover {
-    color: rgba(255,108,113,100%);
+    color: rgb(141, 45, 48);
     background-color: #FFF;
+    box-shadow: 0px 0px 15px rgb(24, 24, 24);
   }
 
   .el-tag {
@@ -530,7 +590,7 @@ export default {
 
   @media only screen and (max-width: 770px) {
     .spot-img {
-      width: 100%;
+      width: 140%;
       height: auto;
     }
     .recommend-area {
@@ -568,6 +628,12 @@ export default {
 
     .btn-ig-left {
       left: 20px;
+    }
+
+    .col-home a, .col-trip a {
+      font-family: 'Noto Sans TC', sans-serif;
+      color: rgb(77, 60, 60);
+
     }
   }
 
