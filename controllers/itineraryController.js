@@ -5,6 +5,10 @@ const errorHandler = require('../utils/errorHandler');
 
 const save = async (req, res, next) => {
     let memberIds = [req.decoded.memberId];
+    let memberId = req.body.memberId;
+    if(memberId !== undefined) {
+        memberIds.push(memberId);
+    }
     let isPublic = req.body.isPublic;
     let _id = req.body._id;
     let startDate = req.body.startDate;
@@ -13,8 +17,9 @@ const save = async (req, res, next) => {
     let startTimes = req.body.startTimes;
     let togos = req.body.togos;
     let travelInfos = req.body.travelInfos;
+    console.log(memberIds, memberId, isPublic, _id, startDate, name, dayNum, startTimes, togos, travelInfos);
 
-    if(NilChecker(req.body, 7, [])) {
+    if(NilChecker(req.body, 8, [])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
     }
 
@@ -31,13 +36,14 @@ const save = async (req, res, next) => {
         togos: togos,
         travelInfos: travelInfos
     });
+    
     if (target == null){
         // 若無 新增
-        itinerary.save().then(() => Response(null, togos, res));
+        itinerary.save().then(() => res.json({status: -1, msg:'success', data: itinerary}));
     }else {
         // 若有 取出後更新
         Itinerary.updateItinerary(_id, itinerary).then(() => {
-            Response(null, itinerary, res);
+            res.json({status: -1, msg:'success', data: itinerary});
         });
     }
 }

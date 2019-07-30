@@ -18,9 +18,35 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
-          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="加入旅伴" class="fas fa-user-plus" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i>
+          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
+          <el-popover
+              placement="bottom-start"
+              width="300"
+              trigger="click"
+              @click.native="saveTrip">
+              <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
+              <el-input
+                placeholder="旅伴的E-mail"
+                v-model="memberEmail"
+                clearable>
+              </el-input>
+              <div class="mt-1 pr-3 row" style="float:right;">
+                <el-button type="success" icon="el-icon-plus" size="mini" @click="addMember" circle></el-button>
+              </div>
+              <div class="mt-2 px-0 col">
+                <el-tag
+                  closable
+                  v-for="(email, index) in memberEmails"
+                  :key="index"
+                  type="info"
+                  effect="plain"
+                  @close="removeMember(index)">
+                  {{ email }}
+                </el-tag>  
+              </div>
+              
+          </el-popover>
           <!-- @click="shareTrip" -->
           <el-dropdown ref="dropdown" placement="bottom-start" @click.native="shareTrip"  trigger="click">
             <span class="el-dropdown-link">
@@ -33,12 +59,12 @@
               :url="shareUrl"
               inline-template>
                 <div class="social-div">
-                    <el-dropdown-item>
+                    <el-dropdown-item :disabled="shareId===undefined">
                       <network network="facebook">
                         <i class="fab fa-facebook-square"></i> Facebook
                       </network>
                     </el-dropdown-item>
-                    <el-dropdown-item>
+                    <el-dropdown-item :disabled="shareId===undefined">
                       <network network="twitter">
                         <i class="fab fa-twitter"></i> Twitter
                       </network>  
@@ -108,6 +134,8 @@ import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 import { async } from 'q';
+import { Message } from 'element-ui'
+import { apiAddMember} from '../../utils/api.js';
 
 export default {
     name: "Togos",
@@ -134,6 +162,8 @@ export default {
         viewMapString: '檢視地圖',
         itineraryLoaded: false,
         shareUrl: 'http://localhost:8080/#/trip?viewId=',
+        memberEmail: '',
+        memberEmails: [],
       }
     },
     components: {
@@ -154,8 +184,10 @@ export default {
     methods: {
       saveTrip() {
         if (this.$store.state.isAuthorized == false){
-          // this.$message("請先登入");
-          alert("請先登入");
+           Message({
+            type: 'warning',
+            message: '請先登入!'
+          });
           this.$store.dispatch("updateFormState", {
             isLogIn: true,
             isSignUp: false,
@@ -170,9 +202,10 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }else {
-            let year = this.tripDate.getFullYear();
-            let month = this.tripDate.getMonth() + 1;
-            let day = this.tripDate.getDate();
+            let date = new Date(Date.parse(this.tripDate));
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }
           this.$emit('saveTrip', this.tripName, this.tripDate);
@@ -224,6 +257,14 @@ export default {
       newTab: function() {
         this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
+      },
+      addMember: function() {
+        this.memberEmails.push(this.memberEmail);
+        this.saveTrip();
+        this.memberEmail = '';
+      },
+      removeMember: function(index) {
+         this.memberEmails.splice(index, 1);
       },
       getStartTime: function(index) {
         // if(index == 0) {
@@ -394,7 +435,7 @@ export default {
     opacity: 0;
   }
   .save-trip {
-    width: 40%;
+    width: 50%;
     display: flex;
     justify-content: space-around;
   }
@@ -495,7 +536,6 @@ export default {
     background: #333555;
   }
   .fa-save {
-    color:darkred;
     cursor: pointer;
   }
   .flip-list-move {

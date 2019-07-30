@@ -107,7 +107,7 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     togos: togos,
     travelInfos: travelInfos
   }
-  //console.log("data", data);
+  console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
 };
 
@@ -115,7 +115,7 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
   let date = startDate.split('-');
   let id = new Date().getTime();
-  console.log(id);
+  //console.log(id);
   let data = {
     id: id,
     startDate: {

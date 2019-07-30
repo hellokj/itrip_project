@@ -81,6 +81,7 @@ import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiG
 import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
 import { Promise } from 'q';
+import { Message } from 'element-ui';
 
 export default {
   name: 'trip',
@@ -160,14 +161,18 @@ export default {
       // console.log("_id", _id);
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
       .then((function (res) {
-        //console.log("res", res);
-        this.$message.success('行程儲存成功!');
+        console.log(res);
+        self.$message.success('行程儲存成功!');
       }))
       .catch(function (error) {
         console.log(error);
       });
     },
     share(name, date) {
+      if(this.togos[0] === undefined) {
+        this.$message.warning('你還沒排行程!');
+        return;
+      }
       let self = this;
       apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
       .then((function (res) {
@@ -197,6 +202,9 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
+    },
+    addMember() {
+
     },
     deleteTogo(index) {
       if(this.travelInfos[this.page] != undefined) {
