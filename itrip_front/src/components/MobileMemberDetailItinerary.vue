@@ -1,124 +1,14 @@
 <template>
   <el-main>
-      <el-container style="margin-bottom: 20px;">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{}" @click.native="changeToCarousel">個人檔案</el-breadcrumb-item>
-          <el-breadcrumb-item>我的行程</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ title }}</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-container>
-      <el-tabs type="border-card" v-model="index">
-        <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
-          <el-container style="display: flex">
-            <el-container style="width: 70%">
-              <el-divider 
-                content-position="center">
-                {{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}
-              </el-divider>
-            </el-container>
-            <el-container style="width: 30%; ">
-              <!-- <i class="el-icon-lock lock" style="float: right"></i> -->
-              <el-link 
-                v-model="itinerary.isPublic" 
-                :icon="getLockIcon()" 
-                @click="changeLockStatus" 
-                style="margin:0px auto;">
-                {{ getLockStatus() ? "設為不公開" : "設為公開" }}
-              </el-link>
-              <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-            </el-container>
-          </el-container>
-          <el-table
-            :data="day"
-            height="400"
-            border
-            style="width: 100%">
-            <el-table-column
-              prop="index"
-              label="No."
-              width="50"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="stayTimeFormat"
-              label="出發時間"
-              width="80"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="景點"
-              width="200"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="traffic"
-              label="交通方式/時間"
-              width="130"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地址"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop='stopTimeFormat'
-              label="停留時間"
-              width="100"
-              align="center">
-            </el-table-column>
-            <el-table-column
-              prop="memo"
-              label="備忘錄"
-              width="70"
-              align="center">
-              <template slot-scope="scope" class="memo_popover">
-                <el-popover
-                placement="top-end"
-                width="200"
-                trigger="click"
-                :ref="`popover-${scope.$index}`">
-                <div class="popover-title" v-html="getTitle(scope.row)"></div>
-                <div class="popover-content" v-html="getContent(scope.row)"></div>
-                <i class="far fa-comment-alt memo" 
-                  v-if="!hasMemo(scope.row)" 
-                  slot="reference" 
-                  @click.native.prevent="scope._self.$refs[`popover-${scope.$index}`].doClose()">
-                </i>
-              </el-popover>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
-          <el-container style="display: flex">
-            <el-container style="width: 70%">
-              <el-divider 
-                content-position="center">
-                {{itinerary.name}} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}
-              </el-divider>
-            </el-container>
-            <el-container style="width: 30%; ">
-              <!-- <i class="el-icon-lock lock" style="float: right"></i> -->
-              <el-link 
-                v-model="itinerary.isPublic" 
-                :icon="getLockIcon()" 
-                @click="changeLockStatus" 
-                style="margin:0px auto;">
-                {{ getLockStatus() ? "設為不公開" : "設為公開" }}
-              </el-link>
-              <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-            </el-container>
-          </el-container>
-          <el-container>
-            <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
-          </el-container>
-        </el-tab-pane>
-      </el-tabs>
-    </el-main>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+      <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+      <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+      <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+    </el-tabs>
+    <MobileMemberTogoItem :togo="itinerary.togos[0][0]"></MobileMemberTogoItem>
+    <TravelTimeItem :togo="itinerary.togos[0][0]" :travelTime="itinerary.travelInfos[0][0].duration" :index="0"></TravelTimeItem>
+  </el-main>
 </template>
 
 <script>
@@ -127,9 +17,14 @@ import MemberMap from '../components/MemberMap'
 import { duration } from 'moment';
 import { start } from 'repl';
 import { setTimeout } from 'timers';
+import MobileMemberTogoItem from '../components/MobileMemberTogoItem'
+import TravelTimeItem from '../components/TravelTimeItem'
 export default {
+  name: "MobileMemberDetailItinerary",
   components: {
     MemberMap,
+    MobileMemberTogoItem,
+    TravelTimeItem
   },
   props: {
     itinerary: Object,
@@ -288,10 +183,9 @@ export default {
     },
     // 修改過後的取出資料方式
     resetItineraryData: function(itinerary){
-      console.log('itinerary', itinerary);
       this.days = [];
       for (let i = 0; i < itinerary.dayNum; i++){ // 天數
-        var tmpDay = [];
+        let tmpDay = [];
         for (let j = 0; j < itinerary.togos[i].length; j++){
           let togo = itinerary.togos[i][j];
           let index = j + 1;
@@ -304,7 +198,13 @@ export default {
           let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
           let memo = togo.memo;
           let traffic = "";
-          
+          if (itinerary.travelInfos[i] !== null){
+            if (itinerary.travelInfos[i] !== undefined){
+              for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
+                traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
+              }
+            }
+          }
           let tmpTogo = {
             index: index, // No.
             name: name, // 景點名稱
@@ -317,10 +217,8 @@ export default {
             memo: memo, // 備忘錄
             traffic: traffic // 交通時間
           }
+          // console.log("tmpTogo", tmpTogo);
           tmpDay.push(tmpTogo);
-        }
-        for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
-          tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
         }
         this.days.push(tmpDay);
       }

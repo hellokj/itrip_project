@@ -11,7 +11,7 @@
         :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
         :page="page" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes"
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share"
         :key="update"/>
       </b-col>
       <b-col 
@@ -32,7 +32,7 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="map-col" order=displayOrders[2] order-md="3"
+      class="px-0 pl-3 map-col" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(1025) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected" no-gutters fluid>
         <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
@@ -78,7 +78,7 @@ import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
 import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip} from '../../utils/api'
 import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
 import { Promise } from 'q';
@@ -135,6 +135,7 @@ export default {
       qname: this.$route.query.qname,
       qspot: this.$route.query.qspot,
       qid: this.$route.query.qid,
+      qviewId: this.$route.query.viewId,
       qresult: null,
       qadded: false,
       updateMap: 0,
@@ -161,7 +162,28 @@ export default {
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
       .then((function (res) {
         //console.log("res", res);
-        alert("儲存成功");
+        this.$message.success('行程儲存成功!');
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    share(name, date) {
+      let self = this;
+      apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
+      .then((function (res) {
+        console.log(res);
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    getSharedTrip(id) {
+      let self = this;
+      apiGetSharedTrip(id)
+      .then((function (res) {
+        //console.log("res", res);
+        self.itinerary = res.data.data[0];
       }))
       .catch(function (error) {
         console.log(error);
@@ -377,11 +399,19 @@ export default {
         this.centerSpot = spot;
         this.$set(this.centerSpot, 'zoom', 12);
         this.$set(this.centerSpot, 'index', index);
-        if(index != null) {
-          this.selectedSpot = index;
-        }  
       }
-       
+      else {
+        if(this.togos[0] !== undefined) {
+          this.centerSpot = this.togos[0];  
+        }
+        else {
+          this.centerSpot = this.spots[0];
+        }
+        
+      }
+      if(index != null) {
+        this.selectedSpot = index;
+      }  
     },
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map', 'Togos/Spots'];
@@ -468,7 +498,6 @@ export default {
       this.updateMap++;
     },
     qresult: function(newVal) {
-
       if (newVal  && !this.qadded) {
         for(var i = 0; i < newVal.length; i++){
           if (newVal[i]._id == this.qid)
@@ -478,19 +507,16 @@ export default {
       }
     },
     itinerary: function(newVal, oldVal){
-      for (let i = 0; i < newVal.togos.length; i++){
-        this.togos[i] = newVal.togos[i];
-        this.travelInfos[i] = newVal.travelInfos[i];
+      for (let i=0;i<newVal.togos.length;i++){
+        this.$set(this.togos, i, newVal.togos[i]);
+        this.$set(this.travelInfos, i, newVal.travelInfos[i]);
       };
-    },
-    togos: function(newVal, oldVal) {
-      console.log(this.togos);
     },
     isAddSpotLocked: function(newVal, oldVal) {
       if(newVal) {
         setTimeout(() => {
             this.isAddSpotLocked = false
-        },1000)
+        },2000)
       }
     },
     // watch window width
@@ -521,12 +547,16 @@ export default {
     }
     if (this.qspot !== undefined && this.qid !== undefined) {
       alert(this.qspot + ", " + this.qid)
-
-
       this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
     }
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
+  },
+  beforeMount() {
+    if(this.qviewId !== undefined) {
+      this.getSharedTrip(this.qviewId);
+      this.qviewId = '';
+    }
   },
   mounted() {
     let data = {
@@ -565,7 +595,7 @@ export default {
     background: rgb(250,250,250);
   }
   .map-col {
-    height: 87vh;
+    height: 90vh;
     border-width: 3px;
     border-style: solid;
     border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;

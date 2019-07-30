@@ -13,6 +13,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
+import 'leaflet-fullscreen/dist/Leaflet.fullscreen';
 import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import store from './store'
@@ -21,15 +23,12 @@ import 'ant-design-vue/dist/antd.css'
 import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
 import jsPDF from 'jspdf'
-
-
-
-
+import SocialSharing from 'vue-social-sharing'
 
 const mediaQueries = new MediaQueries();
-
 Vue.use(mediaQueries);
 Vue.use(ElementUI);
+Vue.use(SocialSharing);
 // configure language
 locale.use(lang)
 Vue.use(Vuex);

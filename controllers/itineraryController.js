@@ -45,12 +45,12 @@ const save = async (req, res, next) => {
 const getItineraries = async(req, res, next) => {
     // 藉由 memeberId 去查詢有包含此會員id的行程
     let memberId = req.decoded.memberId;
-    console.log("memberId", memberId);
+    //console.log("memberId", memberId);
     let itineraries = await Itinerary.find({ memberIds: memberId});
     res.json({status: -1, msg:'success', data: itineraries});
 };
 
 module.exports = {
     save,
-    getItineraries
+    getItineraries,
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="MyTrip">
-    <div class="py-3 m-0 info-container">
+    <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
           名稱
@@ -20,7 +20,26 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
           <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <!-- @click="shareTrip" -->
+          <el-dropdown placement="bottom-start">
+            <span class="el-dropdown-link">
+              <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i> 
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <social-sharing url="https://vuejs.org/" inline-template>
+                <div class="social-div">
+                  <network network="facebook">
+                    <el-dropdown-item><i class="fab fa-facebook-square"></i> Facebook</el-dropdown-item>
+                  </network>
+                  <network network="twitter">  
+                    <el-dropdown-item><i class="fab fa-twitter"></i> Twitter</el-dropdown-item>
+                  </network>  
+                </div>
+              </social-sharing>
+            </el-dropdown-menu>
+             
+          </el-dropdown>
+          
         </div>
       </div>
       
@@ -106,6 +125,7 @@ export default {
         isScrollbarShown: false,
         update: 0,
         viewMapString: '檢視地圖',
+        itineraryLoaded: false,
       }
     },
     components: {
@@ -149,6 +169,25 @@ export default {
           this.$emit('saveTrip', this.tripName, this.tripDate);
         }
       },
+      shareTrip() {
+        if (this.tripDate.date == ""){
+            // 預設今天日期
+            let date = new Date();
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            this.tripDate = year + "-" + month + "-" + day;
+        }
+        else {
+          //console.log(this.tripDate)
+          let date = new Date(Date.parse(this.tripDate));
+          let year = date.getFullYear();
+          let month = date.getMonth() + 1;
+          let day = date.getDate();
+          this.tripDate = year + "-" + month + "-" + day;
+        }
+        this.$emit('share', this.tripName, this.tripDate);
+      },
       changePage(){
         this.$emit('change-page', this.currentPage);
         this.$emit('resetRoutes');
@@ -189,6 +228,12 @@ export default {
             min %= 60;
           }
           hr += this.togos[i].stopTime.hrs;
+        }
+        if(hr >= 24) {
+          this.togos.pop();
+          this.travelInfos.pop();
+          this.$message.error('時間超出本日範圍!');
+          throw 'DAY LIMIT EXCEEDED';
         }
         if(this.togos[index].startTime === undefined) {
           this.togos[index].startTime = {};
@@ -254,18 +299,16 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      updateTabs: async function(){
+      updateTabs: function(){
         let self = this;
-        if (self.itinerary != undefined){
-          await this.$nextTick(function() {
-            if (self.itinerary.togos != undefined){
-              for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-                self.newTab();
-              };
-              self.tripName = self.itinerary.name;
-              self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-            }
-          });
+        if (self.itinerary != undefined){ 
+          if (self.itinerary.togos != undefined){
+            for (let i = 0; i < self.itinerary.togos.length - 1; i++){
+              self.newTab();
+            };
+            self.tripName = self.itinerary.name;
+            self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+          }
         }
       }
     },
@@ -275,6 +318,14 @@ export default {
           this.travelInfos = this.travelInfo;
         },
         immediate: true,
+      },
+      itinerary: {
+        handler: function() {
+          if(!this.itineraryLoaded) {
+            this.updateTabs();
+            this.itineraryLoaded = true;
+          }
+        }
       },
       page: function(){
         this.currentPage = this.page;
@@ -301,9 +352,6 @@ export default {
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
     },
-    mounted() {
-      this.updateTabs();
-    },
 }
 </script>
 
@@ -314,7 +362,7 @@ export default {
     border: none;
     background: rgb(250,250,250);
     color:black;
-    height: 90vh;
+    height:90vh;
     width: 100%;
     // border-left: 2px solid rgb(230, 230, 230);
     border-width: 3px;

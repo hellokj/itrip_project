@@ -1,60 +1,54 @@
 <template>
-    <div class="px-2 py-2 togo-item">
-        <el-card :body-style="{ padding: '0px' }" shadow="hover"> 
-            <div class="card-container">
-                <div class="picture-container">
-                    <vue-load-image>
-                        <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
-                        <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
-                        <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
-                    </vue-load-image>
-                </div>
-                <div class="info-col">
-                    <div class="name-container">
-                        <p class="mb-0 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
-                        <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
-                    </div>
-                    <p class="address" style="text-align:left;">{{getAddress()}}</p>
-                    <div class="row">
-                        <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
-                        <el-tooltip placement="right-start" effect="light" style="width:auto;">
-                            <i class="fas fa-comment-alt" v-if="memo != null"></i>
-                            <h6 slot="content">{{showMemo()}}</h6>
-                        </el-tooltip>
-                    </div>
-                    <div class="iNumber-container">
-                        <a-time-picker class="time-picker" @change="onChange" :defaultValue="moment(stopTimeString, 'HH:mm')" format="HH:mm" />
-                        <a-dropdown :trigger="['click']">
-                        <a class="ant-dropdown-link">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </a>
-                        <a-menu slot="overlay">
-                            <a-menu-item @click="$emit('getNearby', togo, null)">
-                                <i class="fas fa-map-marked-alt"></i>  附近景點
-                            </a-menu-item>
-                            <a-menu-item>
-                                <el-popover
-                                    placement="top"
-                                    title="文字筆記"
-                                    width="300"
-                                    trigger="click">
-                                    <i class="far fa-comment-alt" slot="reference"> 文字筆記</i> 
-                                    <el-input
-                                        type="textarea"
-                                        :placeholder="placeholder"
-                                        v-model="togo.memo"
-                                        maxlength="15"
-                                        show-word-limit>
-                                    </el-input>
-                                </el-popover>
-                            </a-menu-item>
-                        </a-menu>
-                    </a-dropdown> 
-                    </div>
-                </div>
-            </div>
-        </el-card> 
-    </div>
+  <div class="px-2 py-2 togo-item">
+    <el-card :body-style="{ padding: '0px' }" shadow="hover"> 
+      <div class="card-container">
+        <div class="picture-container">
+          <vue-load-image>
+            <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
+            <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
+            <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
+          </vue-load-image>
+        </div>
+        <div class="info-col">
+          <div class="name-container">
+            <p class="mb-0 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
+            <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
+          </div>
+          <p class="address" style="text-align:left;">{{getAddress()}}</p>
+          <div class="row">
+            <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
+            <el-tooltip placement="right-start" effect="light" style="width:auto;">
+              <i class="fas fa-comment-alt" v-if="memo != null"></i>
+              <h6 slot="content">{{showMemo()}}</h6>
+            </el-tooltip>
+          </div>
+          <a-dropdown :trigger="['click']">
+            <a class="ant-dropdown-link">
+              <i class="fas fa-ellipsis-h"></i>
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <el-popover
+                  placement="top"
+                  title="文字筆記"
+                  width="300"
+                  trigger="click">
+                  <i class="far fa-comment-alt" slot="reference"> 文字筆記</i> 
+                  <el-input
+                    type="textarea"
+                    :placeholder="placeholder"
+                    v-model="togo.memo"
+                    maxlength="15"
+                    show-word-limit>
+                  </el-input>
+                </el-popover>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+        </div>
+      </div>
+    </el-card> 
+  </div>
 </template>
 
 <script>
@@ -65,7 +59,7 @@ import moment from 'moment'
 import VueLoadImage from 'vue-load-image'
 
 export default {
-    name: "TogoItem",
+    name: "MobileMemberTogoItem",
     components: {
         VNumberSmarty,
         'vue-load-image': VueLoadImage
@@ -128,11 +122,9 @@ export default {
 
 <style scoped>
     .togo-item {
-        width: 90%;
+        width: auto;
         padding-top: 2px;
         color: #000000;
-        display: flex;
-        flex-direction: row;
     }
     .el-card {
         border:none;

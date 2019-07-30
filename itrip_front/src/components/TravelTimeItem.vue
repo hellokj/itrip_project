@@ -8,7 +8,7 @@
                     </b-col>
                     <b-col>
                         <b-row style="width:auto;">
-                            <a-dropdown :trigger="['click']">
+                            <a-dropdown title="選擇交通方式" :trigger="['click']">
                                 <a class="ant-dropdown-link">
                                 <i id="modes" :class="modes[current].class"></i>
                                 </a>

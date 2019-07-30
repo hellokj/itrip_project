@@ -149,6 +149,7 @@ export default {
     padding-right: 5px;
     display: inline;
     text-align: center;
+    /* height: 60vh; */
   }
 
   .info_title {
