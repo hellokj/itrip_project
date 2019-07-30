@@ -4,6 +4,7 @@
 
     <b-container>
         <!-- {{searchResults}} -->
+        <label class="clear-input" for="search-input" @click="clearInput"></label>
         <input @blur="inputTextFocus = false"  @focus="inputTextFocus = true" class="search-input" v-model="inputText" placeholder="輸入想去的地方、景點" type="text">
 
         <!-- region with pics -->
@@ -78,6 +79,9 @@ export default {
       },
       sendNameToTripPage(name){
         this.$router.push("/trip/?qname=" + name);
+      },
+      clearInput: function(){
+        this.inputText = '';
       }
     },
     created(){
@@ -249,15 +253,6 @@ window
     outline: none;
   }
 
-  /* .region-auto {
-    display: none;
-  }
-  
- 
-  .search-input:focus + .region-auto {
-    display: block;
-  } */
-
   .searchResultItem {
     width: 100%;
     height: 100%;
@@ -297,14 +292,28 @@ window
     color: #FFF;
   }
 
-  .search-input::after {
-    content: "";
+  .clear-input::after {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    content: 'X';
+    text-align: center;
+    padding-top: 1px;
     position: absolute;
+    right: 25px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: transparent;
+    z-index: 2;
     
-    width: 15px;
-    height: 15px;
-    color: #000;
   }
+
+  .clear-input:hover::after {
+    background-color: rgba(187, 135, 126, 0.596);
+    color: #FFF;
+  }
+
 
 </style>
 
