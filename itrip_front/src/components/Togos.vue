@@ -20,10 +20,35 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
           <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
-          <i title="分享" class="fas fa-share-alt" @click="shareTrip" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="加入旅伴" class="fas fa-user-plus" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <!-- @click="shareTrip" -->
+          <el-dropdown ref="dropdown" placement="bottom-start" @click.native="shareTrip"  trigger="click">
+            <span class="el-dropdown-link">
+              <i title="分享" class="fas fa-share-square" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i> 
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <social-sharing
+              @open="shareTrip"
+              description="跟著IG粉絲一起玩!" 
+              :url="shareUrl"
+              inline-template>
+                <div class="social-div">
+                    <el-dropdown-item>
+                      <network network="facebook">
+                        <i class="fab fa-facebook-square"></i> Facebook
+                      </network>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <network network="twitter">
+                        <i class="fab fa-twitter"></i> Twitter
+                      </network>  
+                    </el-dropdown-item>
+                </div>
+              </social-sharing>
+            </el-dropdown-menu>         
+          </el-dropdown>
         </div>
       </div>
-      
     </div>
     <div class="tab-container" style="height: 75vh;">
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
@@ -82,6 +107,7 @@ import TogoItem from './TogoItem'
 import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
+import { async } from 'q';
 
 export default {
     name: "Togos",
@@ -106,6 +132,8 @@ export default {
         isScrollbarShown: false,
         update: 0,
         viewMapString: '檢視地圖',
+        itineraryLoaded: false,
+        shareUrl: 'http://localhost:8080/#/trip?viewId=',
       }
     },
     components: {
@@ -121,6 +149,7 @@ export default {
       page: Number,
       dayNum: Number,
       itinerary: Object,
+      shareId: Number,
     },
     methods: {
       saveTrip() {
@@ -149,24 +178,30 @@ export default {
           this.$emit('saveTrip', this.tripName, this.tripDate);
         }
       },
-      shareTrip() {
-        if (this.tripDate.date == ""){
-            // 預設今天日期
-            let date = new Date();
+      shareTrip: function() {
+        if(this.shareId === undefined) {
+          let self = this;
+          if (this.tripDate.date == ""){
+              // 預設今天日期
+              let date = new Date();
+              let year = date.getFullYear();
+              let month = date.getMonth() + 1;
+              let day = date.getDate();
+              this.tripDate = year + "-" + month + "-" + day;
+          }
+          else {
+            //console.log(this.tripDate)
+            let date = new Date(Date.parse(this.tripDate));
             let year = date.getFullYear();
             let month = date.getMonth() + 1;
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
+          }
+          this.$emit('share', this.tripName, this.tripDate);  
         }
         else {
-          //console.log(this.tripDate)
-          let date = new Date(Date.parse(this.tripDate));
-          let year = date.getFullYear();
-          let month = date.getMonth() + 1;
-          let day = date.getDate();
-          this.tripDate = year + "-" + month + "-" + day;
+          this.$emit('updateShare', this.shareId, this.tripName, this.tripDate);
         }
-        this.$emit('share', this.tripName, this.tripDate);
       },
       changePage(){
         this.$emit('change-page', this.currentPage);
@@ -279,18 +314,16 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      updateTabs: async function(){
+      updateTabs: function(){
         let self = this;
-        if (self.itinerary != undefined){
-          await this.$nextTick(function() {
-            if (self.itinerary.togos != undefined){
-              for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-                self.newTab();
-              };
-              self.tripName = self.itinerary.name;
-              self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-            }
-          });
+        if (self.itinerary != undefined){ 
+          if (self.itinerary.togos != undefined){
+            for (let i = 0; i < self.itinerary.togos.length - 1; i++){
+              self.newTab();
+            };
+            self.tripName = self.itinerary.name;
+            self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+          }
         }
       }
     },
@@ -300,6 +333,14 @@ export default {
           this.travelInfos = this.travelInfo;
         },
         immediate: true,
+      },
+      itinerary: {
+        handler: function() {
+          if(!this.itineraryLoaded) {
+            this.updateTabs();
+            this.itineraryLoaded = true;
+          }
+        }
       },
       page: function(){
         this.currentPage = this.page;
@@ -314,6 +355,11 @@ export default {
         this.startTimeOb.min = parseInt(tmp[1]);
         this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
       },
+      shareId: function(newVal, oldVal) {
+        if(oldVal == undefined) {
+          this.shareUrl += newVal;
+        }
+      }
     },
     created() {
       //console.log("itinerary", this.itinerary);
@@ -325,9 +371,6 @@ export default {
       }
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
-    },
-    mounted() {
-      this.updateTabs();
     },
 }
 </script>

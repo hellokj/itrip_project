@@ -29,10 +29,35 @@ const shareItineraries = async (req, res, next) => {
         togos: togos,
         travelInfos: travelInfos
     });
-    itinerary.save().then(() => Response(null, togos, res));
+    itinerary.save().then(() => res.json({status: -1, msg:'success', data: id}));
+}
+
+const update = async (req, res, next) => {
+    let _id = req.body._id;
+    let startDate = req.body.startDate;
+    let name = req.body.name;
+    let dayNum = req.body.dayNum;
+    let startTimes = req.body.startTimes;
+    let togos = req.body.togos;
+    let travelInfos = req.body.travelInfos;
+
+    let itinerary = new Itinerary({
+        _id: _id,
+        startDate: startDate,
+        name: name,
+        dayNum: dayNum,
+        startTimes: startTimes,
+        togos: togos,
+        travelInfos: travelInfos
+    });
+ 
+    Itinerary.updateItinerary(_id, itinerary).then(() => {
+        Response(null, itinerary, res);
+    });
 }
 
 module.exports = {
     shareItineraries,
-    getSharedItineraries
+    getSharedItineraries,
+    update
 }

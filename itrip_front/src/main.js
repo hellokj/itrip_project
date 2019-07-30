@@ -23,15 +23,12 @@ import 'ant-design-vue/dist/antd.css'
 import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
 import jsPDF from 'jspdf'
-
-
-
-
+import SocialSharing from 'vue-social-sharing'
 
 const mediaQueries = new MediaQueries();
-
 Vue.use(mediaQueries);
 Vue.use(ElementUI);
+Vue.use(SocialSharing);
 // configure language
 locale.use(lang)
 Vue.use(Vuex);

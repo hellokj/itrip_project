@@ -118,7 +118,8 @@ export default {
             }
         },
         getDateString: function() {
-            return this.tripDate.getFullYear() + "-" +  (this.tripDate.getMonth() + 1) + "-" + this.tripDate.getDate();
+            let date = new Date(Date.parse(this.tripDate));
+            return date.getFullYear() + "-" +  (date.getMonth() + 1) + "-" + date.getDate();
         }
         
     },
