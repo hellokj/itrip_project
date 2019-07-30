@@ -3,6 +3,7 @@
     <el-dialog
       title="FB註冊"
       :visible.sync="isVisible"
+      :modal="false"
       width="30%"
       center>
       <span style="text-align: center">{{ hint }}</span>
