@@ -2,8 +2,8 @@
 <div id="profileButton">
   <ProfileDropDown v-if="$store.state.isAuthorized"></ProfileDropDown>
   <el-button type="warning" plain v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
-  <!-- <modal name="logInForm"> -->
-  <LoginForm :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
+  <LoginForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
+  <MobileLoginForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></MobileLoginForm>
   <SignUpForm :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
   <FbSignUpForm :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
 </div>
@@ -11,6 +11,7 @@
 
 <script>
 import LoginForm from '../components/template/LoginForm'
+import MobileLoginForm from '../components/MobileLogInForm'
 import SignUpForm from '../components/template/SignUpForm'
 import FbSignUpForm from '../components/template/FbSignUpForm'
 import ProfileDropDown from '../components/template/ProfileDropDown'
@@ -18,6 +19,7 @@ export default {
   name: 'ProfileButton',
   components: {
     LoginForm,
+    MobileLoginForm,
     SignUpForm,
     FbSignUpForm,
     ProfileDropDown
