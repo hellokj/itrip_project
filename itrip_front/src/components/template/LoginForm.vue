@@ -1,27 +1,29 @@
 <template>
 <div class="logInForm">
-    <el-dialog
-      title="登入"
-      :visible.sync="isVisible"
-      width="30%"
-      center>
-      <span style="text-align: center">{{ hint }}</span>
-      <div style="height: 10px"></div>
-      <el-form :model="logInForm" ref="logInForm" status-icon :rules="rules" class="demo-ruleForm">
-        <el-form-item prop="account" resetField="resetForm">
-          <el-input v-model="logInForm.account" placeholder="帳號/信箱" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="password" resetField="resetForm">
-          <el-input v-model="logInForm.password" placeholder="密碼" show-password clearable></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirm">確認</el-button>
-        <el-button @click="toSignUp">註冊</el-button>
-        <el-button type="info" @click="fbLogIn">以FB帳號註冊</el-button>
-      </span>
-    </el-dialog>
-  </div>
+  <el-dialog
+    title="登入"
+    :visible.sync="isVisible"
+    :modal="false"
+    width="30%"
+    style="z-index: 2011;"
+    center>
+    <span style="text-align: center">{{ hint }}</span>
+    <div style="height: 10px"></div>
+    <el-form :model="logInForm" ref="logInForm" status-icon :rules="rules" class="demo-ruleForm">
+      <el-form-item prop="account" resetField="resetForm">
+        <el-input v-model="logInForm.account" placeholder="帳號/信箱" clearable></el-input>
+      </el-form-item>
+      <el-form-item prop="password" resetField="resetForm">
+        <el-input v-model="logInForm.password" placeholder="密碼" show-password clearable></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="confirm">確認</el-button>
+      <el-button @click="toSignUp">註冊</el-button>
+      <el-button type="info" @click="fbLogIn">以FB帳號註冊</el-button>
+    </span>
+  </el-dialog>
+</div>
 </template>
 
 <script>
@@ -140,6 +142,7 @@ export default {
 </script>
 
 <style scoped>
+
   .el-button--info {
     color: #FFF;
     background-color: #3b5998;

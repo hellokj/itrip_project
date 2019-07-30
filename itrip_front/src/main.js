@@ -38,7 +38,7 @@ Vue.use(jsPDF);
 Vue.use(Antd);
 Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
-Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
+Vue.use(VModal, { dynamic: true, injectModalsContainer: false });
 
 delete Icon.Default.prototype._getIconUrl;
 (function (d, s, id) {

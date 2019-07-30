@@ -10,41 +10,9 @@
           </vue-load-image>
         </div>
         <div class="info-col">
-          <div class="name-container">
-            <p class="mb-0 p-name" style="text-align:left;"><b>{{togo.name}}</b></p>
-            <i class="fas fa-times" @click="$emit('deleteTogo', togo.index)"></i>
-          </div>
-          <p class="address" style="text-align:left;">{{getAddress()}}</p>
-          <div class="row">
-            <p class="mx-0 my-0 px-1 stopTime" style="text-align:left;width:auto;">停留時間</p>
-            <el-tooltip placement="right-start" effect="light" style="width:auto;">
-              <i class="fas fa-comment-alt" v-if="memo != null"></i>
-              <h6 slot="content">{{showMemo()}}</h6>
-            </el-tooltip>
-          </div>
-          <a-dropdown :trigger="['click']">
-            <a class="ant-dropdown-link">
-              <i class="fas fa-ellipsis-h"></i>
-            </a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <el-popover
-                  placement="top"
-                  title="文字筆記"
-                  width="300"
-                  trigger="click">
-                  <i class="far fa-comment-alt" slot="reference"> 文字筆記</i> 
-                  <el-input
-                    type="textarea"
-                    :placeholder="placeholder"
-                    v-model="togo.memo"
-                    maxlength="15"
-                    show-word-limit>
-                  </el-input>
-                </el-popover>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
+          <div class="name-container" style="text-align:left;"><b>{{togo.name}}</b></div>
+          <div style="text-align:left; margin-right: 5px; word-break: break-all;">{{ getAddress()}}</div>
+          <div style="text-align:left; margin-right: 5px; word-break: break-all;">{{ stayTimeFormat(togo.startTime, togo.endTime)}}</div>
         </div>
       </div>
     </el-card> 
@@ -75,22 +43,30 @@ export default {
             stopTime:''
         }
     },
-    methods: {
-        getAddress() {
-            return getAddress(this.togo.address);
-        },
-        onChange(time, timeString){
-            this.hrs = parseInt(timeString.split(':')[0]);
-            this.mins = parseInt(timeString.split(':')[1]);
-            this.togo.stopTime.hrs = this.hrs;
-            this.togo.stopTime.mins = this.mins;
-            this.$emit('updateStopTime');
-        },
-        showMemo() {
-            return this.togo.memo;
-        },
-        moment,
+  methods: {
+    startTimeFormat: function(startTime){
+      if (startTime.min.toString().length == 1){
+        return startTime.hr + "：0" + startTime.min;
+      }
+      return startTime.hr + "：" + startTime.min;
     },
+    stayTimeFormat: function(startTime, endTime){
+      return String(this.startTimeFormat(startTime) + " ~ " + this.startTimeFormat(endTime));
+    },
+    getAddress() {
+      return getAddress(this.togo.address);
+    },
+    onChange(time, timeString){
+      this.hrs = parseInt(timeString.split(':')[0]);
+      this.mins = parseInt(timeString.split(':')[1]);
+      this.togo.stopTime.hrs = this.hrs;
+      this.togo.stopTime.mins = this.mins;
+      this.$emit('updateStopTime');
+    },
+    showMemo() {
+      return this.togo.memo;
+    },
+  },
     computed: {
         srcFunc: function() {
             let src;
@@ -115,8 +91,14 @@ export default {
         },
         placeholder: function() {
             return '在『' + this.togo.name + '』一定要做的事';
+        },
+        stayTime: function(){
+          return this.togo.startTime.hr + ":" + this.togo.startTime.min;
         }
-    }
+    },
+    created() {
+      console.log("???", this.togo);
+    },
 }
 </script>
 
@@ -142,19 +124,20 @@ export default {
         flex-direction: row;
     }
     .picture-container {
-        height: 100%;
-        width: 130px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+      height: 100%;
+      width: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .info-col {
-        width: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        padding-left: 5px;
-        overflow: hidden;
+      padding-bottom: 10px;
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      padding-left: 5px;
+      justify-content: center;
+      /* overflow: hidden; */
     }
     .name-container {
         width: 95%;

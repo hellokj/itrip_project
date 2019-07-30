@@ -373,7 +373,7 @@ export default {
     }
   },
   created() {
-    // console.log("itinerary create", this.itinerary);
+    console.log("itinerary create", this.itinerary);
     // this.resetDetailInfo();
     this.resetItineraryData(this.itinerary);
   },
@@ -384,9 +384,7 @@ export default {
     this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
   },
   watch: {
-    itinerary: function(){
-      this.resetDetailInfo();
-    }
+    
   },
   computed: {
     

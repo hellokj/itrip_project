@@ -1,13 +1,31 @@
 <template>
-  <el-main>
-    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
-      <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
-      <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-      <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
-    </el-tabs>
-    <MobileMemberTogoItem :togo="itinerary.togos[0][0]"></MobileMemberTogoItem>
-    <TravelTimeItem :togo="itinerary.togos[0][0]" :travelTime="itinerary.travelInfos[0][0].duration" :index="0"></TravelTimeItem>
+  <el-main style="text-align: center;">
+    <el-header style="display:flex; align-items:center; justify-content:center;">
+      <el-link 
+        v-model="itinerary.isPublic" 
+        class="lock"
+        :icon="getLockIcon()" 
+        @click.native="changeLockStatus()" 
+        style="margin-right: auto">
+      </el-link>
+      <div style="font-size: 20px;">{{ itinerary.name }} {{itinerary.startDate.year}}-{{itinerary.startDate.month}}-{{itinerary.startDate.day}}</div>
+      <el-link 
+        icon="el-icon-edit"
+        class="edit" 
+        style="margin-left: auto"
+        @click="modifyItinerary(itinerary)">
+      </el-link>
+      <!-- <i class="el-icon-edit edit" style="margin-left: auto" @click="modifyItinerary(itinerary)"></i> -->
+    </el-header>
+    <div class="header">
+      <div class="fas fa-angle-left arrow_left" @click="previousPage"></div>
+      <b style="font-size: 20px; float: center; vertical-align:middle">day {{index+1}}</b>
+      <div class="fas fa-angle-right arrow_right" @click="nextPage"></div>
+    </div>
+    <div v-for="(togo, i) in itinerary.togos[index]" :key="togo._id">
+      <MobileMemberTogoItem :togo="togo" style="text-align: right"></MobileMemberTogoItem>
+      <MobileTravelTimeItem v-if="itinerary.travelInfos[index][i]" :mode="getTravelTimeMode(itinerary.travelInfos[index][i])" :travelTime="getTravelTimeDuration(itinerary.travelInfos[index][i])" :index="index"></MobileTravelTimeItem>
+    </div>
   </el-main>
 </template>
 
@@ -18,13 +36,13 @@ import { duration } from 'moment';
 import { start } from 'repl';
 import { setTimeout } from 'timers';
 import MobileMemberTogoItem from '../components/MobileMemberTogoItem'
-import TravelTimeItem from '../components/TravelTimeItem'
+import MobileTravelTimeItem from '../components/MobileTravelTimeItem'
 export default {
   name: "MobileMemberDetailItinerary",
   components: {
     MemberMap,
     MobileMemberTogoItem,
-    TravelTimeItem
+    MobileTravelTimeItem
   },
   props: {
     itinerary: Object,
@@ -37,15 +55,41 @@ export default {
     }
   },
   methods: {
+    getTravelTimeDuration: function(travelInfo){
+      if (travelInfo !== undefined){
+        return travelInfo.duration;
+      }
+      return 0;
+    },
+    getTravelTimeMode: function(travelInfo){
+      if (travelInfo !== undefined){
+        return travelInfo.mode;
+      }
+      return "";
+    },
+    nextPage: function(){
+      if (this.index + 1 >= this.itinerary.dayNum){
+        this.index = this.itinerary.dayNum - 1;
+      }else {
+        this.index++;
+      }
+    },
+    previousPage: function(){
+      if (this.index - 1 <= 0){
+        this.index = 0;
+      }else {
+        this.index--;
+      }
+    },
     changeLockStatus: function(){
       this.itinerary.isPublic = !this.itinerary.isPublic;
     },
     getLockIcon: function(){
       if (this.itinerary.isPublic == undefined || this.itinerary.isPublic == true){
         // 預設公開
-        return "el-icon-lock";
+        return 'el-icon-lock';
       }
-      return "el-icon-unlock";
+      return 'el-icon-unlock';
     },
     hasMemo: function(rowData){
       // 目前都還沒有memo 所以上面寫反
@@ -283,11 +327,11 @@ export default {
   },
   watch: {
     itinerary: function(){
-      this.resetDetailInfo();
+      this.resetItineraryData();
     }
   },
   computed: {
-    
+
   },
 }
 </script>
@@ -329,5 +373,34 @@ export default {
 
   .memo:hover {
     cursor: pointer;
+  }
+
+  .header {
+    width: 100%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center;
+  }
+
+  .edit, .lock, .arrow_right, .arrow_left {
+    width: 15px;
+    height: 15px;
+    font-size: 18px;
+    /* padding-top: 5px; */
+    border-radius: 50rem;
+    align-items:center;
+  }
+
+  .lock:hover, .edit:hover, .arrow_left:hover, .arrow_right:hover {
+    cursor: pointer;
+    box-shadow: 0 0 15px 5px #ffcb3a;
+  }
+
+  .arrow_left {
+    margin-right: auto;
+  }
+
+  .arrow_right {
+    margin-left: auto;
   }
 </style>

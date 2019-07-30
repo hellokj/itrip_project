@@ -65,8 +65,8 @@ import { setTimeout } from 'timers';
 export default {
   name: "Member",
   components: {
-    MobileMemberAside: MobileMemberAside,
     MemberAside: MemberAside,
+    MobileMemberAside: MobileMemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
     MobileMemberItineraryCarousel: MobileMemberItineraryCarousel,
     MemberDetailItinerary: MemberDetailItinerary,
@@ -95,6 +95,11 @@ export default {
   created() {
     let token = this.$store.state.userToken;
     let self = this;
+    if ((self.$resize && !self.$mq.above(1025))){
+      this.view = "MobileMemberItineraryCarousel";
+    }else {
+      this.view = "MemberItineraryCarousel";
+    }
     apiGetItineraries(token)
       .then(function(res){
         // console.log(res.data.data);
@@ -114,14 +119,22 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
-      // 接收瀏覽所有行程資訊
-      this.$bus.$on("changeToCarousel", event => {
+    // 接收瀏覽所有行程資訊
+    this.$bus.$on("changeToCarousel", event => {
+      if ((self.$resize && !self.$mq.above(1025))){
+        self.changeView("MobileMemberItineraryCarousel");
+      }else {
         self.changeView("MemberItineraryCarousel");
-      });
-      // 接收開啟會員資訊
-      this.$bus.$on("setMemberInfo", event => {
+      }
+    });
+    // 接收開啟會員資訊
+    this.$bus.$on("setMemberInfo", event => {
+      if ((self.$resize && !self.$mq.above(1025))){
+        self.changeView("MobileMemberInfos");
+      }else {
         self.changeView("MemberInfos");
-      });
+      }
+    });
   },
   methods: {
     compareCurrentTime: function(currentDate){
@@ -140,7 +153,8 @@ export default {
     },
     checkDetail: function(itinerary){
       let self = this;
-      this.loading();
+      // this.loading();
+      console.log("check detail", itinerary);
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){
         this.title = "歷史行程";
@@ -169,6 +183,7 @@ export default {
     
   },
   beforeDestroy() {
+    this.$bus.$off("changeToCarousel");
     this.$bus.$off('setMemberInfo');
     this.$bus.$off('changeView');
   },

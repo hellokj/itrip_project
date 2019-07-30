@@ -4,6 +4,7 @@
       title="註冊"
       :visible.sync="isVisible"
       width="30%"
+      :modal="false"
       center>
       <span style="text-align: center">{{ hint }}</span>
       <div style="height: 10px"></div>
