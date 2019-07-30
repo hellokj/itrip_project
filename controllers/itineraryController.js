@@ -50,6 +50,12 @@ const getItineraries = async(req, res, next) => {
     res.json({status: -1, msg:'success', data: itineraries});
 };
 
+const addMember = async(req, res, next) => {
+    // 藉由 行程id 去把行程抓出來
+    let itineraries = await Itinerary.get({ memberIds: memberId});
+    res.json({status: -1, msg:'success', data: itineraries});
+};
+
 module.exports = {
     save,
     getItineraries,

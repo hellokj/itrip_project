@@ -71,7 +71,7 @@ export default {
       let self = this;
       if(this.isChanged) {
         apiUpdateSpot(this.data).then((function (res) {
-          console.log(self.data);
+          //console.log(self.data);
           Message({
             type: 'success',
             message: '資料已送出審核!'

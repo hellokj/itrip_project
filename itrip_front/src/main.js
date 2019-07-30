@@ -24,11 +24,13 @@ import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
 import jsPDF from 'jspdf'
 import SocialSharing from 'vue-social-sharing'
+//import emailjs from 'emailjs-com';
 
 const mediaQueries = new MediaQueries();
 Vue.use(mediaQueries);
 Vue.use(ElementUI);
 Vue.use(SocialSharing);
+//Vue.use(emailjs);
 // configure language
 locale.use(lang)
 Vue.use(Vuex);
