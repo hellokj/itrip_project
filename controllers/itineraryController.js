@@ -51,12 +51,15 @@ const getItineraries = async(req, res, next) => {
 };
 
 const addMember = async(req, res, next) => {
+    let id = req.body.id;
     // 藉由 行程id 去把行程抓出來
-    let itineraries = await Itinerary.get({ memberIds: memberId});
+    let itineraries = await Itinerary.get({ _id: id});
+    console.log(itineraries);
     res.json({status: -1, msg:'success', data: itineraries});
 };
 
 module.exports = {
     save,
     getItineraries,
+    addMember
 }

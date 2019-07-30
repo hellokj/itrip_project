@@ -23,7 +23,8 @@
           <el-popover
               placement="bottom-start"
               width="300"
-              trigger="click">
+              trigger="click"
+              @click.native="addMember">
               <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
               <el-input
                 placeholder="旅伴的E-mail"
@@ -134,6 +135,7 @@ import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 import { async } from 'q';
 import { Message } from 'element-ui'
+import { apiAddMember} from '../../utils/api.js';
 
 export default {
     name: "Togos",
@@ -200,9 +202,10 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }else {
-            let year = this.tripDate.getFullYear();
-            let month = this.tripDate.getMonth() + 1;
-            let day = this.tripDate.getDate();
+            let date = new Date(Date.parse(this.tripDate));
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }
           this.$emit('saveTrip', this.tripName, this.tripDate);
@@ -258,6 +261,8 @@ export default {
       addMember: function() {
         this.memberEmails.push(this.memberEmail);
         this.memberEmail = '';
+        this.saveTrip();
+        
       },
       removeMember: function(index) {
          this.memberEmails.splice(index, 1);

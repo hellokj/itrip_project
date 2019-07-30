@@ -161,8 +161,8 @@ export default {
       // console.log("_id", _id);
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
       .then((function (res) {
-        //console.log("res", res);
-        this.$message.success('行程儲存成功!');
+        console.log(_id);
+        self.$message.success('行程儲存成功!');
       }))
       .catch(function (error) {
         console.log(error);
