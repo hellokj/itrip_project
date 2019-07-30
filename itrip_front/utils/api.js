@@ -107,20 +107,9 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     togos: togos,
     travelInfos: travelInfos
   }
-  //console.log("data", data);
+  console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
 };
-
-const apiAddMember = (_id, token) => {
-  let headers = {
-    "Content-Type": "application/json",
-    "x-access-token": token
-  }
-  let data = {
-    id: _id
-  }
-  return itineraryRequest.post('/addMember', data, { headers: headers });
-}
 
 // share api
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
@@ -200,7 +189,6 @@ export {
     apiDeleteSpot,
     apiGetRoutes,
     apiGetItineraries,
-    apiAddMember,
     apiShareTrip,
     apiGetSharedTrip,
     apiUpdateShare,

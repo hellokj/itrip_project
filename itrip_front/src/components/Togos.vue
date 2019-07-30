@@ -24,7 +24,7 @@
               placement="bottom-start"
               width="300"
               trigger="click"
-              @click.native="addMember">
+              @click.native="saveTrip">
               <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
               <el-input
                 placeholder="旅伴的E-mail"
@@ -260,9 +260,8 @@ export default {
       },
       addMember: function() {
         this.memberEmails.push(this.memberEmail);
-        this.memberEmail = '';
         this.saveTrip();
-        
+        this.memberEmail = '';
       },
       removeMember: function(index) {
          this.memberEmails.splice(index, 1);
