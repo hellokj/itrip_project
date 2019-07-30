@@ -8,11 +8,10 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId"
         :page="page" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share"
-        :key="update"/>
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -78,7 +77,7 @@ import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
 import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip, apiUpdateShare} from '../../utils/api'
 import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
 import { Promise } from 'q';
@@ -171,6 +170,16 @@ export default {
     share(name, date) {
       let self = this;
       apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
+      .then((function (res) {
+        self.qviewId = res.data.data;
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    updateShare(id, name, date) {
+      let self = this;
+      apiUpdateShare(id, date, name, this.togos.length, this.togos, this.travelInfos)
       .then((function (res) {
         console.log(res);
       }))
@@ -338,10 +347,10 @@ export default {
       });
     },
     changeBaseTimes(startTimeOb, page){
-      console.log("startTimeOb", startTimeOb);
-      console.log("page", page);
+      //console.log("startTimeOb", startTimeOb);
+      //console.log("page", page);
       this.baseTimes[page] = startTimeOb;
-      console.log("baseTimes", this.baseTimes);
+      //console.log("baseTimes", this.baseTimes);
     },
     changeMode(index, mode) {
       this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
@@ -555,7 +564,7 @@ export default {
   beforeMount() {
     if(this.qviewId !== undefined) {
       this.getSharedTrip(this.qviewId);
-      this.qviewId = '';
+      this.qviewId = 0;
     }
   },
   mounted() {

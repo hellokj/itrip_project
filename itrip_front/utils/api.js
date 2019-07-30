@@ -138,6 +138,23 @@ const apiGetSharedTrip = (id) => {
   return shareRequest.get('/getSharedItineraries', { params: data });
 };
 
+const apiUpdateShare = (id, startDate, name, dayNum, togos, travelInfos) => {
+  let date = startDate.split('-');
+  let data = {
+    id: id,
+    startDate: {
+      year: parseInt(date[0]),
+      month: parseInt(date[1]),
+      day: parseInt(date[2])
+    },
+    name: name,
+    dayNum: dayNum,
+    togos: togos,
+    travelInfos: travelInfos
+  }
+  return shareRequest.post('/update', data);
+}
+
 
 // Auth api
 const apiLogIn = (authData) => {
@@ -174,6 +191,7 @@ export {
     apiGetItineraries,
     apiShareTrip,
     apiGetSharedTrip,
+    apiUpdateShare,
     apiGetMember,
     apiLogIn,
     apiSignUp,
