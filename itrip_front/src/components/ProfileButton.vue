@@ -1,7 +1,7 @@
 <template>
 <div id="profileButton">
   <ProfileDropDown v-if="$store.state.isAuthorized"></ProfileDropDown>
-  <el-button type="warning" plain v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
+  <el-button :type="type" :round="round" :circle="circle" :plain="plain" v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
   <LoginForm :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
   <SignUpForm :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
   <FbSignUpForm :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
@@ -22,7 +22,22 @@ export default {
     ProfileDropDown
   },
   props: {
-    
+    type: {
+      type: String,
+      default: "warning"
+    },
+    round: {
+      type: Boolean,
+      default: false
+    },
+    circle: {
+      type: Boolean,
+      default: false
+    },
+    plain: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -71,4 +86,5 @@ export default {
   justify-content: center
   margin-right: 50px
   background: #FFFFFF
+  font-size: 25px
 </style>
