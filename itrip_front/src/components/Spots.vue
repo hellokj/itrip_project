@@ -270,6 +270,7 @@ export default {
     .tag-container {
       flex-wrap: wrap;
       justify-content: center;
+      height: auto;
     }
   } 
 </style>
