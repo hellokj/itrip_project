@@ -80,8 +80,8 @@ const removeMember = async(req, res, next) => {
 }
 
 const deleteItinerary = async(req, res, next) => {
-    // get spot's address from req and get region name
     let _id = req.body.id;
+    console.log("_id", _id);
     await Itinerary.deleteItinerary(_id);
     res.json({status: -1, msg:'success'});
 }

@@ -329,7 +329,8 @@ export default {
   },
   watch: {
     itinerary: function(){
-      this.resetItineraryData();
+      this.resetItineraryData(this.itinerary);
+      this.$emit("loadingComplete");
     }
   },
   computed: {

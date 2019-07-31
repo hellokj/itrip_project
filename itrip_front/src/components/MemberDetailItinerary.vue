@@ -387,7 +387,10 @@ export default {
     this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary, currentAccessId: this.currentAccessId});
   },
   watch: {
-
+    itinerary: function(){
+      this.resetItineraryData(this.itinerary);
+      this.$emit("loadingComplete");
+    }
   },
   computed: {
     
