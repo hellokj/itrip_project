@@ -111,8 +111,7 @@
       },
       searchClick() {
         var county = null
-        if (this.countyChecked !== '全部' && this.regionsChecked === []) county = countyChecked;
-
+        if (this.countyChecked !== '全部') county = this.countyChecked;
         this.$emit('header-search-btn-clicked', county, this.regionsChecked, this.typesChecked, this.inputText)
       },
       searchResultClicked(name) {
