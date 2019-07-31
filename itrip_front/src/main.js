@@ -24,11 +24,13 @@ import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
 import jsPDF from 'jspdf'
 import SocialSharing from 'vue-social-sharing'
+//import emailjs from 'emailjs-com';
 
 const mediaQueries = new MediaQueries();
 Vue.use(mediaQueries);
 Vue.use(ElementUI);
 Vue.use(SocialSharing);
+//Vue.use(emailjs);
 // configure language
 locale.use(lang)
 Vue.use(Vuex);
@@ -36,7 +38,7 @@ Vue.use(jsPDF);
 Vue.use(Antd);
 Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
-Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
+Vue.use(VModal, { dynamic: true, injectModalsContainer: false });
 
 delete Icon.Default.prototype._getIconUrl;
 (function (d, s, id) {

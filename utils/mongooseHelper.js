@@ -35,7 +35,7 @@ const Options = (sortBy, page, limit, order, requestType) => {
             customLabels: myCustomLabels
         };  
     }
-  }
+}
 const QueryHelper = (name, city, region) => {
     if(city === undefined) {
         return {$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]};
@@ -48,7 +48,7 @@ const QueryHelper = (name, city, region) => {
     else {
         return {$and:[
             {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
-            {$or: [{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]},
+            {$or: [{"address.suburb": {$in: region}}, {"address.town": {$in: region}}, {"address.state_district": {$in: region}}]},
             {$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]}]};
     }
 };
@@ -58,8 +58,8 @@ const Place_query = (schema, city, region, categories, name, sortBy, page, limit
     console.log(city, region, categories, name, sortBy, page, limit, order);
     if(name != undefined) {
         return schema.paginate(QueryHelper(name, city, region), Options(sortBy, page, limit, order),
-         function(err, result) {
-             return result;
+            function(err, result) {
+            return result;
         });
     }
     if(region === undefined) {
@@ -82,7 +82,7 @@ const Place_query = (schema, city, region, categories, name, sortBy, page, limit
             return schema.paginate(
                 {$and:[
                     {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
-                    {$or: [{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]}]},
+                    {$or: [{"address.suburb": {$in: region}}, {"address.town": {$in: region}}, {"address.state_district": {$in: region}}]}]},
                     Options(sortBy, page, limit, order), 
                     function(err, result) {
                         return result;
@@ -91,11 +91,11 @@ const Place_query = (schema, city, region, categories, name, sortBy, page, limit
         return schema.paginate(
         {$and:[
             {$or: [{"address.city": city}, {"address.state": city},{"address.county": city}]},
-            {$or: [{"address.suburb": region}, {"address.town": region}, {"address.state_district": region}]}], 
+            {$or: [{"address.suburb": {$in: region}}, {"address.town": {$in: region}}, {"address.state_district": {$in: region}}]}], 
                 category: {$in: categories}},
                 Options(sortBy, page, limit, order), 
             function(err, result) {
-                return result;
+                return result; 
         });     
     }
 }

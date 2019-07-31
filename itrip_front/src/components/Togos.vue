@@ -18,31 +18,62 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="font-size:25px;"></i>
-          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i>
+          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
+          <el-popover
+              placement="bottom-start"
+              width="300"
+              trigger="click">
+              <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
+              <el-input
+                placeholder="旅伴的E-mail"
+                v-model="memberEmail"
+                clearable>
+              </el-input>
+              <div class="mt-1 pr-3 row" style="float:right;">
+                <el-button type="success" icon="el-icon-plus" size="mini" @click="addMember" circle></el-button>
+              </div>
+              <div class="mt-2 px-0 col">
+                <el-tag
+                  closable
+                  v-for="(email, index) in memberEmails"
+                  :key="index"
+                  type="info"
+                  effect="plain"
+                  @close="removeMember(index)">
+                  {{ email }}
+                </el-tag>  
+              </div>
+              
+          </el-popover>
           <!-- @click="shareTrip" -->
-          <el-dropdown placement="bottom-start">
+          <el-dropdown ref="dropdown" placement="bottom-start" @click.native="shareTrip"  trigger="click">
             <span class="el-dropdown-link">
-              <i title="分享" class="fas fa-share-alt" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i> 
+              <i title="分享" class="fas fa-share-square" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i> 
             </span>
             <el-dropdown-menu slot="dropdown">
-              <social-sharing url="https://vuejs.org/" inline-template>
+              <social-sharing
+              @open="shareTrip"
+              description="跟著IG粉絲一起玩!" 
+              :url="shareUrl"
+              inline-template>
                 <div class="social-div">
-                  <network network="facebook">
-                    <el-dropdown-item><i class="fab fa-facebook-square"></i> Facebook</el-dropdown-item>
-                  </network>
-                  <network network="twitter">  
-                    <el-dropdown-item><i class="fab fa-twitter"></i> Twitter</el-dropdown-item>
-                  </network>  
+                    <el-dropdown-item :disabled="shareId===undefined">
+                      <network network="facebook">
+                        <i class="fab fa-facebook-square"></i> Facebook
+                      </network>
+                    </el-dropdown-item>
+                    <el-dropdown-item :disabled="shareId===undefined">
+                      <network network="twitter">
+                        <i class="fab fa-twitter"></i> Twitter
+                      </network>  
+                    </el-dropdown-item>
                 </div>
               </social-sharing>
-            </el-dropdown-menu>
-             
+            </el-dropdown-menu>         
           </el-dropdown>
-          
         </div>
       </div>
-      
     </div>
     <div class="tab-container" style="height: 75vh;">
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
@@ -101,6 +132,9 @@ import TogoItem from './TogoItem'
 import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
+import { async, resolve } from 'q';
+import { Message } from 'element-ui'
+import { apiFindMemberByMail } from '../../utils/api.js';
 
 export default {
     name: "Togos",
@@ -126,6 +160,10 @@ export default {
         update: 0,
         viewMapString: '檢視地圖',
         itineraryLoaded: false,
+        shareUrl: 'http://localhost:8080/#/trip?viewId=',
+        memberEmail: '',
+        memberEmails: [],
+        newMemberId: ''
       }
     },
     components: {
@@ -141,12 +179,15 @@ export default {
       page: Number,
       dayNum: Number,
       itinerary: Object,
+      shareId: Number,
     },
     methods: {
       saveTrip() {
         if (this.$store.state.isAuthorized == false){
-          // this.$message("請先登入");
-          alert("請先登入");
+           Message({
+            type: 'warning',
+            message: '請先登入!'
+          });
           this.$store.dispatch("updateFormState", {
             isLogIn: true,
             isSignUp: false,
@@ -161,32 +202,39 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }else {
-            let year = this.tripDate.getFullYear();
-            let month = this.tripDate.getMonth() + 1;
-            let day = this.tripDate.getDate();
-            this.tripDate = year + "-" + month + "-" + day;
-          }
-          this.$emit('saveTrip', this.tripName, this.tripDate);
-        }
-      },
-      shareTrip() {
-        if (this.tripDate.date == ""){
-            // 預設今天日期
-            let date = new Date();
+            let date = new Date(Date.parse(this.tripDate));
             let year = date.getFullYear();
             let month = date.getMonth() + 1;
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
+          }
+          this.$emit('saveTrip', this.tripName, this.tripDate, this.newMemberId);
+        }
+      },
+      shareTrip: function() {
+        if(this.shareId === undefined) {
+          let self = this;
+          if (this.tripDate.date == ""){
+              // 預設今天日期
+              let date = new Date();
+              let year = date.getFullYear();
+              let month = date.getMonth() + 1;
+              let day = date.getDate();
+              this.tripDate = year + "-" + month + "-" + day;
+          }
+          else {
+            //console.log(this.tripDate)
+            let date = new Date(Date.parse(this.tripDate));
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            this.tripDate = year + "-" + month + "-" + day;
+          }
+          this.$emit('share', this.tripName, this.tripDate);  
         }
         else {
-          //console.log(this.tripDate)
-          let date = new Date(Date.parse(this.tripDate));
-          let year = date.getFullYear();
-          let month = date.getMonth() + 1;
-          let day = date.getDate();
-          this.tripDate = year + "-" + month + "-" + day;
+          this.$emit('updateShare', this.shareId, this.tripName, this.tripDate);
         }
-        this.$emit('share', this.tripName, this.tripDate);
       },
       changePage(){
         this.$emit('change-page', this.currentPage);
@@ -209,6 +257,14 @@ export default {
       newTab: function() {
         this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
+      },
+      addMember: async function() {
+        this.memberEmails.push(this.memberEmail);
+        this.callFindMemberAPI(this.memberEmail);
+        this.memberEmail = '';
+      },
+      removeMember: function(index) {
+         this.memberEmails.splice(index, 1);
       },
       getStartTime: function(index) {
         // if(index == 0) {
@@ -304,13 +360,25 @@ export default {
         if (self.itinerary != undefined){ 
           if (self.itinerary.togos != undefined){
             for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-              self.newTab();
+              self.tabs.push(this.tabCounter++);
             };
             self.tripName = self.itinerary.name;
             self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
           }
         }
-      }
+      },
+      callFindMemberAPI: function(email) {
+        let self = this;
+        let token = this.$store.state.userToken;
+        apiFindMemberByMail(email, token)
+        .then((function (res) {
+          self.newMemberId = res.data.data._id;
+          self.saveTrip();
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+      },
     },
     watch: {
       travelInfo: {
@@ -340,6 +408,11 @@ export default {
         this.startTimeOb.min = parseInt(tmp[1]);
         this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
       },
+      shareId: function(newVal, oldVal) {
+        if(oldVal == undefined) {
+          this.shareUrl += newVal;
+        }
+      }
     },
     created() {
       //console.log("itinerary", this.itinerary);
@@ -374,7 +447,7 @@ export default {
     opacity: 0;
   }
   .save-trip {
-    width: 40%;
+    width: 50%;
     display: flex;
     justify-content: space-around;
   }
@@ -475,7 +548,6 @@ export default {
     background: #333555;
   }
   .fa-save {
-    color:darkred;
     cursor: pointer;
   }
   .flip-list-move {

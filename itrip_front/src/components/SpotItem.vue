@@ -29,14 +29,13 @@
                                 #{{t}}
                             </el-tag> 
                         </div>
-                       
                         <i class="pt-1 fas fa-ellipsis-h" style="color:#db4e35"></i>
                     </div>
                     <a-tag v-if="sortBy === 'ig_post_num'" class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i><b>   {{spot.ig_post_num}}</b> 次<b>TAG</b></a-tag>
                     <a-tag v-if="sortBy === 'checkins'" class="mt-2 fb-checkins-tag" color="#3b5998"><i class="fas fa-map-marker"></i><b>   {{spot.checkins}}</b> 次<b>打卡</b></a-tag>
                 </div>
                 <div class="edit-dropdown">
-                   <a-dropdown :trigger="['click']">
+                    <a-dropdown :trigger="['click']">
                         <a class="ant-dropdown-link">
                             <i class="fas fa-info-circle"></i>
                         </a>
@@ -45,10 +44,10 @@
                                 <i class="fab fa-blogger" style="color: #3b5998;"></i>  痞客幫
                             </a-menu-item>
                             <a-menu-item @click="link('wiki')">
-                                 <i class="fab fa-wikipedia-w"></i> Wiki頁面
+                                <i class="fab fa-wikipedia-w"></i> Wiki頁面
                             </a-menu-item>
                             <a-menu-item @click="edit(spot)">
-                               <i class="fas fa-cog"></i> 編輯景點資料
+                                <i class="fas fa-cog"></i> 編輯景點資料
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown> 
@@ -80,7 +79,7 @@ export default {
             this.$emit('add-spot', spot);
         },
         getAddress: function(){
-           return getAddress(this.spot.address)
+            return getAddress(this.spot.address)
         },
         link: function(type, tag) {
             let Url = '';

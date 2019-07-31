@@ -84,7 +84,7 @@ const apiGetRoutes = (data, mode) => {
 
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfos, token) => {
+const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfos, memberId, token) => {
   let headers = {
     "Content-Type": "application/json",
     "x-access-token": token
@@ -105,7 +105,8 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     name: name,
     dayNum: dayNum,
     togos: togos,
-    travelInfos: travelInfos
+    travelInfos: travelInfos,
+    memberId: memberId
   }
   //console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
@@ -115,7 +116,7 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
   let date = startDate.split('-');
   let id = new Date().getTime();
-  console.log(id);
+  //console.log(id);
   let data = {
     id: id,
     startDate: {
@@ -138,6 +139,23 @@ const apiGetSharedTrip = (id) => {
   return shareRequest.get('/getSharedItineraries', { params: data });
 };
 
+const apiUpdateShare = (id, startDate, name, dayNum, togos, travelInfos) => {
+  let date = startDate.split('-');
+  let data = {
+    id: id,
+    startDate: {
+      year: parseInt(date[0]),
+      month: parseInt(date[1]),
+      day: parseInt(date[2])
+    },
+    name: name,
+    dayNum: dayNum,
+    togos: togos,
+    travelInfos: travelInfos
+  }
+  return shareRequest.post('/update', data);
+}
+
 
 // Auth api
 const apiLogIn = (authData) => {
@@ -157,6 +175,14 @@ const apiGetMember = (userToken) => {
   return memberRequest.post('/getMember', {}, { headers: headers });
 }
 
+const apiFindMemberByMail = (email, userToken) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": userToken
+  }
+  return memberRequest.post('/findMemberByMail', { email: email }, { headers: headers });
+}
+
 const apiModifyProfile = (memberInfo, userToken) => {
   let headers = {
     "Content-Type": "application/json",
@@ -174,9 +200,11 @@ export {
     apiGetItineraries,
     apiShareTrip,
     apiGetSharedTrip,
+    apiUpdateShare,
     apiGetMember,
     apiLogIn,
     apiSignUp,
     apiModifyProfile,
-    apiSaveTrip
+    apiSaveTrip,
+    apiFindMemberByMail
 }

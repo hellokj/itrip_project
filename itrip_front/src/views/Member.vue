@@ -21,6 +21,7 @@
   </MemberAside>
 
   <component
+    v-model="windowWidth"
     v-if="($resize && !$mq.above(1025))"
     :is="view" :title="title"
     :incomingItineraries="incomingItineraries" 
@@ -33,6 +34,7 @@
   </component>
 
   <component
+    v-model="windowWidth"
     v-if="($resize && $mq.above(1025))"
     :is="view" :title="title"
     :incomingItineraries="incomingItineraries" 
@@ -59,19 +61,21 @@ import MobileMemberItineraryCarousel from "../components/MobileMemberItineraryCa
 import MemberDetailItinerary from '../components/MemberDetailItinerary'
 import MobileMemberDetailItinerary from '../components/MobileMemberDetailItinerary'
 import MemberInfos from '../components/MemberInfos'
+import MobileMemberInfos from '../components/MobileMemberInfos'
 import MemberFollowingList from '../components/MemberFollowingList'
 import { apiGetItineraries } from '../../utils/api'
 import { setTimeout } from 'timers';
 export default {
   name: "Member",
   components: {
-    MobileMemberAside: MobileMemberAside,
     MemberAside: MemberAside,
+    MobileMemberAside: MobileMemberAside,
     MemberItineraryCarousel: MemberItineraryCarousel,
     MobileMemberItineraryCarousel: MobileMemberItineraryCarousel,
     MemberDetailItinerary: MemberDetailItinerary,
     MobileMemberDetailItinerary: MobileMemberDetailItinerary,
     MemberInfos: MemberInfos,
+    MobileMemberInfos: MobileMemberInfos,
     MemberFollowingList: MemberFollowingList,
     loading: VueLoading
   },
@@ -90,11 +94,19 @@ export default {
       itinerary: Object,
       title: "",
       isLoading: false,
+      windowWidth: 0,
     }
   },
   created() {
     let token = this.$store.state.userToken;
     let self = this;
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+    if ((self.$resize && !self.$mq.above(1025))){
+      this.view = "MobileMemberItineraryCarousel";
+    }else {
+      this.view = "MemberItineraryCarousel";
+    }
     apiGetItineraries(token)
       .then(function(res){
         // console.log(res.data.data);
@@ -114,16 +126,27 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
-      // 接收瀏覽所有行程資訊
-      this.$bus.$on("changeToCarousel", event => {
+    // 接收瀏覽所有行程資訊
+    this.$bus.$on("changeToCarousel", event => {
+      if ((self.$resize && !self.$mq.above(1025))){
+        self.changeView("MobileMemberItineraryCarousel");
+      }else {
         self.changeView("MemberItineraryCarousel");
-      });
-      // 接收開啟會員資訊
-      this.$bus.$on("setMemberInfo", event => {
+      }
+    });
+    // 接收開啟會員資訊
+    this.$bus.$on("setMemberInfo", event => {
+      if ((self.$resize && !self.$mq.above(1025))){
+        self.changeView("MobileMemberInfos");
+      }else {
         self.changeView("MemberInfos");
-      });
+      }
+    });
   },
   methods: {
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
     compareCurrentTime: function(currentDate){
       // 判斷行程 為 即將開始 或 過往行程
       for (let i = 0; i < this.myItineraries.length; i++){
@@ -140,7 +163,8 @@ export default {
     },
     checkDetail: function(itinerary){
       let self = this;
-      this.loading();
+      // this.loading();
+      console.log("check detail", itinerary);
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){
         this.title = "歷史行程";
@@ -165,12 +189,28 @@ export default {
       this.isLoading = false;
     }
   },
-  updated() {
-    
+  watch: {
+    windowWidth: function(newVal, oldVal){
+      let currentView = this.view;
+      if(newVal <= 1025) {
+        if (currentView.substr(0, 6) !== 'Mobile'){
+          this.changeView("Mobile" + currentView);
+        }
+      }
+      if(newVal > 1025) {
+        if (currentView.substr(0, 6) == 'Mobile'){
+          this.changeView(currentView.substr(6));
+        }
+      }
+    }
   },
   beforeDestroy() {
+    this.$bus.$off("changeToCarousel");
     this.$bus.$off('setMemberInfo');
     this.$bus.$off('changeView');
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleResize);
   },
 
 };

@@ -1,44 +1,42 @@
 <template>
-<div class="fbSignUpForm">
-    <el-dialog
-      title="FB註冊"
-      :visible.sync="isVisible"
-      :modal="false"
-      width="30%"
-      center>
-      <span style="text-align: center">{{ hint }}</span>
-      <div style="height: 10px"></div>
-      <el-form :model="fbSignUpForm" ref="fbSignUpForm" status-icon :rules="rules" class="demo-ruleForm">
-        <el-form-item prop="name" resetField="resetForm">
-          <el-input v-model="$store.state.user.name" placeholder="名稱" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item prop="email" resetField="resetForm">
-          <el-input v-model="$store.state.user.email" placeholder="email" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item prop="url" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.url" placeholder="url" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="password" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.password" placeholder="密碼" clearable show-password></el-input>
-        </el-form-item>
-        <el-form-item prop="reCheckPwd" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.reCheckPwd" placeholder="再次確認密碼" clearable show-password></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit">送出</el-button>
-        <el-button @click="toLogIn">回到登入</el-button>
-      </span>
-    </el-dialog>
-  </div>
+<el-dialog
+  title="FB註冊"
+  :visible.sync="isVisible"
+  :modal="false"
+  width="80vw"
+  center>
+  <span style="text-align: center">{{ hint }}</span>
+  <div style="height: 10px"></div>
+  <el-form :model="fbSignUpForm" ref="fbSignUpForm" status-icon :rules="rules" class="demo-ruleForm">
+    <el-form-item prop="name" resetField="resetForm">
+      <el-input v-model="$store.state.user.name" placeholder="名稱" :disabled="true"></el-input>
+    </el-form-item>
+    <el-form-item prop="email" resetField="resetForm">
+      <el-input v-model="$store.state.user.email" placeholder="email" :disabled="true"></el-input>
+    </el-form-item>
+    <el-form-item prop="url" resetField="resetForm">
+      <el-input v-model="fbSignUpForm.url" placeholder="url" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="password" resetField="resetForm">
+      <el-input v-model="fbSignUpForm.password" placeholder="密碼" clearable show-password></el-input>
+    </el-form-item>
+    <el-form-item prop="reCheckPwd" resetField="resetForm">
+      <el-input v-model="fbSignUpForm.reCheckPwd" placeholder="再次確認密碼" clearable show-password></el-input>
+    </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="submit">送出</el-button>
+    <el-button @click="toLogIn">回到登入</el-button>
+  </span>
+</el-dialog>
 </template>
 
 <script>
-import { EmailChecker, PasswordChecker } from '../../../utils/checker'
-import { apiSignUp } from '../../../utils/api'
-import { UserInfo } from '../../../utils/dataClass'
+import { EmailChecker, PasswordChecker } from '../../utils/checker'
+import { apiSignUp } from '../../utils/api'
+import { UserInfo } from '../../utils/dataClass'
 export default {
-  name: "FbSignUpForm",
+  name: "MobileFbSignUpForm",
   props: {
     isVisible: Boolean
   },

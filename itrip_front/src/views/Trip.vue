@@ -8,11 +8,10 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary"
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId"
         :page="page" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share"
-        :key="update"/>
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -78,10 +77,11 @@ import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
 import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip, apiUpdateShare} from '../../utils/api'
 import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
 import { Promise } from 'q';
+import { Message } from 'element-ui';
 
 export default {
   name: 'trip',
@@ -146,7 +146,7 @@ export default {
     }
   },
   methods: {
-    saveTrip(name, date) {
+    saveTrip(name, date, memberId) {
       // itinerary format:
       //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
       //memberId, startDate, name, dayNum, togos, travelInfos
@@ -159,18 +159,32 @@ export default {
       let self = this;
       // console.log("itinerary", this.itinerary);
       // console.log("_id", _id);
-      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
+      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
       .then((function (res) {
-        //console.log("res", res);
-        this.$message.success('行程儲存成功!');
+        console.log(res);
+        self.$message.success('行程儲存成功!');
       }))
       .catch(function (error) {
         console.log(error);
       });
     },
     share(name, date) {
+      if(this.togos[0] === undefined) {
+        this.$message.warning('你還沒排行程!');
+        return;
+      }
       let self = this;
       apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
+      .then((function (res) {
+        self.qviewId = res.data.data;
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    updateShare(id, name, date) {
+      let self = this;
+      apiUpdateShare(id, date, name, this.togos.length, this.togos, this.travelInfos)
       .then((function (res) {
         console.log(res);
       }))
@@ -188,6 +202,9 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
+    },
+    addMember() {
+
     },
     deleteTogo(index) {
       if(this.travelInfos[this.page] != undefined) {
@@ -338,10 +355,10 @@ export default {
       });
     },
     changeBaseTimes(startTimeOb, page){
-      console.log("startTimeOb", startTimeOb);
-      console.log("page", page);
+      //console.log("startTimeOb", startTimeOb);
+      //console.log("page", page);
       this.baseTimes[page] = startTimeOb;
-      console.log("baseTimes", this.baseTimes);
+      //console.log("baseTimes", this.baseTimes);
     },
     changeMode(index, mode) {
       this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
@@ -484,6 +501,7 @@ export default {
         console.log(newVal);
         if(newVal.city !== undefined) this.queryPlace = newVal.city;
         if(newVal.region !== undefined) this.queryPlace = newVal.region;
+        if(newVal.city === undefined && newVal.region === undefined) this.queryPlace = '全部';
         if(newVal.name !== undefined) this.queryName = newVal.name;
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
@@ -555,7 +573,7 @@ export default {
   beforeMount() {
     if(this.qviewId !== undefined) {
       this.getSharedTrip(this.qviewId);
-      this.qviewId = '';
+      this.qviewId = 0;
     }
   },
   mounted() {

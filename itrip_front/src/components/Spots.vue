@@ -109,12 +109,12 @@ export default {
       }
     },
     props: {
-     spots: Array,
-     paginator: Object,
-     perPage: Number,
-     togos: Array,
-     queryPlace: String,
-     queryName: String,
+      spots: Array,
+      paginator: Object,
+      perPage: Number,
+      togos: Array,
+      queryPlace: String,
+      queryName: String,
     },
     methods: {
       Show(Url){
