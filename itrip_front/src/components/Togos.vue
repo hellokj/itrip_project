@@ -132,9 +132,9 @@ import TogoItem from './TogoItem'
 import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
-import { async } from 'q';
+import { async, resolve } from 'q';
 import { Message } from 'element-ui'
-import { apiAddMember} from '../../utils/api.js';
+import { apiFindMemberByMail } from '../../utils/api.js';
 
 export default {
     name: "Togos",
@@ -163,6 +163,7 @@ export default {
         shareUrl: 'http://localhost:8080/#/trip?viewId=',
         memberEmail: '',
         memberEmails: [],
+        newMemberId: ''
       }
     },
     components: {
@@ -207,7 +208,7 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }
-          this.$emit('saveTrip', this.tripName, this.tripDate);
+          this.$emit('saveTrip', this.tripName, this.tripDate, this.newMemberId);
         }
       },
       shareTrip: function() {
@@ -257,10 +258,10 @@ export default {
         this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
-      addMember: function() {
+      addMember: async function() {
         this.memberEmails.push(this.memberEmail);
+        this.callFindMemberAPI(this.memberEmail);
         this.memberEmail = '';
-        this.saveTrip();
       },
       removeMember: function(index) {
          this.memberEmails.splice(index, 1);
@@ -359,13 +360,25 @@ export default {
         if (self.itinerary != undefined){ 
           if (self.itinerary.togos != undefined){
             for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-              self.newTab();
+              self.tabs.push(this.tabCounter++);
             };
             self.tripName = self.itinerary.name;
             self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
           }
         }
-      }
+      },
+      callFindMemberAPI: function(email) {
+        let self = this;
+        let token = this.$store.state.userToken;
+        apiFindMemberByMail(email, token)
+        .then((function (res) {
+          self.newMemberId = res.data.data._id;
+          self.saveTrip();
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+      },
     },
     watch: {
       travelInfo: {

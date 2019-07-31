@@ -35,7 +35,7 @@ const Options = (sortBy, page, limit, order, requestType) => {
             customLabels: myCustomLabels
         };  
     }
-  }
+}
 const QueryHelper = (name, city, region) => {
     if(city === undefined) {
         return {$or:[{name:{$regex:name,$options:"$i"}}, {wiki_name:{$regex:name,$options:"$i"}}]};
@@ -58,8 +58,8 @@ const Place_query = (schema, city, region, categories, name, sortBy, page, limit
     console.log(city, region, categories, name, sortBy, page, limit, order);
     if(name != undefined) {
         return schema.paginate(QueryHelper(name, city, region), Options(sortBy, page, limit, order),
-         function(err, result) {
-             return result;
+            function(err, result) {
+            return result;
         });
     }
     if(region === undefined) {

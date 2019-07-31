@@ -1,44 +1,42 @@
 <template>
-<div class="fbSignUpForm">
-    <el-dialog
-      title="FB註冊"
-      :visible.sync="isVisible"
-      :modal="false"
-      width="30%"
-      center>
-      <span style="text-align: center">{{ hint }}</span>
-      <div style="height: 10px"></div>
-      <el-form :model="fbSignUpForm" ref="fbSignUpForm" status-icon :rules="rules" class="demo-ruleForm">
-        <el-form-item prop="name" resetField="resetForm">
-          <el-input v-model="$store.state.user.name" placeholder="名稱" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item prop="email" resetField="resetForm">
-          <el-input v-model="$store.state.user.email" placeholder="email" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item prop="url" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.url" placeholder="url" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="password" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.password" placeholder="密碼" clearable show-password></el-input>
-        </el-form-item>
-        <el-form-item prop="reCheckPwd" resetField="resetForm">
-          <el-input v-model="fbSignUpForm.reCheckPwd" placeholder="再次確認密碼" clearable show-password></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit">送出</el-button>
-        <el-button @click="toLogIn">回到登入</el-button>
-      </span>
-    </el-dialog>
-  </div>
+<el-dialog
+  title="註冊"
+  :visible.sync="isVisible"
+  width="80vw"
+  :modal="false"
+  center>
+  <span style="text-align: center">{{ hint }}</span>
+  <div style="height: 10px"></div>
+  <el-form :model="signUpForm" ref="signUpForm" status-icon :rules="rules" class="demo-ruleForm">
+    <el-form-item prop="name" resetField="resetForm">
+      <el-input v-model="signUpForm.name" placeholder="名稱" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="url" resetField="resetForm">
+      <el-input v-model="signUpForm.url" placeholder="url" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="email" resetField="resetForm">
+      <el-input v-model="signUpForm.email" placeholder="email" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="password" resetField="resetForm">
+      <el-input v-model="signUpForm.password" placeholder="密碼" clearable show-password></el-input>
+    </el-form-item>
+    <el-form-item prop="reCheckPwd" resetField="resetForm">
+      <el-input v-model="signUpForm.reCheckPwd" placeholder="再次確認密碼" clearable show-password></el-input>
+    </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="submit">送出</el-button>
+    <el-button @click="toLogIn">回到登入</el-button>
+  </span>
+</el-dialog>
 </template>
 
 <script>
-import { EmailChecker, PasswordChecker } from '../../../utils/checker'
-import { apiSignUp } from '../../../utils/api'
-import { UserInfo } from '../../../utils/dataClass'
+import { EmailChecker, PasswordChecker } from '../../utils/checker'
+import { apiSignUp } from '../../utils/api'
+import { UserInfo } from '../../utils/dataClass'
 export default {
-  name: "FbSignUpForm",
+  name: "MobileSignUpForm",
   props: {
     isVisible: Boolean
   },
@@ -47,8 +45,8 @@ export default {
       if (!EmailChecker(value)){
         callback(new Error('輸入格式不符'));
       } else {
-        if (EmailChecker(this.fbSignUpForm.email)){
-          this.$refs.fbSignUpForm.validateField('checkPass');
+        if (EmailChecker(this.signUpForm.email)){
+          this.$refs.signUpForm.validateField('checkPass');
         }
         callback();
       }
@@ -57,14 +55,14 @@ export default {
       if (!PasswordChecker(value)){
         callback(new Error('密碼長度需至少6個字，且包含至少一個大寫字母'));
       } else {
-        if (EmailChecker(this.fbSignUpForm.password)){
-          this.$refs.fbSignUpForm.validateField('checkPass');
+        if (PasswordChecker(this.signUpForm.password)){
+          this.$refs.signUpForm.validateField('checkPass');
         }
         callback();
       }
     };
     var validateReCheckPwd = (rule, value, callback) => {
-      if (value !== this.fbSignUpForm.password){
+      if (value !== this.signUpForm.password){
         callback(new Error('兩次輸入密碼不一致'));
       } else {
         callback();
@@ -72,10 +70,10 @@ export default {
     };
     return {
       hint: "",
-      fbSignUpForm: {
+      signUpForm: {
         name: "",
-        email: "",
         url: "",
+        email: "",
         password: "",
         reCheckPwd: "",
       },
@@ -107,16 +105,17 @@ export default {
     submit: function(){
       let self = this;
       let data = {
-        name: this.fbSignUpForm.name,
-        url: this.fbSignUpForm.url,
-        email: this.fbSignUpForm.email,
-        password: this.fbSignUpForm.password
+        name: this.signUpForm.name,
+        url: this.signUpForm.url,
+        email: this.signUpForm.email,
+        password: this.signUpForm.password
       }
+      
       apiSignUp(data)
       .then(function(res) {
         if (res.data.status == 200){
           self.hint = "註冊成功，回到登入頁重新登入";
-          self.$refs["fbSignUpForm"].resetFields();
+          self.$refs["signUpForm"].resetFields();
         }else{
           self.hint = res.data.msg;
         }
@@ -126,7 +125,7 @@ export default {
       });
     },
     resetForm: function(){
-      this.$refs["fbSignUpForm"].resetFields();
+      this.$refs["signUpForm"].resetFields();
     },
     toLogIn: function(){
       this.$emit("changeFormState", {

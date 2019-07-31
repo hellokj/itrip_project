@@ -146,7 +146,7 @@ export default {
     }
   },
   methods: {
-    saveTrip(name, date) {
+    saveTrip(name, date, memberId) {
       // itinerary format:
       //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
       //memberId, startDate, name, dayNum, togos, travelInfos
@@ -159,9 +159,9 @@ export default {
       let self = this;
       // console.log("itinerary", this.itinerary);
       // console.log("_id", _id);
-      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, token)
+      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
       .then((function (res) {
-        console.log(_id);
+        console.log(res);
         self.$message.success('行程儲存成功!');
       }))
       .catch(function (error) {
@@ -501,6 +501,7 @@ export default {
         console.log(newVal);
         if(newVal.city !== undefined) this.queryPlace = newVal.city;
         if(newVal.region !== undefined) this.queryPlace = newVal.region;
+        if(newVal.city === undefined && newVal.region === undefined) this.queryPlace = '全部';
         if(newVal.name !== undefined) this.queryName = newVal.name;
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);

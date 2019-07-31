@@ -2,24 +2,32 @@
 <div id="profileButton">
   <ProfileDropDown v-if="$store.state.isAuthorized"></ProfileDropDown>
   <el-button type="warning" plain v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
-  <!-- <modal name="logInForm"> -->
-  <LoginForm :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
-  <SignUpForm :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
-  <FbSignUpForm :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
+  <LoginForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
+  <MobileLoginForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></MobileLoginForm>
+  <SignUpForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
+  <MobileSignUpForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></MobileSignUpForm>
+  <FbSignUpForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
+  <MobileFbSignUpForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></MobileFbSignUpForm>
 </div>
 </template>
 
 <script>
 import LoginForm from '../components/template/LoginForm'
+import MobileLoginForm from '../components/MobileLogInForm'
 import SignUpForm from '../components/template/SignUpForm'
+import MobileSignUpForm from '../components/MobileSignUpForm'
 import FbSignUpForm from '../components/template/FbSignUpForm'
+import MobileFbSignUpForm from '../components/MobileFbSignUpForm'
 import ProfileDropDown from '../components/template/ProfileDropDown'
 export default {
   name: 'ProfileButton',
   components: {
     LoginForm,
+    MobileLoginForm,
     SignUpForm,
+    MobileSignUpForm,
     FbSignUpForm,
+    MobileFbSignUpForm,
     ProfileDropDown
   },
   props: {
