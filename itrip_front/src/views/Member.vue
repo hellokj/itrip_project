@@ -163,7 +163,7 @@ export default {
     },
     checkDetail: function(itinerary){
       let self = this;
-      // this.loading();
+      this.loading();
       console.log("check detail", itinerary);
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){

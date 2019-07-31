@@ -25,6 +25,9 @@ export default {
       if (itinerary.togos[0] == undefined){
         return blank;
       }else {
+        if (itinerary.togos[0][0] == undefined){
+          return blank;
+        }
         return String(itinerary.togos[0][0].images[0]);
       }
     }

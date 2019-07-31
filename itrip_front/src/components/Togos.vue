@@ -18,61 +18,32 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i>
-          <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
-          <el-popover
-              placement="bottom-start"
-              width="300"
-              trigger="click">
-              <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
-              <el-input
-                placeholder="旅伴的E-mail"
-                v-model="memberEmail"
-                clearable>
-              </el-input>
-              <div class="mt-1 pr-3 row" style="float:right;">
-                <el-button type="success" icon="el-icon-plus" size="mini" @click="addMember" circle></el-button>
-              </div>
-              <div class="mt-2 px-0 col">
-                <el-tag
-                  closable
-                  v-for="(email, index) in memberEmails"
-                  :key="index"
-                  type="info"
-                  effect="plain"
-                  @close="removeMember(index)">
-                  {{ email }}
-                </el-tag>  
-              </div>
-              
-          </el-popover>
-          <!-- @click="shareTrip" -->
-          <el-dropdown ref="dropdown" placement="bottom-start" @click.native="shareTrip"  trigger="click">
-            <span class="el-dropdown-link">
-              <i title="分享" class="fas fa-share-square" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i> 
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <social-sharing
-              @open="shareTrip"
-              description="跟著IG粉絲一起玩!" 
-              :url="shareUrl"
-              inline-template>
-                <div class="social-div">
-                    <el-dropdown-item :disabled="shareId===undefined">
-                      <network network="facebook">
-                        <i class="fab fa-facebook-square"></i> Facebook
-                      </network>
-                    </el-dropdown-item>
-                    <el-dropdown-item :disabled="shareId===undefined">
-                      <network network="twitter">
-                        <i class="fab fa-twitter"></i> Twitter
-                      </network>  
-                    </el-dropdown-item>
-                </div>
-              </social-sharing>
-            </el-dropdown-menu>         
-          </el-dropdown>
+          <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i>
+          <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
+          <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
+          @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
+          <SharingLink :shareUrl="shareUrl" :shareId="shareId" @shareTrip="shareTrip"/>
         </div>
+        <!-- <el-dropdown ref="dropdown2" placement="bottom-start" trigger="click">
+            <span>
+              <i title="功能列" class="fas fa-ellipsis-h" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown2">
+              <el-dropdown-item >
+                <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 儲存行程</i>
+              </el-dropdown-item>
+              <el-dropdown-item >
+                <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 匯出成PDF</i>
+              </el-dropdown-item>
+              <el-dropdown-item >
+                <AddMemberPopover id="mobile-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
+                 @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>加入旅伴
+              </el-dropdown-item>
+            <el-dropdown-item>
+              <SharingLink :shareUrl="shareUrl" :shareId="shareId"/>
+            </el-dropdown-item>
+          </el-dropdown-menu>         
+        </el-dropdown> -->
       </div>
     </div>
     <div class="tab-container" style="height: 75vh;">
@@ -100,7 +71,6 @@
                 {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
             <div style="height: 65vh;">
-          <!-- <virtual-list :size="170" :remain="4"> -->
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
@@ -119,7 +89,6 @@
                   </div>
                 </transition-group>
             </draggable> 
-          <!-- </virtual-list> -->
           </div>
         </b-tab>    
       </b-tabs>
@@ -132,9 +101,11 @@ import TogoItem from './TogoItem'
 import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
-import { async, resolve } from 'q';
+import { async, resolve } from 'q'
 import { Message } from 'element-ui'
-import { apiFindMemberByMail } from '../../utils/api.js';
+import { apiFindMemberByMail, apiRemoveMember } from '../../utils/api.js'
+import AddMemberPopover from './AddMemberPopover'
+import SharingLink from './SharingLink'
 
 export default {
     name: "Togos",
@@ -171,7 +142,8 @@ export default {
         TravelTimeItem,
         draggable,
         'virtual-list': virtualList,
-        
+        AddMemberPopover,
+        SharingLink,
     },
     props: {
       togos: Array,
@@ -208,7 +180,7 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }
-          this.$emit('saveTrip', this.tripName, this.tripDate, this.newMemberId);
+          this.$emit('saveTrip', this.tripName, this.tripDate, this.memberEmail);
         }
       },
       shareTrip: function() {
@@ -260,11 +232,30 @@ export default {
       },
       addMember: async function() {
         this.memberEmails.push(this.memberEmail);
-        this.callFindMemberAPI(this.memberEmail);
+        this.saveTrip();
         this.memberEmail = '';
       },
-      removeMember: function(index) {
-         this.memberEmails.splice(index, 1);
+      removeMember: async function(index) {
+        let token = this.$store.state.userToken;
+        let mailToRemove = this.memberEmails[index];
+        this.memberEmails.splice(index, 1);
+        let memberId;
+        await apiFindMemberByMail(mailToRemove, token)
+        .then((function (res) {
+          memberId = res.data.data._id;
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+        console.log(memberId);
+        await apiRemoveMember(this.itinerary.id, memberId, token)
+        .then((function (res) {
+          console.log(res);
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+
       },
       getStartTime: function(index) {
         // if(index == 0) {
@@ -367,18 +358,19 @@ export default {
           }
         }
       },
-      callFindMemberAPI: function(email) {
-        let self = this;
-        let token = this.$store.state.userToken;
-        apiFindMemberByMail(email, token)
-        .then((function (res) {
-          self.newMemberId = res.data.data._id;
-          self.saveTrip();
-        }))
-        .catch(function (error) {
-          console.log(error);
-        });
-      },
+      getCurrentMembers: function() {
+        let userId = this.$store.state.user.id;
+        let memberIds;
+        if(this.itineraryLoaded) {
+          memberIds = this.itinerary.memberIds;
+          memberIds.array.forEach(element => {
+            if(element !== userId) {
+              this.memberEmails.push(element)
+            }
+          });
+        }
+
+      }
     },
     watch: {
       travelInfo: {
@@ -392,6 +384,7 @@ export default {
           if(!this.itineraryLoaded) {
             this.updateTabs();
             this.itineraryLoaded = true;
+            this.getCurrentMembers();
           }
         }
       },
@@ -569,10 +562,37 @@ export default {
   .tab-container{
     height: 500px;
   }
+  .fa-ellipsis-h {
+    display: none;
+  }
+  #mobile-addMember-popover {
+    display: none
+  }
 
   @media only screen and (max-width: 768px) {
     .MyTrip {
       width: 100%;
     }
+  }
+ @media only screen and (max-width: 1200px) {
+    #save {
+      display: none;
+    } 
+    #pdf {
+      display: none;
+    }
+    #pc-addMember-popover {
+      display: none;
+    } 
+    #share {
+      display: none;
+    }
+    .fa-ellipsis-h {
+      display: block
+    }
+    .save-trip {
+    width: 10%;
+    }
+
   }
 </style>

@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 // member schema
 const memberSchema = new Schema({
+    _id: String,
     signUpDate: {
         year: Number,
         month: Number,
