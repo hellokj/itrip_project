@@ -13,14 +13,14 @@
 export default {
     name: "TabletHeader",
     data() {
-      return {
-         currentMode: 3,
-      }
+        return {
+        currentMode: 3,
+        }
     },
     methods: {
-       toggle: function(id) {
-           this.$bus.$emit('toggle', {id: id});
-       }
+        toggle: function(id) {
+            this.$bus.$emit('toggle', {id: id});
+        }
     },
     watch: {
         currentMode: function(newVal, oldVal) {

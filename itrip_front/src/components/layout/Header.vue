@@ -47,7 +47,7 @@
                 @select="setCity"
                 />  
             </div>
-           
+        
             <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
             class="icon_search" src="../icons/search.svg" 
             @click="searchClicked">
@@ -81,7 +81,7 @@ export default {
         Treeselect,
     },
     data() {
-      return {
+        return {
         input_name: '',
         selected_type: undefined,
         selected_region: undefined,
@@ -94,7 +94,7 @@ export default {
         options: getAreas(),
         sortValueBy: 'ORDER_SELECTED',
         val: ''
-      }
+        }
     },
     created: function() {
         window.addEventListener('click',this.clickOutSide);
@@ -150,8 +150,8 @@ export default {
 
 
 @font-face {
-  font-family: logoFont;
-  src: url(../../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
+    font-family: logoFont;
+    src: url(../../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
 }
 
     .header {
@@ -315,7 +315,7 @@ export default {
         font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f3c5";
         color:darkgray
     }
-  
+
     /* The container <div> - needed to position the dropdown content */
     .dropdown {
         display: none;
@@ -413,6 +413,6 @@ export default {
     .fa-search {
         display: none;
     }
-  }
+}
 
 </style>

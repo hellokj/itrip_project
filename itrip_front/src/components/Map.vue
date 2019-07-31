@@ -203,7 +203,7 @@ export default {
       this.updateMarkers();
     },
     centerSpot: {
-       handler(newVal, oldVal) {
+      handler(newVal, oldVal) {
         this.resetRoutesArr();
         let oldIndex = oldVal.index;
         let newIndex = newVal.index;

@@ -528,6 +528,7 @@ export default {
       for (let i=0;i<newVal.togos.length;i++){
         this.$set(this.togos, i, newVal.togos[i]);
         this.$set(this.travelInfos, i, newVal.travelInfos[i]);
+        this.routes.push(newVal.travelInfos[i].routes);
       };
     },
     isAddSpotLocked: function(newVal, oldVal) {
