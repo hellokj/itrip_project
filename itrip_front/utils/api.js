@@ -84,7 +84,7 @@ const apiGetRoutes = (data, mode) => {
 
 // itinerary api
 //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfos, token) => {
+const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfos, memberId, token) => {
   let headers = {
     "Content-Type": "application/json",
     "x-access-token": token
@@ -105,9 +105,10 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     name: name,
     dayNum: dayNum,
     togos: togos,
-    travelInfos: travelInfos
+    travelInfos: travelInfos,
+    memberId: memberId
   }
-  console.log("data", data);
+  //console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
 };
 
@@ -174,6 +175,14 @@ const apiGetMember = (userToken) => {
   return memberRequest.post('/getMember', {}, { headers: headers });
 }
 
+const apiFindMemberByMail = (email, userToken) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": userToken
+  }
+  return memberRequest.post('/findMemberByMail', { email: email }, { headers: headers });
+}
+
 const apiModifyProfile = (memberInfo, userToken) => {
   let headers = {
     "Content-Type": "application/json",
@@ -196,5 +205,6 @@ export {
     apiLogIn,
     apiSignUp,
     apiModifyProfile,
-    apiSaveTrip
+    apiSaveTrip,
+    apiFindMemberByMail
 }

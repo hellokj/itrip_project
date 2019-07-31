@@ -17,11 +17,11 @@ const save = async (req, res, next) => {
     let startTimes = req.body.startTimes;
     let togos = req.body.togos;
     let travelInfos = req.body.travelInfos;
-    console.log(memberIds, memberId, isPublic, _id, startDate, name, dayNum, startTimes, togos, travelInfos);
+    // console.log(memberIds, memberId, isPublic, _id, startDate, name, dayNum, startTimes, togos, travelInfos);
 
-    if(NilChecker(req.body, 8, [])) {
-        Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
-    }
+    // if(NilChecker(req.body, 8, [])) {
+    //     Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
+    // }
 
     // 先查詢資料庫有無相同_id的資料
     let target = await Itinerary.get(_id);

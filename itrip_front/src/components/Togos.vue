@@ -23,8 +23,7 @@
           <el-popover
               placement="bottom-start"
               width="300"
-              trigger="click"
-              @click.native="saveTrip">
+              trigger="click">
               <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
               <el-input
                 placeholder="旅伴的E-mail"
@@ -133,9 +132,9 @@ import TogoItem from './TogoItem'
 import TravelTimeItem from './TravelTimeItem'
 import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
-import { async } from 'q';
+import { async, resolve } from 'q';
 import { Message } from 'element-ui'
-import { apiAddMember} from '../../utils/api.js';
+import { apiFindMemberByMail } from '../../utils/api.js';
 
 export default {
     name: "Togos",
@@ -164,6 +163,7 @@ export default {
         shareUrl: 'http://localhost:8080/#/trip?viewId=',
         memberEmail: '',
         memberEmails: [],
+        newMemberId: ''
       }
     },
     components: {
@@ -208,7 +208,7 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }
-          this.$emit('saveTrip', this.tripName, this.tripDate);
+          this.$emit('saveTrip', this.tripName, this.tripDate, this.newMemberId);
         }
       },
       shareTrip: function() {
@@ -258,9 +258,9 @@ export default {
         this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
-      addMember: function() {
+      addMember: async function() {
         this.memberEmails.push(this.memberEmail);
-        this.saveTrip();
+        this.callFindMemberAPI(this.memberEmail);
         this.memberEmail = '';
       },
       removeMember: function(index) {
@@ -366,7 +366,19 @@ export default {
             self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
           }
         }
-      }
+      },
+      callFindMemberAPI: function(email) {
+        let self = this;
+        let token = this.$store.state.userToken;
+        apiFindMemberByMail(email, token)
+        .then((function (res) {
+          self.newMemberId = res.data.data._id;
+          self.saveTrip();
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+      },
     },
     watch: {
       travelInfo: {

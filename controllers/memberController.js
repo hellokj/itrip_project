@@ -6,8 +6,15 @@ const errorHandler = require('../utils/errorHandler');
 const getMember = (req, res, next) => {
   // 給予token 取得member資訊
   let memberDecoded = req.decoded;
-  console.log("decoded", req.decoded);
+  //console.log("decoded", req.decoded);
   res.json({status: -1, msg:'success', data: memberDecoded});
+}
+
+const findMemberByMail = async (req, res, next) => {
+  let email = req.body.email;
+  let member = await Member.findMember(email, null, null);
+  //console.log(member);
+  res.json({status: -1, msg:'success', data: member});
 }
 
 const modifyProfile = async (req, res, next) => {
@@ -20,7 +27,7 @@ const modifyProfile = async (req, res, next) => {
   
   // 更改自己的會員資訊(密碼)
   let member = await Member.findMember(email, url, originPassword);
-  console.log("found member", member);
+  //console.log("found member", member);
   if (member !== null){
     // 找到後更新
     let newMember = member;
@@ -48,5 +55,6 @@ const removeFollowingItem = (req, res, next) => {
 
 module.exports = {
   modifyProfile,
-  getMember
+  getMember,
+  findMemberByMail
 }
