@@ -17,6 +17,7 @@ const save = async (req, res, next) => {
     if(NilChecker(req.body, 7, [])) {
         Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
     }
+    console.log(memberIds)
 
     // 先查詢資料庫有無相同_id的資料
     let target = await Itinerary.get(_id);
