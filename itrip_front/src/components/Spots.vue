@@ -1,13 +1,13 @@
 <template>
   <div class="spotContainer" >
-    <div class="tag-container">
-      <div class="sort-container" style="display:flex;flex-direction:row;justify-content:space-between;">
-        <div style="display:flex;flex-direction:row;">
-          <p class="ml-4 my-0" style="line-height:40px;">搜尋:    <b style="font-size:18px;">{{getQuery}}</b></p>
+    <div class="tag-container" style="width: 100%;">
+      <div class="sort-container" style="display:flex;flex-direction:row;justify-content:space-between; width:100%;">
+        <div style="display:flex;flex-direction:row;width:60%;">
+          <p class="ml-4 my-0" style="line-height:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">搜尋:    <b style="font-size:18px;">{{getQuery}}</b></p>
           
         </div>
         <div style="display:flex;flex-direction:row;">
-          <p class="ml-4 my-0" style="line-height:40px;"> 排序:</p>
+          <p class="ml-2 my-0" style="line-height:40px; white-space: nowrap; overflow: hidden;"> 排序:</p>
           <b-dropdown size="sm" class="m-2" v-model="sortBy" style="height:30px;padding-right:10px;">
               <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
               <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
@@ -113,7 +113,8 @@ export default {
       paginator: Object,
       perPage: Number,
       togos: Array,
-      queryPlace: String,
+      queryCounty: String,
+      queryRegion: Array,
       queryName: String,
     },
     methods: {
@@ -155,8 +156,16 @@ export default {
     computed: {
       getQuery: function() {
         //console.log(this.queryName, this.queryPlace);
-        if(this.queryName !== '') return this.queryName;
-        if(this.queryPlace !== '') return this.queryPlace;
+        if(this.queryName) return this.queryName;
+        if(this.queryRegion){
+          var str = "";
+          var arr = this.queryRegion;
+          arr.map(function(val){
+            str = str.concat(val, ', ')
+          }, str);
+          return str;
+        }
+        
         return '全部';
       }
     },

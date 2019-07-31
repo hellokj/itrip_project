@@ -20,7 +20,7 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown" :queryPlace="queryPlace" :queryName="queryName"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
           @filter-spot="filterSpot"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
@@ -140,7 +140,8 @@ export default {
       qadded: false,
       updateMap: 0,
       checkList: ['景點圖標', '路徑指示'],
-      queryPlace: '',
+      queryCounty: '',
+      queryRegion: [],
       queryName: '',
       isAddSpotLocked: false,
     }
@@ -501,10 +502,16 @@ export default {
     paramProp: {
       handler: function(newVal, oldVal) {
         console.log(newVal);
-        if(newVal.city !== undefined) this.queryPlace = newVal.city;
-        if(newVal.region !== undefined) this.queryPlace = newVal.region;
-        if(newVal.city === undefined && newVal.region === undefined) this.queryPlace = '全部';
-        if(newVal.name !== undefined) this.queryName = newVal.name;
+        if(newVal.city) this.queryCounty = newVal.city;
+        else this.queryCounty = null;
+
+        if(newVal.region) this.queryRegion = newVal.region;
+        else this.queryRegion = null;
+
+        if(newVal.name) this.queryName = newVal.name;
+        else this.queryName = name;
+        
+        // if(this.queryCounty === null && this.queryRegion === null)
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
         }
