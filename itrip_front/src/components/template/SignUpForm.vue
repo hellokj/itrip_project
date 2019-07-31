@@ -38,6 +38,7 @@ import { EmailChecker, PasswordChecker } from '../../../utils/checker'
 import { apiSignUp } from '../../../utils/api'
 import { UserInfo } from '../../../utils/dataClass'
 export default {
+  name: "SignUpForm",
   props: {
     isVisible: Boolean
   },

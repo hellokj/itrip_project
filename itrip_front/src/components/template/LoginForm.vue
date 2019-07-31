@@ -30,6 +30,7 @@
 import { apiLogIn } from '../../../utils/api'
 import { EmailChecker } from '../../../utils/checker'
 export default {
+  name: "LogInForm",
   props: {
     isVisible: Boolean
   },

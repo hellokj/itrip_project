@@ -24,7 +24,7 @@
     </div>
     <div v-for="(togo, i) in itinerary.togos[index]" :key="togo._id">
       <MobileMemberTogoItem :togo="togo" style="text-align: right"></MobileMemberTogoItem>
-      <MobileTravelTimeItem v-if="itinerary.travelInfos[index][i]" :mode="getTravelTimeMode(itinerary.travelInfos[index][i])" :travelTime="getTravelTimeDuration(itinerary.travelInfos[index][i])" :index="index"></MobileTravelTimeItem>
+      <MobileTravelTimeItem v-if="itinerary.travelInfos[index]" :mode="getTravelTimeMode(itinerary.travelInfos[index][i])" :travelTime="getTravelTimeDuration(itinerary.travelInfos[index][i])" :index="index"></MobileTravelTimeItem>
     </div>
   </el-main>
 </template>

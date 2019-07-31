@@ -360,7 +360,7 @@ export default {
         if (self.itinerary != undefined){ 
           if (self.itinerary.togos != undefined){
             for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-              self.newTab();
+              self.tabs.push(this.tabCounter++);
             };
             self.tripName = self.itinerary.name;
             self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);

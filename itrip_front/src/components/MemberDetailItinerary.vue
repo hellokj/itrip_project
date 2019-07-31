@@ -320,6 +320,7 @@ export default {
           tmpDay.push(tmpTogo);
         }
         for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
+        
           tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
         }
         this.days.push(tmpDay);
@@ -384,7 +385,7 @@ export default {
     this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
   },
   watch: {
-    
+
   },
   computed: {
     
