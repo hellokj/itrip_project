@@ -26,4 +26,9 @@ itinerarySchema.statics.updateItinerary = function(_id, changes) {
     return this.replaceOne({_id: _id}, changes);
 }
 
+// delete spot
+itinerarySchema.statics.deleteItinerary = function(_id) {
+    return this.deleteOne({_id: _id});
+}
+
 module.exports = mongoose.model('Itinerary', itinerarySchema);
