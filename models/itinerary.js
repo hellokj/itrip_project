@@ -26,7 +26,7 @@ itinerarySchema.statics.updateItinerary = function(_id, changes) {
     return this.replaceOne({_id: _id}, changes);
 }
 
-// delete spot
+// delete itinerary
 itinerarySchema.statics.deleteItinerary = function(_id) {
     return this.deleteOne({_id: _id});
 }

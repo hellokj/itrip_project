@@ -4,6 +4,7 @@
     title="登入"
     :visible.sync="isVisible"
     :modal="false"
+    :close-on-click-modal="false"
     width="30%"
     style="z-index: 2011;"
     center>
