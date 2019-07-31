@@ -6,7 +6,7 @@ const errorHandler = require('../utils/errorHandler');
 const save = async (req, res, next) => {
     let memberIds = [req.decoded.memberId];
     let memberId = req.body.memberId;
-    if(memberId !== undefined) {
+    if(memberId !== '') {
         memberIds.push(memberId);
     }
     let isPublic = req.body.isPublic;

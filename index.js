@@ -18,32 +18,41 @@ app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 app.use(cors());
 app.use('/api', router);
 
+
+
+// socket.io
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+//const port = process.env.PORT||8000;
+
+// 開啟server監聽
+
+
 mongoose.connect(config.mongodb,{
     useNewUrlParser: true }).then(() => {
-    app.listen(config.port, ()=> {
-        console.log('listening on ' + config.port);
+    // app.listen(config.port, ()=> {
+    //     console.log('listening on ' + config.port);
+    // });
+    server.listen(config.port, function(){
+        console.log('Server listening at port %d', config.port);
     });
 }).catch((err) => {
     console.log(err);
 })
 
-// socket.io
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
-const port = process.env.PORT||8000;
+// app.get('/', function(req, res){
+//     res.json({id: 8888});
+// });
 
-// 開啟server監聽
-server.listen(port, function(){
-    console.log('Server listening at port %d', port);
-});
-
-app.get('/', function(req, res){
-    res.json({id: 8888});
-});
-
-io.on('connection', function(socket) {
-    console.log(socket.id);
+io.on('connection', (socket) => {
+    console.log(socket.id + ' has connected.')
     socket.on('SEND_MESSAGE', function(data) {
-        io.emit('MESSAGE', data)
+        console.log(data);
+        io.emit('message', 'data');
     });
+
+    socket.on("disconnect", () => {
+      console.log("a user go out");
+    });
+  
 });
