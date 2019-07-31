@@ -47,13 +47,6 @@ for(let i=0;i<requestList.length;i++) {
   })
 }
 
-const apiGetItineraries = (token) => {
-  let headers = {
-    "x-access-token": token
-  }
-  return itineraryRequest.post('/getItineraries', {} , {headers: headers});
-};
-
 // spot api
 const apiGetSpots = (data) => {
   return spotRequest.get('/get', { params: data });
@@ -112,6 +105,13 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
   return itineraryRequest.post('/save', data, { headers: headers });
 };
 
+const apiGetItineraries = (token) => {
+  let headers = {
+    "x-access-token": token
+  }
+  return itineraryRequest.post('/getItineraries', {} , {headers: headers});
+};
+
 const apiRemoveMember = (id, memberId, token) => {
   let headers = {
     "Content-Type": "application/json",
@@ -123,6 +123,18 @@ const apiRemoveMember = (id, memberId, token) => {
   }
   return itineraryRequest.post('/removeMember', data, { headers: headers });
 };
+
+const apiGetItinerary = (id, memberId, token) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": token
+  }
+  let data = {
+    itineraryId: id,
+    memberId: memberId
+  }
+  return itineraryRequest.post('/getItinerary',  data, { headers: headers });
+}
 
 // share api
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
@@ -221,5 +233,6 @@ export {
     apiModifyProfile,
     apiSaveTrip,
     apiFindMemberByMail,
-    apiRemoveMember
+    apiRemoveMember,
+    apiGetItinerary
 }
