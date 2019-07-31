@@ -531,7 +531,6 @@ export default {
         this.$set(this.togos, i, newVal.togos[i]);
         this.$set(this.travelInfos, i, newVal.travelInfos[i]);
         this.$set(this.routes, i, newVal.travelInfos[i].routes);
-        // this.routes.push(newVal.travelInfos[i].routes);
       };
     },
     isAddSpotLocked: function(newVal, oldVal) {
@@ -561,7 +560,6 @@ export default {
       self.itinerary = event.itinerary;
       console.log("trip get", self.itinerary);
       for (let i=0;i<self.itinerary.togos.length;i++){
-        console.log("i", i);
         self.$set(self.togos, i, self.itinerary.togos[i]);
         self.$set(self.travelInfos, i, self.itinerary.travelInfos[i]);
         self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
