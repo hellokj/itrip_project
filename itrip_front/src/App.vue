@@ -87,6 +87,9 @@ export default {
           this.atHome = false;
         }
     },
+    isAuthorized() {
+      console.log(this.isAuthorized)
+    }
   }
 }
 </script>

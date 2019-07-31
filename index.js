@@ -26,15 +26,14 @@ const io = require('socket.io')(server);
 //const port = process.env.PORT||8000;
 
 // 開啟server監聽
-
+server.listen(4000, function(){
+    console.log('Server listening at port %d', 4000);
+});
 
 mongoose.connect(config.mongodb,{
     useNewUrlParser: true }).then(() => {
-    // app.listen(config.port, ()=> {
-    //     console.log('listening on ' + config.port);
-    // });
-    server.listen(config.port, function(){
-        console.log('Server listening at port %d', config.port);
+    app.listen(config.port, ()=> {
+        console.log('listening on ' + config.port);
     });
 }).catch((err) => {
     console.log(err);
@@ -54,5 +53,4 @@ io.on('connection', (socket) => {
     socket.on("disconnect", () => {
       console.log("a user go out");
     });
-  
 });
