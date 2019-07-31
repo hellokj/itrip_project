@@ -11,7 +11,7 @@ const signUp = async(req, res, next) => {
     let year = today.getFullYear();
     let month = today.getMonth() + 1;
     let day = today.getDate();
-
+    
     let name = req.body.name;
     let url = req.body.url;
     let email = req.body.email;
@@ -34,6 +34,7 @@ const signUp = async(req, res, next) => {
     }
 
     let member = new Member({
+        _id: email,
         signUpDate: {
             year: year,
             month: month,
