@@ -9,7 +9,7 @@
                         <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                         <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
                     </vue-load-image>
-                    <i :class="markClass"  @click="clickAdd(spot)" style="position:absolute;z-index:1;padding:3px;"></i> 
+                    <i :class="markClass" class="add-marker" @click="clickAdd(spot)" style="position:absolute;z-index:1;padding:3px;"></i> 
                 </div>
                 <div class="info-col">
                     <div class="spot-header">
@@ -25,7 +25,7 @@
                             <el-tag
                                 class="mx-1 el-tag"
                                 v-for="(t, index) in spot.ig_tag"
-                                :key="index" effect="plain" size="mini" type="danger" @click="link('ig', t)">
+                                :key="index" effect="plain" size="mini" @click="link('ig', t)">
                                 #{{t}}
                             </el-tag> 
                         </div>
@@ -254,11 +254,13 @@ export default {
         cursor: pointer;
         padding-right: 5px;
         color: #ffaa00;
-        text-shadow: 0 0 5px white; 
+        text-shadow: 0 0 3px white;
     }
     .fa-bookmark:hover {
         color:#eb8c34;
+        transform: translateY(-3px);
     }
+
     .icons {
         width: 50%;
         display: flex;
@@ -288,9 +290,15 @@ export default {
         font-size: 15px;
         height:auto;
         width: auto;
+        background-color: #FFF;
+        color: tomato;
+        border: 1px solid tomato;
+        transition: all 0.5s ease;
     }
     .el-tag:hover {
         cursor: pointer;
+        background-color: tomato;
+        color: #FFF;
     }
     .fa-info-circle {
         font-size: 20px;
@@ -391,6 +399,12 @@ export default {
     }
     .el-tag {
         font-size: 10px;
+    }
+    .add-marker {
+        transition: all 0.4s ease;
+    }
+    .add-marker:hover {
+        transform: translateY(-6px);
     }
 }
 @media only screen and (max-width: 767px){
