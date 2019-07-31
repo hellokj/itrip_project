@@ -30,5 +30,10 @@ export default new Router({
       name: 'member',
       component: () => import(/* webpackChunkName: "about" */ './views/Member.vue')
     },
+    {
+      path: '/test',
+      name: 'testSocketIo',
+      component: () => import(/* webpackChunkName: "about" */ './views/Chat.vue')
+    },
   ]
 })
