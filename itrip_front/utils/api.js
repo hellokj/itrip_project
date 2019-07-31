@@ -153,6 +153,7 @@ const apiGetSharedTrip = (id) => {
 
 const apiUpdateShare = (id, startDate, name, dayNum, togos, travelInfos) => {
   let date = startDate.split('-');
+  //console.log(startDate);
   let data = {
     id: id,
     startDate: {
