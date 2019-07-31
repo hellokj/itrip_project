@@ -47,6 +47,7 @@ export default {
   props: {
     itinerary: Object,
     title: String,
+    currentAccessId: String
   },
   data() {
     return {
@@ -323,7 +324,8 @@ export default {
     this.$emit("loadingComplete");
   },
   beforeDestroy() {
-    this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary});
+    this.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
+    this.$bus.$emit('modifyItinerary', {itinerary: this.itinerary, currentAccessId: this.currentAccessId});
   },
   watch: {
     itinerary: function(){

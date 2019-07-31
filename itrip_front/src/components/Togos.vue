@@ -157,6 +157,7 @@ export default {
       dayNum: Number,
       itinerary: Object,
       shareId: Number,
+      currentAccessId: String
     },
     methods: {
       saveTrip() {
@@ -257,7 +258,7 @@ export default {
         let token = this.$store.state.userToken;
         let mailToRemove = this.memberEmails[index];
         //this.memberEmails.splice(index, 1);
-        await apiRemoveMember(this.itinerary.id, memberId, token)
+        await apiRemoveMember(this.itinerary.id, mailToRemove, token)
         .then((function (res) {
           console.log(res);
         }))
@@ -368,14 +369,15 @@ export default {
         }
       },
       getCurrentMembers: function() {
-        let userId = this.$store.state.user.id;
+        //console.log(this.itinerary);
         let memberIds;
         let self = this;
         this.memberEmails = []
+        //console.log(this.currentAccessId)
         if(this.itineraryLoaded) {
           memberIds = this.itinerary.memberIds;
           memberIds.forEach(element => {
-            if(element !== userId) {
+            if(element !== this.currentAccessId) {
               self.memberEmails.push(element)
             }
           });

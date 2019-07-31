@@ -54,8 +54,23 @@ const getItineraries = async(req, res, next) => {
     let memberId = req.decoded.memberId;
     //console.log("memberId", memberId);
     let itineraries = await Itinerary.find({ memberIds: memberId});
-    res.json({status: -1, msg:'success', data: itineraries});
+    //console.log(itineraries);
+    res.json({status: -1, msg:'success', data: itineraries, currentAccessId: memberId});
 };
+
+const getItinerary = async(req, res, next) => {
+    let id = req.body.itineraryId;
+    let memberId = req.body.memberId;
+    let memberIdToken = req.decoded.memberId;
+    if(memberId !== memberIdToken) {
+        console.log(memberId, memberIdToken)
+        Response(errorHandler.ACCESS_TOKEN_EXPIRED, null, res);
+        return;
+    }
+    //console.log(id);
+    let itinerary = await Itinerary.findOne({_id: id});
+    res.json({status: -1, msg:'success', data: itinerary, currentAccessId: memberId});
+}
 
 const removeMember = async(req, res, next) => {
     let id = req.body.id;
@@ -75,5 +90,6 @@ module.exports = {
     save,
     getItineraries,
     removeMember,
-    deleteItinerary
+    deleteItinerary,
+    getItinerary
 }
