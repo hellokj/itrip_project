@@ -10,12 +10,12 @@
             :url="shareUrl"
             inline-template>
                 <div class="social-div">
-                    <el-dropdown-item :disabled="shareId===undefined">
+                    <el-dropdown-item :disabled="isDisabled">
                         <network network="facebook">
                         <i class="fab fa-facebook-square"></i> Facebook
                         </network>
                     </el-dropdown-item>
-                    <el-dropdown-item :disabled="shareId===undefined">
+                    <el-dropdown-item :disabled="isDisabled">
                         <network network="twitter">
                         <i class="fab fa-twitter"></i> Twitter
                         </network>  
@@ -30,6 +30,17 @@
 export default {
   name: "SharingLink",
   props: ['shareUrl', 'shareId'],
+  watch: {
+      shareId: function() {
+          console.log(this.shareId);
+      }
+  },
+  computed: {
+      isDisabled: function() {
+            //console.log(this.shareId);
+            return this.shareId === undefined;
+      }
+  },
 }
 </script>
 

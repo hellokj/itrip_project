@@ -14,15 +14,17 @@
         <div class="mt-1 pr-3 row" style="float:right;">
             <el-button type="success" icon="el-icon-plus" size="mini" @click="$emit('addMember')" circle></el-button>
         </div>
-        <div class="mt-2 px-0 col">
+        <div class="mt-2 px-0 col" style="display:flex;flex-direction:column;width:70%;">
             <el-tag
+                class="my-1"
                 closable
                 v-for="(email, index) in memberEmails"
                 :key="index"
                 type="info"
                 effect="plain"
-                @close="$emit('removeMember',index)">
-                {{ email }}
+                @close="$emit('removeMember',index)"
+                style="width:100%;display:flex;justify-content:space-between;">
+                 {{ email }}
             </el-tag>  
         </div>
     </el-popover>
@@ -35,7 +37,6 @@ export default {
   data() {
     return {
         content: this.memberEmail,
-        memberEmails: this.memberEmails
     }
   },
   model: {
