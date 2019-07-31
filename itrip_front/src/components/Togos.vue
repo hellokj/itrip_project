@@ -23,7 +23,8 @@
           <el-popover
               placement="bottom-start"
               width="300"
-              trigger="click">
+              trigger="click"
+              @click.native="getCurrentMembers">
               <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;font-size:25px;cursor: pointer;" slot="reference"></i>
               <el-input
                 placeholder="旅伴的E-mail"
@@ -134,7 +135,7 @@ import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 import { async, resolve } from 'q';
 import { Message } from 'element-ui'
-import { apiFindMemberByMail } from '../../utils/api.js';
+import { apiFindMemberByMail, apiRemoveMember } from '../../utils/api.js';
 
 export default {
     name: "Togos",
@@ -208,7 +209,7 @@ export default {
             let day = date.getDate();
             this.tripDate = year + "-" + month + "-" + day;
           }
-          this.$emit('saveTrip', this.tripName, this.tripDate, this.newMemberId);
+          this.$emit('saveTrip', this.tripName, this.tripDate, this.memberEmail);
         }
       },
       shareTrip: function() {
@@ -260,11 +261,30 @@ export default {
       },
       addMember: async function() {
         this.memberEmails.push(this.memberEmail);
-        this.callFindMemberAPI(this.memberEmail);
+        this.saveTrip();
         this.memberEmail = '';
       },
-      removeMember: function(index) {
-         this.memberEmails.splice(index, 1);
+      removeMember: async function(index) {
+        let token = this.$store.state.userToken;
+        let mailToRemove = this.memberEmails[index];
+        this.memberEmails.splice(index, 1);
+        let memberId;
+        await apiFindMemberByMail(mailToRemove, token)
+        .then((function (res) {
+          memberId = res.data.data._id;
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+        console.log(memberId);
+        await apiRemoveMember(this.itinerary.id, memberId, token)
+        .then((function (res) {
+          console.log(res);
+        }))
+        .catch(function (error) {
+          console.log(error);
+        });
+
       },
       getStartTime: function(index) {
         // if(index == 0) {
@@ -367,18 +387,19 @@ export default {
           }
         }
       },
-      callFindMemberAPI: function(email) {
-        let self = this;
-        let token = this.$store.state.userToken;
-        apiFindMemberByMail(email, token)
-        .then((function (res) {
-          self.newMemberId = res.data.data._id;
-          self.saveTrip();
-        }))
-        .catch(function (error) {
-          console.log(error);
-        });
-      },
+      getCurrentMembers: function() {
+        let userId = this.$store.state.user.id;
+        let memberIds;
+        if(this.itineraryLoaded) {
+          memberIds = this.itinerary.memberIds;
+          memberIds.array.forEach(element => {
+            if(element !== userId) {
+              
+            }
+          });
+        }
+
+      }
     },
     watch: {
       travelInfo: {

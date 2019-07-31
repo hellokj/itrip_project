@@ -20,7 +20,7 @@
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
             <!-- <button class="btn-login">登入</button> -->
-            <ProfileButton style="width:max-content"></ProfileButton>
+            <ProfileButton :type="'danger'" style="width:max-content"></ProfileButton>
           </b-col>
         </b-row>
       </b-container>

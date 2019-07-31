@@ -11,8 +11,9 @@
                 </div>
             </div>
         </div>
-        <div class="searchbar">
-            <div class="inner-addon right-addon">
+        <div class="searchbar" >
+            <HeaderSearch @header-search-btn-clicked="searchClicked"></HeaderSearch>
+            <!-- <div class="inner-addon right-addon">
                 <i class="fas fa-search"></i>
                 <input  
                 class="input_name"
@@ -22,7 +23,7 @@
                 style="text-align:center;" />
             </div>
             <div class="trees">
-                <!-- Select Type -->
+     
                 <treeselect
                 class="input_type"
                 :multiple="false"
@@ -50,7 +51,7 @@
         
             <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
             class="icon_search" src="../icons/search.svg" 
-            @click="searchClicked">
+            @click="searchClicked"> -->
         </div>
         <div class="btns">
             <div class="div_trip">
@@ -66,6 +67,7 @@
 
 <script>
 import Vue from 'vue'
+import HeaderSearch from '../HeaderSearch'
 import ProfileButton from '../ProfileButton'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 // import InputTag from 'vue-input-tag'
@@ -79,6 +81,7 @@ export default {
     components: {
         ProfileButton,
         Treeselect,
+        HeaderSearch
     },
     data() {
         return {
@@ -112,8 +115,21 @@ export default {
         selectTypeText() {
             this.$refs['type'].select();
         },
-        searchClicked() {
-            this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
+        // searchClicked() {
+        //     this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
+        //     this.$emit('search-click', this.params);
+
+        //     if(window.innerWidth <= 768) {
+        //         this.$bus.$emit('toggle', {id: 'Spots'});
+        //     }
+        //     this.input_name = '';
+        // },
+        searchClicked(city, region, type, name) {
+            // alert(city)
+            // alert(region)
+            // alert(type)
+            // alert(name)
+            this.params = makeParams(city, region, type, name);
             this.$emit('search-click', this.params);
 
             if(window.innerWidth <= 768) {
@@ -155,10 +171,8 @@ export default {
 }
 
     .header {
-
         position: sticky;
         top: 0;
-
         background: rgb(255,208,129);
         background: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%);
         height: 10vh;
@@ -172,20 +186,23 @@ export default {
 
     .btns {
         /* flex-grow: 3; */
+        width: 30%;
         display: flex;
         align-items: center;
         justify-content: flex-end;
         flex: 0 1 auto;
         padding-right: 20px;
-
+        white-space: nowrap; 
+        overflow: hidden;
     }
     .searchbar {
-        width: 650px;
+        width: 40%;
         display: flex;
         flex-wrap:wrap;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
+        padding-top: 3vh;
         flex:0 0 auto;
     }
 
@@ -247,17 +264,7 @@ export default {
     p {
         color: #ffffff;
     }
-    .div_logIn{
-        width: 125px;
-        height: 40px;
-        border: 2px solid #ffffff;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 50px;
 
-    }
     .div_home {
         margin-right: 25px;
     }
@@ -399,7 +406,8 @@ export default {
         flex-direction: row;
         align-self: flex-end;
         justify-content: center;
-        margin-left: 25px;
+        margin-left: 30px;
+        margin-top: 5px;
         padding: 0px;
     }
     .dropdown {

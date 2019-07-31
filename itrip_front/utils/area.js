@@ -145,27 +145,27 @@ const paramsHelper = (params, values) => {
 const makeParams = (city = null, region = null, _category = null, _name = null, _sortBy = "ig_post_num", _page = 1, _limit = 10, _order = -1) => {
     let _region = region;
     let _city = city;
-    if (region != null && region.length >= 4) {
-        _region = _region.slice(4, region.length);
-    }
-    else {
-        _city = region;
-        _region = null;
-    }
+    // if (region != null && region.length >= 4) {
+    //     _region = _region.slice(4, region.length);
+    // }
+    // else {
+    //     _city = region;
+    //     _region = null;
+    // }
 
     // search for type or name
-    let name = null;
-    let _tmpcategory = null;
-    let typeValues = Object.values(types);
-    if(typeValues.indexOf(_category) != -1) {
-        _tmpcategory = _category;
-    } else {
-        _tmpcategory = null;
-        name = _category
-    }        
+    // let name = null;
+    // let _tmpcategory = null;
+    // let typeValues = Object.values(types);
+    // if(typeValues.indexOf(_category) != -1) {
+    //     _tmpcategory = _category;
+    // } else {
+    //     _tmpcategory = null;
+    //     name = _category
+    // }        
     
     return paramsHelper(['city', 'region', 'categories', 'name', 'sortBy', 'page', 'limit', 'order'],
-                        [_city, _region, [_tmpcategory], _name, _sortBy, _page, _limit, _order]);
+                        [_city, _region, _category, _name, _sortBy, _page, _limit, _order]);
 }
 
 export {

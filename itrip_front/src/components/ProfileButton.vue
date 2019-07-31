@@ -31,7 +31,22 @@ export default {
     ProfileDropDown
   },
   props: {
-    
+    type: {
+      type: String,
+      default: "warning"
+    },
+    round: {
+      type: Boolean,
+      default: false
+    },
+    circle: {
+      type: Boolean,
+      default: false
+    },
+    plain: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -80,4 +95,5 @@ export default {
   justify-content: center
   margin-right: 50px
   background: #FFFFFF
+  font-size: 25px
 </style>

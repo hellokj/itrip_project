@@ -22,6 +22,7 @@ const save = async (req, res, next) => {
     // if(NilChecker(req.body, 8, [])) {
     //     Response(errorHandler.REQUIRED_FIELD_IS_MISSING, null, res);
     // }
+    //console.log(memberIds);
 
     // 先查詢資料庫有無相同_id的資料
     let target = await Itinerary.get(_id);
@@ -56,7 +57,15 @@ const getItineraries = async(req, res, next) => {
     res.json({status: -1, msg:'success', data: itineraries});
 };
 
+const removeMember = async(req, res, next) => {
+    let id = req.body.id;
+    let itinerary = await Itinerary.find({ _id: id});
+    let memberId = req.body.memberId;
+    console.log(itinerary);
+}
+
 module.exports = {
     save,
     getItineraries,
+    removeMember
 }
