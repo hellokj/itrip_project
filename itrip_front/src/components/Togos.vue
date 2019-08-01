@@ -394,8 +394,8 @@ export default {
         if(!this.isLocked) {
           let self = this;
           this.$socket.emit('editRequest', {itineraryId: this.itinerary._id, memberId: this.currentAccessId, token: this.$store.state.userToken});
-          await this.$socket.on('granted', (message) => {
-            if(message == 'granted') {
+          await this.$socket.on('canEdit', (res) => {
+            if(res === 'granted') {
               self.editMode = true;
               Message({
                 showClose: true,
@@ -477,14 +477,19 @@ export default {
       this.tabCounter = this.dayNum;
     },
     mounted() {
+      let self = this;
       if(this.isLocked) {
         Message({
           showClose: true,
           duration: 0,
-          message: '此行程正在編輯中...',
+          message: '此行程正在編輯中...，請稍後!',
           type: 'warning'
         });
       }
+      // listen to locked notification
+      this.$socket.on('notifyLocked', () => {
+        self.isLocked = true;
+      });
     }
 }
 </script>
