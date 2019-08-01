@@ -4,9 +4,10 @@ const Response = require('../utils/responseHandler');
 const errorHandler = require('../utils/errorHandler');
 
 const save = async (req, res, next) => {
+    
     let memberIds = [req.decoded.memberId];
     let memberId = req.body.memberId;
-    if(memberId !== '') {
+    if(memberId !== undefined) {
         memberIds.push(memberId);
     }
     let isPublic = req.body.isPublic;
