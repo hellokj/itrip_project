@@ -7,7 +7,7 @@ const save = async (req, res, next) => {
     
     let memberIds = [req.decoded.memberId];
     let memberId = req.body.memberId;
-    if(memberId != null) {
+    if(memberId != null && !memberIds.includes(memberId)) {
         memberIds.push(memberId);
         //console.log(memberId)
     }

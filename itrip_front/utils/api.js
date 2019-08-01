@@ -87,12 +87,13 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
   }
 
   let date;
-  if(typeof(startDate) === String) {
+  if(typeof(startDate) === 'string') {
     date = new Date(Date.parse(startDate));
   }
   else {
     date = startDate;
   }
+  
   let data = {
     _id: _id,
     isPublic: true,

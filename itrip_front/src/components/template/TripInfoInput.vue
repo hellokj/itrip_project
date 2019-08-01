@@ -56,6 +56,7 @@ export default {
         return {
            tripDate: new Date(),
            tripName: '我的旅行',
+           itinerary: {},
            visible: false,
            currentAccessId: this.$route.query.currentAccessId,
            showWarning: false
@@ -84,9 +85,11 @@ export default {
         if(token.length > 0) {
             apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
             .then((function (res) {
-                console.log(res);
+                //console.log(res);
                 self.$message.success('行程儲存成功!');
-                self.$router.push('/trip/?currentAccessId=' + self.currentAccessId + '&itineraryId=' + _id);
+                self.itinerary = res.data.data;
+                self.$router.push('/trip/?currentAccessId=' + res.data.data.memberIds[0] + '&itineraryId=' + _id);
+                self.$bus.$emit('createTrip', {tripName: self.tripName, tripDate: self.tripDate, itinerary: self.itinerary});
             }))
             .catch(function (error) {
                 console.log(error);
@@ -96,14 +99,15 @@ export default {
             apiShareTrip(this.tripDate, this.tripName, 1,[], [])
             .then((function (res) {
                 self.$router.push('/trip/?itineraryId=' + _id);
+                self.itinerary = res.data.data;
+                self.$bus.$emit('createTrip', {tripName: self.tripName, tripDate: self.tripDate, itinerary: self.itinerary});
             }))
             .catch(function (error) {
                 console.log(error);
             });
         }
-        this.$bus.$emit('createTrip', {tripName: this.tripName, tripDate: this.tripDate});
+        
     }
-
 };
 </script>
 

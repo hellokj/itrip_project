@@ -8,8 +8,8 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
-        :page="page" :isLocked="isLocked" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" 
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
+        :page="page" :isLocked="isLocked" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" :itinerary="itinerary" 
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
         @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"/>
       </b-col>
@@ -130,6 +130,8 @@ export default {
       itinerary: {},
       updateMap:0,
       windowWidth: 0,
+      tripName: '',
+      tripDate: '',
       // query parameters
       qplace: this.$route.query.qplace,
       qname: this.$route.query.qname,
@@ -165,11 +167,10 @@ export default {
       // console.log("_id", _id);
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
       .then((function (res) {
-        if(self.itinerary === {}) {
-          self.itinerary = res.data.data;
-        }
+        self.itinerary = Object.assign({}, self.itinerary, res.data.data);
+        //console.log(self.itinerary)
         self.$message.success('行程儲存成功!');
-        self.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + self.itinerary._id);
+        self.$router.push('/trip/?currentAccessId=' + self.$route.query.currentAccessId + '&itineraryId=' + self.itinerary._id);
       }))
       .catch(function (error) {
         console.log(error);
@@ -507,6 +508,7 @@ export default {
       let self = this;
       await apiGetItinerary(this.qitineraryId, this.qcurrentAccessId, token)
       .then((function (res) {
+        console.log(res.data)
         self.itinerary = res.data.data;
         self.currentAccessId = self.qcurrentAccessId;
       }))
@@ -589,8 +591,12 @@ export default {
       self.itinerary = event.itinerary;
       self.currentAccessId = event.currentAccessId;
       self.isLocked = event.isLocked;
-      //console.log(event.isLocked);
-      //console.log("trip get", self.itinerary);
+    this.$bus.$on('createTrip', event => {
+      self.tripName = event.tripName;
+      self.tripDate = event.tripDate;
+      self.itinerary = event.itinerary;
+      console.log(self.itinerary)
+    })
       for (let i=0;i<self.itinerary.togos.length;i++){
         self.$set(self.togos, i, self.itinerary.togos[i]);
         self.$set(self.travelInfos, i, self.itinerary.travelInfos[i]);
