@@ -466,8 +466,14 @@ export default {
       }
     },
     created() {
+      let self = this;
       //console.log("itinerary", this.itinerary);
       this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
+       // 註冊監聽事件
+      this.$bus.$on('createTrip', event => {
+        self.tripName = event.tripName;
+        self.tripDate = event.tripDate;
+      })
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -475,6 +481,7 @@ export default {
       }
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
+      
     },
     mounted() {
       let self = this;
