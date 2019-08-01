@@ -32,6 +32,14 @@ export default {
       isAuthorized: this.$store.state.isAuthorized,
     }
   },
+  sockets: {
+    connect() {
+        console.log('socket connected')
+    },
+    message(data) {
+        console.log(data);
+    }
+  },
   methods: {
     Search(para) {
       this.param = para;
@@ -79,6 +87,9 @@ export default {
           this.atHome = false;
         }
     },
+    isAuthorized() {
+      console.log(this.isAuthorized)
+    }
   }
 }
 </script>
@@ -89,16 +100,12 @@ export default {
   font-family: logoFont;
   src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
 }
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: logoFont;
-    
   }
-
-
   .btn {
     display: inline-block;
     border: none;

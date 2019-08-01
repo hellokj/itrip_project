@@ -96,6 +96,7 @@ export default {
   props: {
     param: Object,
   },
+  
   data() {
     return {
       togos: [],
@@ -164,11 +165,14 @@ export default {
       // console.log("_id", _id);
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
       .then((function (res) {
-        console.log(res);
+        //console.log(res);
         self.$message.success('行程儲存成功!');
       }))
       .catch(function (error) {
         console.log(error);
+      });
+      this.$socket.emit('SEND_MESSAGE', {
+          togos: self.togos
       });
     },
     share(name, date) {
@@ -207,9 +211,6 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
-    },
-    addMember() {
-
     },
     deleteTogo(index) {
       if(this.travelInfos[this.page] != undefined) {
@@ -630,7 +631,6 @@ export default {
     } else {
       this.paramProp = data;
     }
-    
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
