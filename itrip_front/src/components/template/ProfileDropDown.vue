@@ -41,6 +41,7 @@
         this.$bus.$emit("changeToCarousel");
       },
       logOut: function(){
+        this.$socket.emit('logOut', {token: this.$store.state.userToken});
         this.$store.dispatch('updateAuthorized', false);
         this.$store.dispatch("updateUserToken", "");
         this.$store.dispatch('updateUserInfo', {});

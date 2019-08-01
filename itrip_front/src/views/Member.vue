@@ -1,6 +1,5 @@
 <template>
 <el-container style="height: 90vh; border: 1px solid #eee">
-  <el-button @click="test">測試socket.io</el-button>
   <!-- 會員頁面側邊欄 -->
   <MobileMemberAside 
     v-if="($resize && !$mq.above(1025))"
@@ -56,8 +55,6 @@
 <script>
 import VueLoading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
-import io from 'socket.io-client';
-
 import MemberAside from '../components/MemberAside'
 import MobileMemberAside from '../components/MobileMemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
@@ -100,7 +97,6 @@ export default {
       isLoading: false,
       windowWidth: 0,
       currentAccessId: '',
-      socket: io('localhost:7777')
     }
   },
   created() {
@@ -152,11 +148,6 @@ export default {
     });
   },
   methods: {
-    test: function(e){
-      e.preventDefault();
-      console.log("lalala",this.myItineraries);
-      this.socket.emit('SEND_ITINERARY', (this.myItineraries));
-    },
     handleResize() {
       this.windowWidth = window.innerWidth;
     },
@@ -225,12 +216,6 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.handleResize);
   },
-  mounted() {
-    this.socket.on('MESSAGE', (data)=> {
-      console.log("data",data);
-    });
-  },
-
 };
 </script>
 
