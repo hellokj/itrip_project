@@ -577,7 +577,7 @@ export default {
       this.callGetSpotApi(makeParams(null, null, null, this.qname));
     } 
     if (this.qplace !== undefined) {
-      this.callGetSpotApi(makeParams(null, this.qplace));
+      this.callGetSpotApi(makeParams(this.qplace));
     }
     if (this.qspot !== undefined && this.qid !== undefined) {
       alert(this.qspot + ", " + this.qid)
