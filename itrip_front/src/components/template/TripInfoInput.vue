@@ -7,13 +7,18 @@
          v-model="visible">
         <i class="fas fa-suitcase-rolling" slot="reference" style="cursor:pointer;color:white;"> 開始規劃</i>
         <b-container>
-            <b-row class="mb-3">
+            <b-row class="mb-2">
                 <b-col class="px-0" cols="2" style="text-align:center;line-height:40px;">
                     名稱
                 </b-col>
                 <b-col cols="7">
                     <el-input placeholder="旅行名稱" v-model="tripName"></el-input>
                 </b-col>
+                <div class="row" style="height:10px;">
+                  <p class="py-0" v-if="showWarning" style="color:red;font-size:10px;width:100%;text-align:center;">* 名稱不得為空白!</p>  
+                </div>
+            </b-row>
+            <b-row>
             </b-row>
             <b-row class="mb-3">
                 <b-col class="px-0" cols="2" style="text-align:center;line-height:40px;">
@@ -53,6 +58,7 @@ export default {
            tripName: '我的旅行',
            visible: false,
            currentAccessId: this.$route.query.currentAccessId,
+           showWarning: false
         }
     },
     methods: {
@@ -60,6 +66,16 @@ export default {
             this.$router.push({path: '/trip'});
             
         },
+    },
+    watch: {
+        tripName: function(newVal) {
+            if(newVal.length == 0) {
+                this.showWarning = true;
+            }
+            else {
+                this.showWarning = false;
+            }
+        }
     },
     beforeDestroy() {
         let self = this;

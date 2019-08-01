@@ -84,7 +84,9 @@ export default {
           });
           self.$router.push('?currentAccessId=' + self.logInForm.account);
           self.$refs["logInForm"].resetFields();
-          console.log(res.data)
+          self.$message.success({
+            text: res.data.memberName + ', 歡迎回來!'
+          })
           self.$store.dispatch("updateAuthorized", true); // 登入成功
           self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{

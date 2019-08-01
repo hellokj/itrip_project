@@ -194,6 +194,7 @@ export default {
             this.tripDate = year + "-" + month + "-" + day;
           }
           this.$emit('saveTrip', this.tripName, this.tripDate, this.memberEmail);
+          this.memberEmail = '';
         }
       },
       shareTrip: function() {
@@ -244,7 +245,7 @@ export default {
         this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
-      addMember: async function() {
+      addMember: function() {
         if (this.$store.state.isAuthorized == false){
            Message({
             type: 'warning',
@@ -259,7 +260,6 @@ export default {
         }
         this.memberEmails.push(this.memberEmail);
         this.saveTrip();
-        this.memberEmail = '';
       },
       removeMember: async function(index) {
         let token = this.$store.state.userToken;
