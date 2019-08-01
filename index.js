@@ -30,7 +30,7 @@ mongoose.connect(config.mongodb,{
 // socket.io
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-const port = process.env.PORT||8000;
+const port = process.env.PORT||7777;
 
 // 開啟server監聽
 server.listen(port, function(){
@@ -43,6 +43,9 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket) {
     console.log(socket.id);
+    socket.on('SEND_ITINERARY', function(data) {
+        io.emit('MESSAGE', data)
+    });
     socket.on('SEND_MESSAGE', function(data) {
         io.emit('MESSAGE', data)
     });

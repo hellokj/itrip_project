@@ -37,7 +37,7 @@ export default {
       user: '',
       message: '',
       messages: [],
-      socket : io('localhost:8000')
+      socket : io('localhost:7777')
     }
   },
   methods: {
