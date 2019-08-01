@@ -1,6 +1,5 @@
 <template>
 <el-container style="height: 90vh; border: 1px solid #eee">
-  <el-button @click="test">測試socket.io</el-button>
   <!-- 會員頁面側邊欄 -->
   <MobileMemberAside 
     v-if="($resize && !$mq.above(1025))"
@@ -152,11 +151,6 @@ export default {
     });
   },
   methods: {
-    test: function(e){
-      e.preventDefault();
-      console.log("lalala",this.myItineraries);
-      this.socket.emit('SEND_ITINERARY', (this.myItineraries));
-    },
     handleResize() {
       this.windowWidth = window.innerWidth;
     },
