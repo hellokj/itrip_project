@@ -589,7 +589,7 @@ export default {
       self.itinerary = event.itinerary;
       self.currentAccessId = event.currentAccessId;
       self.isLocked = event.isLocked;
-      console.log(event.isLocked);
+      //console.log(event.isLocked);
       //console.log("trip get", self.itinerary);
       for (let i=0;i<self.itinerary.togos.length;i++){
         self.$set(self.togos, i, self.itinerary.togos[i]);
