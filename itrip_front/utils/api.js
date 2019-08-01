@@ -93,7 +93,7 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     startDate: {
       year: startDate.getFullYear(),
       month: startDate.getMonth() + 1,
-      day: startDate.getDay()
+      day: startDate.getDate()
     },
     startTimes: startTimes,
     name: name,

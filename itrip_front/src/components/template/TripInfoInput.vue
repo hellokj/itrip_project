@@ -68,6 +68,7 @@ export default {
         if(token.length > 0) {
             apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
             .then((function (res) {
+                console.log(res);
                 self.$message.success('行程儲存成功!');
                 self.$router.push('/trip/?currentAccessId=' + self.currentAccessId + '&itineraryId=' + _id);
             }))
