@@ -24,10 +24,21 @@
                 v-model="itinerary.isPublic" 
                 :icon="getLockIcon()" 
                 @click="changeLockStatus" 
-                style="margin:0px auto;">
+                style="padding: 5px; margin:0px auto;">
                 {{ getLockStatus() ? "設為不公開" : "設為公開" }}
               </el-link>
-              <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+              <el-link icon="el-icon-edit" style="padding: 5px; margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+              <el-popover
+                placement="top"
+                width="160"
+                v-model="visible">
+                <p>確定刪除此行程嗎？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button type="primary" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
+                  <el-button size="mini" type="text" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
+                </div>
+                <el-link slot="reference" icon="el-icon-delete" style="padding: 5px; margin:0px auto;" @click="visible = true">刪除行程</el-link>
+              </el-popover>
             </el-container>
           </el-container>
           <el-table
@@ -107,10 +118,21 @@
                 v-model="itinerary.isPublic" 
                 :icon="getLockIcon()" 
                 @click="changeLockStatus" 
-                style="margin:0px auto;">
+                style="padding: 5px; margin:0px auto;">
                 {{ getLockStatus() ? "設為不公開" : "設為公開" }}
               </el-link>
-              <el-link icon="el-icon-edit" style="margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+              <el-link icon="el-icon-edit" style="padding: 5px; margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
+              <el-popover
+                placement="top"
+                width="160"
+                v-model="visible">
+                <p>確定刪除此行程嗎？</p>
+                <div style="text-align: right; margin: 0px">
+                  <el-button type="primary" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
+                  <el-button size="mini" type="text" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
+                </div>
+                <el-link slot="reference" icon="el-icon-delete" style="padding: 5px; margin:0px auto;">刪除行程</el-link>
+              </el-popover>
             </el-container>
           </el-container>
           <el-container>
@@ -123,10 +145,12 @@
 
 <script>
 import {getAddress} from "../../utils/checker"
+import { apiDeleteItinerary } from '../../utils/api'
 import MemberMap from '../components/MemberMap'
 import { duration } from 'moment';
 import { start } from 'repl';
 import { setTimeout } from 'timers';
+import { async } from 'q';
 export default {
   components: {
     MemberMap,
@@ -140,10 +164,23 @@ export default {
     return {
       days: [], // 每天的行程 裡面存放 景點object
       index: 0,
+      visible: false,
+      isConfirmed: false, // check wheather delete or not
       isLocked: false // check if itinerary is locked by server
     }
   },
   methods: {
+    confirmDeleteOrNot: function(state, itinerary){
+      this.visible = false;
+      this.isConfirmed = state;
+      this.deleteItinerary(itinerary);
+    },
+    deleteItinerary: async function(itinerary){
+      if (this.isConfirmed){
+        await apiDeleteItinerary(itinerary._id, this.$store.state.userToken);
+        this.$bus.$emit("changeToCarousel");
+      }
+    },
     changeLockStatus: function(){
       this.itinerary.isPublic = !this.itinerary.isPublic;
     },

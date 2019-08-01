@@ -53,27 +53,30 @@ export default {
            tripName: '我的旅行',
            visible: false,
            currentAccessId: this.$route.query.currentAccessId,
+           isSubmit: false,
         }
     },
     methods: {
         submit() {
             this.$router.push({path: '/trip'});
-            
+            this.isSubmit = true;
         },
     },
     beforeDestroy() {
-        let self = this;
-        let _id = new Date().getTime();
-        let token = this.$store.state.userToken;
-        if(token.length > 0) {
-            apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
-            .then((function (res) {
-                self.$message.success('行程儲存成功!');
-                self.$router.push('/trip/?currentAccessId=' + self.currentAccessId + '&itineraryId=' + _id);
-            }))
-            .catch(function (error) {
-                console.log(error);
-            });    
+        // bug 在此
+        if (this.isSubmit){
+            let self = this;
+            let _id = new Date().getTime();
+            let token = this.$store.state.userToken;
+            if(token.length > 0) {
+                apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
+                .then((function (res) {
+                    self.$message.success('行程儲存成功!');
+                    self.$router.push('/trip/?currentAccessId=' + self.currentAccessId + '&itineraryId=' + _id);
+                }))
+                .catch(function (error) {
+                    console.log(error);
+            });
         }
         else {
             apiShareTrip(this.tripDate, this.tripName, 1,[], [])
@@ -85,11 +88,12 @@ export default {
             });
         }
         this.$bus.$emit('createTrip', {tripName: this.tripName, tripDate: this.tripDate});
+        }
     }
 
 };
 </script>
 
 <style scoped>
- 
+
 </style>

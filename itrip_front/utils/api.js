@@ -137,6 +137,17 @@ const apiGetItinerary = (id, memberId, token) => {
   return itineraryRequest.post('/getItinerary',  data, { headers: headers });
 }
 
+const apiDeleteItinerary = (id, token) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": token
+  }
+  let data = {
+    id: id,
+  }
+  return itineraryRequest.post('/deleteItinerary', data, { headers: headers });
+};
+
 // share api
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
   let date = startDate.split('-');
@@ -235,5 +246,6 @@ export {
     apiSaveTrip,
     apiFindMemberByMail,
     apiRemoveMember,
+    apiDeleteItinerary,
     apiGetItinerary
 }
