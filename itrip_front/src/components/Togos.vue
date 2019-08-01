@@ -19,32 +19,41 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i>
+          <i title="編輯行程" id="edit" class="fas fa-edit" 
+           @click="requestEdit"
+           :style="[isLocked ? { cursor: 'not-allowed' }:{ cursor: 'pointer' }]"
+           style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
+          <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
-          <SharingLink :shareUrl="shareUrl" :shareId="shareId" @shareTrip="shareTrip"/>
+          <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @shareTrip="shareTrip"/>
         </div>
-        <!-- <el-dropdown ref="dropdown2" placement="bottom-start" trigger="click">
-            <span>
-              <i title="功能列" class="fas fa-ellipsis-h" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown2">
-              <el-dropdown-item >
-                <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 儲存行程</i>
-              </el-dropdown-item>
-              <el-dropdown-item >
-                <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 匯出成PDF</i>
-              </el-dropdown-item>
-              <el-dropdown-item >
+        <el-dropdown ref="dropdown" placement="bottom-start" trigger="click">
+          <span>
+            <i title="功能列" class="pr-2 fas fa-ellipsis-h" style="font-size:25px;color:#8a8d91;cursor: pointer;"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item >
+              
+              <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 儲存行程</i>
+            </el-dropdown-item>
+            <el-dropdown-item >
+              <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 匯出成PDF</i>
+            </el-dropdown-item>
+            <el-dropdown-item >
+              <div class="pl-3 row">
                 <AddMemberPopover id="mobile-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
-                 @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>加入旅伴
-              </el-dropdown-item>
+                @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>加入旅伴 
+              </div>
+            </el-dropdown-item>
             <el-dropdown-item>
-              <SharingLink :shareUrl="shareUrl" :shareId="shareId"/>
+              <div class="pl-3 row">
+                <SharingLink id="mobile-sharingLink" :shareUrl="shareUrl" :shareId="shareId" @shareTrip="shareTrip"/>分享行程
+              </div>
             </el-dropdown-item>
           </el-dropdown-menu>         
-        </el-dropdown> -->
+        </el-dropdown>
       </div>
     </div>
     <div class="tab-container" style="height: 75vh;">
@@ -135,7 +144,9 @@ export default {
         shareUrl: 'http://localhost:8080/#/trip?viewId=',
         memberEmail: '',
         memberEmails: [],
-        newMemberId: ''
+        newMemberId: '',
+        shareIdProp: undefined,
+        editMode: false,
       }
     },
     components: {
@@ -153,6 +164,8 @@ export default {
       dayNum: Number,
       itinerary: Object,
       shareId: Number,
+      currentAccessId: String,
+      isLocked: Boolean,
     },
     methods: {
       saveTrip() {
@@ -185,7 +198,8 @@ export default {
         }
       },
       shareTrip: function() {
-        if(this.shareId === undefined) {
+        if(this.shareId === undefined && this.shareIdProp === undefined) {
+          //console.log(this.shareIdProp)
           let self = this;
           if (this.tripDate.date == ""){
               // 預設今天日期
@@ -206,7 +220,7 @@ export default {
           this.$emit('share', this.tripName, this.tripDate);  
         }
         else {
-          this.$emit('updateShare', this.shareId, this.tripName, this.tripDate);
+          this.$emit('updateShare', this.shareIdProp, this.tripName, this.tripDate);
         }
       },
       changePage(){
@@ -232,6 +246,18 @@ export default {
         this.$emit('add-new-day');
       },
       addMember: async function() {
+        if (this.$store.state.isAuthorized == false){
+           Message({
+            type: 'warning',
+            message: '請先登入!'
+          });
+          this.$store.dispatch("updateFormState", {
+            isLogIn: true,
+            isSignUp: false,
+            isFbSignUp: false
+          });
+          return;
+        }
         this.memberEmails.push(this.memberEmail);
         this.saveTrip();
         this.memberEmail = '';
@@ -239,17 +265,8 @@ export default {
       removeMember: async function(index) {
         let token = this.$store.state.userToken;
         let mailToRemove = this.memberEmails[index];
-        this.memberEmails.splice(index, 1);
-        let memberId;
-        await apiFindMemberByMail(mailToRemove, token)
-        .then((function (res) {
-          memberId = res.data.data._id;
-        }))
-        .catch(function (error) {
-          console.log(error);
-        });
-        console.log(memberId);
-        await apiRemoveMember(this.itinerary.id, memberId, token)
+        //this.memberEmails.splice(index, 1);
+        await apiRemoveMember(this.itinerary.id, mailToRemove, token)
         .then((function (res) {
           console.log(res);
         }))
@@ -360,17 +377,39 @@ export default {
         }
       },
       getCurrentMembers: function() {
-        let userId = this.$store.state.user.id;
+        //console.log(this.itinerary);
         let memberIds;
+        let self = this;
+        this.memberEmails = []
+        //console.log(this.currentAccessId)
         if(this.itineraryLoaded) {
           memberIds = this.itinerary.memberIds;
-          memberIds.array.forEach(element => {
-            if(element !== userId) {
-              this.memberEmails.push(element)
+          memberIds.forEach(element => {
+            if(element !== this.currentAccessId) {
+              self.memberEmails.push(element)
             }
           });
         }
-
+      },
+      requestEdit: async function() {
+        if(!this.isLocked) {
+          let self = this;
+          this.$socket.emit('editRequest', {itineraryId: this.itinerary._id, memberId: this.currentAccessId, token: this.$store.state.userToken});
+          await this.$socket.on('canEdit', (res) => {
+            if(res === 'granted') {
+              self.editMode = true;
+              Message({
+                showClose: true,
+                duration: 0,
+                type: 'success',
+                message: '開始編輯'
+              })
+            }
+            else {
+              self.editMode = false;
+            }
+          })
+        }
       }
     },
     watch: {
@@ -405,12 +444,37 @@ export default {
       shareId: function(newVal, oldVal) {
         if(oldVal == undefined) {
           this.shareUrl += newVal;
+          this.shareIdProp = newVal;
+        }
+      },
+      isLocked: function(newVal, oldVal) {
+        if(newVal) {
+          Message({
+            duration: 0,
+            showClose: true,
+            message: '此行程正在編輯中...，請稍後',
+            type: 'warning'
+          });
+        }
+        else {
+          Message({
+            duration: 0,
+            showClose: true,
+            message: '行程可編輯!',
+            type: 'success'
+          });
         }
       }
     },
     created() {
+      let self = this;
       //console.log("itinerary", this.itinerary);
       this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
+       // 註冊監聽事件
+      this.$bus.$on('createTrip', event => {
+        self.tripName = event.tripName;
+        self.tripDate = event.tripDate;
+      })
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -418,7 +482,23 @@ export default {
       }
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
+      
     },
+    mounted() {
+      let self = this;
+      if(this.isLocked) {
+        Message({
+          showClose: true,
+          duration: 0,
+          message: '此行程正在編輯中...，請稍後!',
+          type: 'warning'
+        });
+      }
+      // listen to locked notification
+      this.$socket.on('notifyLocked', () => {
+        self.isLocked = true;
+      });
+    }
 }
 </script>
 
@@ -568,7 +648,10 @@ export default {
     display: none;
   }
   #mobile-addMember-popover {
-    display: none
+    display: none;
+  }
+  #mobile-sharingLink {
+    display: none;
   }
   .togoContainer {
     display: flex;
@@ -590,17 +673,23 @@ export default {
     #pdf {
       display: none;
     }
+    #mobile-sharingLink {
+    display: block;
+  }
+    #mobile-addMember-popover {
+      display: block;
+    }
     #pc-addMember-popover {
       display: none;
-    } 
-    #share {
+    }
+    #pc-sharingLink {
       display: none;
     }
     .fa-ellipsis-h {
       display: block
     }
     .save-trip {
-    width: 10%;
+      width: 10%;
     }
 
   }

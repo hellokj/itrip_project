@@ -5,7 +5,7 @@
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
-                    <router-link to="/trip">旅遊</router-link>
+                    <router-link to="/trip">開始規劃</router-link>
                     <router-link to="/">首頁</router-link> 
                     <a href="#">登入</a>
                 </div>
@@ -55,7 +55,7 @@
         </div>
         <div class="btns">
             <div class="div_trip">
-                <router-link  to="/trip">旅遊</router-link>
+                <router-link  to="/trip">開始規劃</router-link>
             </div>
             <div class="div_home">
                 <router-link to="/">首頁</router-link>

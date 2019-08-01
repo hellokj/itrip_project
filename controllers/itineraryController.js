@@ -4,6 +4,7 @@ const Response = require('../utils/responseHandler');
 const errorHandler = require('../utils/errorHandler');
 
 const save = async (req, res, next) => {
+    
     let memberIds = [req.decoded.memberId];
     let memberId = req.body.memberId;
     if(memberId !== undefined) {
@@ -54,8 +55,23 @@ const getItineraries = async(req, res, next) => {
     let memberId = req.decoded.memberId;
     //console.log("memberId", memberId);
     let itineraries = await Itinerary.find({ memberIds: memberId});
-    res.json({status: -1, msg:'success', data: itineraries});
+    //console.log(itineraries);
+    res.json({status: -1, msg:'success', data: itineraries, currentAccessId: memberId});
 };
+
+const getItinerary = async(req, res, next) => {
+    let id = req.body.itineraryId;
+    let memberId = req.body.memberId;
+    let memberIdToken = req.decoded.memberId;
+    if(memberId !== memberIdToken) {
+        console.log(memberId, memberIdToken)
+        Response(errorHandler.ACCESS_TOKEN_EXPIRED, null, res);
+        return;
+    }
+    //console.log(id);
+    let itinerary = await Itinerary.findOne({_id: id});
+    res.json({status: -1, msg:'success', data: itinerary, currentAccessId: memberId});
+}
 
 const removeMember = async(req, res, next) => {
     let id = req.body.id;
@@ -65,8 +81,8 @@ const removeMember = async(req, res, next) => {
 }
 
 const deleteItinerary = async(req, res, next) => {
-    // get spot's address from req and get region name
     let _id = req.body.id;
+    console.log("_id", _id);
     await Itinerary.deleteItinerary(_id);
     res.json({status: -1, msg:'success'});
 }
@@ -74,5 +90,7 @@ const deleteItinerary = async(req, res, next) => {
 module.exports = {
     save,
     getItineraries,
-    removeMember
+    removeMember,
+    deleteItinerary,
+    getItinerary
 }

@@ -32,10 +32,18 @@ export default {
       isAuthorized: this.$store.state.isAuthorized,
     }
   },
+  sockets: {
+    connect() {
+        console.log('socket connected');
+    },
+  },
   methods: {
     Search(para) {
       this.param = para;
     },
+    connectionSuccess() {
+      this.$socket.emit('QQ', { token: this.$store.state.userToken});
+    }
   },
   created() {
     // 重新載入頁面不登出
@@ -44,6 +52,7 @@ export default {
     if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
       this.$store.dispatch('updateUserToken', userToken);
+      
     }else{
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
@@ -68,7 +77,8 @@ export default {
       FB.getLoginStatus(response => {
         vm.statusChangeCallback(response);
       });
-    }
+    };
+    this.connectionSuccess();
   },
   watch: {
     $route (to, from){
@@ -79,6 +89,9 @@ export default {
           this.atHome = false;
         }
     },
+    isAuthorized() {
+      console.log(this.isAuthorized)
+    }
   }
 }
 </script>
@@ -89,16 +102,12 @@ export default {
   font-family: logoFont;
   src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
 }
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: logoFont;
-    
   }
-
-
   .btn {
     display: inline-block;
     border: none;

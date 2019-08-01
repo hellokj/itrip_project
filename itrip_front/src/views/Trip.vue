@@ -8,8 +8,8 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId"
-        :page="page" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap"
+        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
+        :page="page" :isLocked="isLocked" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" 
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
         @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"/>
       </b-col>
@@ -77,10 +77,10 @@ import Map from '../components/Map'
 import MobileHeader from '../components/layout/MobileHeader'
 import ItineraryPdf from '../components/template/ItineraryPdf'
 import {TravelInfo} from '../../utils/dataClass'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip, apiUpdateShare} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiShareTrip, apiGetSharedTrip, apiUpdateShare, apiGetItinerary} from '../../utils/api'
 import {makeParams} from '../../utils/area'
 import VueLoadImage from 'vue-load-image'
-import { Promise } from 'q';
+import { Promise, async } from 'q';
 import { Message } from 'element-ui';
 
 export default {
@@ -136,6 +136,8 @@ export default {
       qspot: this.$route.query.qspot,
       qid: this.$route.query.qid,
       qviewId: this.$route.query.viewId,
+      qcurrentAccessId: this.$route.query.currentAccessId,
+      qitineraryId: this.$route.query.itineraryId,
       qresult: null,
       qadded: false,
       updateMap: 0,
@@ -144,6 +146,8 @@ export default {
       queryRegion: [],
       queryName: '',
       isAddSpotLocked: false,
+      currentAccessId:'',
+      isLocked: false,
     }
   },
   methods: {
@@ -151,7 +155,6 @@ export default {
       // itinerary format:
       //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
       //memberId, startDate, name, dayNum, togos, travelInfos
-      let userId = this.$store.state.user.id;
       let token = this.$store.state.userToken;
       let _id = "";
       if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
@@ -162,12 +165,18 @@ export default {
       // console.log("_id", _id);
       apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
       .then((function (res) {
-        console.log(res);
+        if(self.itinerary === {}) {
+          self.itinerary = res.data.data;
+        }
         self.$message.success('行程儲存成功!');
+        self.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + self.itinerary._id);
       }))
       .catch(function (error) {
         console.log(error);
       });
+      // this.$socket.emit('SEND_MESSAGE', {
+      //     togos: self.togos
+      // });
     },
     share(name, date) {
       if(this.togos[0] === undefined) {
@@ -205,9 +214,6 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
-    },
-    addMember() {
-
     },
     deleteTogo(index) {
       if(this.travelInfos[this.page] != undefined) {
@@ -494,6 +500,20 @@ export default {
     handleResize() {
       this.windowWidth = window.innerWidth;
     },
+    callGetItinerary: async function() {
+      //console.log(this.qcurrentAccessId, this.qitineraryId);
+      let token = this.$store.state.userToken;
+      //console.log(token)
+      let self = this;
+      await apiGetItinerary(this.qitineraryId, this.qcurrentAccessId, token)
+      .then((function (res) {
+        self.itinerary = res.data.data;
+        self.currentAccessId = self.qcurrentAccessId;
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
   },
   watch: {
     param: function(newVal) {
@@ -537,7 +557,9 @@ export default {
       for (let i=0;i<newVal.togos.length;i++){
         this.$set(this.togos, i, newVal.togos[i]);
         this.$set(this.travelInfos, i, newVal.travelInfos[i]);
-        this.$set(this.routes, i, newVal.travelInfos[i].routes);
+        if(newVal.travelInfos[i] !== undefined) {
+          this.$set(this.routes, i, newVal.travelInfos[i].routes);
+        }
       };
     },
     isAddSpotLocked: function(newVal, oldVal) {
@@ -565,11 +587,16 @@ export default {
     });
     this.$bus.$on('modifyItinerary', event => {
       self.itinerary = event.itinerary;
-      console.log("trip get", self.itinerary);
+      self.currentAccessId = event.currentAccessId;
+      self.isLocked = event.isLocked;
+      //console.log(event.isLocked);
+      //console.log("trip get", self.itinerary);
       for (let i=0;i<self.itinerary.togos.length;i++){
         self.$set(self.togos, i, self.itinerary.togos[i]);
         self.$set(self.travelInfos, i, self.itinerary.travelInfos[i]);
-        self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
+        if(self.itinerary.travelInfos[i] !== undefined) {
+          self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
+        }
         // this.routes.push(newVal.travelInfos[i].routes);
       };
     });
@@ -591,6 +618,9 @@ export default {
       this.getSharedTrip(this.qviewId);
       this.qviewId = 0;
     }
+    if(this.qcurrentAccessId !== undefined && this.qitineraryId !== undefined) {
+      this.callGetItinerary();
+    }
   },
   mounted() {
     let data = {
@@ -610,6 +640,11 @@ export default {
     } else {
       this.paramProp = data;
     }
+    let token = this.$store.state.userToken
+    //sockets listening event
+    this.$socket.on('message', (data) => {
+      console.log(data);
+    });
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
@@ -617,7 +652,7 @@ export default {
     this.$bus.$off('modifyItinerary');
   },
   destroy: function() {
-     window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>

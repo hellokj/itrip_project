@@ -4,6 +4,7 @@
   :visible.sync="isVisible"
   :modal="false"
   width='80vw'
+  :close-on-click-modal="false"
   center>
   <span style="text-align: center">{{ hint }}</span>
   <div style="height: 10px"></div>
@@ -80,6 +81,7 @@ export default {
             isFbSignUp: false
           });
           self.$store.dispatch("updateAuthorized", true); // 登入成功
+          self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;
         }

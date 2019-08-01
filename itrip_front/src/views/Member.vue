@@ -27,6 +27,7 @@
     :incomingItineraries="incomingItineraries" 
     :historyItineraries="historyItineraries" 
     :itinerary="itinerary"
+    :currentAccessId="currentAccessId"
     v-on:changeToCarousel="changeView('MobileMemberItineraryCarousel')"
     v-on:loading="loading"
     v-on:loadingComplete="loadingComplete"
@@ -40,6 +41,7 @@
     :incomingItineraries="incomingItineraries" 
     :historyItineraries="historyItineraries" 
     :itinerary="itinerary"
+    :currentAccessId="currentAccessId"
     v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
     v-on:loading="loading"
     v-on:loadingComplete="loadingComplete"
@@ -53,7 +55,6 @@
 <script>
 import VueLoading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
-
 import MemberAside from '../components/MemberAside'
 import MobileMemberAside from '../components/MobileMemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
@@ -95,6 +96,7 @@ export default {
       title: "",
       isLoading: false,
       windowWidth: 0,
+      currentAccessId: '',
     }
   },
   created() {
@@ -113,6 +115,8 @@ export default {
         // console.log(res.data.data[0].togos[0][0].images[0]);
         // console.log(res.data.data[0]);
         self.myItineraries = res.data.data; // 行程
+        self.currentAccessId = res.data.currentAccessId; // get current access id
+        //console.log('itinerary API',self.myItineraries)
         let currentDate = new Date();
         self.year = currentDate.getFullYear();
         self.month = currentDate.getMonth() + 1;
@@ -212,7 +216,6 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.handleResize);
   },
-
 };
 </script>
 

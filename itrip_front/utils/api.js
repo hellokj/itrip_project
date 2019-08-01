@@ -47,13 +47,6 @@ for(let i=0;i<requestList.length;i++) {
   })
 }
 
-const apiGetItineraries = (token) => {
-  let headers = {
-    "x-access-token": token
-  }
-  return itineraryRequest.post('/getItineraries', {} , {headers: headers});
-};
-
 // spot api
 const apiGetSpots = (data) => {
   return spotRequest.get('/get', { params: data });
@@ -92,14 +85,15 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
   if (_id == ""){
     _id = new Date().getTime();
   }
-  let date = startDate.split('-');
+
+  // let date = startDate.split('-');
   let data = {
     _id: _id,
     isPublic: true,
     startDate: {
-      year: parseInt(date[0]),
-      month: parseInt(date[1]),
-      day: parseInt(date[2])
+      year: startDate.getFullYear(),
+      month: startDate.getMonth() + 1,
+      day: startDate.getDate()
     },
     startTimes: startTimes,
     name: name,
@@ -110,6 +104,13 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
   }
   //console.log("data", data);
   return itineraryRequest.post('/save', data, { headers: headers });
+};
+
+const apiGetItineraries = (token) => {
+  let headers = {
+    "x-access-token": token
+  }
+  return itineraryRequest.post('/getItineraries', {} , {headers: headers});
 };
 
 const apiRemoveMember = (id, memberId, token) => {
@@ -124,11 +125,24 @@ const apiRemoveMember = (id, memberId, token) => {
   return itineraryRequest.post('/removeMember', data, { headers: headers });
 };
 
+const apiGetItinerary = (id, memberId, token) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": token
+  }
+  let data = {
+    itineraryId: id,
+    memberId: memberId
+  }
+  return itineraryRequest.post('/getItinerary',  data, { headers: headers });
+}
+
 // share api
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
   let date = startDate.split('-');
   let id = new Date().getTime();
   //console.log(id);
+  
   let data = {
     id: id,
     startDate: {
@@ -153,7 +167,7 @@ const apiGetSharedTrip = (id) => {
 
 const apiUpdateShare = (id, startDate, name, dayNum, togos, travelInfos) => {
   let date = startDate.split('-');
-  //console.log(startDate);
+  console.log(startDate);
   let data = {
     id: id,
     startDate: {
@@ -220,5 +234,6 @@ export {
     apiModifyProfile,
     apiSaveTrip,
     apiFindMemberByMail,
-    apiRemoveMember
+    apiRemoveMember,
+    apiGetItinerary
 }

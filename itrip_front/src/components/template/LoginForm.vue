@@ -4,6 +4,7 @@
     title="登入"
     :visible.sync="isVisible"
     :modal="false"
+    :close-on-click-modal="false"
     width="30%"
     style="z-index: 2011;"
     center>
@@ -75,14 +76,17 @@ export default {
         if (res.data.status == -1){
           self.hint = "";
           self.isVisible = false;
-          self.$refs["logInForm"].resetFields();
           self.$store.dispatch("updateUserToken", res.data.data); // token
           self.$store.dispatch("updateFormState", {
             isLogIn: false,
             isSignUp: false,
             isFbSignUp: false
           });
+          self.$router.push('?currentAccessId=' + self.logInForm.account);
+          self.$refs["logInForm"].resetFields();
+          console.log(res.data)
           self.$store.dispatch("updateAuthorized", true); // 登入成功
+          self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;
         }

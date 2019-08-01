@@ -16,7 +16,8 @@
             <router-link class="btn-home" to="/">首頁</router-link>
           </b-col>
           <b-col class="col-trip text-start" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center" style="white-space: nowrap; overflow: hidden;">
-            <router-link class="btn-trip" to="/trip">旅遊</router-link>
+            <!-- <router-link class="btn-trip" to="/trip">開始規劃</router-link> -->
+            <tripInfoInput/>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
             <!-- <button class="btn-login">登入</button> -->
@@ -183,7 +184,7 @@
           </b-col>
           <b-col class="footer-col-two" sm="12" md="3" lg="3">
             <router-link class="footer-home" to="/">首頁</router-link>
-            <router-link class="footer-trip" to="/trip">旅遊</router-link>
+            <router-link class="footer-trip" to="/trip">開始規劃</router-link>
             <router-link class="footer-login" to="/">登入</router-link>
           </b-col>
           <b-col class="footer-col-three" sm="12" md="3" lg="3">
@@ -203,6 +204,7 @@ import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiGetSharedTrip, 
 import HomeSearch from '../components/HomeSearch'
 import ProfileButton from '../components/ProfileButton'
 import ProfileDropDown from '../components/template/ProfileDropDown'
+import TripInfoInput from '../components/template/TripInfoInput'
 
 // path for images: ../assets/home/XXXX.svg
 export default {
@@ -211,7 +213,7 @@ export default {
     HomeSearch,
     ProfileButton,
     ProfileDropDown,
-  
+    TripInfoInput
   },
   data() {
     return {

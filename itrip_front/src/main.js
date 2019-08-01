@@ -24,6 +24,12 @@ import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
 import jsPDF from 'jspdf'
 import SocialSharing from 'vue-social-sharing'
+import VueSocketio from 'vue-socket.io-extended';
+import io from 'socket.io-client';
+
+Vue.use(VueSocketio, io('http://35.194.247.229:4000'));
+
+//Vue.use(VueSocketio, socketio('ws://'));
 //import emailjs from 'emailjs-com';
 
 const mediaQueries = new MediaQueries();
