@@ -34,16 +34,16 @@ export default {
   },
   sockets: {
     connect() {
-        console.log('socket connected')
+        console.log('socket connected');
     },
-    message(data) {
-        console.log(data);
-    }
   },
   methods: {
     Search(para) {
       this.param = para;
     },
+    connectionSuccess() {
+      this.$socket.emit('QQ', { token: this.$store.state.userToken});
+    }
   },
   created() {
     // 重新載入頁面不登出
@@ -52,6 +52,7 @@ export default {
     if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
       this.$store.dispatch('updateUserToken', userToken);
+      
     }else{
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
@@ -76,7 +77,8 @@ export default {
       FB.getLoginStatus(response => {
         vm.statusChangeCallback(response);
       });
-    }
+    };
+    this.connectionSuccess();
   },
   watch: {
     $route (to, from){

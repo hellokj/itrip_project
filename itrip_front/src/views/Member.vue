@@ -55,8 +55,6 @@
 <script>
 import VueLoading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
-import io from 'socket.io-client';
-
 import MemberAside from '../components/MemberAside'
 import MobileMemberAside from '../components/MobileMemberAside'
 import MemberItineraryCarousel from "../components/MemberItineraryCarousel"
@@ -99,7 +97,6 @@ export default {
       isLoading: false,
       windowWidth: 0,
       currentAccessId: '',
-      socket: io('localhost:7777')
     }
   },
   created() {
@@ -219,12 +216,6 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.handleResize);
   },
-  mounted() {
-    this.socket.on('MESSAGE', (data)=> {
-      console.log("data",data);
-    });
-  },
-
 };
 </script>
 

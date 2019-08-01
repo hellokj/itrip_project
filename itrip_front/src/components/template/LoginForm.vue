@@ -76,14 +76,16 @@ export default {
         if (res.data.status == -1){
           self.hint = "";
           self.isVisible = false;
-          self.$refs["logInForm"].resetFields();
           self.$store.dispatch("updateUserToken", res.data.data); // token
           self.$store.dispatch("updateFormState", {
             isLogIn: false,
             isSignUp: false,
             isFbSignUp: false
           });
+          self.$router.push('?currentAccessId=' + self.logInForm.account);
+          self.$refs["logInForm"].resetFields();
           self.$store.dispatch("updateAuthorized", true); // 登入成功
+          self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;
         }

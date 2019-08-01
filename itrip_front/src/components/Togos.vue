@@ -18,7 +18,11 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i>
+          <i title="編輯行程" id="edit" class="fas fa-edit" 
+           @click="requestEdit"
+           :style="[isLocked ? { cursor: 'not-allowed' }:{ cursor: 'pointer' }]"
+           style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
+          <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
@@ -30,6 +34,7 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item >
+              
               <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 儲存行程</i>
             </el-dropdown-item>
             <el-dropdown-item >
@@ -139,7 +144,8 @@ export default {
         memberEmail: '',
         memberEmails: [],
         newMemberId: '',
-        shareIdProp: undefined
+        shareIdProp: undefined,
+        editMode: false,
       }
     },
     components: {
@@ -157,7 +163,8 @@ export default {
       dayNum: Number,
       itinerary: Object,
       shareId: Number,
-      currentAccessId: String
+      currentAccessId: String,
+      isLocked: Boolean,
     },
     methods: {
       saveTrip() {
@@ -382,7 +389,26 @@ export default {
             }
           });
         }
-
+      },
+      requestEdit: async function() {
+        if(!this.isLocked) {
+          let self = this;
+          this.$socket.emit('editRequest', {itineraryId: this.itinerary._id, memberId: this.currentAccessId, token: this.$store.state.userToken});
+          await this.$socket.on('canEdit', (res) => {
+            if(res === 'granted') {
+              self.editMode = true;
+              Message({
+                showClose: true,
+                duration: 0,
+                type: 'success',
+                message: '開始編輯'
+              })
+            }
+            else {
+              self.editMode = false;
+            }
+          })
+        }
       }
     },
     watch: {
@@ -419,6 +445,24 @@ export default {
           this.shareUrl += newVal;
           this.shareIdProp = newVal;
         }
+      },
+      isLocked: function(newVal, oldVal) {
+        if(newVal) {
+          Message({
+            duration: 0,
+            showClose: true,
+            message: '此行程正在編輯中...，請稍後',
+            type: 'warning'
+          });
+        }
+        else {
+          Message({
+            duration: 0,
+            showClose: true,
+            message: '行程可編輯!',
+            type: 'success'
+          });
+        }
       }
     },
     created() {
@@ -432,6 +476,21 @@ export default {
       this.currentPage = this.page;
       this.tabCounter = this.dayNum;
     },
+    mounted() {
+      let self = this;
+      if(this.isLocked) {
+        Message({
+          showClose: true,
+          duration: 0,
+          message: '此行程正在編輯中...，請稍後!',
+          type: 'warning'
+        });
+      }
+      // listen to locked notification
+      this.$socket.on('notifyLocked', () => {
+        self.isLocked = true;
+      });
+    }
 }
 </script>
 
