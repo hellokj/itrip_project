@@ -122,7 +122,9 @@ export default {
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.4;
+    
   }
+
 
   .mobileHeader {
     display: none;

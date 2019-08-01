@@ -1,6 +1,6 @@
 <template>
-  <div style="margin:0px; padding:0px;">
-
+  <div style="margin:0px; padding:0px;position: relative;">
+    <!-- <div style="width: 500px; height: 500px; position: fixed; left: 0px; top: 0px; border: 1px solid black; z-index: 30; overflowY: scroll;" >{{officialItineraries}}</div> -->
     <!-- Scroll to Top Button-->
     <button class="btn-scroll-to-top" @click="ScrollToTop" style="position: fixed; right: 50px; bottom: 50px; z-index: 20;">Top</button>
     
@@ -10,7 +10,7 @@
       <b-container class="nav-bar mt-0 mb-3 mx-auto">
         <b-row style="height: 100px;">
           <b-col align-self="center" cols="2">
-            <img href="/trip" class="bg" src="../assets/home/Logo.svg" style="width: 100px;" />
+            <img href="/trip" class="home-logo" src="../assets/home/Logo.svg" />
           </b-col>
           <b-col class="col-home text-start" offset="2" offset-sm="2"  offset-md="4" offset-lg="6" offset-xl="7" cols="2" sm="2" md="2" lg="1" style="white-space: nowrap; overflow: hidden;">
             <router-link class="btn-home" to="/">首頁</router-link>
@@ -29,8 +29,8 @@
       <!-- big title -->
       <div class="container">
         <b-row align-h="center" align-v="center">
-          <b-col class="p-0" cols="12" style="text-align: center;"><h1 style="margin: 0px; font-size: 40px; color: #FFF;">跟著IG的粉絲一起旅行吧!</h1></b-col>
-          <b-col class="p-0" cols="12" style="text-align: center;"><p style="font-size: 23px; color: #FFF">打卡、分享、說走就走</p></b-col>
+          <b-col class="p-0" cols="12" style="text-align: center;"><h1 class="home-title">跟著IG的粉絲一起旅行吧!</h1></b-col>
+          <b-col class="p-0" cols="12" style="text-align: center;"><p class="home-subtitle">打卡、分享、說走就走</p></b-col>
         </b-row>
       </div>
 
@@ -55,11 +55,11 @@
       </div>
     </div>
 
-    <!-- Recommend Area -->
+    <!-- Spot Recommend Area -->
     <div class="recommend-area" style="z-index: 0;">
 
       <!-- IG景點推薦 -->
-      <b-container class="mt-3" style="position: relative">
+      <b-container class="mt-5 mb-3" style="position: relative">
 
         <!-- Scroll Button -->
         <button class="btn-ig-right" @click="ScrollIgRight">></button>
@@ -93,7 +93,7 @@
         </b-row>
       </b-container>
       <!-- 美食推薦 -->
-      <b-container class="mt-3" style="position: relative">
+      <b-container class="mt-3 mb-5" style="position: relative">
 
         <!-- Scroll Button -->
         <button class="btn-ig-right" @click="ScrollFoodRight">></button>
@@ -111,7 +111,7 @@
                 <button class="btn-spotItem-add" @click="addToTrip(food_recommend[i - 1].name, food_recommend[i - 1]._id)">加入行程</button><br>
               </div>
               <div class="spot-item-down">
-                <p class="spot-item-title" style="font-size: 20px; color:#FFF; width: 100%;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ food_recommend[i - 1].name }}</p>
+                <p class="spot-item-title" style="width: 100%;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ food_recommend[i - 1].name }}</p>
                 <!-- <i class="fab fa-instagram fa-2x" style="display: block; padding-top: 22px;"></i> -->
                 <div v-for="(t, index) in food_recommend[i - 1].ig_tag" :key="index" style="display: inline-block">
                   <el-tag
@@ -128,6 +128,31 @@
       </b-container>
     </div>
 
+    <!-- Itinerary Recommend Area  -->
+    <div class="itinerary-area" style="width:100%; height:auto; overflow: hidden">
+      <b-container class="mt-5 mb-5" v-if="officialItineraries !== []">
+        <b-row>
+          <p class="col itinerary-title" style="font-size: 28px;">精選行程</p>
+        </b-row>
+        <b-row style="flex-direction: row-reverse;">
+          <b-col class="itinerary-col mb-5" cols="12" sm="6" md="6" lg="3" v-for="i in 4" :key="i">
+            <div class="itinerary-item">
+              <img class="img-itinerary" :src="officialItineraries[i-1].togos[0][0]['images'][0]" alt="">
+              <p class="itinerary-name">{{officialItineraries[i-1].name}}</p>
+              <div class="itinerary-days">
+                <p style="margin: 0px; padding: 0px;">{{ dayStr(i) }}</p>
+              </div>
+              <button @click="viewOfficialTrip(officialItineraries[i-1]._id)" class="itinerary-go-now">
+                馬上出發
+              </button>
+              <div class="itinerary-stops">
+                <p v-for="(v, k) in officialItineraries[i-1].togos[0]" :key="k" style="margin: 0px; padding: 0px;" class="itinerary-stop">{{v.name}}</p>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </b-container>
+    </div>
 
     <!-- Introduce Area -->
     <div class="intro-area" style="width:100%; height:100vh; overflow: hidden">
@@ -175,7 +200,7 @@
 
 <script>
 import {getAreas, getTypes, makeParams, getAreaPics} from '../../utils/area.js'
-import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby} from '../../utils/api'
+import {apiGetSpots, apiGetRoutes, apiSaveTrip, apiGetNearby, apiGetSharedTrip, apiLogIn, apiGetItineraries} from '../../utils/api'
 import HomeSearch from '../components/HomeSearch'
 import ProfileButton from '../components/ProfileButton'
 import ProfileDropDown from '../components/template/ProfileDropDown'
@@ -202,6 +227,10 @@ export default {
       ig_recommend: [],
       food_recommend: [],
       keyWords: [],
+      itinerary: ['nothing'],
+      token: '',
+      data: {},
+      officialItineraries: []
     }
   },
   created: function() {
@@ -212,6 +241,19 @@ export default {
     this.callGetSpotApi(params_food, "self.food_recommend");
     console.log(params_ig);
     console.log(params_food);
+ 
+    let user = {
+      email: 'example@mail.com',
+      password: '123QQQ'
+    };
+    apiLogIn(user)
+    .then(function(res){
+      self.token = res.data.data;
+      return apiGetItineraries(self.token);
+    }).then(function(r){
+      self.officialItineraries = r.data.data;
+      console.log(self.officialItineraries);
+    });
   },
   methods: {
 
@@ -233,20 +275,15 @@ export default {
     printRecommend: function(){
       console.log(this.ig_recommend);
     },
-    // call get spots api
     callGetSpotApi: function(data, varString) {
       let self = this;
-      // call get spots api
+
       apiGetSpots(data)
       .then(function (res) {
         eval(varString + '=' + "res.data.data.resultList");
-        // self.paginator = res.data.data.paginator;
       })
       .catch(function (error) {
         console.log(error);
-      })
-      .then(function () {
-        // always executed
       });
     },
     addToTrip(spot, id){
@@ -255,6 +292,11 @@ export default {
     sendNameToTripPage(name){
         this.$router.push("/trip/?qname=" + name);
     },
+    viewOfficialTrip(viewId){
+      this.$router.push("/trip/?viewId=" + viewId);
+    },
+
+    // Handle scroll 
     ScrollToTop: function(){
       window.scrollTo(0, 0);
     },
@@ -289,6 +331,13 @@ export default {
         left: -elem.clientWidth,   
         behavior: "smooth" 
       });
+    },
+    dayStr(i){
+      let dayNum = this.officialItineraries[i-1].dayNum;
+      if (dayNum > 1)
+        return dayNum + "天" + eval(dayNum - 1) + "夜"
+      else if (dayNum == 1)
+        return "一日遊"
     }
   },
   watch: {
@@ -296,7 +345,7 @@ export default {
       for(var i = 0; i < 4; i++)
       this.keyWords.push(this.ig_recommend[i].name);
     },
-  }
+  },
 }
 </script>
 
@@ -327,6 +376,19 @@ export default {
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(117, 117, 117); 
+  }
+  .home-logo {
+    width: 100px;
+  }
+
+  .home-title {
+    margin: 0px; 
+    font-size: 40px; 
+    color: #FFF;
+  }
+  .home-subtitle {
+    font-size: 23px; 
+    color: #FFF;
   }
   .spot-img {
     display: block;
@@ -398,7 +460,7 @@ export default {
   .spot-item-up {
     position: relative;
     border: none;
-    border-radius: 10px 10px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
     width: 100%;
     height: 250px;
     transition: all 0.4s ease;
@@ -411,17 +473,17 @@ export default {
   .spot-item-down {
     position: relative;
     border: none;
-    border-radius: 0px 0px 10px 10px;
+    border-radius: 0px 0px 5px 5px;
     width: 100%;
     height: 60px;
     padding-left: 10px;
-    background-image: linear-gradient(to bottom right, rgba(255,194,132,100%), rgba(255,131,59,100%), rgba(255,108,113,100%));
+    background-image: linear-gradient(to bottom right, rgb(255, 190, 125), rgba(255, 193, 142, 0.76), rgba(255, 130, 92, 0.856), rgb(231, 113, 125));
     overflow: hidden;
     transition: all 0.4s ease;
   }
 
   .spot-item-up-down:hover {
-    border-radius: 10px 10px 10px 10px;
+    border-radius: 5px 5px 5px 5px;
     box-shadow: 0px 3px 15px rgba(1,7,43,74%);
     align-self: flex-start;
   }
@@ -442,9 +504,12 @@ export default {
   }
 
   .spot-item-title {
+    font-size: 20px; 
+    color:#FFF;
     padding-left: 10px;
     margin-bottom: 16px;
     margin-top: 15px;
+    text-shadow: 0px 3px 6px rgb(1, 3, 10);
   }
 
   .btn-spotItem-add {
@@ -468,7 +533,7 @@ export default {
   }
 
   .btn-spotItem-add:hover {
-    color: rgb(141, 45, 48);
+    color: rgb(253, 43, 50);
     background-color: #FFF;
     box-shadow: 0px 0px 15px rgb(24, 24, 24);
   }
@@ -521,7 +586,6 @@ export default {
   }
   .footer-home:hover, .footer-trip:hover, .footer-login:hover {
     text-shadow: 0px 0px 20px rgba(55,55,55,100%);
-
   } 
   .footer-col-one {
     padding-left: 10%;
@@ -539,11 +603,9 @@ export default {
     font-size: 20px;
     outline: none;
   }
-
   .btn-scroll-to-top:hover {
     background-color: rgba(255, 111, 75, 100%);
   }
-
   .btn-ig-right {
     border: none;
     background-color: rgba(29, 27, 36, 0.226);
@@ -560,12 +622,10 @@ export default {
     top: 50%; 
     z-index: 20;
   }
-
   .btn-ig-right:hover {
     background-color: rgba(29, 27, 36, 0.479);
     color: rgb(212, 212, 212);
   }
-
   .btn-ig-left {
     border: none;
     background-color: rgba(29, 27, 36, 0.226);
@@ -582,15 +642,124 @@ export default {
     top: 50%; 
     z-index: 20;
   }
-
   .btn-ig-left:hover {
     background-color: rgba(29, 27, 36, 0.479);
     color: rgb(212, 212, 212);
   }
   /* Scroll Bottom */
 
+  .itinerary-col {
+    overflow: visible;
+    z-index: 1;
+  }
 
+  .itinerary-item {
+    width: 100%;
+    height: 600px;
+    background-color: #FFF;
+    border: none;
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+  }
+  .img-itinerary {
+    height: 100%;
+    transition: all 0.5s ease;
+    opacity: 0.9;
+  }
+  .itinerary-item:hover {
+    box-shadow: 0px 3px 6px rgba(1,7,43,84%);
+    width: 150%;
+  }
+  .itinerary-item:hover .img-itinerary {
+    opacity: 0.6;
+  }
+  .itinerary-name {
+    position: absolute;
+    font-size: 22px;
+    color: #FFF;
+    top: 25px;
+    left: 10%;
+    text-shadow: 0px 3px 4px rgba(1,7,43,84%);
+  }
+  .itinerary-days {
+    position: absolute;
+    width: 110px;
+    height: 40px;
+    left: 10%;
+    top: 80px;
+    border-radius: 20px;
+    background-color: #FFF;
+    color: #E77E7D;
+    box-shadow: 0px 3px 6px rgba(1,7,43,54%);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .itinerary-item:hover:hover .itinerary-days {
+    box-shadow: none;
+    opacity: 0.5;
+  }
+  .itinerary-go-now {
+    border: none;
+    width: 180px;
+    height: 50px;
+    border-radius: 25px;
+    position: absolute;
+    top: 140px;
+    left: calc(-100%);
+    background-color: #E77E7D;
+    color: #FFF;
+    font-size: 22px;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  .itinerary-item:hover .itinerary-go-now {
+    top: 140px;
+    left: calc(50% - 90px);
+  }
+  .itinerary-go-now:hover {
+    box-shadow: 0px 3px 15px rgba(1,7,43,74%);
+  }
+  .itinerary-stop {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .itinerary-stops {
+    font-size: 16px;
+    color: #FFF;
+    /* text-shadow: 0px 3px 4px rgba(1,7,43,84%); */
+    position: absolute;
+    width: 80%;
+    height: 380px;
+    bottom: 10px;
+    left: -80%;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 16%);
+    transition: all 0.5s ease;
+  }
+  .itinerary-item:hover .itinerary-stops{
+    left: 10%;
+  }
   @media only screen and (max-width: 770px) {
+    .home-logo {
+      width: 70px;
+    }
+    .home-title {
+      margin: 0px; 
+      font-size: 30px; 
+      color: #FFF;
+    }
+    .home-subtitle {
+      font-size: 16px; 
+      color: #FFF;
+    }
     .spot-img {
       width: 140%;
       height: auto;
@@ -637,6 +806,14 @@ export default {
       color: rgb(77, 60, 60);
 
     }
+
+    .itinerary-col:hover .itinerary-item {
+      width: 100%;
+    }
+
+    /* .itinerary-col:hover .itinerary-stops {
+      left: 10%;
+    } */
   }
 
 </style>

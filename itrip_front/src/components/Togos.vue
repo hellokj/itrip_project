@@ -1,5 +1,6 @@
 <template>
   <div class="MyTrip">
+    <div style="position: absolute; width: 150px; height: 40px; background-color: tomato; border:none; right: 0px; top: 0px;"></div>
     <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
@@ -503,18 +504,19 @@ export default {
 
 <style lang="scss" scoped>
   .MyTrip {
+    position: relative;
     display: flex;
     flex-direction: column; 
-    border: none;
+    border: 4px solid tomato;
     background: rgb(250,250,250);
     color:black;
     height:90vh;
     width: 100%;
     // border-left: 2px solid rgb(230, 230, 230);
-    border-width: 3px;
-    border-style: solid;
-    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
-    border-right: none;
+    // border-width: 3px;
+    // border-style: solid;
+    // border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
+    // border-right: none;
   }
   .MyTrip .sortable-drag {
     opacity: 0;
@@ -650,6 +652,13 @@ export default {
   }
   #mobile-sharingLink {
     display: none;
+  }
+  .togoContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    align-items: center;
+    margin: 0px;
   }
 
   @media only screen and (max-width: 768px) {
