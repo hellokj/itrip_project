@@ -1,5 +1,6 @@
 <template>
   <div class="MyTrip">
+    <div style="position: absolute; width: 150px; height: 40px; background-color: tomato; border:none; right: 0px; top: 0px;"></div>
     <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
@@ -112,7 +113,7 @@ import virtualList from 'vue-virtual-scroll-list'
 import draggable from 'vuedraggable'
 import { async, resolve } from 'q'
 import { Message } from 'element-ui'
-import { apiFindMemberByMail, apiRemoveMember } from '../../utils/api.js'
+import { apiFindMemberByMail, apiRemoveMember, apiSaveTrip } from '../../utils/api.js'
 import AddMemberPopover from './AddMemberPopover'
 import SharingLink from './SharingLink'
 
@@ -146,6 +147,7 @@ export default {
         newMemberId: '',
         shareIdProp: undefined,
         editMode: false,
+        itinerary: {}
       }
     },
     components: {
@@ -161,7 +163,6 @@ export default {
       travelInfo: Array,
       page: Number,
       dayNum: Number,
-      itinerary: Object,
       shareId: Number,
       currentAccessId: String,
       isLocked: Boolean,
@@ -179,43 +180,23 @@ export default {
             isFbSignUp: false
           });
         }else{
-          if (this.tripDate.date == ""){
-            // 預設今天日期
-            let date = new Date();
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            this.tripDate = year + "-" + month + "-" + day;
-          }else {
-            let date = new Date(Date.parse(this.tripDate));
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            this.tripDate = year + "-" + month + "-" + day;
+          this.getDate();
+          let token = this.$store.state.userToken;
+          let _id = "";
+          if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
+            _id = this.itinerary._id;
           }
+          // console.log("itinerary", this.itinerary);
+          // console.log("_id", _id);
           this.$emit('saveTrip', this.tripName, this.tripDate, this.memberEmail);
+          this.memberEmail = '';
         }
       },
       shareTrip: function() {
         if(this.shareId === undefined && this.shareIdProp === undefined) {
           //console.log(this.shareIdProp)
           let self = this;
-          if (this.tripDate.date == ""){
-              // 預設今天日期
-              let date = new Date();
-              let year = date.getFullYear();
-              let month = date.getMonth() + 1;
-              let day = date.getDate();
-              this.tripDate = year + "-" + month + "-" + day;
-          }
-          else {
-            //console.log(this.tripDate)
-            let date = new Date(Date.parse(this.tripDate));
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            this.tripDate = year + "-" + month + "-" + day;
-          }
+          this.getDate();
           this.$emit('share', this.tripName, this.tripDate);  
         }
         else {
@@ -244,7 +225,7 @@ export default {
         this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
-      addMember: async function() {
+      addMember: function() {
         if (this.$store.state.isAuthorized == false){
            Message({
             type: 'warning',
@@ -257,9 +238,14 @@ export default {
           });
           return;
         }
-        this.memberEmails.push(this.memberEmail);
-        this.saveTrip();
-        this.memberEmail = '';
+        if(!this.memberEmails.includes(this.memberEmail)) {
+          this.memberEmails.push(this.memberEmail);
+          this.saveTrip();  
+        }
+        else {
+          this.$message.warning('該旅伴已在列表中!')
+        }
+        
       },
       removeMember: async function(index) {
         let token = this.$store.state.userToken;
@@ -377,18 +363,17 @@ export default {
       },
       getCurrentMembers: function() {
         //console.log(this.itinerary);
-        let memberIds;
         let self = this;
         this.memberEmails = []
         //console.log(this.currentAccessId)
-        if(this.itineraryLoaded) {
-          memberIds = this.itinerary.memberIds;
-          memberIds.forEach(element => {
-            if(element !== this.currentAccessId) {
-              self.memberEmails.push(element)
-            }
-          });
-        }
+        let memberIds = this.itinerary.memberIds;
+        console.log(memberIds)
+        //console.log(this.itinerary)
+        memberIds.forEach((element) => {
+          if(element !== self.$route.query.currentAccessId) {
+            self.memberEmails.push(element)
+          }
+        });
       },
       requestEdit: async function() {
         if(!this.isLocked) {
@@ -409,6 +394,22 @@ export default {
             }
           })
         }
+      },
+      getDate: function() {
+        if (this.tripDate.date == ""){
+          // 預設今天日期
+          let date = new Date();
+          let year = date.getFullYear();
+          let month = date.getMonth() + 1;
+          let day = date.getDate();
+          this.tripDate = year + "-" + month + "-" + day;
+        }else {
+          let date = new Date(Date.parse(this.tripDate));
+          let year = date.getFullYear();
+          let month = date.getMonth() + 1;
+          let day = date.getDate();
+          this.tripDate = year + "-" + month + "-" + day;
+        }
       }
     },
     watch: {
@@ -423,9 +424,8 @@ export default {
           if(!this.itineraryLoaded) {
             this.updateTabs();
             this.itineraryLoaded = true;
-            this.getCurrentMembers();
           }
-        }
+        },
       },
       page: function(){
         this.currentPage = this.page;
@@ -463,17 +463,20 @@ export default {
             type: 'success'
           });
         }
-      }
+      },
     },
     created() {
       let self = this;
       //console.log("itinerary", this.itinerary);
       this.$emit("changeBaseTimes", this.startTimeOb, this.currentPage);
-       // 註冊監聽事件
+      // 註冊監聽事件
       this.$bus.$on('createTrip', event => {
         self.tripName = event.tripName;
         self.tripDate = event.tripDate;
+        self.itinerary = event.itinerary;
+        //console.log(self.itinerary)
       })
+       
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -503,18 +506,19 @@ export default {
 
 <style lang="scss" scoped>
   .MyTrip {
+    position: relative;
     display: flex;
     flex-direction: column; 
-    border: none;
+    border: 4px solid tomato;
     background: rgb(250,250,250);
     color:black;
     height:90vh;
     width: 100%;
     // border-left: 2px solid rgb(230, 230, 230);
-    border-width: 3px;
-    border-style: solid;
-    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
-    border-right: none;
+    // border-width: 3px;
+    // border-style: solid;
+    // border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206), rgb(222, 222, 222), rgb(235, 235, 235)) 1 100%;
+    // border-right: none;
   }
   .MyTrip .sortable-drag {
     opacity: 0;
@@ -650,6 +654,13 @@ export default {
   }
   #mobile-sharingLink {
     display: none;
+  }
+  .togoContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    align-items: center;
+    margin: 0px;
   }
 
   @media only screen and (max-width: 768px) {

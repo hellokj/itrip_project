@@ -405,7 +405,7 @@ export default {
         flex: 0 1 auto;
         flex-direction: row;
         align-self: flex-end;
-        justify-content: center;
+        /* justify-content: center; */
         margin-left: 30px;
         margin-top: 5px;
         padding: 0px;
