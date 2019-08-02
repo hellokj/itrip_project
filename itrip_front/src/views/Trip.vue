@@ -144,8 +144,9 @@ export default {
     }
   },
   methods: {
-    // Togos operation
-    // Changed: togos, travelInfos, itinerary
+    editOn: function(){
+      this.$emit("edit-on")
+    },
     addSpotToTrip(spot) {
       if(!this.isAddSpotLocked) {
         if (this.itinerary.togos[this.page] === undefined){
@@ -224,7 +225,7 @@ export default {
     },
     removeDay(index) {
       this.itinerary.togos.splice(index, 1);
-       this.$set(this.itinerary, 'dayNum', this.itinerary.dayNum - 1);
+      this.$set(this.itinerary, 'dayNum', this.itinerary.dayNum - 1);
     },
     changePage(p) {
       this.page = p;
@@ -309,7 +310,6 @@ export default {
       }
       this.$set(this.itinerary, 'memberIds', tmp);
       this.$message.success('旅伴刪除成功!');
-      //console.log('removeMember', this.itinerary)
     },
     changeName(name) {
       this.$set(this.itinerary, 'name', name);
@@ -575,8 +575,7 @@ export default {
 
         if(newVal.name) this.queryName = newVal.name;
         else this.queryName = name;
-        
-        // if(this.queryCounty === null && this.queryRegion === null)
+
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
         }
@@ -589,16 +588,8 @@ export default {
     // Push changes every update
     itinerary: {
       handler: function(newVal, oldVal){
-      // for (let i=0;i<newVal.togos.length;i++){
-      //   this.$set(this.togos, i, newVal.togos[i]);
-      //   this.$set(this.travelInfos, i, newVal.travelInfos[i]);
-      //   if(newVal.travelInfos[i] !== undefined) {
-      //     this.$set(this.routes, i, newVal.travelInfos[i].routes);
-      //   }
-      // };
-        console.log(this.itinerary);
-        console.log(this.$store.state.user.id);
-        // this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+        this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+        console.log(newVal)
       },
       deep: true
     },
@@ -628,6 +619,9 @@ export default {
       if(newVal > 768 && newVal <= 1024 && (this.selected == 1 || this.selected == 0)) {
         this.selected = 3;
       }
+    },
+    isLocked: function(newVal) {
+      if(newVal) this.$emit('is-locked-on');
     }
   },
   created () {
@@ -659,6 +653,7 @@ export default {
     }
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
+    
   },
   beforeMount() {
     if(this.qviewId !== undefined) {
@@ -677,6 +672,7 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
+    //this.isLocked = true; //modetest
     // console.log(this.itinerary)
     // for (let i=0;i<this.itinerary.togos.length;i++){
     //   if(self.itinerary.travelInfos[i] !== undefined) {
@@ -684,8 +680,9 @@ export default {
     //   }
     // };
     // listen to update itinerary
-    this.$socket.on('updateNotification', (itineraryOb)=> {
+    this.$socket.on('updateNotification', (itineraryOb) => {
       self.itinerary = Object.assign({}, itineraryOb);
+      console.log('being notified...')
     })
 
     if (this.qname !== undefined) {

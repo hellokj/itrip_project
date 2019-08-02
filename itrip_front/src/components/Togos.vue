@@ -1,6 +1,10 @@
 <template>
   <div class="MyTrip">
-    <div style="position: absolute; width: 150px; height: 40px; background-color: tomato; border:none; right: 0px; top: 0px;"></div>
+
+    <!-- <div style="position: fixed; right: 30vw; top: 0px; width: 400px; height: 200px; background-color: transparent; color:#AAA; z-index: 30; font-size: 30px;"><p>editMode: {{editMode}}</p><p>  isLockedProp: {{isLockedProp}}</p></div> -->
+    <div v-if="isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
+    <div v-if="editMode" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-circle"><div></div></div></div>
+    
     <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
@@ -22,7 +26,7 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="編輯行程" id="edit" class="fas fa-edit" 
            @click="requestEdit"
-           :style="[isLocked ? { cursor: 'not-allowed' }:{ cursor: 'pointer' }]"
+           :style="[isLocked ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
            style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
@@ -126,14 +130,13 @@ export default {
         oldIndex: '',
         newIndex: '',
         travelInfos: Array,
-        tabCounter: 0,
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
         tripDate: new Date(),
         togos_prop: this.togos,
         startTime: '08:00',
-        editMode: true,
+        // editMode: true,
         startTimeOb: {
           hr: 8,
           min: 0
@@ -165,6 +168,7 @@ export default {
       dayNum: Number,
       shareId: Number,
       currentAccessId: String,
+      isLockedProp: Boolean,
       isLocked: Boolean,
       itinerary: Object
     },
@@ -223,7 +227,6 @@ export default {
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
       newTab: function() {
-        this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
       addMember: function() {
@@ -313,14 +316,9 @@ export default {
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
       closeTab: function(x) {
-        for (let i = 0; i < this.tabs.length; i++) {
-          if (x > 0 && this.tabs[i] === x) {
-            this.tabs.splice(i, 1)
-            this.tabCounter--;
-          }
-        }
-        for(let i=1;i<this.tabCounter;i++) {
-          if(this.tabs[i] != i) {
+        this.tabs.splice(x, 1);
+        for(let i=0;i<this.tabs.length;i++) {
+          if(i != this.tabs[i]) {
             this.tabs[i] = i;
           }
         }
@@ -345,18 +343,13 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      updateTabs: function(){
-        let self = this;
-        if (self.itinerary != undefined){ 
-          if (self.itinerary.togos != undefined){
-            for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-              self.tabs.push(this.tabCounter++);
-            };
-            self.tripName = self.itinerary.name;
-            self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-          }
-        }
-      },
+      // updateTabs: function(){
+      //   for (let i = this.itinerary.dayNum; i < self.itinerary.togos.length - 1; i++){
+      //     self.tabs.push(this.tabCounter++);
+      //   };
+      //   this.tripName = self.itinerary.name;
+      //   this.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+      // },
       getCurrentMembers: function() {
         //console.log(this.itinerary);
         let self = this;
@@ -422,10 +415,14 @@ export default {
       },
       itinerary: {
         handler: function() {
-          if(!this.itineraryLoaded) {
-            this.updateTabs();
-            this.itineraryLoaded = true;
+          // if(!this.itineraryLoaded) {
+          //   this.updateTabs();
+          //   this.itineraryLoaded = true;
+          // }
+          for(let i=this.tabs.length;i<this.itinerary.dayNum;i++) {
+            this.tabs.push(i);
           }
+          console.log(this.tabs)
           // get name and date from itinerary
           this.tripName = this.itinerary.name;
           this.tripDate = this.stringifyStartDate(this.itinerary.startDate);
@@ -468,6 +465,15 @@ export default {
           });
         }
       },
+      editMode: function(newVal){
+        if(newVal){
+          this.$emit('edit-on')
+        }
+      },
+      isLockedProp: function(newVal){
+        if(newVal) this.isLocked = true;
+        else this.isLocked = false;
+      }
     },
     created() {
       let self = this;
@@ -481,7 +487,6 @@ export default {
         this.tabs.push(i);
       }
       this.currentPage = this.page;
-      this.tabCounter = this.dayNum;
     },
     mounted() {
       let self = this;
@@ -506,7 +511,6 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column; 
-    border: 4px solid tomato;
     background: rgb(250,250,250);
     color:black;
     height:90vh;
@@ -693,3 +697,93 @@ export default {
 
   }
 </style>
+
+// 編輯模式下的style
+<style scoped>
+.Mytrip {
+  border: 4px solid tomato;
+}
+</style>
+
+// 被lock住的style
+<style scoped>
+
+</style>
+// editing animation
+<style scoped>
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 6px;
+  width: 13px;
+  background: lightgray;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 6px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 26px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 45px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 6px;
+    height: 51px;
+  }
+  50%, 100% {
+    top: 19px;
+    height: 26px;
+  }
+}
+</style>
+
+
+// editing animation
+<style scoped>
+
+
+  .lds-circle {
+    display: inline-block;
+    transform: translateZ(1px);
+  }
+  .lds-circle > div {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    margin: 10px;
+    border-radius: 50%;
+    background: lightblue;
+    animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+  @keyframes lds-circle {
+    0%, 100% {
+      animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+    }
+    0% {
+      transform: rotateY(0deg);
+    }
+    50% {
+      transform: rotateY(1800deg);
+      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+    }
+    100% {
+      transform: rotateY(3600deg);
+    }
+  }
+
+</style>
+
+
+

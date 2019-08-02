@@ -1,7 +1,42 @@
 <template>
-    <header class="header">
+    <header class="header" :class="{headerBackgroundEdit : editMode, headerBackgroundLocked: isLocked}">
+        <!-- {{isLocked}}
+        {{editMode}} -->
+        <!-- {{editMode}} -->
+
+        <!-- Edit mode modal -->
+        <b-modal ref="edit-tutorial" size="md" hide-footer hide-backdrop hide-header>
+            <div class="edit-tutorial" style="width: 100%; height:auto; text-align:center;">
+                <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">點擊以下圖示以退出編輯模式</h3>
+                <div style="margin-bottom: 150px; display: block; width: 100%; font-size: 100px;">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="edit-tutorial-cursor">
+                    <i class="far fa-hand-pointer"></i>
+                </div>
+                <button class="edit-tutorial-ok" @click="hideEditTutorial">我知道了</button>
+            </div>
+        </b-modal>
+
+        <!-- Lock mode modal -->
+        <b-modal ref="locked-tutorial" size="md" hide-footer hide-backdrop hide-header>
+            <div class="locked-tutorial" style="text-align:center;">
+                <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">此行程已鎖定</h3>
+                <h3 style="margin-top: 10px; width: 100%; font-size: 25px; color:#FFF;">可即時查看行程變更</h3>
+                <div style="display: block; width: 100%; height: 250px; text-align: center;">
+                    <img src="../../assets/itinerary.png" alt="" style="width: 50%">
+                </div>                
+                <div class="locked-tutorial-cursor">
+                    <i class="far fa-hand-pointer"></i>
+                </div>
+                <button class="locked-tutorial-ok" @click="hideLockedTutorial">我知道了</button>
+            </div>
+        </b-modal>
+
+        <div v-if="editMode" style="background-color: transparent; position:absolute; left: 60%; top: 5px; text-align: center;"><b-button id="show-btn" @click="showEditTutorial">Open Modal</b-button></div>
+        <div v-if="isLocked" style="background-color: transparent; position:absolute; left: 60%; top: 0px; text-align: center;"><b-button id="show-btn" @click="showLockedTutorial">Open Modal</b-button></div>
         <div class="logo">
-            <img src="./itripLogo.svg" alt="iTripLogo" @click="toHome">
+            <img :src="require('./'+logo)" alt="iTripLogo" @click="toHome">
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
@@ -83,24 +118,30 @@ export default {
         Treeselect,
         HeaderSearch
     },
+    props: {editMode: Boolean, isLockedProp: Boolean},
     data() {
         return {
-        input_name: '',
-        selected_type: undefined,
-        selected_region: undefined,
-        selected_city: undefined,
-        regions: getAreas(),
-        types: getTypes(),
-        params: {},
-        hover: true,
-        tags: [],
-        options: getAreas(),
-        sortValueBy: 'ORDER_SELECTED',
-        val: ''
+            input_name: '',
+            selected_type: undefined,
+            selected_region: undefined,
+            selected_city: undefined,
+            regions: getAreas(),
+            types: getTypes(),
+            params: {},
+            hover: true,
+            tags: [],
+            options: getAreas(),
+            sortValueBy: 'ORDER_SELECTED',
+            val: '',
+            isLocked: false,
         }
     },
     created: function() {
         window.addEventListener('click',this.clickOutSide);
+    },
+    mounted() {
+        if(this.editMode) this.showEditTutorial();
+        if(this.isLocked) console.log(`isLocked become true`)
     },
     destroyed: function() {
         window.removeEventListener('click', this.clickOutSide);
@@ -157,8 +198,38 @@ export default {
         },
         toHome: function(){
             this.$router.push({path: '/'});
-        }
+        },
+        showEditTutorial: function() {
+            this.$refs['edit-tutorial'].show();
+        },
+        hideEditTutorial: function() {
+            this.$refs['edit-tutorial'].hide();
+        },
+        showLockedTutorial: function() {
+            this.$refs['locked-tutorial'].show();
+        },
+        hideLockedTutorial: function() {
+            this.$refs['locked-tutorial'].hide();
+        },
     },
+    computed: {
+        logo:  function(){
+                if( this.editMode ) return "itripLogoWhite.svg"
+                if( this.isLocked ) return "itripLogoWhite.svg"
+                else return "itripLogo.svg"
+        },
+        
+    },
+    watch: {
+        isLockedProp: function(newVal){
+            if(newVal) {
+                this.isLocked = true;
+                this.showLockedTutorial();
+                console.log("isLockedProp Change")
+            }
+            else this.isLocked = false;
+        }
+    }
 }
 </script>
 
@@ -173,15 +244,22 @@ export default {
     .header {
         position: sticky;
         top: 0;
-        background: rgb(255,208,129);
-        background: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%);
+        background-image: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%); 
         height: 10vh;
         display: flex;
         font-family: logoFont;
         justify-content: space-between;
         flex-grow: 3;
-        width: 100%;
+        width: 100vw;
         z-index: 20;
+    }
+
+    .headerBackgroundEdit {
+        background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+        box-shadow: 0px 3px 6px rgb(55, 55, 55, 0.75);
+    }
+    .headerBackgroundLocked {
+        background-image: linear-gradient(90deg, rgba(92, 82, 64, 0.26) 0%, rgba(119, 102, 97, 0.322) 50%, rgba(78, 62, 62, 0.432) 100%);
     }
 
     .btns {
@@ -361,10 +439,103 @@ export default {
         padding-bottom: 10px;
     }
 
-    @media only screen and (max-width: 780px) {
+    .edit-tutorial {
+        position: absolute; 
+        left: 0px; 
+        top: -5px; 
+        width:100%; 
+        height: 600px;
+        border-radius: 5px;
+        background-color: #FFF;
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        box-shadow: 0px 3px 6px rgba(55, 55, 55, 0.85);
+    }
+    .edit-tutorial-ok {
+        position: absolute;
+        outline: none;
+        left: calc(50% - 75px);
+        width: 150px;
+        height: 50px;
+        border-radius: 25px;
+        border: 2px solid #FFF;
+        color: #FFF;
+        background: transparent;
+        bottom: 15px;
+    }
+    .edit-tutorial-ok:hover {
+        background: #FFF;
+        color: #5a8381;
+    }
+    .edit-tutorial-cursor {
+        display: block; 
+        position: absolute; 
+        left: 50%; 
+        bottom: 80px; 
+        font-size: 30px;
+    }
+    .edit-tutorial-cursor {
+        display: block; 
+        position: absolute; 
+        left: 50%; 
+        font-size: 30px;
+        animation: lds-facebook 1.5s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+    .locked-tutorial {
+        position: absolute; 
+        left: 0px; 
+        top: -5px; 
+        width: 100%; 
+        height: auto;
+        border-radius: 5px;
+        background-color: #FFF;
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        box-shadow: 0px 3px 6px rgba(55, 55, 55, 0.85);
+        overflow: hidden;
+    }
+    .locked-tutorial-ok {
+        position: absolute;
+        outline: none;
+        left: calc(50% - 75px);
+        width: 150px;
+        height: 50px;
+        border-radius: 25px;
+        border: 2px solid #FFF;
+        color: #FFF;
+        background: transparent;
+        bottom: 15px;
+    }
+    .locked-tutorial-ok:hover {
+        background: #FFF;
+        color: #5a8381;
+    }
+    .locked-tutorial-cursor {
+        display: block; 
+        position: absolute; 
+        left: 50%; 
+        bottom: 80px; 
+        font-size: 30px;
+    }
+    .locked-tutorial-cursor {
+        display: block; 
+        position: absolute; 
+        left: 50%; 
+        font-size: 30px;
+        animation: lds-facebook 1.5s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+    @keyframes lds-facebook {
+        0% {
+            bottom: 50px;
+        }
+        50%, 100% {
+            bottom: 130px;
+        }
+    }
+
+    @media only screen and (max-width: 780px) { 
     .header {
         flex-direction: column;
         height: 120px;
+        padding: 0px;
     }
     .icon_search {
         width: 30px;
@@ -417,6 +588,7 @@ export default {
     }
     .btns {
         display: none;
+        padding: 0px;
     }
     .fa-search {
         display: none;

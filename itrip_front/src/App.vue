@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search"/>
+    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" :editMode="editMode" :isLockedProp="isLocked"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <TabletHeader v-if="!atHome" class="tabletHeader"/>
     <div id="nav"></div>
     <transition name="router-anim" enter-active-class="animated fadeIn" >
-      <router-view :param="param" :region="region" :type="type" @search-click="Search"/>
+      <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn"/>
     </transition>
   </div>
 </template>
@@ -30,6 +30,8 @@ export default {
       param: {},
       atHome: true,
       isAuthorized: this.$store.state.isAuthorized,
+      editMode: false,
+      isLocked: false,
     }
   },
   sockets: {
@@ -54,6 +56,12 @@ export default {
     },
     connectionSuccess() {
       this.$socket.emit('QQ', { token: this.$store.state.userToken});
+    },
+    editOn() {
+      this.editMode = true;
+    },
+    isLockedOn() {
+      this.isLocked = true;
     }
   },
   created() {
