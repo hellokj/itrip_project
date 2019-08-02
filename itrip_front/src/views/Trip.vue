@@ -144,8 +144,21 @@ export default {
     }
   },
   methods: {
-    // Togos operation
-    // Changed: togos, travelInfos, itinerary
+    editOn: function(){
+      this.$emit("edit-on")
+    },
+    // saveTrip(name, date, memberId) {
+    //   // itinerary format:
+    //   //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
+    //   //memberId, startDate, name, dayNum, togos, travelInfos
+    //   let token = this.$store.state.userToken;
+    //   let _id = "";
+    //   if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
+    //     _id = this.itinerary._id;
+    //   }
+    // // Togos operation
+    // // Changed: togos, travelInfos, itinerary
+    // },
     addSpotToTrip(spot) {
       if(!this.isAddSpotLocked) {
         if (this.itinerary.togos[this.page] === undefined){
@@ -629,6 +642,9 @@ export default {
       if(newVal > 768 && newVal <= 1024 && (this.selected == 1 || this.selected == 0)) {
         this.selected = 3;
       }
+    },
+    isLocked: function(newVal) {
+      if(newVal) this.$emit('is-locked-on');
     }
   },
   created () {
@@ -660,6 +676,7 @@ export default {
     }
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
+    
   },
   beforeMount() {
     if(this.qviewId !== undefined) {
@@ -678,6 +695,7 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
+    this.isLocked = true; //modetest
     // console.log(this.itinerary)
     // for (let i=0;i<this.itinerary.togos.length;i++){
     //   if(self.itinerary.travelInfos[i] !== undefined) {

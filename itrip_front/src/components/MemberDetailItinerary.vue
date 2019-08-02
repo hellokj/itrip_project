@@ -469,6 +469,10 @@ export default {
 </script>
 
 <style>
+  el-main {
+    width: 100vw;
+  }
+
   .memo_popover {
     border-radius: 50px;
   }

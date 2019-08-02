@@ -47,7 +47,8 @@ socketHandler = new SocketHandler();
 io.on('connection', (socket) => {
     console.log(socket.id + ' has connected.');
     console.log("on locked itineraries", socketHandler.lockedItineraryIds);
-    console.log("connected members", socketHandler.connectedMembers);
+    // console.log("connected members", socketHandler.connectedMembers);
+    console.log("membersTable", socketHandler.membersTable);
     socket.on('QQ', (data) => {
         let token = data.token;
         console.log("偷啃", token);
@@ -61,18 +62,18 @@ io.on('connection', (socket) => {
         let token = data.token;
         socketHandler.connect(socket.id, token);
         console.log("socket id", socket.id);
-        // console.log("connected members", socketHandler.connectedMembers);
+        console.log("membersTable", socketHandler.membersTable);
     });
     // when member logout
     socket.on('logOut', (data) => {
         socketHandler.disconnect(socket.id);
-        // console.log('connected members', socketHandler.connectedMembers);
+        console.log("membersTable", socketHandler.membersTable);
     })
 
     socket.on("disconnect", () => {
         console.log("a user go out");
         socketHandler.disconnect(socket.id);
-        // console.log("connected members", socketHandler.connectedMembers);
+        console.log("membersTable", socketHandler.membersTable);
     });
 
     socket.on("checkItinerary", (data) => {
