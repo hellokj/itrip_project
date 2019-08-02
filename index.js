@@ -47,6 +47,7 @@ socketHandler = new SocketHandler();
 io.on('connection', (socket) => {
     console.log(socket.id + ' has connected.');
     console.log("on locked itineraries", socketHandler.lockedItineraryIds);
+    console.log("connected members", socketHandler.connectedMembers);
     socket.on('QQ', (data) => {
         let token = data.token;
         console.log("偷啃", token);

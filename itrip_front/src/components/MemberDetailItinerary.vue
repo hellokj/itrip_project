@@ -1,5 +1,5 @@
 <template>
-  <el-main>
+  <el-main v-model="update">
       <el-container style="margin-bottom: 20px;">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
@@ -164,6 +164,7 @@ export default {
     return {
       days: [], // 每天的行程 裡面存放 景點object
       index: 0,
+      update: 0,
       visible: false,
       isConfirmed: false, // check wheather delete or not
       isLocked: false // check if itinerary is locked by server
@@ -375,7 +376,7 @@ export default {
             resolve(checkedReply);
             clearTimeout(timer);
         }
-       self.$socket.on('checkedReply', responseHandler); 
+      self.$socket.on('checkedReply', responseHandler); 
         // set timeout so if a response is not received within a 
         // reasonable amount of time, the promise will reject
         timer = setTimeout(() => {
@@ -454,9 +455,12 @@ export default {
   },
   watch: {
     itinerary: function(){
-      this.resetItineraryData(this.itinerary);
       this.$emit("loadingComplete");
+      this.resetItineraryData(this.itinerary);
     }
+  },
+  beforeUpdate() {
+    this.$emit("loadingComplete");
   },
   computed: {
     

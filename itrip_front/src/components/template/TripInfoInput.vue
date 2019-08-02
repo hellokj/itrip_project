@@ -80,7 +80,6 @@ export default {
         }
     },
     beforeDestroy() {
-        // bug 在此
         if (this.isSubmit){
             let self = this;
             let _id = new Date().getTime();
