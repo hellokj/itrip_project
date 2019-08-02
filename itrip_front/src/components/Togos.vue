@@ -1,6 +1,10 @@
 <template>
   <div class="MyTrip">
-    <div style="position: absolute; width: 150px; height: 40px; background-color: tomato; border:none; right: 0px; top: 0px;"></div>
+
+    <!-- <div style="position: fixed; right: 30vw; top: 0px; width: 400px; height: 200px; background-color: transparent; color:#AAA; z-index: 30; font-size: 30px;"><p>editMode: {{editMode}}</p><p>  isLockedProp: {{isLockedProp}}</p></div> -->
+    <div v-if="isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
+    <div v-if="editMode" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-circle"><div></div></div></div>
+    
     <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
@@ -21,7 +25,7 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="編輯行程" id="edit" class="fas fa-edit" 
            @click="requestEdit"
-           :style="[isLocked ? { cursor: 'not-allowed' }:{ cursor: 'pointer' }]"
+           :style="[isLocked ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
            style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
@@ -132,7 +136,7 @@ export default {
         tripDate: new Date(),
         togos_prop: this.togos,
         startTime: '08:00',
-        editMode: true,
+        // editMode: true,
         startTimeOb: {
           hr: 8,
           min: 0
@@ -147,6 +151,7 @@ export default {
         newMemberId: '',
         shareIdProp: undefined,
         editMode: false,
+        isLocked: false,
       }
     },
     components: {
@@ -165,7 +170,7 @@ export default {
       itinerary: Object,
       shareId: Number,
       currentAccessId: String,
-      isLocked: Boolean,
+      isLockedProp: Boolean,
     },
     methods: {
       saveTrip() {
@@ -464,6 +469,15 @@ export default {
             type: 'success'
           });
         }
+      },
+      editMode: function(newVal){
+        if(newVal){
+          this.$emit('edit-on')
+        }
+      },
+      isLockedProp: function(newVal){
+        if(newVal) this.isLocked = true;
+        else this.isLocked = false;
       }
     },
     created() {
@@ -475,6 +489,7 @@ export default {
         self.tripName = event.tripName;
         self.tripDate = event.tripDate;
       })
+      // this.editMode = true; //modetest
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -507,7 +522,6 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column; 
-    border: 4px solid tomato;
     background: rgb(250,250,250);
     color:black;
     height:90vh;
@@ -694,3 +708,93 @@ export default {
 
   }
 </style>
+
+// 編輯模式下的style
+<style scoped>
+.Mytrip {
+  border: 4px solid tomato;
+}
+</style>
+
+// 被lock住的style
+<style scoped>
+
+</style>
+// editing animation
+<style scoped>
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 6px;
+  width: 13px;
+  background: lightgray;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 6px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 26px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 45px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 6px;
+    height: 51px;
+  }
+  50%, 100% {
+    top: 19px;
+    height: 26px;
+  }
+}
+</style>
+
+
+// editing animation
+<style scoped>
+
+
+  .lds-circle {
+    display: inline-block;
+    transform: translateZ(1px);
+  }
+  .lds-circle > div {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    margin: 10px;
+    border-radius: 50%;
+    background: lightblue;
+    animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+  @keyframes lds-circle {
+    0%, 100% {
+      animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+    }
+    0% {
+      transform: rotateY(0deg);
+    }
+    50% {
+      transform: rotateY(1800deg);
+      animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+    }
+    100% {
+      transform: rotateY(3600deg);
+    }
+  }
+
+</style>
+
+
+

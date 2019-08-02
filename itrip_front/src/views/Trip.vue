@@ -9,9 +9,10 @@
         id="togos"
         class="togos"
         :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
-        :page="page" :isLocked="isLocked" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" 
+        :page="page" :isLockedProp="isLocked" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" 
         @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"/>
+        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"
+        @edit-on="editOn"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -151,6 +152,9 @@ export default {
     }
   },
   methods: {
+    editOn: function(){
+      this.$emit("edit-on")
+    },
     saveTrip(name, date, memberId) {
       // itinerary format:
       //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
@@ -577,6 +581,9 @@ export default {
       if(newVal > 768 && newVal <= 1024 && (this.selected == 1 || this.selected == 0)) {
         this.selected = 3;
       }
+    },
+    isLocked: function(newVal) {
+      if(newVal) this.$emit('is-locked-on');
     }
   },
   created () {
@@ -612,6 +619,7 @@ export default {
     }
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
+    
   },
   beforeMount() {
     if(this.qviewId !== undefined) {
@@ -629,7 +637,7 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-
+    this.isLocked = true; //modetest
     if (this.qname !== undefined) {
       this.callGetSpotApi(makeParams(null, null, null, this.qname));
     } else if (this.qplace !== undefined) {
