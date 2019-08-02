@@ -94,10 +94,11 @@ export default {
           });
           self.$router.push('?currentAccessId=' + self.logInForm.account);
           self.$refs["logInForm"].resetFields();
-          self.$message.success({
-            text: res.data.memberName + ', 歡迎回來!'
-          })
+          
           self.$store.dispatch("updateAuthorized", true); // 登入成功
+          self.$message.success({
+            text: self.$store.state.user.name + ', 歡迎回來!'
+          })
           self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;

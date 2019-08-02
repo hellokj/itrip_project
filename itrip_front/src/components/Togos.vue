@@ -252,17 +252,9 @@ export default {
         
       },
       removeMember: async function(index) {
-        let token = this.$store.state.userToken;
         let mailToRemove = this.memberEmails[index];
-        //this.memberEmails.splice(index, 1);
-        await apiRemoveMember(this.itinerary.id, mailToRemove, token)
-        .then((function (res) {
-          console.log(res);
-        }))
-        .catch(function (error) {
-          console.log(error);
-        });
-
+        this.$emit('removeMember', mailToRemove);
+        this.memberEmails.splice(index, 1);
       },
       getStartTime: function(index) {
         // if(index == 0) {
@@ -369,13 +361,14 @@ export default {
         //console.log(this.itinerary);
         let self = this;
         this.memberEmails = []
-         console.log(this.itinerary)
+        //console.log(this.itinerary)
         //console.log(this.currentAccessId)
         let memberIds = this.itinerary.memberIds;
-       
+        //console.log(self.$store.state.user);
         //console.log(this.itinerary)
         memberIds.forEach((element) => {
-          if(element !== self.$route.query.currentAccessId) {
+          if(element != self.$store.state.user.id) {
+            //console.log(JSON.parse(self.$store.state.user.id))
             self.memberEmails.push(element)
           }
         });

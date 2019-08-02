@@ -176,13 +176,16 @@ export default {
   },
   watch: {
     togos: function(newVal, oldVal) {
-      let togoIcon = L.divIcon({
-      html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;">' + (this.togos.length) + '</i>',
-      iconSize: [15, 45],
-      className: 'myDivIcon'
-    });
-      this.togoIcons.push(togoIcon);
-      this.updateMarkers();
+      if(this.togos !== undefined) {
+        let togoIcon = L.divIcon({
+        html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;">' + (this.togos.length) + '</i>',
+        iconSize: [15, 45],
+        className: 'myDivIcon'
+        });
+        this.togoIcons.push(togoIcon);
+        this.updateMarkers();
+      }
+      
     },
     page: function(){
       this.currentPage = this.page;

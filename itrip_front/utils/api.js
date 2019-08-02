@@ -120,18 +120,6 @@ const apiGetItineraries = (token) => {
   return itineraryRequest.post('/getItineraries', {} , {headers: headers});
 };
 
-const apiRemoveMember = (id, memberId, token) => {
-  let headers = {
-    "Content-Type": "application/json",
-    "x-access-token": token
-  }
-  let data = {
-    id: id,
-    memberId: memberId,
-  }
-  return itineraryRequest.post('/removeMember', data, { headers: headers });
-};
-
 const apiGetItinerary = (id, memberId, token) => {
   let headers = {
     "Content-Type": "application/json",
@@ -252,7 +240,6 @@ export {
     apiModifyProfile,
     apiSaveTrip,
     apiFindMemberByMail,
-    apiRemoveMember,
     apiDeleteItinerary,
     apiGetItinerary
 }
