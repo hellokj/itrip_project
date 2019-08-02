@@ -130,7 +130,6 @@ export default {
         oldIndex: '',
         newIndex: '',
         travelInfos: Array,
-        tabCounter: 0,
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
@@ -152,7 +151,6 @@ export default {
         newMemberId: '',
         shareIdProp: undefined,
         editMode: false,
-        isLocked: false,
       }
     },
     components: {
@@ -229,7 +227,6 @@ export default {
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
       newTab: function() {
-        this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
       addMember: function() {
@@ -319,14 +316,9 @@ export default {
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
       closeTab: function(x) {
-        for (let i = 0; i < this.tabs.length; i++) {
-          if (x > 0 && this.tabs[i] === x) {
-            this.tabs.splice(i, 1)
-            this.tabCounter--;
-          }
-        }
-        for(let i=1;i<this.tabCounter;i++) {
-          if(this.tabs[i] != i) {
+        this.tabs.splice(x, 1);
+        for(let i=0;i<this.tabs.length;i++) {
+          if(i != this.tabs[i]) {
             this.tabs[i] = i;
           }
         }
@@ -351,18 +343,13 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      updateTabs: function(){
-        let self = this;
-        if (self.itinerary != undefined){ 
-          if (self.itinerary.togos != undefined){
-            for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-              self.tabs.push(this.tabCounter++);
-            };
-            self.tripName = self.itinerary.name;
-            self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-          }
-        }
-      },
+      // updateTabs: function(){
+      //   for (let i = this.itinerary.dayNum; i < self.itinerary.togos.length - 1; i++){
+      //     self.tabs.push(this.tabCounter++);
+      //   };
+      //   this.tripName = self.itinerary.name;
+      //   this.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+      // },
       getCurrentMembers: function() {
         //console.log(this.itinerary);
         let self = this;
@@ -428,10 +415,14 @@ export default {
       },
       itinerary: {
         handler: function() {
-          if(!this.itineraryLoaded) {
-            this.updateTabs();
-            this.itineraryLoaded = true;
+          // if(!this.itineraryLoaded) {
+          //   this.updateTabs();
+          //   this.itineraryLoaded = true;
+          // }
+          for(let i=this.tabs.length;i<this.itinerary.dayNum;i++) {
+            this.tabs.push(i);
           }
+          console.log(this.tabs)
           // get name and date from itinerary
           this.tripName = this.itinerary.name;
           this.tripDate = this.stringifyStartDate(this.itinerary.startDate);
@@ -496,7 +487,6 @@ export default {
         this.tabs.push(i);
       }
       this.currentPage = this.page;
-      this.tabCounter = this.dayNum;
     },
     mounted() {
       let self = this;

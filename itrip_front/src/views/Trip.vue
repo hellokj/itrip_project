@@ -147,18 +147,6 @@ export default {
     editOn: function(){
       this.$emit("edit-on")
     },
-    // saveTrip(name, date, memberId) {
-    //   // itinerary format:
-    //   //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-    //   //memberId, startDate, name, dayNum, togos, travelInfos
-    //   let token = this.$store.state.userToken;
-    //   let _id = "";
-    //   if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
-    //     _id = this.itinerary._id;
-    //   }
-    // // Togos operation
-    // // Changed: togos, travelInfos, itinerary
-    // },
     addSpotToTrip(spot) {
       if(!this.isAddSpotLocked) {
         if (this.itinerary.togos[this.page] === undefined){
@@ -237,7 +225,7 @@ export default {
     },
     removeDay(index) {
       this.itinerary.togos.splice(index, 1);
-       this.$set(this.itinerary, 'dayNum', this.itinerary.dayNum - 1);
+      this.$set(this.itinerary, 'dayNum', this.itinerary.dayNum - 1);
     },
     changePage(p) {
       this.page = p;
@@ -322,7 +310,6 @@ export default {
       }
       this.$set(this.itinerary, 'memberIds', tmp);
       this.$message.success('旅伴刪除成功!');
-      //console.log('removeMember', this.itinerary)
     },
     changeName(name) {
       this.$set(this.itinerary, 'name', name);
@@ -588,8 +575,7 @@ export default {
 
         if(newVal.name) this.queryName = newVal.name;
         else this.queryName = name;
-        
-        // if(this.queryCounty === null && this.queryRegion === null)
+
         if(Object.keys(newVal).includes('distance')) {
           this.callNearbyApi(newVal);
         }
@@ -602,15 +588,6 @@ export default {
     // Push changes every update
     itinerary: {
       handler: function(newVal, oldVal){
-      // for (let i=0;i<newVal.togos.length;i++){
-      //   this.$set(this.togos, i, newVal.togos[i]);
-      //   this.$set(this.travelInfos, i, newVal.travelInfos[i]);
-      //   if(newVal.travelInfos[i] !== undefined) {
-      //     this.$set(this.routes, i, newVal.travelInfos[i].routes);
-      //   }
-      // };
-        //console.log(this.itinerary);
-        //console.log(this.$store.state.user.id);
         this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
         console.log(newVal)
       },
@@ -695,7 +672,7 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    this.isLocked = true; //modetest
+    //this.isLocked = true; //modetest
     // console.log(this.itinerary)
     // for (let i=0;i<this.itinerary.togos.length;i++){
     //   if(self.itinerary.travelInfos[i] !== undefined) {
