@@ -7,8 +7,9 @@ const save = async (req, res, next) => {
     
     let memberIds = [req.decoded.memberId];
     let memberId = req.body.memberId;
-    if(memberId !== undefined) {
+    if(memberId != null && !memberIds.includes(memberId)) {
         memberIds.push(memberId);
+        //console.log(memberId)
     }
     let isPublic = req.body.isPublic;
     let _id = req.body._id;

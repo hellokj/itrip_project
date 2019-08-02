@@ -76,7 +76,17 @@ export default {
         if (res.data.status == -1){
           self.hint = "";
           self.isVisible = false;
-          self.$store.dispatch("updateUserToken", res.data.data); // token
+          self.$store.dispatch("updateUserToken", res.data.data);
+          
+          let userInfo = {
+            id: res.data.memberId,
+            name: res.data.memberName,
+            email: "",
+            url: ""
+          }
+          //console.log(userInfo)
+          self.$store.dispatch("updateUserInfo", userInfo);
+          // token
           self.$store.dispatch("updateFormState", {
             isLogIn: false,
             isSignUp: false,
@@ -84,8 +94,11 @@ export default {
           });
           self.$router.push('?currentAccessId=' + self.logInForm.account);
           self.$refs["logInForm"].resetFields();
-          console.log(res.data)
+          
           self.$store.dispatch("updateAuthorized", true); // 登入成功
+          self.$message.success({
+            text: self.$store.state.user.name + ', 歡迎回來!'
+          })
           self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;

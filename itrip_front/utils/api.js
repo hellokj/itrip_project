@@ -86,14 +86,21 @@ const apiSaveTrip = (_id, startDate, name, dayNum, startTimes, togos, travelInfo
     _id = new Date().getTime();
   }
 
-  // let date = startDate.split('-');
+  let date;
+  if(typeof(startDate) === 'string') {
+    date = new Date(Date.parse(startDate));
+  }
+  else {
+    date = startDate;
+  }
+  
   let data = {
     _id: _id,
     isPublic: true,
     startDate: {
-      year: startDate.getFullYear(),
-      month: startDate.getMonth() + 1,
-      day: startDate.getDate()
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate()
     },
     startTimes: startTimes,
     name: name,
@@ -113,18 +120,6 @@ const apiGetItineraries = (token) => {
   return itineraryRequest.post('/getItineraries', {} , {headers: headers});
 };
 
-const apiRemoveMember = (id, memberId, token) => {
-  let headers = {
-    "Content-Type": "application/json",
-    "x-access-token": token
-  }
-  let data = {
-    id: id,
-    memberId: memberId,
-  }
-  return itineraryRequest.post('/removeMember', data, { headers: headers });
-};
-
 const apiGetItinerary = (id, memberId, token) => {
   let headers = {
     "Content-Type": "application/json",
@@ -136,6 +131,17 @@ const apiGetItinerary = (id, memberId, token) => {
   }
   return itineraryRequest.post('/getItinerary',  data, { headers: headers });
 }
+
+const apiDeleteItinerary = (id, token) => {
+  let headers = {
+    "Content-Type": "application/json",
+    "x-access-token": token
+  }
+  let data = {
+    id: id,
+  }
+  return itineraryRequest.post('/deleteItinerary', data, { headers: headers });
+};
 
 // share api
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
@@ -234,6 +240,6 @@ export {
     apiModifyProfile,
     apiSaveTrip,
     apiFindMemberByMail,
-    apiRemoveMember,
+    apiDeleteItinerary,
     apiGetItinerary
 }

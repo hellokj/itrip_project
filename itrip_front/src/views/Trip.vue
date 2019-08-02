@@ -8,11 +8,11 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togos[page]" :travelInfo="travelInfos[page]" :dayNum="dayNum" :itinerary="itinerary" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
-        :page="page" :isLockedProp="isLocked" @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" 
-        @changeMode="changeMode" @resetRoutes="resetRoutes" @saveTrip="saveTrip" @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage"
-        @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @changeBaseTimes="changeBaseTimes" @share="share" @updateShare="updateShare"
-        @edit-on="editOn"/>
+        :togos="togo" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
+        :page="page" :isLocked="isLocked" :itinerary="itinerary"
+        @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes"
+        @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" 
+        @addMember="addMember" @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -21,7 +21,7 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togos[page]" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
           @filter-spot="filterSpot"
           @hoverSpotItem="hoverSpotItem"
           @add-spot="addSpotToTrip"
@@ -57,14 +57,14 @@
             id="map"
             class="map"
             :key="updateMap"
-            :spots="spots" :togos="togos[page]" :routes="routes" 
+            :spots="spots" :togos="togo" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage" 
             :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
       </b-col>
     </b-row>
     <b-row>
-      <ItineraryPdf :togos="togos" :travelInfos="travelInfos"/>
+      <ItineraryPdf :togos="itinerary.togos" :travelInfos="itinerary.travelInfos"/>
     </b-row>
   </b-container>
 </template>
@@ -99,12 +99,7 @@ export default {
   },
   data() {
     return {
-      togos: [],
       spots: [],
-      // routes format: {
-      // "0" : {
-      //  "routes": // 2-d array
-      //  "color": }}
       routes: {},
       showSpots: true,
       // unused params
@@ -116,10 +111,6 @@ export default {
       spotPage: 1,
       perPage: 10,
       changedElementValue: null,
-      // travelTime format:
-      // { start: , dest: ,duration: , time: , mode:}
-      baseTimes: [],
-      travelInfos: [],
       paginator: {},
       centerSpot: {},
       selected: 3,
@@ -127,10 +118,11 @@ export default {
       paramProp: '',
       selectedSpot: 0,
       update: 0,
-      dayNum: 1,
       itinerary: {},
       updateMap:0,
       windowWidth: 0,
+      tripName: '',
+      tripDate: '',
       // query parameters
       qplace: this.$route.query.qplace,
       qname: this.$route.query.qname,
@@ -155,57 +147,151 @@ export default {
     editOn: function(){
       this.$emit("edit-on")
     },
-    saveTrip(name, date, memberId) {
-      // itinerary format:
-      //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-      //memberId, startDate, name, dayNum, togos, travelInfos
-      let token = this.$store.state.userToken;
-      let _id = "";
-      if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
-        _id = this.itinerary._id;
-      }
-      let self = this;
-      // console.log("itinerary", this.itinerary);
-      // console.log("_id", _id);
-      apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
-      .then((function (res) {
-        if(self.itinerary === {}) {
-          self.itinerary = res.data.data;
+    // saveTrip(name, date, memberId) {
+    //   // itinerary format:
+    //   //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
+    //   //memberId, startDate, name, dayNum, togos, travelInfos
+    //   let token = this.$store.state.userToken;
+    //   let _id = "";
+    //   if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
+    //     _id = this.itinerary._id;
+    //   }
+    // // Togos operation
+    // // Changed: togos, travelInfos, itinerary
+    // },
+    addSpotToTrip(spot) {
+      if(!this.isAddSpotLocked) {
+        if (this.itinerary.togos[this.page] === undefined){
+          this.$set(this.itinerary.togos, this.page, []);
         }
-        self.$message.success('行程儲存成功!');
-        self.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + self.itinerary._id);
-      }))
-      .catch(function (error) {
-        console.log(error);
-      });
-      // this.$socket.emit('SEND_MESSAGE', {
-      //     togos: self.togos
-      // });
-    },
-    share(name, date) {
-      if(this.togos[0] === undefined) {
-        this.$message.warning('你還沒排行程!');
-        return;
+        spot.stopTime = {
+          hrs: 1,
+          mins: 0
+        }
+        this.itinerary.togos[this.page].push(spot);
+        let length = this.itinerary.togos[this.page].length;
+        // only need to get travelInfo if length > 2
+        if(length > 1) {
+          this.addTravelInfo(this.itinerary.togos[this.page][length - 2], spot);
+        }
+        if(window.innerWidth <= 768) {
+            this.$bus.$emit('toggle', {id: 'Togos'});
+        }
+        this.isAddSpotLocked = true;
+        //this.$set(this.itinerary, 'togos', this.togos);
+        //this.$set(this.itinerary, 'travelInfos', this.travelInfos);
       }
-      let self = this;
-      apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
-      .then((function (res) {
-        self.qviewId = res.data.data;
-      }))
-      .catch(function (error) {
-        console.log(error);
-      });
     },
-    updateShare(id, name, date) {
-      let self = this;
-      apiUpdateShare(id, date, name, this.togos.length, this.togos, this.travelInfos)
-      .then((function (res) {
-        console.log(res);
-      }))
-      .catch(function (error) {
-        console.log(error);
-      });
+    addTravelInfo(startOb, destOb) {
+      // initialize travelInfos
+      if(this.itinerary.travelInfos[this.page] === undefined) {
+        this.$set(this.itinerary.travelInfos, this.page, []);
+      }
+      // call get routes api
+      this.callGetRoutesApi(this.itinerary.travelInfos[this.page].length, startOb, destOb, 'driving-car');
     },
+    deleteTogo(index) {
+      if(this.itinerary.travelInfos[this.page] != undefined) {
+        this.fixTravelInfo(index);
+      }
+      this.itinerary.togos[this.page].splice(index, 1);
+    },
+    fixTravelInfo(index) {
+      if(index == 0) {
+        this.itinerary.travelInfos[this.page].shift();
+      }
+      else if(index == this.itinerary.togos[this.page].length - 1) {
+        this.itinerary.travelInfos[this.page].pop();
+      }
+      else {
+        // get start and dest object
+        let start = this.itinerary.togos[this.page][index - 1];
+        let dest = this.itinerary.togos[this.page][index + 1];
+        this.callGetRoutesApi(index - 1, start, dest, this.itinerary.travelInfos[this.page][index - 1].mode);
+        this.itinerary.travelInfos[this.page].splice(index, 1);
+        // reset routes
+      }
+      this.resetRoutes();
+    },
+    resetRoutes: function() {
+      if(this.itinerary.travelInfos[this.page] !== undefined) {
+        let length = this.itinerary.travelInfos[this.page].length;
+        if(length > 0) {
+          let tmp = [];
+          for(let i=0;i<length;i++) {
+            tmp = tmp.concat((this.itinerary.travelInfos[this.page][i]).routes);
+          };
+          this.$set(this.routes, this.page, {
+            routes: tmp,
+            color: "#FF0000"
+          });
+        }
+        else {
+          this.routes = {};
+        }
+      }
+    },
+    addNewDay() {
+      this.itinerary.togos.push([]);
+      this.$set(this.itinerary, 'dayNum', this.itinerary.dayNum + 1);
+    },
+    removeDay(index) {
+      this.itinerary.togos.splice(index, 1);
+       this.$set(this.itinerary, 'dayNum', this.itinerary.dayNum - 1);
+    },
+    changePage(p) {
+      this.page = p;
+    },
+    // saveTrip(name, date, memberId) {
+    //   // itinerary format:
+    //   //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
+    //   //memberId, startDate, name, dayNum, togos, travelInfos
+    //   let token = this.$store.state.userToken;
+    //   let _id = "";
+    //   if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
+    //     _id = this.itinerary._id;
+    //   }
+    //   let self = this;
+    //   // console.log("itinerary", this.itinerary);
+    //   // console.log("_id", _id);
+    //   apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
+    //   .then((function (res) {
+    //     self.itinerary = Object.assign({}, self.itinerary, res.data.data);
+    //     //console.log(self.itinerary)
+    //     self.$message.success('行程儲存成功!');
+    //     self.$router.push('/trip/?currentAccessId=' + self.$route.query.currentAccessId + '&itineraryId=' + self.itinerary._id);
+    //   }))
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+    //   // this.$socket.emit('SEND_MESSAGE', {
+    //   //     togos: self.togos
+    //   // });
+    // },
+    // share(name, date) {
+    //   if(this.togos[0] === undefined) {
+    //     this.$message.warning('你還沒排行程!');
+    //     return;
+    //   }
+    //   let self = this;
+    //   apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
+    //   .then((function (res) {
+    //     self.qviewId = res.data.data;
+    //   }))
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+    // },
+    // updateShare(id, name, date) {
+    //   let self = this;
+    //   apiUpdateShare(id, date, name, this.togos.length, this.togos, this.travelInfos)
+    //   .then((function (res) {
+    //     console.log(res);
+    //   }))
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+    // },
     getSharedTrip(id) {
       let self = this;
       apiGetSharedTrip(id)
@@ -219,67 +305,106 @@ export default {
         console.log(error);
       });
     },
-    deleteTogo(index) {
-      if(this.travelInfos[this.page] != undefined) {
-        this.fixTravelInfo(index);
+    addMember(memberId) {
+      let memberIds = this.itinerary.memberIds;
+      if(!memberIds.includes(memberId)) {
+        memberIds.push(memberId);
       }
-      this.togos[this.page].splice(index, 1);
+      this.$set(this.itinerary, 'memberIds', memberIds);
+      this.$message.success('旅伴新增成功!');
     },
-    addNewDay() {
-      this.togos.push([]);
-      this.dayNum++;
-    },
-    removeDay(index) {
-      this.togos.splice(index, 1);
-      this.dayNum--;
-    },
-    fixTravelInfo(index) {
-      if(index == 0) {
-        this.travelInfos[this.page].shift();
+    removeMember(mailToRemove) {
+      let tmp = this.itinerary.memberIds;
+      for(let i=0;i<tmp.length;i++) {
+        if(mailToRemove === tmp[i]) {
+          tmp.splice(i, 1);
+        }
       }
-      else if(index == this.togos[this.page].length - 1) {
-        this.travelInfos[this.page].pop();
+      this.$set(this.itinerary, 'memberIds', tmp);
+      this.$message.success('旅伴刪除成功!');
+      //console.log('removeMember', this.itinerary)
+    },
+    changeName(name) {
+      this.$set(this.itinerary, 'name', name);
+    },
+    changeDate(date) {
+      let ob = this.undoDateOb(date);
+      this.$set(this.itinerary, 'startDate', ob);
+    },
+    // Map
+    reverseCoordinates: function(tmpCoordinates) {
+      for (let i = 0; i < tmpCoordinates.length; i++) {
+        // 反轉經緯度 for leaflet
+        let tmp = tmpCoordinates[i][1];
+        tmpCoordinates[i][1] = tmpCoordinates[i][0];
+        tmpCoordinates[i][0] = tmp;
+      }
+    },
+    hoverSpotItem: function(index, spot) {
+      if(this.checkList.includes('景點圖標')) {
+        this.centerSpot = Object.assign({}, spot);;
+        this.$set(this.centerSpot, 'zoom', 12);
+        this.$set(this.centerSpot, 'index', index);
       }
       else {
-        // get start and dest object
-        let start = this.togos[this.page][index - 1];
-        let dest = this.togos[this.page][index + 1];
-        this.callGetRoutesApi(index - 1, start, dest, this.travelInfos[this.page][index - 1].mode);
-        this.travelInfos[this.page].splice(index, 1);
-        // reset routes
+        if(this.itinerary.togos[0] !== undefined) {
+          this.centerSpot = this.itinerary.togos[0];  
+        }
+        else {
+          this.centerSpot = this.itinerary.spots[0];
+        }
+        
       }
-      this.resetRoutes();
+      if(index != null) {
+        this.selectedSpot = index;
+      }  
     },
-    addSpotToTrip(spot) {
-      if(!this.isAddSpotLocked) {
-        if (this.togos[this.page] === undefined){
-        this.togos.push([]);
-        }
-        spot.stopTime = {
-          hrs: 1,
-          mins: 0
-        }
-        this.togos[this.page].push(spot);
-        let length = this.togos[this.page].length;
-        // only need to get travelInfo if length > 2
-        if(length > 1) {
-          this.addTravelInfo(this.togos[this.page][length - 2], spot);
-        }
-        if(window.innerWidth <= 768) {
-            this.$bus.$emit('toggle', {id: 'Togos'});
-        }
-        this.isAddSpotLocked = true;
+    zoomTogos: function() {
+      this.centerSpot = this.itinerary.togos[this.page][0];
+      this.$set( this.centerSpot, 'type', 'togos');
+      this.$set( this.centerSpot, 'zoom', 10);
+    },
+    clickViewMap: function() {
+      this.isMapShown = !this.isMapShown;
+    },
+    // Spots
+    getNearby: function(spot, page) {
+      if(spot !== null) {
+          let data = {
+            id: spot._id,
+            distance: 10000,
+            limit: 10,
+            order: -1,
+            sortBy: 'ig_post_num',
+            page: 1
+          }
+          this.paramProp = data;
       }
-      
-    },
-    addTravelInfo(startOb, destOb) {
-      // initialize travelInfos
-      if(this.travelInfos[this.page] === undefined) {
-        this.$set(this.travelInfos, this.page, []);
+      else {
+        this.paramProp.page = page;
       }
-      // call get routes api
-      this.callGetRoutesApi(this.travelInfos[this.page].length, startOb, destOb, 'driving-car');
     },
+    getImages: function(index) {
+      if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
+        return this.spots[index].images;
+      }
+      else {
+        return ['111'];
+      }
+    },
+    sortSpot: function(sortBy) {
+      this.$set( this.paramProp, 'page', 1);
+      this.$set( this.paramProp, 'sortBy', sortBy);
+    },
+    getSpot: function(page) {
+      this.$set( this.paramProp, 'page', page);
+    },
+    filterSpot: function(checkedCategories) {
+      this.$set(this.paramProp, 'categories', checkedCategories);
+    },
+    
+    // api
+    // Togos api
     callGetRoutesApi: async function(index, startOb, destOb, mode) {
       let self = this;
       //console.log(start, dest);
@@ -303,7 +428,7 @@ export default {
         let start = startOb.name;
         let dest = destOb.name;
         let travelInfo = new TravelInfo(start, dest, mode, duration, distance, routes);
-        self.$set(self.travelInfos[self.page], index, travelInfo);
+        self.$set(self.itinerary.travelInfos[self.page], index, travelInfo);
         // reset routes
         self.resetRoutes();
       })
@@ -314,6 +439,29 @@ export default {
         // always executed
       });
     },
+    changeMode(index, mode) {
+      this.callGetRoutesApi(index, this.itinerary.togos[this.page][index], this.itinerary.togos[this.page][index + 1], mode);
+    },
+    updateTogos(arr, oldIndex, newIndex){
+      this.itinerary.togos[this.page] = arr;
+      //console.log(oldIndex, newIndex);
+      let length = this.itinerary.togos[this.page].length;
+      //update old
+      for(let i=newIndex-1;i<=newIndex;i++) {
+        if(i < 0 || i == length) continue;
+        let startOb = this.itinerary.togos[this.page][i];
+        let destOb = this.itinerary.togos[this.page][i + 1];
+        this.callGetRoutesApi(i, startOb, destOb, this.itinerary.travelInfos[this.page][i].mode);
+      }
+      //update new
+      for(let i=oldIndex-1;i<=oldIndex;i++) {
+        if(i == newIndex || i < 0 || i == length) continue;
+        let startOb = this.itinerary.togos[this.page][i];
+        let destOb = this.itinerary.togos[this.page][i + 1];
+        this.callGetRoutesApi(i, startOb, destOb, this.itinerary.travelInfos[this.page][i].mode);
+      }
+    },
+    // Spots api
     callGetSpotApi: function(data=null, byQuery=false) {
       let self = this;
       if(data == null) {
@@ -367,82 +515,7 @@ export default {
         // always executed
       });
     },
-    changeBaseTimes(startTimeOb, page){
-      //console.log("startTimeOb", startTimeOb);
-      //console.log("page", page);
-      this.baseTimes[page] = startTimeOb;
-      //console.log("baseTimes", this.baseTimes);
-    },
-    changeMode(index, mode) {
-      this.callGetRoutesApi(index, this.togos[this.page][index], this.togos[this.page][index + 1], mode);
-    },
-    updateTogos(arr, oldIndex, newIndex){
-      this.togos[this.page] = arr;
-      //console.log(oldIndex, newIndex);
-      let length = this.togos[this.page].length;
-      //update old
-      for(let i=newIndex-1;i<=newIndex;i++) {
-        if(i < 0 || i == length) continue;
-        let startOb = this.togos[this.page][i];
-        let destOb = this.togos[this.page][i + 1];
-        this.callGetRoutesApi(i, startOb, destOb, this.travelInfos[this.page][i].mode);
-      }
-      //update new
-      for(let i=oldIndex-1;i<=oldIndex;i++) {
-        if(i == newIndex || i < 0 || i == length) continue;
-        let startOb = this.togos[this.page][i];
-        let destOb = this.togos[this.page][i + 1];
-        this.callGetRoutesApi(i, startOb, destOb, this.travelInfos[this.page][i].mode);
-      }
-    },
-    changePage(p) {
-      this.page = p;
-    },
-    reverseCoordinates: function(tmpCoordinates) {
-      for (let i = 0; i < tmpCoordinates.length; i++) {
-        // 反轉經緯度 for leaflet
-        let tmp = tmpCoordinates[i][1];
-        tmpCoordinates[i][1] = tmpCoordinates[i][0];
-        tmpCoordinates[i][0] = tmp;
-      }
-    },
-    resetRoutes: function() {
-      if(this.travelInfos[this.page] !== undefined) {
-        let length = this.travelInfos[this.page].length;
-        if(length > 0) {
-          let tmp = [];
-          for(let i=0;i<length;i++) {
-            tmp = tmp.concat((this.travelInfos[this.page][i]).routes);
-          };
-          this.$set(this.routes, this.page, {
-            routes: tmp,
-            color: "#FF0000"
-          });
-        }
-        else {
-          this.routes = {};
-        }
-      }
-    },
-    hoverSpotItem: function(index, spot) {
-      if(this.checkList.includes('景點圖標')) {
-        this.centerSpot = spot;
-        this.$set(this.centerSpot, 'zoom', 12);
-        this.$set(this.centerSpot, 'index', index);
-      }
-      else {
-        if(this.togos[0] !== undefined) {
-          this.centerSpot = this.togos[0];  
-        }
-        else {
-          this.centerSpot = this.spots[0];
-        }
-        
-      }
-      if(index != null) {
-        this.selectedSpot = index;
-      }  
-    },
+    // Other
     toggle: function(toggle) {
       let components = ['Togos', 'Spots', 'Map', 'Togos/Spots'];
       for(let i=0;i<components.length;i++) {
@@ -451,45 +524,6 @@ export default {
         }
       }
     },
-    clickViewMap: function() {
-      this.isMapShown = !this.isMapShown;
-    },
-    getNearby: function(spot, page) {
-      if(spot !== null) {
-          let data = {
-            id: spot._id,
-            distance: 10000,
-            limit: 10,
-            order: -1,
-            sortBy: 'ig_post_num',
-            page: 1
-          }
-          this.paramProp = data;
-      }
-      else {
-        this.paramProp.page = page;
-      }
-    },
-    getImages: function(index) {
-      if(this.spots[index] !== undefined && Object.keys(this.spots[index]).includes('images')) {
-        return this.spots[index].images;
-      }
-      else {
-        return ['111'];
-      }
-    },
-    zoomTogos: function() {
-      this.centerSpot = this.togos[this.page][0];
-      this.$set( this.centerSpot, 'type', 'togos');
-      this.$set( this.centerSpot, 'zoom', 10);
-    },
-    sortSpot: function(sortBy) {
-      this.$set( this.paramProp, 'page', 1);
-      this.$set( this.paramProp, 'sortBy', sortBy);
-    },
-    getSpot: function(page) {
-      this.$set( this.paramProp, 'page', page);
-    },
     refresh: function() {
       if(Object.keys(this.paramProp).includes('distance')) {
         this.callNearbyApi();
@@ -497,9 +531,6 @@ export default {
       else {
         this.callGetSpotApi();
       }
-    },
-    filterSpot: function(checkedCategories) {
-      this.$set(this.paramProp, 'categories', checkedCategories);
     },
     handleResize() {
       this.windowWidth = window.innerWidth;
@@ -511,12 +542,35 @@ export default {
       let self = this;
       await apiGetItinerary(this.qitineraryId, this.qcurrentAccessId, token)
       .then((function (res) {
+        console.log(res.data)
         self.itinerary = res.data.data;
         self.currentAccessId = self.qcurrentAccessId;
       }))
       .catch(function (error) {
         console.log(error);
       });
+    },
+    undoDateOb(s) {
+      let ob = {
+        year: s.getFullYear(),
+        month: s.getMonth() + 1,
+        day: s.getDate()
+      }
+      return ob;
+    }
+  },
+  computed: {
+    togo: function() {
+      if(this.itinerary.togos === undefined) {
+        return []
+      }
+      return this.itinerary.togos[this.page];
+    },
+    travelInfo: function() {
+      if(this.itinerary.travelInfos === undefined) {
+        return []
+      }
+      return this.itinerary.travelInfos[this.page];
     }
   },
   watch: {
@@ -545,6 +599,22 @@ export default {
       },
       deep: true,
     },
+    // Push changes every update
+    itinerary: {
+      handler: function(newVal, oldVal){
+      // for (let i=0;i<newVal.togos.length;i++){
+      //   this.$set(this.togos, i, newVal.togos[i]);
+      //   this.$set(this.travelInfos, i, newVal.travelInfos[i]);
+      //   if(newVal.travelInfos[i] !== undefined) {
+      //     this.$set(this.routes, i, newVal.travelInfos[i].routes);
+      //   }
+      // };
+        console.log(this.itinerary);
+        console.log(this.$store.state.user.id);
+        this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+      },
+      deep: true
+    },
     selectedSpot: function(newVal, oldVal) {
       this.updateMap++;
     },
@@ -557,15 +627,6 @@ export default {
         }
       }
     },
-    itinerary: function(newVal, oldVal){
-      for (let i=0;i<newVal.togos.length;i++){
-        this.$set(this.togos, i, newVal.togos[i]);
-        this.$set(this.travelInfos, i, newVal.travelInfos[i]);
-        if(newVal.travelInfos[i] !== undefined) {
-          this.$set(this.routes, i, newVal.travelInfos[i].routes);
-        }
-      };
-    },
     isAddSpotLocked: function(newVal, oldVal) {
       if(newVal) {
         setTimeout(() => {
@@ -573,7 +634,6 @@ export default {
         },2000)
       }
     },
-    // watch window width
     windowWidth: function(newVal, oldVal) {
       if(newVal <= 768 && this.selected == 3) {
         this.selected = 1;
@@ -588,6 +648,7 @@ export default {
   },
   created () {
     // [註冊監聽事件]
+    // context
     let self = this;
     this.$bus.$on('toggle', event => {
       this.toggle(event.id);
@@ -596,17 +657,12 @@ export default {
       self.itinerary = event.itinerary;
       self.currentAccessId = event.currentAccessId;
       self.isLocked = event.isLocked;
-      //console.log(event.isLocked);
-      //console.log("trip get", self.itinerary);
-      for (let i=0;i<self.itinerary.togos.length;i++){
-        self.$set(self.togos, i, self.itinerary.togos[i]);
-        self.$set(self.travelInfos, i, self.itinerary.travelInfos[i]);
-        if(self.itinerary.travelInfos[i] !== undefined) {
-          self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
-        }
-        // this.routes.push(newVal.travelInfos[i].routes);
-      };
     });
+    this.$bus.$on('createTrip', event => {
+      self.itinerary = Object.assign({}, event.itinerary);
+      //console.log(self.itinerary)
+    });
+    
     if (this.qname !== undefined){
       this.callGetSpotApi(makeParams(null, null, null, this.qname));
     } 
@@ -631,6 +687,7 @@ export default {
     }
   },
   mounted() {
+    let self = this;
     let data = {
       limit: 10,
       order: -1,
@@ -638,6 +695,17 @@ export default {
       sortBy: 'ig_post_num'
     };
     this.isLocked = true; //modetest
+    // console.log(this.itinerary)
+    // for (let i=0;i<this.itinerary.togos.length;i++){
+    //   if(self.itinerary.travelInfos[i] !== undefined) {
+    //     self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
+    //   }
+    // };
+    // listen to update itinerary
+    this.$socket.on('updateNotification', (itineraryOb)=> {
+      self.itinerary = Object.assign({}, itineraryOb);
+    })
+
     if (this.qname !== undefined) {
       this.callGetSpotApi(makeParams(null, null, null, this.qname));
     } else if (this.qplace !== undefined) {
@@ -658,6 +726,7 @@ export default {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
+    this.$bus.$off('createTrip');
   },
   destroy: function() {
     window.removeEventListener('resize', this.handleResize)

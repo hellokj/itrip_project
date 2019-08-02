@@ -1,10 +1,12 @@
 const config = require('../config');
 const jwt = require('jsonwebtoken');
 const Itinerary = require('../models/itinerary');
+const HashMap = require('./hashmap');
 
 class SocketHandler {
   constructor() {
-    this.connectedMembers = []; // 存放 { socketId: xxx, memberId: xxx} Object
+    this.membersTable = new HashMap();
+    // this.connectedMembers = []; // 存放 { socketId: xxx, memberId: xxx} Object
     this.lockedItineraryIds = []; // 存放 被鎖定的行程id們
   }
 
@@ -21,24 +23,46 @@ class SocketHandler {
     else {
       console.log("error");
       return;
-  }
-    let connectedMember = { socketId : socketId, memberId: memberId };
-    console.log("connected member", connectedMember);
-    this.connectedMembers.push(connectedMember);
-    console.log("connected members", this.connectedMembers);
+    }
+    let socketIds;
+    if (this.membersTable.containsKey(memberId)){
+      socketIds = this.membersTable.get(memberId);
+      socketIds.push(socketId);
+    }else {
+      this.membersTable.put(memberId, [socketId]);
+    }
+    console.log("memberTable", this.membersTable);
+    // let connectedMember = { socketId : socketId, memberId: memberId };
+    // console.log("connected member", connectedMember);
+    // this.connectedMembers.push(connectedMember);
+    // console.log("connected members", this.connectedMembers);
   }
 
   disconnect(socketId){
-    let target = -1;
-    for (let i = 0; i < this.connectedMembers.length; i++){
-      if (socketId == this.connectedMembers[i].socketId){
-        target = i;
+    for (var key in this.membersTable.obj){
+      console.log("???????????????", key);
+      for(let j = 0; j < this.membersTable.obj[key].length; j++){
+        if (socketId == this.membersTable.obj[key][j]){
+          this.membersTable.obj[key].splice(j, 1);
+          if (this.membersTable.obj[key].length == 0){
+            this.membersTable.remove(this.membersTable.obj[key]);
+          }
+          return;
+        }
       }
     }
-    if (target !== -1){
-      this.connectedMembers.splice(target, 1);
-    }
-  }
+  }  
+
+    // let target = -1;
+    // for (let i = 0; i < this.connectedMembers.length; i++){
+    //   if (socketId == this.connectedMembers[i].socketId){
+    //     target = i;
+    //   }
+    // }
+    // if (target !== -1){
+    //   this.connectedMembers.splice(target, 1);
+    // }
+  
 
   // 確認行程是否上鎖
   checkLockedItineraries(itineraryId){
@@ -94,6 +118,27 @@ class SocketHandler {
     }
     console.log("handler members", members);
     return members;
+  }
+
+  updateItinerary(itinerary, editorId){
+    console.log("update itinerary", itinerary);
+    console.log("update editor", editorId);
+    let _id = itinerary._id;
+    let self = this;
+    console.log("self", self);
+    Itinerary.updateItinerary(_id, itinerary).then(function(res){
+      let itineraryMembers = itinerary.memberIds;
+      let onlineMembers = [];
+      for (let i = 0; i < itineraryMembers.length; i++){
+        if (this.membersTable.containsKey(itineraryMembers[i])){
+          for (let j = 0; j < this.membersTable.get(itineraryMembers[i]).length; j++){
+            onlineMembers.push(this.membersTable.get(itineraryMembers[i])[j]);
+          }
+        }
+      }
+      console.log("online members", onlineMembers);
+
+    });
   }
 
   verifyToken(token){

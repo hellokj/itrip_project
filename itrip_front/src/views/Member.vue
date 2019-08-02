@@ -1,7 +1,8 @@
 <template>
 <el-container style="height: 90vh; border: 1px solid #eee">
   <!-- 會員頁面側邊欄 -->
-  <MobileMemberAside 
+  <MobileMemberAside
+    v-model="isLoading"
     v-if="($resize && !$mq.above(1025))"
     :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
@@ -11,6 +12,7 @@
     v-on:setMemberInfo="changeView('MobileMemberInfos')">
   </MobileMemberAside>
   <MemberAside
+    v-model="isLoading"
     v-if="($resize && $mq.above(1025))"
     :incomingItineraries="incomingItineraries"
     :historyItineraries="historyItineraries"
@@ -175,6 +177,13 @@ export default {
       } else {
         this.title = "即將到來行程";
       }
+
+      if (this.isLoading == true){
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 1500)
+      }
+      
       setTimeout(()=>{
         if (self.$resize && self.$mq.above(1025)){
           self.changeView('MemberDetailItinerary');
@@ -206,7 +215,7 @@ export default {
           this.changeView(currentView.substr(6));
         }
       }
-    }
+    },
   },
   beforeDestroy() {
     this.$bus.$off("changeToCarousel");
