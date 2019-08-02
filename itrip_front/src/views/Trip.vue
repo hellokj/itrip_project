@@ -596,9 +596,10 @@ export default {
       //     this.$set(this.routes, i, newVal.travelInfos[i].routes);
       //   }
       // };
-        console.log(this.itinerary);
-        console.log(this.$store.state.user.id);
+        //console.log(this.itinerary);
+        //console.log(this.$store.state.user.id);
         this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+        console.log(newVal)
       },
       deep: true
     },
@@ -684,8 +685,9 @@ export default {
     //   }
     // };
     // listen to update itinerary
-    this.$socket.on('updateNotification', (itineraryOb)=> {
+    this.$socket.on('updateNotification', (itineraryOb) => {
       self.itinerary = Object.assign({}, itineraryOb);
+      console.log('being notified...')
     })
 
     if (this.qname !== undefined) {
@@ -699,10 +701,6 @@ export default {
       this.paramProp = data;
     }
     let token = this.$store.state.userToken
-    //sockets listening event
-    this.$socket.on('message', (data) => {
-      console.log(data);
-    });
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
