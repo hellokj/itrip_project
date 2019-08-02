@@ -96,6 +96,27 @@ class SocketHandler {
     return members;
   }
 
+  updateItinerary(itinerary, editorId){
+    console.log("update itinerary", itinerary);
+    console.log("update editor", editorId);
+    let _id = itinerary._id;
+    let self = this;
+    console.log("self", self);
+    Itinerary.updateItinerary(_id, itinerary).then(function(res){
+      let itineraryMembers = itinerary.memberIds;
+      let onlineMembers = [];
+      for (let i = 0; i < itineraryMembers.length; i++){
+        for (let j = 0; j < self.connectedMembers.length; j++){
+          if (itineraryMembers[i] == self.connectedMembers[j].memberId){
+            onlineMembers.push(self.connectedMembers[j]);
+            break;
+          }
+        }
+      }
+      console.log("online members", onlineMembers);
+    });
+  }
+
   verifyToken(token){
     let memberId;
     jwt.verify(token, config.jwtSalt, (err, decoded) => {

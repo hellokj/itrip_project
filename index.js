@@ -96,7 +96,14 @@ io.on('connection', (socket) => {
         for (let i = 1; i < members.length; i++){
             io.to(members[i].socketId).emit('notifyLocked'); // 上鎖
         }
-    })
+    });
+
+    socket.on("updateItinerary", function(data){
+        console.log("updateItinerary", data);
+        let itinerary = data.itinerary;
+        let editorId = data.memberId;
+        socketHandler.updateItinerary(itinerary, editorId);
+    });
 
     socket.on('SEND_MESSAGE', function(data) {
         console.log(data);
