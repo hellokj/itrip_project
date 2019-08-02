@@ -98,7 +98,7 @@ const getToken = (req, res, next) => {
                 account: member.email,
                 name: member.name,
                 url: member.url}
-            , config.jwtSalt, {
+                ,config.jwtSalt, {
             expiresIn: 60*60*24 //24 hrs
         });
         res.json({status: -1, msg: 'success!', data: token, memberId:String(member._id), memberName: member.name});

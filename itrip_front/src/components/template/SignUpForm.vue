@@ -119,6 +119,7 @@ export default {
         if (res.data.status == 200){
           self.hint = "註冊成功，回到登入頁重新登入";
           self.$refs["signUpForm"].resetFields();
+          self.$socket.emit('signUp', {mebmerId: res.data.member.email});
         }else{
           self.hint = res.data.msg;
         }

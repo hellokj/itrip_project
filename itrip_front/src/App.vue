@@ -36,6 +36,17 @@ export default {
     connect() {
         console.log('socket connected');
     },
+    disconnect() {
+      console.log('you have been kicked by server');
+      this.$store.dispatch('updateAuthorized', false);
+      this.$store.dispatch("updateUserToken", "");
+      this.$store.dispatch('updateUserInfo', {});
+      FB.logout(function (response) {
+        console.log('res when logout', response);
+      });
+      // 登出後導向首頁
+      this.$router.push({path: '/'});
+    }
   },
   methods: {
     Search(para) {
@@ -49,13 +60,18 @@ export default {
     // 重新載入頁面不登出
     let status = window.localStorage.getItem('isAuthorized');
     let userToken = window.localStorage.getItem('userToken');
+    let user = JSON.parse(window.localStorage.getItem('user'));
+    console.log('User store', window.localStorage.getItem('user'));
+    console.log("user", user)
     if (status == "true"){
       this.$store.dispatch('updateAuthorized', true);
       this.$store.dispatch('updateUserToken', userToken);
+      this.$store.dispatch('updateUserInfo', user);
       
     }else{
       this.$store.dispatch('updateAuthorized', false);
       this.$store.dispatch('updateUserToken', "");
+      this.$store.dispatch('updateUserInfo', null);
     }
   },
   mounted() {

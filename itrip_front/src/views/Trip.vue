@@ -12,7 +12,7 @@
         :page="page" :isLocked="isLocked" :itinerary="itinerary"
         @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes"
         @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" 
-        @addMember="addMember" @changeName="changeName" @changeDate="changeDate"/>
+        @addMember="addMember" @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -298,6 +298,18 @@ export default {
         memberIds.push(memberId);
       }
       this.$set(this.itinerary, 'memberIds', memberIds);
+      this.$message.success('旅伴新增成功!');
+    },
+    removeMember(mailToRemove) {
+      let tmp = this.itinerary.memberIds;
+      for(let i=0;i<tmp.length;i++) {
+        if(mailToRemove === tmp[i]) {
+          tmp.splice(i, 1);
+        }
+      }
+      this.$set(this.itinerary, 'memberIds', tmp);
+      this.$message.success('旅伴刪除成功!');
+      //console.log('removeMember', this.itinerary)
     },
     changeName(name) {
       this.$set(this.itinerary, 'name', name);
@@ -585,7 +597,8 @@ export default {
       //   }
       // };
         console.log(this.itinerary);
-        this.$socket.emit('updateItinerary', newVal);
+        console.log(this.$store.state.user.id);
+        this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
       },
       deep: true
     },
@@ -631,7 +644,7 @@ export default {
     });
     this.$bus.$on('createTrip', event => {
       self.itinerary = Object.assign({}, event.itinerary);
-      console.log(self.itinerary)
+      //console.log(self.itinerary)
     });
     
     if (this.qname !== undefined){
@@ -657,6 +670,7 @@ export default {
     }
   },
   mounted() {
+    let self = this;
     let data = {
       limit: 10,
       order: -1,
@@ -669,6 +683,10 @@ export default {
     //     self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
     //   }
     // };
+    // listen to update itinerary
+    this.$socket.on('updateNotification', (itineraryOb)=> {
+      self.itinerary = Object.assign({}, itineraryOb);
+    })
 
     if (this.qname !== undefined) {
       this.callGetSpotApi(makeParams(null, null, null, this.qname));
