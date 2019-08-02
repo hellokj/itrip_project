@@ -38,7 +38,7 @@
         <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
           <div class="big-image-container" :style="[($resize && !$mq.above(1025)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
-              <el-carousel-item v-for="item in getImages(selectedSpot)" :key="item">
+              <el-carousel-item v-for="(item, index) in getImages(selectedSpot)" :key="index">
                 <vue-load-image  style="width:100%;height:100%;">
                   <img ref="image" class="big-image" slot="image" :src="item">
                   <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
@@ -285,9 +285,7 @@ export default {
       apiGetSharedTrip(id)
       .then((function (res) {
         console.log("res", res);
-        self.itinerary = res.data.data[0];
-        self.itinerary._id = new Date().getTime();
-        self.itinerary.memberIds = [];
+        self.itinerary = Object.assign({}, res.data.data[0]);
       }))
       .catch(function (error) {
         console.log(error);
@@ -588,8 +586,13 @@ export default {
     // Push changes every update
     itinerary: {
       handler: function(newVal, oldVal){
-        this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
         console.log(newVal)
+        if(this.itinerary.memberIds.length === 0) {
+          this.$socket.emit('updateItinerary', {itinerary: newVal});
+        }
+        else {
+          this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+        }
       },
       deep: true
     },
@@ -658,7 +661,7 @@ export default {
   beforeMount() {
     if(this.qviewId !== undefined) {
       this.getSharedTrip(this.qviewId);
-      this.qviewId = 0;
+      //this.qviewId = 0;
     }
     if(this.qcurrentAccessId !== undefined && this.qitineraryId !== undefined) {
       this.callGetItinerary();
