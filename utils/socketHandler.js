@@ -120,25 +120,28 @@ class SocketHandler {
     return members;
   }
 
-  updateItinerary(itinerary, editorId){
+  async updateItinerary(itinerary, editorId){
     console.log("update itinerary", itinerary);
     console.log("update editor", editorId);
     let _id = itinerary._id;
+    let onlineMembers = [];
     let self = this;
     console.log("self", self);
-    Itinerary.updateItinerary(_id, itinerary).then(function(res){
+    await Itinerary.updateItinerary(_id, itinerary).then(function(res){
       let itineraryMembers = itinerary.memberIds;
-      let onlineMembers = [];
+      itineraryMembers = itineraryMembers.filter(function(value, index, arr){
+        return value !== editorId;
+      });
       for (let i = 0; i < itineraryMembers.length; i++){
-        if (this.membersTable.containsKey(itineraryMembers[i])){
-          for (let j = 0; j < this.membersTable.get(itineraryMembers[i]).length; j++){
-            onlineMembers.push(this.membersTable.get(itineraryMembers[i])[j]);
+        if (self.membersTable.containsKey(itineraryMembers[i])){
+          for (let j = 0; j < self.membersTable.get(itineraryMembers[i]).length; j++){
+            onlineMembers.push(self.membersTable.get(itineraryMembers[i])[j]);
           }
         }
       }
-      console.log("online members", onlineMembers);
-
     });
+    console.log("online members", onlineMembers);
+    return onlineMembers;
   }
 
   verifyToken(token){

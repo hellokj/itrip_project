@@ -598,7 +598,7 @@ export default {
       // };
         console.log(this.itinerary);
         console.log(this.$store.state.user.id);
-        this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+        // this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
       },
       deep: true
     },
@@ -699,10 +699,6 @@ export default {
       this.paramProp = data;
     }
     let token = this.$store.state.userToken
-    //sockets listening event
-    this.$socket.on('message', (data) => {
-      console.log(data);
-    });
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
