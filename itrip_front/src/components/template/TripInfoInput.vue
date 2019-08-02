@@ -88,7 +88,8 @@ export default {
                 apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
                 .then((function (res) {
                     self.$message.success('行程儲存成功!');
-                    self.$router.push('/trip/?currentAccessId=' + self.currentAccessId + '&itineraryId=' + _id);
+                    self.$router.push('/trip/?currentAccessId=' + self.$store.state.user.id + '&itineraryId=' + _id);
+                    self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
                 }))
                 .catch(function (error) {
                     console.log(error);
@@ -99,14 +100,16 @@ export default {
             .then((function (res) {
                 self.$router.push('/trip/?itineraryId=' + _id);
                 self.itinerary = res.data.data;
-                self.$bus.$emit('createTrip', {tripName: self.tripName, tripDate: self.tripDate, itinerary: self.itinerary});
+                self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: self.itinerary});
             }))
             .catch(function (error) {
                 console.log(error);
             });
         }
-        this.$bus.$emit('createTrip', {tripName: this.tripName, tripDate: this.tripDate});
         }
+    },
+    destroyed() {
+
     }
 };
 </script>

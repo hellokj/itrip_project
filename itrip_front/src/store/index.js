@@ -11,6 +11,9 @@ const localStoragePlugin = store => {
     if (mutation.type === "TOKEN") {
       window.localStorage.setItem("userToken", String(store.userToken));
     }
+    if (mutation.type === "LOGIN") {
+      window.localStorage.setItem("user", JSON.stringify(store.user));
+    }
   });
 };
 
