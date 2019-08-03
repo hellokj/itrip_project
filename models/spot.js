@@ -66,8 +66,8 @@ spotSchema.statics.getNearby = function(location, categories, distance, sortBy, 
                distanceField: "dist.calculated",
                maxDistance: distance,
                spherical: true
-            }
-        }]);
+            }},
+            {"$sort":{ [sortBy]: -1, "distance": 1 }}]);
     }
     else {
         aggregate = this.aggregate([{
@@ -81,7 +81,7 @@ spotSchema.statics.getNearby = function(location, categories, distance, sortBy, 
                spherical: true,
                query: {'category': {$in: categories}}
             }
-        },{ "$sort": { "distance": 1, 'ig_post_num': -1 } }]);
+        },{"$sort": { [sortBy]: -1, "distance": 1, }}]);
     }
     return this.aggregatePaginate(aggregate, Options(null, page, limit, order, 'nearby'), 
             function(err, results) {

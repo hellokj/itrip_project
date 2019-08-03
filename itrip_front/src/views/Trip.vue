@@ -357,7 +357,7 @@ export default {
       if(spot !== null) {
           let data = {
             id: spot._id,
-            distance: 10000,
+            distance: 100000,
             limit: 10,
             order: -1,
             sortBy: 'ig_post_num',
