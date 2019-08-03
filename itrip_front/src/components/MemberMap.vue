@@ -63,7 +63,8 @@ export default {
     travelInfos: Array
   },
   created() {
-    console.log("itinerary", this.itinerary);
+    this.centerLatLng = this.calculateCenterPoin(this.getTotalTogos(this.itinerary));
+    this.center = L.latLng(this.centerLatLng[1], this.centerLatLng[0]);
   },
   mounted() {
     console.log("total togos", this.getTotalTogos(this.itinerary));

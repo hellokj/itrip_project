@@ -1,5 +1,5 @@
 module.exports = {
-    baseUrl: "./",
+    baseUrl: 'http://localhost:8080/',
     chainWebpack: config => {
       config.module
         .rule('vue')
