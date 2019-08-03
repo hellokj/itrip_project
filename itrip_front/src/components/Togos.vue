@@ -100,7 +100,8 @@
                       <TogoItem :togo="togo"
                       @updateStopTime="updateStopTime"
                       @deleteTogo="$emit('deleteTogo', index)"
-                      @getNearby="getNearby"/>
+                      @getNearby="getNearby"
+                      @mouseOver="$emit('hoverItem', 'togos', index)"/>
                     </div>
                     <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"/>
                   </div>

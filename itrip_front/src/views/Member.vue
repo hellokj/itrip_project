@@ -194,7 +194,7 @@ export default {
     checkDetail: function(itinerary){
       let self = this;
       this.loading();
-      console.log("check detail", itinerary);
+      //console.log("check detail", itinerary);
       this.itinerary = itinerary;
       if (this.historyItineraries.includes(this.itinerary)){
         this.title = "歷史行程";
