@@ -49,8 +49,7 @@
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
           :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :sortBy="sortBy" :isInTogos="isInTogos(spot._id)"
           @add-spot="$emit('add-spot', spot)" 
-          @mouseOver="$emit('hoverSpotItem', index, spot)"
-          @mouseOut="$emit('hoverSpotItem', null, spot)"
+          @mouseOver="$emit('hoverItem', 'spots', index)"
           @show-link="Show"
           @edit-form="EditSpot"
           @is-in-togos="isInTogos"/>

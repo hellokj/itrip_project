@@ -105,7 +105,6 @@ import Vue from 'vue'
 import HeaderSearch from '../HeaderSearch'
 import ProfileButton from '../ProfileButton'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
-// import InputTag from 'vue-input-tag'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
@@ -156,20 +155,7 @@ export default {
         selectTypeText() {
             this.$refs['type'].select();
         },
-        // searchClicked() {
-        //     this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
-        //     this.$emit('search-click', this.params);
-
-        //     if(window.innerWidth <= 768) {
-        //         this.$bus.$emit('toggle', {id: 'Spots'});
-        //     }
-        //     this.input_name = '';
-        // },
         searchClicked(city, region, type, name) {
-            // alert(city)
-            // alert(region)
-            // alert(type)
-            // alert(name)
             this.params = makeParams(city, region, type, name);
             this.$emit('search-click', this.params);
 
@@ -214,9 +200,9 @@ export default {
     },
     computed: {
         logo:  function(){
-                if( this.editMode ) return "itripLogoWhite.svg"
-                if( this.isLocked ) return "itripLogoWhite.svg"
-                else return "itripLogo.svg"
+            if( this.editMode ) return "itripLogoWhite.svg"
+            if( this.isLocked ) return "itripLogoWhite.svg"
+            else return "itripLogo.svg"
         },
         
     },

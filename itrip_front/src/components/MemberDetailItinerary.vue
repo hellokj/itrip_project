@@ -330,7 +330,7 @@ export default {
     },
     // 修改過後的取出資料方式
     resetItineraryData: function(itinerary){
-      console.log('itinerary', itinerary);
+      //console.log('itinerary', itinerary);
       this.days = [];
       for (let i = 0; i < itinerary.dayNum; i++){ // 天數
         var tmpDay = [];
@@ -399,7 +399,7 @@ export default {
       //this.$router.push({path: '/trip'});
       //console.log(this.isLocked)
       
-      this.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
+      this.$router.push('/trip?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
       
     },
     getLockStatus: function(){
@@ -447,7 +447,7 @@ export default {
     }
   },
   created() {
-    console.log("itinerary create", this.itinerary);
+    //console.log("itinerary create", this.itinerary);
     // this.resetDetailInfo();
     this.resetItineraryData(this.itinerary);
   },

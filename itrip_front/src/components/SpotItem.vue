@@ -1,5 +1,5 @@
 <template>
-    <div class="spot-item-container" @mouseover="$emit('mouseOver', spot)" @mouseout="$emit('mouseOut', spot)">
+    <div class="spot-item-container" @mouseover="$emit('mouseOver')">
         <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}">
             <div class="card-container">
                         

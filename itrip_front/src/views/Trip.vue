@@ -10,9 +10,9 @@
         class="togos"
         :togos="togo" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
         :page="page" :isLocked="isLocked" :itinerary="itinerary"
-        @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes"
-        @getNearby="getNearby" @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" 
-        @addMember="addMember" @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember"/>
+        @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 
+        @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @addMember="addMember" 
+        @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember" @hoverItem="hoverItem"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -22,13 +22,7 @@
           id="spots"
           class="spots"
           :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
-          @filter-spot="filterSpot"
-          @hoverSpotItem="hoverSpotItem"
-          @add-spot="addSpotToTrip"
-          @get-spot="getSpot"
-          @get-nearby="getNearby"
-          @sort-spot="sortSpot"
-          @refresh="refresh"/> 
+          @filter-spot="filterSpot" @hoverItem="hoverItem" @add-spot="addSpotToTrip" @get-spot="getSpot" @get-nearby="getNearby" @sort-spot="sortSpot" @refresh="refresh"/> 
       </b-col>
       <b-col
       v-if="isMapShown"
@@ -325,24 +319,25 @@ export default {
         tmpCoordinates[i][0] = tmp;
       }
     },
-    hoverSpotItem: function(index, spot) {
-      if(this.checkList.includes('景點圖標')) {
-        this.centerSpot = Object.assign({}, spot);;
-        this.$set(this.centerSpot, 'zoom', 12);
-        this.$set(this.centerSpot, 'index', index);
-      }
-      else {
-        if(this.itinerary.togos[0] !== undefined) {
-          this.centerSpot = this.itinerary.togos[0];  
+    hoverItem: function(type, index) {
+      if(type == 'spots') {
+        if(this.checkList.includes('景點圖標')) {
+          this.centerSpot = Object.assign({}, this.spots[index]);;
+          this.$set(this.centerSpot, 'zoom', 12);
+          this.$set(this.centerSpot, 'index', index);
+          if(index != null) {
+            this.selectedSpot = index;
+          }
         }
-        else {
-          this.centerSpot = this.itinerary.spots[0];
-        }
-        
       }
-      if(index != null) {
-        this.selectedSpot = index;
-      }  
+      else if(type == 'togos') {
+        //console.log('!')
+        if(this.checkList.includes('路徑指示')) {
+          this.centerSpot = Object.assign({}, this.itinerary.togos[this.page][index]);;
+          this.$set(this.centerSpot, 'zoom', 12);
+          this.$set(this.centerSpot, 'index', index);
+        }
+      }
     },
     zoomTogos: function() {
       this.centerSpot = this.itinerary.togos[this.page][0];
@@ -357,7 +352,7 @@ export default {
       if(spot !== null) {
           let data = {
             id: spot._id,
-            distance: 10000,
+            distance: 100000,
             limit: 10,
             order: -1,
             sortBy: 'ig_post_num',
@@ -559,6 +554,19 @@ export default {
     }
   },
   watch: {
+    routes: function() {
+      console.log(this.routes);
+    },
+    checkList: function(newVal, oldVal) {
+      if(!newVal.includes('景點圖標')) {
+        if(this.itinerary.togos[this.page][0] !== undefined) {
+          this.centerSpot = this.itinerary.togos[this.page][0];  
+        }
+        else {
+          this.centerSpot = this.itinerary.spots[this.page][0];
+        }
+      }
+    },
     param: function(newVal) {
       this.paramProp = newVal;
     },
@@ -651,7 +659,7 @@ export default {
       this.callGetSpotApi(makeParams(this.qplace));
     }
     if (this.qspot !== undefined && this.qid !== undefined) {
-      alert(this.qspot + ", " + this.qid)
+      //alert(this.qspot + ", " + this.qid)
       this.qresult = this.callGetSpotApi(makeParams(null, null, null, this.qspot), true);
     }
     window.addEventListener('resize', this.handleResize);
