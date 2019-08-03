@@ -1,6 +1,6 @@
 <template>
-<div class="map">
-  <l-map :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
+<div class="map" style="width: 50vw; height:60vh">
+  <l-map ref="myMap" :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
     <l-tile-layer :url="url" :attribution="attribution" dragging="true"></l-tile-layer>
     <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
     <l-polyline
@@ -28,7 +28,7 @@ import { Icon, divIcon }  from 'leaflet'
 import L from "leaflet"
 
 export default {
-  name: 'Map',
+  name: 'MemberMap',
   components: {
       LMap,
       LTileLayer,
@@ -46,7 +46,7 @@ export default {
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icon: L.divIcon({
-        html: '<i class="fas fa-star" style="color: orange;font-size: 30px;"></i>',
+        html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;"></i>',
         iconSize: [20, 20],
         className: 'myDivIcon'
       }),
@@ -55,13 +55,18 @@ export default {
       colors: ["#f7534a", "#f7bd4a", "#f7f74a", "#87f74a", "#4af1f7", "#4a5bf7", "#bd4af7"],
       opacity: 0.6,
       weight: 7,
+      centerLatLng: [],
     }
   },
   props: {
     itinerary: Object,
     travelInfos: Array
   },
+  created() {
+    console.log("itinerary", this.itinerary);
+  },
   mounted() {
+    console.log("total togos", this.getTotalTogos(this.itinerary));
   },
   methods: {
     getLatLng: function(lat, lng) {
@@ -91,10 +96,23 @@ export default {
         }
       }
       return totalTogos;
-    }
+    },
+    calculateCenterPoin: function(spots){
+      let lng = 0.0;
+      let lat = 0.0;
+      for( let i = 0; i < spots.length; i++){
+        lng = lng + parseFloat(spots[i].location.coordinates[0]);
+        lat = lat + parseFloat(spots[i].location.coordinates[1]);
+      }
+      lng = lng / spots.length;
+      lat = lat / spots.length;
+      return [lng, lat];
+    },
   },
   watch: {
-    travelInfos: function(){
+    itinerary: function(newVal, oldVal){
+      this.centerLatLng = this.calculateCenterPoin(this.getTotalTogos(newVal));
+      this.center = L.latLng(this.centerLatLng[1], this.centerLatLng[0]);
     },
   },
   computed: {

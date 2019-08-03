@@ -9,7 +9,7 @@
           <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
         </el-breadcrumb>
       </el-container>
-      <el-tabs type="border-card" v-model="index">
+      <el-tabs type="border-card" v-model="index" @tab-click="handleClick">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container style="display: flex">
             <el-container style="width: 70%">
@@ -104,7 +104,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
+        <el-tab-pane name="myMap" label="查看地圖" v-model="itinerary.travelInfos[0]">
           <el-container style="display: flex">
             <el-container style="width: 70%">
               <el-divider 
@@ -136,7 +136,7 @@
             </el-container>
           </el-container>
           <el-container>
-            <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
+            <MemberMap v-if="activeName=='myMap'" :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
           </el-container>
         </el-tab-pane>
       </el-tabs>
@@ -167,10 +167,18 @@ export default {
       update: 0,
       visible: false,
       isConfirmed: false, // check wheather delete or not
-      isLocked: false // check if itinerary is locked by server
+      isLocked: false, // check if itinerary is locked by server
+      activeName: "",
     }
   },
   methods: {
+    handleClick(tab, event) {
+      if(tab.name=='myMap'){
+        this.activeName = "myMap";
+      }else {
+        this.activeName = "";
+      }
+    },
     confirmDeleteOrNot: function(state, itinerary){
       this.visible = false;
       this.isConfirmed = state;
