@@ -1,10 +1,12 @@
 <template>
 <el-dialog
   title="登入"
+  v-model="isVisible"
   :visible.sync="isVisible"
   :modal="false"
   width='80vw'
   :close-on-click-modal="false"
+  @close="closeDialog"
   center>
   <span style="text-align: center">{{ hint }}</span>
   <div style="height: 10px"></div>
@@ -30,7 +32,7 @@ import { EmailChecker } from '../../utils/checker'
 export default {
   name: "MobileLogInForm",
   props: {
-    isVisible: Boolean
+    visible: Boolean
   },
   data() {
     var validateEmail = (rule, value, callback) => {
@@ -44,6 +46,7 @@ export default {
       }
     };
     return {
+      isVisible: false,
       hint: "",
       logInForm: {
         account: "",
@@ -62,6 +65,9 @@ export default {
     };
   },
   methods: {
+    closeDialog: function(){
+      this.$emit('closeDialog');
+    },
     confirm: function(){
       let self = this;
       let data = {
@@ -123,21 +129,42 @@ export default {
       this.$refs["logInForm"].resetFields();
     },
     toSignUp: function(){
-      this.$emit("changeFormState", {
-        isLogIn: false,
-        isSignUp: true,
-        isFbSignUp: false
-      });
+      this.$emit("changeView", 'MobileSignUpForm');
+      // this.$emit("changeFormState", {
+      //   isLogIn: false,
+      //   isSignUp: true,
+      //   isFbSignUp: false
+      // });
       this.resetForm();
     },
     toFbSignUp: function(){
-      this.$emit("changeFormState", {
-        isLogIn: false,
-        isSignUp: false,
-        isFbSignUp: true
-      });
-    }
+      this.$emit("changeView", 'MobileFbSignUpForm');
+      // this.$emit("changeFormState", {
+      //   isLogIn: false,
+      //   isSignUp: false,
+      //   isFbSignUp: true
+      // });
+      this.resetForm();
+    },
   },
+  created() {
+    this.isVisible = this.visible;
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "2353529008088124",
+        xfbml: true,
+        status: true,
+        cookie: true,
+        autoLogAppEvents: true,
+        version: "v3.3"
+      });
+    };
+  },
+  watch: {
+    visible: function(newVal, oldVal){
+      this.isVisible = newVal;
+    }
+  }
 };
 </script>
 

@@ -1,9 +1,11 @@
 <template>
 <el-dialog
   title="FB註冊"
+  v-model="isVisible"
   :visible.sync="isVisible"
   :modal="false"
   width="80vw"
+  @close="closeDialog"
   :close-on-click-modal="false"
   center>
   <span style="text-align: center">{{ hint }}</span>
@@ -39,7 +41,7 @@ import { UserInfo } from '../../utils/dataClass'
 export default {
   name: "MobileFbSignUpForm",
   props: {
-    isVisible: Boolean
+    visible: Boolean
   },
   data() {
     var validateEmail = (rule, value, callback) => {
@@ -70,6 +72,7 @@ export default {
       }
     };
     return {
+      isVisible: false,
       hint: "",
       fbSignUpForm: {
         name: "",
@@ -103,6 +106,9 @@ export default {
     };
   },
   methods: {
+    closeDialog: function(){
+      this.$emit('closeDialog');
+    },
     submit: function(){
       let self = this;
       let data = {
@@ -128,14 +134,23 @@ export default {
       this.$refs["fbSignUpForm"].resetFields();
     },
     toLogIn: function(){
-      this.$emit("changeFormState", {
-        isLogIn: true,
-        isSignUp: false,
-        isFbSignUp: false
-      });
+      this.$emit("changeView", "MobileLoginForm");
+      // this.$emit("changeFormState", {
+      //   isLogIn: true,
+      //   isSignUp: false,
+      //   isFbSignUp: false
+      // });
       this.resetForm();
     }
   },
+  created() {
+    this.isVisible = this.visible;
+  },
+  watch: {
+    visible: function(newVal, oldVal){
+      this.isVisible = newVal;
+    }
+  }
 };
 </script>
 

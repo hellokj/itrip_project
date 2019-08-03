@@ -707,7 +707,7 @@ export default {
     this.$bus.$off('createTrip');
   },
   destroy: function() {
-    window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('resize', this.handleResize);
   }
 }
 </script>

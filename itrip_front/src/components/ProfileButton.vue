@@ -1,13 +1,20 @@
 <template>
 <div id="profileButton">
-  <ProfileDropDown v-if="$store.state.isAuthorized"></ProfileDropDown>
+  <ProfileDropDown v-model="$store.state.isAuthorized" v-if="$store.state.isAuthorized"></ProfileDropDown>
+  <component
+    :is="view"
+    v-model="visible"
+    :visible.sync="visible"
+    v-on:changeView="changeView"
+    v-on:closeDialog="closeDialog">
+  </component>
   <el-button type="warning" plain v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
-  <LoginForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
-  <MobileLoginForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></MobileLoginForm>
-  <SignUpForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
-  <MobileSignUpForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></MobileSignUpForm>
-  <FbSignUpForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
-  <MobileFbSignUpForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></MobileFbSignUpForm>
+  <!-- <LoginForm v-if="(this.$resize && this.$mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
+  <MobileLoginForm v-else-if="(this.$resize && !this.$mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></MobileLoginForm>
+  <SignUpForm v-if="(this.$resize && this.$mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
+  <MobileSignUpForm v-else-if="(this.$resize && !this.$mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></MobileSignUpForm>
+  <FbSignUpForm v-if="(this.$resize && this.$mq.above(1025))" :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></FbSignUpForm>
+  <MobileFbSignUpForm v-else-if="(this.$resize && !this.$mq.above(1025))" :isVisible="$store.state.formState.isFbSignUp" v-on:changeFormState="changeFormState"></MobileFbSignUpForm> -->
 </div>
 </template>
 
@@ -22,63 +29,86 @@ import ProfileDropDown from '../components/template/ProfileDropDown'
 export default {
   name: 'ProfileButton',
   components: {
-    LoginForm,
-    MobileLoginForm,
-    SignUpForm,
-    MobileSignUpForm,
-    FbSignUpForm,
-    MobileFbSignUpForm,
+    LoginForm: LoginForm,
+    MobileLoginForm: MobileLoginForm,
+    SignUpForm: SignUpForm,
+    MobileSignUpForm: MobileSignUpForm,
+    FbSignUpForm: FbSignUpForm,
+    MobileFbSignUpForm: MobileFbSignUpForm,
     ProfileDropDown
   },
   props: {
-    type: {
-      type: String,
-      default: "warning"
-    },
-    round: {
-      type: Boolean,
-      default: false
-    },
-    circle: {
-      type: Boolean,
-      default: false
-    },
-    plain: {
-      type: Boolean,
-      default: true
-    }
+    
   },
   data() {
     return {
-      
+      view: "LoginForm",
+      visible: false,
+      windowWidth: 0,
     }
   },
   methods: {
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
+    changeView: function(viewName){
+      this.view = viewName;
+    },
     openDialog: function(){
-      if (!this.$store.state.isAuthorized){
-        this.$store.dispatch("updateFormState", {
-        isLogIn: true,
-        isSignUp: false,
-        isFbSignUp: false
-        });
-      }else {
-        this.$store.dispatch("updateAuthorized", false);
-        this.$store.dispatch('updateUserInfo', {});
-        this.$store.dispatch('updateUserToken', "");
-        FB.logout(function (response) {
-          console.log('res when logout', response);
-        });
-      }
+      this.visible = true;
+      // if (!this.$store.state.isAuthorized){
+      //   this.$store.dispatch("updateFormState", {
+      //   isLogIn: true,
+      //   isSignUp: false,
+      //   isFbSignUp: false
+      //   });
+      // }else {
+      //   this.$store.dispatch("updateAuthorized", false);
+      //   this.$store.dispatch('updateUserInfo', {});
+      //   this.$store.dispatch('updateUserToken', "");
+      //   FB.logout(function (response) {
+      //     console.log('res when logout', response);
+      //   });
+      // }
     },
     closeDialog: function(){
-      this.$store.dispatch("updateFormState", {
-        isLogIn: false,
-        isSignUp: false,
-        isFbSignUp: false
-      });
+      this.visible = false;
+      // this.$store.dispatch("updateFormState", {
+      //   isLogIn: false,
+      //   isSignUp: false,
+      //   isFbSignUp: false
+      // });
     },
     changeFormState: function(formState){
       this.$store.dispatch("updateFormState", formState);
+    },
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+    let self = this;
+    if ((self.$resize && !self.$mq.above(1025))){
+      this.view = "MobileLoginForm";
+    }else {
+      this.view = "LoginForm";
+    }
+  },
+  destroyed: function() {
+    window.removeEventListener('resize', this.handleResize)
+  },
+  watch: {
+    windowWidth: function(newVal, oldVal){
+      let currentView = this.view;
+      if(newVal <= 1025 && newVal !== oldVal) {
+        if (currentView.substr(0, 6) !== 'Mobile'){
+          this.changeView("Mobile" + currentView);
+        }
+      }
+      if(newVal > 1025 && newVal !== oldVal) {
+        if (currentView.substr(0, 6) == 'Mobile'){
+          this.changeView(currentView.substr(6));
+        }
+      }
     },
   },
 }
