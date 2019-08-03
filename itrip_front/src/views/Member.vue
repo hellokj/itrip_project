@@ -46,6 +46,7 @@
     :currentAccessId="currentAccessId"
     v-on:changeToCarousel="changeView('MemberItineraryCarousel')"
     v-on:loading="loading"
+    v-on:reloadItineraries="reloadItineraries"
     v-on:loadingComplete="loadingComplete"
     v-on:checkDetail="checkDetail">
   </component>
@@ -150,6 +151,29 @@ export default {
     });
   },
   methods: {
+    reloadItineraries: function(){
+      //  reset
+      this.myItineraries = [];
+      this.incomingItineraries = [];
+      this.historyItineraries = [];
+      let token = this.$store.state.userToken;
+      let self = this;
+      apiGetItineraries(token)
+      .then(function(res){
+        self.myItineraries = res.data.data; // 行程
+        self.currentAccessId = res.data.currentAccessId; // get current access id
+        //console.log('itinerary API',self.myItineraries)
+        let currentDate = new Date();
+        self.year = currentDate.getFullYear();
+        self.month = currentDate.getMonth() + 1;
+        self.day = currentDate.getDate();
+        self.compareCurrentTime(currentDate);
+        self.flag = true;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
     handleResize() {
       this.windowWidth = window.innerWidth;
     },

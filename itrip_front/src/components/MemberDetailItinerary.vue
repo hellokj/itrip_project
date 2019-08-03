@@ -1,14 +1,28 @@
 <template>
   <el-main v-model="update">
-      <el-container style="margin-bottom: 20px;">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{}" @click.native="changeToCarousel">個人檔案</el-breadcrumb-item>
-          <el-breadcrumb-item>我的行程</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ title }}</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-container>
+    <el-container style="margin-bottom: 0px;">
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{}" @click.native="changeToCarousel">個人檔案</el-breadcrumb-item>
+        <el-breadcrumb-item>我的行程</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ title }}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-container>
+    <div style="height: 7vh; margin: 0px auto;">
+      <el-popover
+        placement="left-start"
+        width="160"
+        v-model="visible">
+        <p>確定要刪除此行程？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button type="text" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
+          <el-button size="mini" type="primary" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
+        </div>
+        <el-button slot="reference" icon='el-icon-delete' round style="height: min-content; float: right;">刪除行程</el-button>
+      </el-popover>
+      <!-- <el-button style="border-radius: 50; padding: 5px; margin:0px auto; " @click="confirmDeleteOrNot(true, itinerary)"><i class="el-icon-delete"></i></el-button> -->
+    </div>
       <el-tabs type="border-card" v-model="index" @tab-click="handleClick">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container style="display: flex">
@@ -28,22 +42,12 @@
                 {{ getLockStatus() ? "設為不公開" : "設為公開" }}
               </el-link>
               <el-link icon="el-icon-edit" style="padding: 5px; margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-              <el-popover
-                placement="top"
-                width="160"
-                v-model="visible">
-                <p>確定刪除此行程嗎？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button type="primary" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
-                  <el-button size="mini" type="text" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
-                </div>
-                <el-link slot="reference" icon="el-icon-delete" style="padding: 5px; margin:0px auto;" @click="visible = true">刪除行程</el-link>
-              </el-popover>
+              <!-- <el-link icon="el-icon-delete" style="padding: 5px; margin:0px auto;" @click="confirmDeleteOrNot(true, itinerary)">刪除行程</el-link> -->
             </el-container>
           </el-container>
           <el-table
             :data="day"
-            height="400"
+            height="385"
             border
             style="width: 100%">
             <el-table-column
@@ -122,17 +126,6 @@
                 {{ getLockStatus() ? "設為不公開" : "設為公開" }}
               </el-link>
               <el-link icon="el-icon-edit" style="padding: 5px; margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-              <el-popover
-                placement="top"
-                width="160"
-                v-model="visible">
-                <p>確定刪除此行程嗎？</p>
-                <div style="text-align: right; margin: 0px">
-                  <el-button type="primary" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
-                  <el-button size="mini" type="text" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
-                </div>
-                <el-link slot="reference" icon="el-icon-delete" style="padding: 5px; margin:0px auto;">刪除行程</el-link>
-              </el-popover>
             </el-container>
           </el-container>
           <el-container>
@@ -168,7 +161,7 @@ export default {
       visible: false,
       isConfirmed: false, // check wheather delete or not
       isLocked: false, // check if itinerary is locked by server
-      activeName: "",
+      activeName: '1',
     }
   },
   methods: {
@@ -187,7 +180,8 @@ export default {
     deleteItinerary: async function(itinerary){
       if (this.isConfirmed){
         await apiDeleteItinerary(itinerary._id, this.$store.state.userToken);
-        this.$bus.$emit("changeToCarousel");
+        this.$emit("reloadItineraries");
+        this.$emit("changeToCarousel");
       }
     },
     changeLockStatus: function(){
