@@ -26,11 +26,11 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="編輯行程" id="edit" class="fas fa-edit" 
            @click="requestEdit"
-           :style="[isLocked ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
+           :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
            style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
-          <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
+          <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails" :lockIcon="lockIcon"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
           <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @shareTrip="shareTrip"/>
         </div>
@@ -40,8 +40,10 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item >
-              
-              <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 儲存行程</i>
+            <i title="編輯行程" id="edit" class="fas fa-edit" 
+            @click="requestEdit"
+            :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
+            style="color:#8a8d91;font-size:15px;cursor: pointer;">編輯行程</i>
             </el-dropdown-item>
             <el-dropdown-item >
               <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 匯出成PDF</i>
@@ -166,11 +168,16 @@ export default {
       travelInfo: Array,
       page: Number,
       dayNum: Number,
-      shareId: Number,
+      shareId: String,
       currentAccessId: String,
       isLockedProp: Boolean,
       isLocked: Boolean,
       itinerary: Object
+    },
+    computed: {
+      lockIcon() {
+        return this.isLocked || this.itinerary.memberIds === undefined || this.itinerary.memberIds.length === 0;
+      }
     },
     methods: {
       saveTrip() {
@@ -414,18 +421,19 @@ export default {
         immediate: true,
       },
       itinerary: {
-        handler: function() {
+        handler: function(newVal, oldVal) {
           // if(!this.itineraryLoaded) {
           //   this.updateTabs();
           //   this.itineraryLoaded = true;
           // }
-          for(let i=this.tabs.length;i<this.itinerary.dayNum;i++) {
+          for(let i=this.tabs.length;i<newVal.dayNum;i++) {
             this.tabs.push(i);
           }
-          console.log(this.tabs)
+          //console.log(this.tabs)
           // get name and date from itinerary
-          this.tripName = this.itinerary.name;
-          this.tripDate = this.stringifyStartDate(this.itinerary.startDate);
+          this.tripName = newVal.name;
+          //console.log(newVal)
+          this.tripDate = this.stringifyStartDate(newVal.startDate);
           // console.log(this.itinerary)
         },
         deep: true

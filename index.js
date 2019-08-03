@@ -49,6 +49,15 @@ io.on('connection', (socket) => {
     console.log("on locked itineraries", socketHandler.lockedItineraryIds);
     // console.log("connected members", socketHandler.connectedMembers);
     console.log("membersTable", socketHandler.membersTable);
+    // 刪除垃圾行程表
+    // socketHandler.getAllItinerary().exec((err, res) => {
+    //     res.forEach((element) => {
+    //         if(element.name.includes('我的旅行')) {
+    //             //console.log(element.name)
+    //             socketHandler.deleteItinerary(element._id);
+    //         }
+    //     })
+    // })
     socket.on('QQ', (data) => {
         let token = data.token;
         console.log("偷啃", token);

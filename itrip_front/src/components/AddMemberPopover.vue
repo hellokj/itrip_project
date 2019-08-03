@@ -3,8 +3,10 @@
         placement="bottom-start"
         width="300"
         trigger="click"
-        @click.native="$emit('getCurrentMembers')">
-        <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;cursor: pointer;" slot="reference"></i>
+        @click.native="$emit('getCurrentMembers')"
+        :disabled="lockIcon">
+        <i title="加入旅伴" class="fas fa-user-plus" style="color:#8a8d91;cursor: pointer;" slot="reference"
+        :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"></i>
         <el-input
         placeholder="旅伴的E-mail"
         v-model="content"
@@ -33,7 +35,7 @@
 <script>
 export default {
   name: "AddMemberPopover",
-  props: ['memberEmail', 'memberEmails'],
+  props: ['memberEmail', 'memberEmails', 'lockIcon'],
   data() {
     return {
         content: this.memberEmail,

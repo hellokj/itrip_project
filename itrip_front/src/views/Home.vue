@@ -256,7 +256,6 @@ export default {
     });
   },
   methods: {
-
     toggle: function(toggle){
       console.log(toggle);
     },

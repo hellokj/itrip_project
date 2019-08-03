@@ -158,6 +158,13 @@ class SocketHandler {
     });
     return memberId;
   }
+
+  getAllItinerary() {
+    return Itinerary.find({});
+  }
+  deleteItinerary(id) {
+    Itinerary.deleteOne({ _id: id}, function (err) {});
+  }
 }
 
 module.exports = SocketHandler;

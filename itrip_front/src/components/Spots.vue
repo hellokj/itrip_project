@@ -10,9 +10,10 @@
           <p class="ml-2 my-0" style="line-height:40px; white-space: nowrap; overflow: hidden;"> 排序:</p>
           <b-dropdown size="sm" class="m-2" v-model="sortBy" style="height:30px;padding-right:10px;">
               <template slot="button-content">&#x1f50d;<span class="sr-only">Search</span>{{sortString}}</template>
-              <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fab fa-instagram"></i>  IG Tag熱度</b-dropdown-item-button>
-              <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fab fa-facebook-square"></i>  臉書打卡王</b-dropdown-item-button>
-          </b-dropdown>  
+              <b-dropdown-item-button @click="sortBy='ig_post_num'"><i class="fas fa-hashtag"></i> HashTag熱度</b-dropdown-item-button>
+              <b-dropdown-item-button @click="sortBy='checkins'" ><i class="fas fa-map-marker-alt"></i> IG打卡王</b-dropdown-item-button>
+          </b-dropdown>
+          
         </div>
       </div>
       <div class="ml-4 category-container" style="display:flex;flex-direction:column;">
@@ -20,6 +21,19 @@
         <el-checkbox-group class="checkbox-group" v-model="checkedCategories" @change="handleCheckedCategoryListChange">
           <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
         </el-checkbox-group>
+      </div>
+      <div>
+        <a-dropdown :trigger="['click']" placement="bottomRight" style="position:absolute;right:15px;">
+            <a class="ant-dropdown-link">
+            <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer;"></i>
+            </a>
+            <a-menu slot="overlay">
+                <a-menu-item>
+                   <i class="fas fa-search-plus"></i> 新增景點
+                </a-menu-item>
+            </a-menu>
+        </a-dropdown>
+        
       </div>
     </div>
     

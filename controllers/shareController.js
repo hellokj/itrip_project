@@ -29,7 +29,7 @@ const shareItineraries = async (req, res, next) => {
         togos: togos,
         travelInfos: travelInfos
     });
-    itinerary.save().then(() => res.json({status: -1, msg:'success', data: id}));
+    itinerary.save().then(() => res.json({status: -1, msg:'success', data: itinerary}));
 }
 
 const update = async (req, res, next) => {
@@ -59,5 +59,5 @@ const update = async (req, res, next) => {
 module.exports = {
     shareItineraries,
     getSharedItineraries,
-    update
+    update,
 }
