@@ -131,6 +131,7 @@ class SocketHandler {
     console.log("self", self);
     await Itinerary.updateItinerary(_id, itinerary).then(function(res){
       let itineraryMembers = itinerary.memberIds;
+      // 其他人
       itineraryMembers = itineraryMembers.filter(function(value, index, arr){
         return value !== editorId;
       });

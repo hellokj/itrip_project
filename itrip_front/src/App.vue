@@ -36,19 +36,22 @@ export default {
   },
   sockets: {
     connect() {
-        console.log('socket connected');
+      console.log('socket connected');
     },
-    disconnect() {
-      console.log('you have been kicked by server');
-      this.$store.dispatch('updateAuthorized', false);
-      this.$store.dispatch("updateUserToken", "");
-      this.$store.dispatch('updateUserInfo', {});
-      FB.logout(function (response) {
-        console.log('res when logout', response);
-      });
-      // 登出後導向首頁
-      this.$router.push({path: '/'});
-    }
+    reconnect(){
+      console.log("socket reconnected");
+    },
+    // disconnect() {
+    //   console.log('you have been kicked by server');
+    //   this.$store.dispatch('updateAuthorized', false);
+    //   this.$store.dispatch("updateUserToken", "");
+    //   this.$store.dispatch('updateUserInfo', {});
+    //   FB.logout(function (response) {
+    //     console.log('res when logout', response);
+    //   });
+    //   // 登出後導向首頁
+    //   this.$router.push({path: '/'});
+    // }
   },
   methods: {
     Search(para) {
