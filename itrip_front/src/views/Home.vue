@@ -21,7 +21,7 @@
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
             <!-- <button class="btn-login">登入</button> -->
-            <ProfileButton :type="'danger'" style="width:max-content"></ProfileButton>
+            <ProfileButton :type="'danger'"></ProfileButton>
           </b-col>
         </b-row>
       </b-container>
@@ -129,7 +129,7 @@
     </div>
 
     <!-- Itinerary Recommend Area  -->
-    <div class="itinerary-area" style="width:100%; height:auto; overflow: hidden">
+    <div  class="itinerary-area" style="width:100%; height:auto; overflow: hidden">
       <b-container class="mt-5 mb-5" v-if="officialItineraries !== []">
         <b-row>
           <p class="col itinerary-title" style="font-size: 28px;">精選行程</p>
@@ -137,7 +137,7 @@
         <b-row style="flex-direction: row-reverse;">
           <b-col class="itinerary-col mb-5" cols="12" sm="6" md="6" lg="3" v-for="i in 4" :key="i">
             <div class="itinerary-item">
-              <img class="img-itinerary" :src="officialItineraries[i-1].togos[0][0]['images'][0]" alt="">
+              <img v-if="officialItineraries!==undefined" class="img-itinerary" :src="officialItineraries[i-1].togos[0][0]['images'][0]" alt="">
               <p class="itinerary-name">{{officialItineraries[i-1].name}}</p>
               <div class="itinerary-days">
                 <p style="margin: 0px; padding: 0px;">{{ dayStr(i) }}</p>
@@ -220,6 +220,7 @@ export default {
       slide: 0,
       sliding: null,
       selected: null,
+      windowSize: {w: window.innerWidth, h: window.innerHeight},
       options: ["美食", "購物", "景點", "交通", "住宿", "娛樂"],
       types: {'美食':'gourmet', '購物':'shopping', '景點':'scenic spot', '交通':'transportation', '住宿':'lodging', '娛樂':'entertainment'},
       SearchHover: false,
@@ -254,6 +255,17 @@ export default {
       self.officialItineraries = r.data.data;
       console.log(self.officialItineraries);
     });
+    window.addEventListener("resize", this.resizeHandler);
+  },
+  computed: {
+      isMobileSize: function() {
+        if(this.windowSize.w > 768 )return false;
+        else return true;
+      }
+    
+  },
+  destroyed: function(){
+    window.removeEventListener("resize", this.resizeHandler);
   },
   methods: {
 
@@ -338,6 +350,10 @@ export default {
         return dayNum + "天" + eval(dayNum - 1) + "夜"
       else if (dayNum == 1)
         return "一日遊"
+    },
+    resizeHandler(e) {
+      this.windowSize.w = window.innerWidth;
+      this.windowSize.h = window.innerHeight;
     }
   },
   watch: {
@@ -347,6 +363,8 @@ export default {
     },
   },
 }
+
+
 </script>
 
 <style scoped>
@@ -802,10 +820,10 @@ export default {
     }
 
     .col-home a, .col-trip a {
-      font-family: 'Noto Sans TC', sans-serif;
-      color: rgb(77, 60, 60);
-
+      font-family: 'Noto Serif TC', serif;
+      text-shadow: 0px 3px 6px rgba(55, 55, 55, 0.75);
     }
+
 
     .itinerary-col:hover .itinerary-item {
       width: 100%;

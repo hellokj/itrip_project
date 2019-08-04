@@ -5,7 +5,7 @@
         width="300"
         trigger="click"
          v-model="visible">
-        <i class="fas fa-suitcase-rolling" slot="reference" style="cursor:pointer;color:white;"> 開始規劃</i>
+        <div class="text" slot="reference" style="cursor:pointer; font-size: 1.2em;"> 規劃</div>
         <b-container>
             <b-row class="mb-2">
                 <b-col class="px-0" cols="2" style="text-align:center;line-height:40px;">
@@ -115,5 +115,16 @@ export default {
 </script>
 
 <style scoped>
+* {
+    font-family: 'Noto Serif TC', serif;
+}
 
+.text {
+    color: #FFF;
+}
+@media only screen and (max-width: 770px) {
+    .text {
+        text-shadow: 0px 3px 6px rgba(55, 55, 55, 0.75);
+    }
+}
 </style>

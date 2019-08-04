@@ -1,8 +1,8 @@
 <template>
 <div id="profileButton">
   <ProfileDropDown v-if="$store.state.isAuthorized"></ProfileDropDown>
-  <el-button type="warning" plain v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
-  <LoginForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
+  <el-button :style="btnStyle" :type="type" :plain="plain" :round="round" :circle="circle" v-model="$store.state.isAuthorized" v-if="!$store.state.isAuthorized" @click="openDialog">登入</el-button>
+  <LoginForm class="login-form" v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></LoginForm>
   <MobileLoginForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isLogIn" v-on:changeFormState="changeFormState"></MobileLoginForm>
   <SignUpForm v-if="($resize && $mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></SignUpForm>
   <MobileSignUpForm v-else-if="($resize && !$mq.above(1025))" :isVisible="$store.state.formState.isSignUp" v-on:changeFormState="changeFormState"></MobileSignUpForm>
@@ -45,7 +45,10 @@ export default {
     },
     plain: {
       type: Boolean,
-      default: true
+      default: false
+    },
+    btnStyle: {
+      type: Object
     }
   },
   data() {
@@ -84,16 +87,20 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-.button
-  width: 125px
-  height: 40px
-  border: 2px solid #ffffff
-  border-radius: 20px
-  display: flex
-  align-items: center
-  justify-content: center
-  margin-right: 50px
-  background: #FFFFFF
-  font-size: 25px
+<style scoped>
+* {
+  font-family: 'Noto Serif TC', serif;
+}
+.button {
+  width: 125px;
+  height: 40px;
+  border: 2px solid #ffffff;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 50px;
+  background: #FFFFFF;
+  font-size: 25px;
+}
 </style>

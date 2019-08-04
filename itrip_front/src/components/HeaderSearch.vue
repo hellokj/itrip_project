@@ -96,10 +96,6 @@
       }
     },
     created() {
-      // this.$refs["refCheckAllTypes"].checked = true;
-      // for(var i = 0; i < 6; i++){
-      //   this.typesChecked.push(this.types[i].id)
-      // }
     },
     methods: {
       checkAllTypes(){
@@ -116,6 +112,7 @@
       },
       searchResultClicked(name) {
         this.inputText = name;
+        this.searchClick();
       },
       clearInputText() {
         this.inputText = '';
