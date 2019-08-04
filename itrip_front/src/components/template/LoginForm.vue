@@ -51,11 +51,6 @@ export default {
       }
     };
     return {
-      fbInit: {
-        appId: 2353529008088124,
-        version: 'v3.3',
-        button_style: {},
-      },
       isVisible: false,
       hint: "",
       logInForm: {
