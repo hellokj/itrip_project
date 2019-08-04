@@ -40,7 +40,8 @@
             <div class="dropdown">
                 <i @click="myFunction()" class="fas fa-bars"></i>
                 <div id="myDropdown" class="dropdown-content">
-                    <router-link to="/trip">開始規劃</router-link>
+                    <!-- <router-link to="/trip">開始規劃</router-link> -->
+                    <tripInfoInput/>
                     <router-link to="/">首頁</router-link> 
                     <a href="#">登入</a>
                 </div>
@@ -90,7 +91,8 @@
         </div>
         <div class="btns">
             <div class="div_trip">
-                <router-link  to="/trip">開始規劃</router-link>
+                <!-- <router-link  to="/trip">開始規劃</router-link> -->
+                <tripInfoInput/>
             </div>
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
@@ -104,6 +106,7 @@
 import Vue from 'vue'
 import HeaderSearch from '../HeaderSearch'
 import ProfileButton from '../ProfileButton'
+import tripInfoInput from '../../components/template/TripInfoInput'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -115,7 +118,8 @@ export default {
     components: {
         ProfileButton,
         Treeselect,
-        HeaderSearch
+        HeaderSearch,
+        tripInfoInput
     },
     props: {editMode: Boolean, isLockedProp: Boolean},
     data() {

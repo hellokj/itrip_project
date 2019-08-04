@@ -224,56 +224,6 @@ export default {
     changePage(p) {
       this.page = p;
     },
-    // saveTrip(name, date, memberId) {
-    //   // itinerary format:
-    //   //{_id: Number, memberId: Number, startDate: {year: Number, month: Number, day: Number}, name: String, dayNum: Number, togos: Array, travelInfos: Array}
-    //   //memberId, startDate, name, dayNum, togos, travelInfos
-    //   let token = this.$store.state.userToken;
-    //   let _id = "";
-    //   if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
-    //     _id = this.itinerary._id;
-    //   }
-    //   let self = this;
-    //   // console.log("itinerary", this.itinerary);
-    //   // console.log("_id", _id);
-    //   apiSaveTrip(_id, date, name, this.togos.length, this.baseTimes, this.togos, this.travelInfos, memberId, token)
-    //   .then((function (res) {
-    //     self.itinerary = Object.assign({}, self.itinerary, res.data.data);
-    //     //console.log(self.itinerary)
-    //     self.$message.success('行程儲存成功!');
-    //     self.$router.push('/trip/?currentAccessId=' + self.$route.query.currentAccessId + '&itineraryId=' + self.itinerary._id);
-    //   }))
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-    //   // this.$socket.emit('SEND_MESSAGE', {
-    //   //     togos: self.togos
-    //   // });
-    // },
-    // share(name, date) {
-    //   if(this.togos[0] === undefined) {
-    //     this.$message.warning('你還沒排行程!');
-    //     return;
-    //   }
-    //   let self = this;
-    //   apiShareTrip(date, name, this.togos.length, this.togos, this.travelInfos)
-    //   .then((function (res) {
-    //     self.qviewId = res.data.data;
-    //   }))
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-    // },
-    // updateShare(id, name, date) {
-    //   let self = this;
-    //   apiUpdateShare(id, date, name, this.togos.length, this.togos, this.travelInfos)
-    //   .then((function (res) {
-    //     console.log(res);
-    //   }))
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-    // },
     getSharedTrip(id) {
       let self = this;
       apiGetSharedTrip(id)
@@ -501,6 +451,9 @@ export default {
       for(let i=0;i<components.length;i++) {
         if(toggle == components[i]) {
           this.selected = i;
+          if(components[i] == 'Map') {
+            this.updateMap++;
+          }
         }
       }
     },

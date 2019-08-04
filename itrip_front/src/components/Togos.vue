@@ -290,7 +290,7 @@ export default {
           this.togos.pop();
           this.travelInfos.pop();
           this.$message.error('時間超出本日範圍!');
-          throw 'DAY LIMIT EXCEEDED';
+          //throw 'DAY LIMIT EXCEEDED';
         }
         if(this.togos[index].startTime === undefined) {
           this.togos[index].startTime = {};
