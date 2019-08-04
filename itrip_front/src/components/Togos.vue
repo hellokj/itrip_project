@@ -28,6 +28,7 @@
           <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails" :lockIcon="lockIcon"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
           <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @saveShare="saveShare"/>
+          <i title="開啟導航" class="fas fa-map-marked-alt" style="color:#8a8d91;font-size:25px;cursor: pointer;" @click="navigate"></i>
         </div>
         <el-dropdown ref="dropdown" placement="bottom-start" trigger="click">
           <span>
@@ -49,6 +50,9 @@
               <div class="pl-3 row">
                 <SharingLink id="mobile-sharingLink" @saveShare="saveShare" :shareUrl="shareUrl" :shareId="shareId"/>儲存及分享
               </div>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <i title="開啟導航" class="fas fa-map-marked-alt" style="color:#8a8d91;font-size:15px;cursor: pointer;" @click="navigate"> 開啟導航</i>
             </el-dropdown-item>
           </el-dropdown-menu>         
         </el-dropdown>
@@ -113,6 +117,7 @@ import draggable from 'vuedraggable'
 import { async, resolve } from 'q'
 import { Message } from 'element-ui'
 import { apiFindMemberByMail, apiRemoveMember, apiSaveTrip } from '../../utils/api.js'
+import { getUrl } from '../../utils/navigation.js'
 import AddMemberPopover from './AddMemberPopover'
 import SharingLink from './SharingLink'
 
@@ -145,7 +150,9 @@ export default {
         newMemberId: '',
         shareIdProp: undefined,
         editMode: false,
-        message: null
+        message: null,
+        googleMapUrl: '',
+        newWin: null 
       }
     },
     components: {
@@ -359,6 +366,10 @@ export default {
       },
       stringifyStartDate(ob) {
         return ob.year + '-' + ob.month + '-' + ob.day;
+      },
+      navigate() {
+        this.newWin = window.open();
+        this.googleMapUrl = getUrl(this.togos_prop);
       }
     },
     watch: {
@@ -428,6 +439,13 @@ export default {
       isLockedProp: function(newVal){
         if(newVal) this.isLocked = true;
         else this.isLocked = false;
+      },
+      googleMapUrl: function(newVal, oldVal) {
+        if(newVal && this.newWin) {
+          this.newWin.location.href = newVal;
+          this.googleMapUrl = '';
+          this.newWin = null;
+        }
       }
     },
     created() {
