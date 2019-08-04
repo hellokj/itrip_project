@@ -254,16 +254,28 @@ export default {
           return;
         }
         if(!this.memberEmails.includes(this.memberEmail)) {
-          this.memberEmails.push(this.memberEmail);
-          // this.saveTrip();
-          this.$emit('addMember', this.memberEmail);
-          this.memberEmail = '';
-          
+          let self = this;
+          // check if this member exists
+          apiFindMemberByMail(this.memberEmail,this.$store.state.userToken)
+          .then(function(res) {
+            //console.log(res)
+            if(res.data.data != null) {
+              self.memberEmail = res.data.data._id;
+              self.memberEmails.push(self.memberEmail);
+              self.$emit('addMember', self.memberEmail);
+            }
+            else {
+              Message({
+                type: 'warning',
+                message: '找不到該旅伴的資料，確定Email沒有打錯嗎?'
+              });
+            }
+          });
         }
         else {
           this.$message.warning('該旅伴已在列表中!')
         }
-        
+        this.memberEmail = '';
       },
       removeMember: async function(index) {
         let mailToRemove = this.memberEmails[index];
@@ -426,7 +438,7 @@ export default {
       },
       itinerary: {
         handler: function(newVal, oldVal) {
-          console.log(newVal);
+          //console.log(newVal);
           for(let i=this.tabs.length;i<newVal.dayNum;i++) {
             this.tabs.push(i);
           }

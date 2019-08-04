@@ -228,7 +228,7 @@ export default {
       let self = this;
       apiGetSharedTrip(id)
       .then((function (res) {
-        console.log("res", res);
+        //console.log("res", res);
         self.itinerary = Object.assign({}, res.data.data[0]);
       }))
       .catch(function (error) {
@@ -488,7 +488,7 @@ export default {
       let self = this;
       await apiGetItinerary(this.qitineraryId, this.qcurrentAccessId, token)
       .then((function (res) {
-        console.log(res.data)
+        //console.log(res.data)
         self.itinerary = res.data.data;
         self.currentAccessId = self.qcurrentAccessId;
       }))
@@ -520,9 +520,6 @@ export default {
     }
   },
   watch: {
-    routes: function() {
-      console.log(this.routes);
-    },
     checkList: function(newVal, oldVal) {
       if(!newVal.includes('景點圖標')) {
         if(this.itinerary.togos[this.page][0] !== undefined) {
@@ -538,7 +535,7 @@ export default {
     },
     paramProp: {
       handler: function(newVal, oldVal) {
-        console.log(newVal);
+        //console.log(newVal);
         if(newVal.city) this.queryCounty = newVal.city;
         else this.queryCounty = null;
 
@@ -565,7 +562,9 @@ export default {
           this.$socket.emit('updateItinerary', {itinerary: newVal});
         }
         else {
-          this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+          if(!this.isLocked) {
+            this.$socket.emit('updateItinerary', {itinerary: newVal, memberId: this.$store.state.user.id});
+          }
         }
       },
       deep: true
@@ -616,7 +615,6 @@ export default {
     });
     this.$bus.$on('createTrip', event => {
       self.itinerary = Object.assign({}, event.itinerary);
-      console.log(self.itinerary)
       //console.log(self.itinerary)
     });
     

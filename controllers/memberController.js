@@ -12,6 +12,7 @@ const getMember = (req, res, next) => {
   res.json({status: -1, msg:'success', data: memberDecoded});
 }
 
+
 const findMemberByMail = async (req, res, next) => {
   let email = req.body.email;
   let member = await Member.findMember(email, null, null);
@@ -72,5 +73,5 @@ const removeFollowingItem = (req, res, next) => {
 module.exports = {
   modifyProfile,
   getMember,
-  findMemberByMail
+  findMemberByMail,
 }

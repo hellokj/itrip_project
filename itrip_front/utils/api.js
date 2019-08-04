@@ -233,6 +233,7 @@ const apiModifyProfile = (memberInfo, userToken) => {
   return memberRequest.post('/modifyProfile', { memberInfo: memberInfo }, { headers: headers });
 }
 
+
 export {
     apiGetSpots,
     apiGetNearby,

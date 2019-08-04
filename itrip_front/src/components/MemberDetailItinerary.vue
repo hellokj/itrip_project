@@ -452,7 +452,7 @@ export default {
     }
   },
   created() {
-    console.log("itinerary create", this.itinerary);
+    //console.log("itinerary create", this.itinerary);
     // this.resetDetailInfo();
     this.resetItineraryData(this.itinerary);
     if (this.itinerary.dayNum == 1){

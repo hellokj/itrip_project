@@ -65,7 +65,6 @@ io.on('connection', (socket) => {
             socketHandler.connect(socket.id, token);
         }
     })
-
     // when member login
     socket.on('logIn', (data) => {
         let token = data.token;
