@@ -200,6 +200,10 @@ const apiLogIn = (authData) => {
   return authRequest.post('/logIn', authData);
 }
 
+const apiFbLogIn = (authData) => {
+  return authRequest.post('/fbLogIn', authData);
+}
+
 const apiSignUp = (user) => {
   return authRequest.post('/signUp', user);
 }
@@ -241,6 +245,7 @@ export {
     apiUpdateShare,
     apiGetMember,
     apiLogIn,
+    apiFbLogIn,
     apiSignUp,
     apiModifyProfile,
     apiSaveTrip,

@@ -21,13 +21,13 @@
   <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="confirm">確認</el-button>
     <el-button @click="toSignUp">註冊</el-button>
-    <el-button type="info" @click="fbLogIn">以FB帳號註冊</el-button>
+    <el-button type="info" @click="fbLogIn">以FB帳號登入</el-button>
   </span>
 </el-dialog>
 </template>
 
 <script>
-import { apiLogIn } from '../../utils/api'
+import { apiLogIn, apiFbLogIn } from '../../utils/api'
 import { EmailChecker } from '../../utils/checker'
 export default {
   name: "MobileLogInForm",
@@ -109,14 +109,39 @@ export default {
     statusChangeCallback(response) {
       let self = this;
       if (response.status === "connected") {
-        FB.api('/me?fields=name,id,email', function (response) {
-          self.$store.dispatch('updateUserInfo', {
-            id: response.id,
+        FB.api('/me?fields=name,email', function (response) {
+          let member = {
+            id: response.email,
             name: response.name,
             email: response.email
-          });
+          }
+          apiFbLogIn(member).then(function(res){
+            if (res.data.status == -1 || res.data.status == 200){
+              // 登入成功
+              // console.log("res.data", res.data);
+              self.hint = "";
+              self.isVisible = false;
+              self.$store.dispatch("updateUserToken", res.data.data);
+              let userInfo = {
+                id: res.data.memberId,
+                name: res.data.memberName,
+                email: "",
+                url: ""
+              }
+              //console.log(userInfo)
+              self.$store.dispatch("updateUserInfo", userInfo);
+              // token
+              self.$router.push('?currentAccessId=' + userInfo.id);
+              self.$refs["logInForm"].resetFields();
+              
+              self.$store.dispatch("updateAuthorized", true); // 登入成功
+              self.$message.success({
+                text: self.$store.state.user.name + ', 歡迎回來!'
+              })
+              self.$socket.emit('logIn', {token: self.$store.state.userToken});
+            }
+          })
         });
-        self.toFbSignUp();
       } else if (response.status === "not_authorized") {
         self.$store.dispatch('updateAuthorized', false);
       } else if (response.status === "unknown") {

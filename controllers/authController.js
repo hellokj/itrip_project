@@ -5,6 +5,8 @@ const NilChecker = require('../utils/nilChecker');
 const Response = require('../utils/responseHandler');
 const errorHandler = require('../utils/errorHandler');
 
+let self = this;
+
 const signUp = async(req, res, next) => {
     // Sign up date
     let today = new Date();
@@ -46,7 +48,7 @@ const signUp = async(req, res, next) => {
         password: password,
     })
 
-    member.save().then(() => res.json( {status: 200, member: member, msg: 'success'}));    
+    member.save().then(() => res.json( {status: 200, member: member, msg: 'success'}));
 }
 
 const logIn = async(req, res, next) => {
@@ -69,6 +71,64 @@ const logIn = async(req, res, next) => {
     }
     // login success!
     getToken(req, res);
+}
+
+const fbLogIn = async(req, res, next) => {
+    console.log('req.body', req.body);
+    let name = req.body.name;
+    let email = req.body.email;
+    let member = await Member.findMember(email, null, null);
+    console.log('fbMember', member);
+    if (member !== null){
+        // 登入進去，給token回去
+        let token = jwt.sign(
+            {memberId: String(member._id),
+            account: member.email,
+            name: member.name,
+            url: member.url}
+            ,config.jwtSalt
+            , {
+            expiresIn: 60*60*24 //24 hrs
+        });
+        res.json({status: -1, msg: 'success!', data: token, memberId:String(member._id), memberName: member.name});
+    }else {
+        // 第一次登入，註冊一個新的，給token回去
+        let _id = req.body.email;
+        let name = req.body.name;
+        let email = req.body.email;
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = today.getMonth() + 1;
+        let day = today.getDate();
+        let url = "";
+        let password = "123QQQ"; // 預設fb登入的共通密碼
+
+        let fbMember = new Member({
+            _id: _id,
+            signUpDate: {
+                year: year,
+                month: month,
+                day: day
+            },
+            name: name,
+            url: url,
+            email: email,
+            password: password,
+        });
+        fbMember.isThirdPartyAccount = true;
+        console.log('fbMember', fbMember);
+        fbMember.save().then(function(){
+            let token = jwt.sign(
+                {memberId: String(fbMember._id),
+                account: fbMember.email,
+                name: fbMember.name,
+                url: fbMember.url}
+                ,config.jwtSalt, {
+                expiresIn: 60*60*24 //24 hrs
+            });
+            res.json( {status: 200, member: fbMember, msg: 'hello, new member from fb', token: token})
+        });
+    }
 }
 
 const is_valid_password = (password) => {
@@ -128,5 +188,6 @@ const checkToken = (req, res, next) => {
 module.exports = {
     checkToken,
     signUp,
-    logIn
+    logIn,
+    fbLogIn
 }

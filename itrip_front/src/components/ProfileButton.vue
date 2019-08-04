@@ -35,7 +35,7 @@ export default {
     MobileSignUpForm: MobileSignUpForm,
     FbSignUpForm: FbSignUpForm,
     MobileFbSignUpForm: MobileFbSignUpForm,
-    ProfileDropDown
+    ProfileDropDown,
   },
   props: {
     

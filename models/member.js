@@ -13,6 +13,7 @@ const memberSchema = new Schema({
     url: String,
     email: String,
     password: String,
+    isThirdPartyAccount: false
 });
 
 memberSchema.statics.findMember = function(email, url, password) {
