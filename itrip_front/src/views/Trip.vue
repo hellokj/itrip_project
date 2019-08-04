@@ -601,7 +601,7 @@ export default {
       if(newVal) this.$emit('is-locked-on');
       if(!newVal) {
         if(this.message != null) {
-          this.message.close()
+          this.message.close();
         }
       }
     }
@@ -661,7 +661,8 @@ export default {
       console.log('being notified...')
     })
     // listen to unclock notification
-    this.$socket.on('unlockNotification', (data) => {
+    this.$socket.on('unlockNotification', () => {
+      console.log('being notified to unlock!')
       self.isLocked = false;
     })
 
