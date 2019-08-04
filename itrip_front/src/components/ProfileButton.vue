@@ -38,7 +38,25 @@ export default {
     ProfileDropDown,
   },
   props: {
-    
+    type: {
+      type: String,
+      default: "warning"
+    },
+    round: {
+      type: Boolean,
+      default: false
+    },
+    circle: {
+      type: Boolean,
+      default: false
+    },
+    plain: {
+      type: Boolean,
+      default: false
+    },
+    btnStyle: {
+      type: Object
+    }
   },
   data() {
     return {
@@ -114,16 +132,20 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-.button
-  width: 125px
-  height: 40px
-  border: 2px solid #ffffff
-  border-radius: 20px
-  display: flex
-  align-items: center
-  justify-content: center
-  margin-right: 50px
-  background: #FFFFFF
-  font-size: 25px
+<style scoped>
+* {
+  font-family: 'Noto Serif TC', serif;
+}
+.button {
+  width: 125px;
+  height: 40px;
+  border: 2px solid #ffffff;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 50px;
+  background: #FFFFFF;
+  font-size: 25px;
+}
 </style>

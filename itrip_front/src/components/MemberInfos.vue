@@ -63,7 +63,7 @@ export default {
         reCheckPwd: "",
       },
       isValidate: false,
-      msg: "我這邊放一些提示訊息",
+      msg: "",
       originInfo: {},
       rules: {
         name: [
@@ -102,7 +102,8 @@ export default {
           // success
           console.log(res);
           if (res.data.status == -1){
-            self.msg = "修改成功"
+            // self.msg = "修改成功"
+            self.$message.success("修改成功");
             self.memberInfo.name = res.data.data.name;
             self.memberInfo.account = res.data.data.email;
             self.memberInfo.url = res.data.data.url;
@@ -110,7 +111,8 @@ export default {
             // 應該要取得新的token
             self.$store.dispatch("updateUserToken", token);
           }else {
-            self.msg = "修改失敗"
+            // self.msg = "修改失敗"
+            self.$message.error("修改失敗");
           }
         })
         .catch(function (error) {

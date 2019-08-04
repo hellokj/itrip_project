@@ -161,7 +161,7 @@ export default {
       visible: false,
       isConfirmed: false, // check wheather delete or not
       isLocked: false, // check if itinerary is locked by server
-      activeName: '1',
+      activeName: '',
     }
   },
   methods: {
@@ -283,32 +283,34 @@ export default {
             min: 0
           };
         }
-        for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3 0 0 0 ...
-          // 每天的行程
-          let tmpTogo = {};
-          let index = j + 1;
-          let name = this.itinerary.togos[i][j].name;
-          let address = this.addressFormat(this.itinerary.togos[i][j].address);
-          let stopTime = this.itinerary.togos[i][j].stopTime;
-          let memo = this.itinerary.togos[i][j].memo;
-          // let memo = "lalalalal";
-          let startTime = baseTime;
-          if (j !== 0 && this.itinerary.travelInfos[i] !== null){
-            if (this.itinerary.travelInfos[i] !== undefined){
-              startTime = 
-                this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
+        if (this.itinerary.togos.length !== 0){
+          for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3 0 0 0 ...
+            // 每天的行程
+            let tmpTogo = {};
+            let index = j + 1;
+            let name = this.itinerary.togos[i][j].name;
+            let address = this.addressFormat(this.itinerary.togos[i][j].address);
+            let stopTime = this.itinerary.togos[i][j].stopTime;
+            let memo = this.itinerary.togos[i][j].memo;
+            // let memo = "lalalalal";
+            let startTime = baseTime;
+            if (j !== 0 && this.itinerary.travelInfos[i] !== null){
+              if (this.itinerary.travelInfos[i] !== undefined){
+                startTime = 
+                  this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
+              }
             }
+            tmpTogo = {
+              index: index,
+              startTime: startTime,
+              stopTime: stopTime,
+              name: name,
+              address: address,
+              memo: memo
+            };
+            // console.log("tmpTogo", tmpTogo);
+            tmpDay.push(tmpTogo);
           }
-          tmpTogo = {
-            index: index,
-            startTime: startTime,
-            stopTime: stopTime,
-            name: name,
-            address: address,
-            memo: memo
-          };
-          // console.log("tmpTogo", tmpTogo);
-          tmpDay.push(tmpTogo);
         }
         if (this.itinerary.travelInfos[i] !== null){
           if (this.itinerary.travelInfos[i] !== undefined){
@@ -334,36 +336,39 @@ export default {
       this.days = [];
       for (let i = 0; i < itinerary.dayNum; i++){ // 天數
         var tmpDay = [];
-        for (let j = 0; j < itinerary.togos[i].length; j++){
-          let togo = itinerary.togos[i][j];
-          let index = j + 1;
-          let name = togo.name;
-          let address = this.addressFormat(togo.address);
-          let stopTime = togo.stopTime;
-          let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
-          let startTime = togo.startTime;
-          let endTime = togo.endTime;
-          let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
-          let memo = togo.memo;
-          let traffic = "";
-          
-          let tmpTogo = {
-            index: index, // No.
-            name: name, // 景點名稱
-            address: address, // 地址
-            stopTime: stopTime, 
-            stopTimeFormat: stopTimeFormat, // 停留時間
-            startTime: startTime, 
-            endTime: endTime,
-            stayTimeFormat: stayTimeFormat, // 開始時間
-            memo: memo, // 備忘錄
-            traffic: traffic // 交通時間
+        if (itinerary.togos.length !== 0){
+          for (let j = 0; j < itinerary.togos[i].length; j++){
+            let togo = itinerary.togos[i][j];
+            let index = j + 1;
+            let name = togo.name;
+            let address = this.addressFormat(togo.address);
+            let stopTime = togo.stopTime;
+            let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
+            let startTime = togo.startTime;
+            let endTime = togo.endTime;
+            let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
+            let memo = togo.memo;
+            let traffic = "";
+            
+            let tmpTogo = {
+              index: index, // No.
+              name: name, // 景點名稱
+              address: address, // 地址
+              stopTime: stopTime, 
+              stopTimeFormat: stopTimeFormat, // 停留時間
+              startTime: startTime, 
+              endTime: endTime,
+              stayTimeFormat: stayTimeFormat, // 開始時間
+              memo: memo, // 備忘錄
+              traffic: traffic // 交通時間
+            }
+            tmpDay.push(tmpTogo);
           }
-          tmpDay.push(tmpTogo);
         }
-        for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
-        
-          tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
+        if (this.itinerary.travelInfos[i] !== undefined){
+          for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
+            tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
+          }
         }
         this.days.push(tmpDay);
       }
@@ -447,18 +452,28 @@ export default {
     }
   },
   created() {
-    //console.log("itinerary create", this.itinerary);
+    console.log("itinerary create", this.itinerary);
     // this.resetDetailInfo();
     this.resetItineraryData(this.itinerary);
+    if (this.itinerary.dayNum == 1){
+      this.activeName = "myMap";
+    } else {
+      this.activeName = "1";
+    }
   },
   mounted() {
     let self = this;
     this.$emit("loadingComplete");
   },
   watch: {
-    itinerary: function(){
+    itinerary: function(newVal, oldVal){
       this.$emit("loadingComplete");
       this.resetItineraryData(this.itinerary);
+      if (newVal.dayNum == 1){
+        this.activeName = "myMap";
+      } else {
+        this.activeName = "1";
+      }
     }
   },
   beforeUpdate() {

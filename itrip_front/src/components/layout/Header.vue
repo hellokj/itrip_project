@@ -3,8 +3,8 @@
         <!-- {{isLocked}}
         {{editMode}} -->
         <!-- {{editMode}} -->
-
-        <!-- Edit mode modal -->
+        
+        <!-- Edit mode modal -->    
         <b-modal ref="edit-tutorial" size="md" hide-footer hide-backdrop hide-header>
             <div class="edit-tutorial" style="width: 100%; height:auto; text-align:center;">
                 <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">點擊以下圖示以退出編輯模式</h3>
@@ -33,17 +33,19 @@
             </div>
         </b-modal>
 
+        <!-- for mode test -->
         <div v-if="editMode" style="background-color: transparent; position:absolute; left: 60%; top: 5px; text-align: center;"><b-button id="show-btn" @click="showEditTutorial">Open Modal</b-button></div>
         <div v-if="isLocked" style="background-color: transparent; position:absolute; left: 60%; top: 0px; text-align: center;"><b-button id="show-btn" @click="showLockedTutorial">Open Modal</b-button></div>
+        
         <div class="logo">
             <img :src="require('./'+logo)" alt="iTripLogo" @click="toHome">
             <div class="dropdown">
-                <i @click="myFunction()" class="fas fa-bars"></i>
-                <div id="myDropdown" class="dropdown-content">
-                    <!-- <router-link to="/trip">開始規劃</router-link> -->
-                    <tripInfoInput/>
+                <button class="btn-burger" @click="burgerClicked()"><i  class="fas fa-bars"></i></button>
+                <div id="myDropdown" class="dropdown-content" :class="{'show-burger-content': burgerShow}">
+                    <router-link to="/trip">規劃</router-link>
                     <router-link to="/">首頁</router-link> 
-                    <a href="#">登入</a>
+                    <!-- <a href="#">登入</a> -->
+                    <ProfileButton type="text" :btnStyle="{ border: 'none', background:'none', color:'#000', width: '60px'}" :plain="true" />
                 </div>
             </div>
         </div>
@@ -137,6 +139,8 @@ export default {
             sortValueBy: 'ORDER_SELECTED',
             val: '',
             isLocked: false,
+            burgerShow: false,
+            burgerDropdown: false,
         }
     },
     created: function() {
@@ -171,8 +175,11 @@ export default {
         setCity(node) {
             this.selected_city = node.parentId;
         },
-        myFunction() {
-            document.getElementById("myDropdown").classList.toggle("show");
+        burgerClicked() {
+            this.burgerShow = !this.burgerShow;
+        },
+        burgerBlurred() {
+            this.burgerShow = false;
         },
         clickOutSide(event) {
             if (!event.target.matches('.fa-bars')) {
@@ -408,6 +415,7 @@ export default {
 
     /* Links inside the dropdown */
     .dropdown-content a {
+        width: 100%;
         color: black;
         padding: 12px 16px;
         text-decoration: none;
@@ -418,8 +426,14 @@ export default {
     .dropdown-content a:hover {background-color: #ddd}
 
     /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {display:block;}
-
+    .show-burger-content {display:block;}
+    .btn-burger {
+        padding: 0px;
+        color: #FFF;
+        border: none;
+        background: transparent;
+        outline: none;
+    }
     .fa-bars{
         font-size: 30px;
         color: white;
