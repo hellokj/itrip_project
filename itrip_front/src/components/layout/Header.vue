@@ -568,9 +568,10 @@ export default {
         padding: 0px;
     }
     .dropdown {
-        display: inline-block;
+        display: block;
         position: relative;
         align-self: center;
+        float: right;
     }
     .btns {
         display: none;

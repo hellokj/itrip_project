@@ -29,7 +29,7 @@
                                 #{{t}}
                             </el-tag> 
                         </div>
-                        <i class="pt-1 fas fa-ellipsis-h" style="color:#db4e35"></i>
+                        <!-- <i class="pt-1 fas fa-ellipsis-h" style="color:#db4e35"></i> -->
                     </div>
                     <a-tag v-if="sortBy === 'ig_post_num'" class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i><b>   {{spot.ig_post_num}}</b> 次<b>TAG</b></a-tag>
                     <a-tag v-if="sortBy === 'checkins'" class="mt-2 fb-checkins-tag" color="#3b5998"><i class="fas fa-map-marker"></i><b>   {{spot.checkins}}</b> 次<b>打卡</b></a-tag>
@@ -416,6 +416,9 @@ export default {
     }
     .fa-ellipsis-h {
         display: block;
+    }
+    .tags-row {
+        display: none;
     }
 }
 </style>
