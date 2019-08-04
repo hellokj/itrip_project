@@ -47,13 +47,15 @@
               <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
               <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
             </el-checkbox-group>
+            <i class="ml-5 mt-1 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
           </div>
           <Map 
             id="map"
+            ref="map"
             class="map"
             :key="updateMap"
             :spots="spots" :togos="togo" :routes="routes" 
-            :page="page" :perPage="perPage" :spotPage="spotPage" 
+            :page="page" :perPage="perPage" :spotPage="spotPage"
             :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
       </b-col>
@@ -161,8 +163,7 @@ export default {
             this.$bus.$emit('toggle', {id: 'Togos'});
         }
         this.isAddSpotLocked = true;
-        //this.$set(this.itinerary, 'togos', this.togos);
-        //this.$set(this.itinerary, 'travelInfos', this.travelInfos);
+        this.$refs.map.centerRoutes();
       }
     },
     addTravelInfo(startOb, destOb) {
@@ -298,7 +299,7 @@ export default {
         //console.log('!')
         if(this.checkList.includes('路徑指示')) {
           this.centerSpot = Object.assign({}, this.itinerary.togos[this.page][index]);;
-          this.$set(this.centerSpot, 'zoom', 12);
+          this.$set(this.centerSpot, 'zoom', 10);
           this.$set(this.centerSpot, 'index', index);
         }
       }
@@ -492,6 +493,8 @@ export default {
         //console.log(res.data)
         self.itinerary = res.data.data;
         self.currentAccessId = self.qcurrentAccessId;
+        // reset routes
+        self.resetRoutes();
       }))
       .catch(function (error) {
         console.log(error);
@@ -504,6 +507,10 @@ export default {
         day: s.getDate()
       }
       return ob;
+    },
+    centerRoutes() {
+      this.$refs.map.centerRoutes();
+
     }
   },
   computed: {
@@ -524,10 +531,8 @@ export default {
     checkList: function(newVal, oldVal) {
       if(!newVal.includes('景點圖標')) {
         if(this.itinerary.togos[this.page][0] !== undefined) {
-          this.centerSpot = this.itinerary.togos[this.page][0];  
-        }
-        else {
-          this.centerSpot = this.itinerary.spots[this.page][0];
+          this.centerSpot = this.itinerary.togos[this.page][0];
+          this.$set(this.centerSpot, 'zoom', 12);
         }
       }
     },
@@ -636,7 +641,6 @@ export default {
     }
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
-    
   },
   beforeMount() {
     if(this.qviewId !== undefined) {
@@ -676,7 +680,6 @@ export default {
     } else {
       this.paramProp = data;
     }
-    let token = this.$store.state.userToken
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
