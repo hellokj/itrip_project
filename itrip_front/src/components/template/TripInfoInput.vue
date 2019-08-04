@@ -65,7 +65,7 @@ export default {
     },
     methods: {
         submit() {
-            this.$router.push({path: '/trip'});
+            //this.$router.push({path: '/trip'});
             this.isSubmit = true;
         },
     },
