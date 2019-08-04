@@ -410,12 +410,14 @@ export default {
           });
         }
         else {
+          this.message.close()
           this.message = Message({
-            duration: 0,
+            duration: 3,
             showClose: true,
             message: '行程可編輯!',
             type: 'success'
           });
+          
         }
       },
       editMode: function(newVal){
