@@ -90,9 +90,9 @@ io.on('connection', (socket) => {
         console.log("......", socketHandler.checkLockedItineraries(itineraryId, token));
         if (socketHandler.checkLockedItineraries(itineraryId, token) == -1){
             io.emit('checkedReply', false); // locked
-            let otherMembers = await socketHandler.lockItinerary(itineraryId, token);
-            for (let i = 1; i < otherMembers.length; i++){
-                io.to(otherMembers[i].socketId).emit('notifyLocked'); // 上鎖
+            let otherMembersSocketIds = await socketHandler.lockItinerary(itineraryId, token);
+            for (let i = 1; i < otherMembersSocketIds.length; i++){
+                io.to(otherMembersSocketIds[i]).emit('notifyLocked'); // 上鎖
             }
         }else {
             io.emit('checkedReply', true); // unlocked
@@ -116,11 +116,12 @@ io.on('connection', (socket) => {
     socket.on("releaseEditMode", async function(data){
         let itineraryId = data.itineraryId;
         let token = data.token;
-        let others = await socketHandler.releaseItinerary(itineraryId, token);
-        console.log("通知這些人", others);
+        let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
+        console.log("通知這些人", otherMembersSocketIds);
         console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
-        for (let i = 0; i < others.length; i++){
-            io.to(others[i].socketId).emit('unlockNotification'); // 通知解鎖
+        for (let i = 0; i < otherMembersSocketIds.length; i++){
+            console.log("人", otherMembersSocketIds[i]);
+            io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
         }
     })
 

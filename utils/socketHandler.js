@@ -102,14 +102,14 @@ class SocketHandler {
       this.lockedItineraryIds.push(itinerary._id);
       let editorId = this.verifyToken(token); // 編輯者id
       console.log("token editor id", editorId);
-      return this.notify(itinerary, editorId);
+      return this.getNotifiedMembers(itinerary, editorId);
     }else {
       // 沒找到 抱錯
       return null;
     }
   }
 
-  notify(itinerary, editorId){
+  getNotifiedMembers(itinerary, editorId){
     console.log("editor id", editorId);
     let editor = itinerary.memberIds.filter(function(value, index, arr){
       return value == editorId;
@@ -118,16 +118,20 @@ class SocketHandler {
       return value !== editorId;
     });
     // 再由此ids去找到各自對應的socketIds
-    let members = []; // 裡面是 connectedMember { socketId: xxx, memberId: xxx} Object
+    let membersSocketIds = []; // 裡面是 connectedMember { socketId: xxx, memberId: xxx} Object
     console.log("editor handler", editor);
     console.log("connected members handler", this.membersTable);
     for (let i = 0; i < othersId.length; i++){
+      let socketIds = [];
       if (this.membersTable.containsKey(othersId[i])){
-        members.push(othersId[i]);
+        socketIds = this.membersTable.get(othersId[i]);
+        for (let j = 0; j < socketIds.length; j++){
+          membersSocketIds.push(socketIds[j]);
+        }
       }
     }
-    console.log("handler members", members);
-    return members;
+    console.log("handler membersSocketIds", membersSocketIds);
+    return membersSocketIds;
   }
 
   async releaseItinerary(itineraryId, token){
@@ -137,18 +141,9 @@ class SocketHandler {
     this.lockedItineraryIds = this.lockedItineraryIds.filter(function(value, index, arr){
       return value !== itineraryId;
     });
-    // 要通知剩餘其他人解鎖
-    let othersId = itinerary.memberIds.filter(function(value, index, arr){
-      return value !== editorId;
-    });
-    let members = []; // 裡面是 members { socketId: xxx, memberId: xxx} Object
-    for (let i = 0; i < othersId.length; i++){
-      if (this.membersTable.containsKey(othersId[i])){
-        members.push(othersId[i]);
-      }
-    }
-    console.log("我要通知這些人", members);
-    return members;
+    let membersSocketIds = this.getNotifiedMembers(itinerary, editorId);
+    console.log("我要通知這些socketIds", membersSocketIds);
+    return membersSocketIds;
   }
 
   // 改成membersTable 
