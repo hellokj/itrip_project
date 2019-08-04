@@ -32,7 +32,7 @@
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails" :lockIcon="lockIcon"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
-          <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @shareTrip="shareTrip"/>
+          <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @saveShare="saveShare"/>
         </div>
         <el-dropdown ref="dropdown" placement="bottom-start" trigger="click">
           <span>
@@ -56,7 +56,7 @@
             </el-dropdown-item>
             <el-dropdown-item>
               <div class="pl-3 row">
-                <SharingLink id="mobile-sharingLink" :shareUrl="shareUrl" :shareId="shareId" @shareTrip="shareTrip"/>分享行程
+                <SharingLink id="mobile-sharingLink" @saveShare="saveShare" :shareUrl="shareUrl" :shareId="shareId"/>儲存及分享
               </div>
             </el-dropdown-item>
           </el-dropdown-menu>         
@@ -205,15 +205,18 @@ export default {
           this.memberEmail = '';
         }
       },
-      shareTrip: function() {
+      saveShare: function() {
         if(this.shareId === undefined && this.shareIdProp === undefined) {
           //console.log(this.shareIdProp)
           let self = this;
           this.getDate();
-          this.$emit('share', this.tripName, this.tripDate);  
+          this.$emit('saveShare', this.tripName, this.tripDate);
+          //console.log(this.tripDate);
+
+          //this.$emit('share', this.tripName, this.tripDate);  
         }
         else {
-          this.$emit('updateShare', this.shareIdProp, this.tripName, this.tripDate);
+          //this.$emit('updateShare', this.shareIdProp, this.tripName, this.tripDate);
         }
       },
       changePage(){
@@ -423,10 +426,7 @@ export default {
       },
       itinerary: {
         handler: function(newVal, oldVal) {
-          // if(!this.itineraryLoaded) {
-          //   this.updateTabs();
-          //   this.itineraryLoaded = true;
-          // }
+          console.log(newVal);
           for(let i=this.tabs.length;i<newVal.dayNum;i++) {
             this.tabs.push(i);
           }

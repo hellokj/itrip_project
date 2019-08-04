@@ -12,7 +12,7 @@
         :page="page" :isLocked="isLocked" :itinerary="itinerary"
         @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 
         @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @addMember="addMember" 
-        @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember" @hoverItem="hoverItem"/>
+        @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember" @hoverItem="hoverItem" @saveShare="saveShare"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -234,6 +234,19 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
+    },
+    saveShare(date, name) {
+      apiShareTrip(date, name, this.togos.length,this.togos, this.travelInfos)
+        .then((function (res) {
+            self.$message.success('行程儲存完成，請記住目前網址!');
+            self.$router.push('/trip?viewId=' + _id);
+            let viewId = res.data.data._id;
+            //console.log(self.itinerary)
+            self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
+        }))
+        .catch(function (error) {
+            console.log(error);
+        });
     },
     addMember(memberId) {
       let memberIds = this.itinerary.memberIds;
@@ -548,7 +561,7 @@ export default {
     itinerary: {
       handler: function(newVal, oldVal){
         console.log(newVal)
-        if(this.itinerary.memberIds.length === 0) {
+        if(this.itinerary.memberIds === undefined || this.itinerary.memberIds.length === 0) {
           this.$socket.emit('updateItinerary', {itinerary: newVal});
         }
         else {
@@ -589,6 +602,7 @@ export default {
     }
   },
   created () {
+    //console.log('created!')
     // [註冊監聽事件]
     // context
     let self = this;
@@ -602,6 +616,7 @@ export default {
     });
     this.$bus.$on('createTrip', event => {
       self.itinerary = Object.assign({}, event.itinerary);
+      console.log(self.itinerary)
       //console.log(self.itinerary)
     });
     

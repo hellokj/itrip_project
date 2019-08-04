@@ -1,11 +1,10 @@
 <template>
-    <el-dropdown ref="dropdown" placement="bottom-start" trigger="click" @click.native="$emit('shareTrip')">
+    <el-dropdown ref="dropdown" placement="bottom-start" trigger="click" @click.native="$emit('saveShare')">
         <span class="el-dropdown-link">
-            <i title="分享" id="share" class="fas fa-share-square" style="color:#8a8d91;cursor:pointer;"></i> 
+            <i title="儲存及分享" id="share" class="fas fa-share-square" style="color:#8a8d91;cursor:pointer;"></i> 
         </span>
         <el-dropdown-menu slot="dropdown">
             <social-sharing
-            @open="$emit('shareTrip')"
             description="跟著IG粉絲一起玩!" 
             :url="shareUrl"
             inline-template>
