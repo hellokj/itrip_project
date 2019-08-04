@@ -145,22 +145,27 @@ const apiDeleteItinerary = (id, token) => {
 
 // share api
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
-  let date = startDate.split('-');
   let id = new Date().getTime();
-  //console.log(id);
-  
+  let date;
+  if(typeof(startDate) === 'string') {
+    date = new Date(Date.parse(startDate));
+  }
+  else {
+    date = startDate;
+  }
   let data = {
     id: id,
     startDate: {
-      year: parseInt(date[0]),
-      month: parseInt(date[1]),
-      day: parseInt(date[2])
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate()
     },
     name: name,
     dayNum: dayNum,
     togos: togos,
     travelInfos: travelInfos
   }
+  //console.log(data)
   return shareRequest.post('/shareItineraries', data);
 };
 
@@ -193,6 +198,10 @@ const apiUpdateShare = (id, startDate, name, dayNum, togos, travelInfos) => {
 // Auth api
 const apiLogIn = (authData) => {
   return authRequest.post('/logIn', authData);
+}
+
+const apiFbLogIn = (authData) => {
+  return authRequest.post('/fbLogIn', authData);
 }
 
 const apiSignUp = (user) => {
@@ -236,6 +245,7 @@ export {
     apiUpdateShare,
     apiGetMember,
     apiLogIn,
+    apiFbLogIn,
     apiSignUp,
     apiModifyProfile,
     apiSaveTrip,

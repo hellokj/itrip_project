@@ -1,15 +1,29 @@
 <template>
   <el-main v-model="update">
-      <el-container style="margin-bottom: 20px;">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{}" @click.native="changeToCarousel">個人檔案</el-breadcrumb-item>
-          <el-breadcrumb-item>我的行程</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ title }}</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-container>
-      <el-tabs type="border-card" v-model="index">
+    <el-container style="margin-bottom: 0px;">
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{}" @click.native="changeToCarousel">個人檔案</el-breadcrumb-item>
+        <el-breadcrumb-item>我的行程</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ title }}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ itinerary.name }}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-container>
+    <div style="height: 7vh; margin: 0px auto;">
+      <el-popover
+        placement="left-start"
+        width="160"
+        v-model="visible">
+        <p>確定要刪除此行程？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button type="text" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
+          <el-button size="mini" type="primary" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
+        </div>
+        <el-button slot="reference" icon='el-icon-delete' round style="height: min-content; float: right;">刪除行程</el-button>
+      </el-popover>
+      <!-- <el-button style="border-radius: 50; padding: 5px; margin:0px auto; " @click="confirmDeleteOrNot(true, itinerary)"><i class="el-icon-delete"></i></el-button> -->
+    </div>
+      <el-tabs type="border-card" v-model="index" @tab-click="handleClick">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container style="display: flex">
             <el-container style="width: 70%">
@@ -28,22 +42,12 @@
                 {{ getLockStatus() ? "設為不公開" : "設為公開" }}
               </el-link>
               <el-link icon="el-icon-edit" style="padding: 5px; margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-              <el-popover
-                placement="top"
-                width="160"
-                v-model="visible">
-                <p>確定刪除此行程嗎？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button type="primary" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
-                  <el-button size="mini" type="text" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
-                </div>
-                <el-link slot="reference" icon="el-icon-delete" style="padding: 5px; margin:0px auto;" @click="visible = true">刪除行程</el-link>
-              </el-popover>
+              <!-- <el-link icon="el-icon-delete" style="padding: 5px; margin:0px auto;" @click="confirmDeleteOrNot(true, itinerary)">刪除行程</el-link> -->
             </el-container>
           </el-container>
           <el-table
             :data="day"
-            height="400"
+            height="385"
             border
             style="width: 100%">
             <el-table-column
@@ -104,7 +108,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="查看地圖" v-model="itinerary.travelInfos[0]">
+        <el-tab-pane name="myMap" label="查看地圖" v-model="itinerary.travelInfos[0]">
           <el-container style="display: flex">
             <el-container style="width: 70%">
               <el-divider 
@@ -122,21 +126,10 @@
                 {{ getLockStatus() ? "設為不公開" : "設為公開" }}
               </el-link>
               <el-link icon="el-icon-edit" style="padding: 5px; margin:0px auto;" @click="modifyItinerary(itinerary)">編輯行程</el-link>
-              <el-popover
-                placement="top"
-                width="160"
-                v-model="visible">
-                <p>確定刪除此行程嗎？</p>
-                <div style="text-align: right; margin: 0px">
-                  <el-button type="primary" size="mini" @click="confirmDeleteOrNot(true, itinerary)">確定</el-button>
-                  <el-button size="mini" type="text" @click="confirmDeleteOrNot(false, itinerary)">取消</el-button>
-                </div>
-                <el-link slot="reference" icon="el-icon-delete" style="padding: 5px; margin:0px auto;">刪除行程</el-link>
-              </el-popover>
             </el-container>
           </el-container>
           <el-container>
-            <MemberMap :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
+            <MemberMap v-if="activeName=='myMap'" :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
           </el-container>
         </el-tab-pane>
       </el-tabs>
@@ -167,10 +160,18 @@ export default {
       update: 0,
       visible: false,
       isConfirmed: false, // check wheather delete or not
-      isLocked: false // check if itinerary is locked by server
+      isLocked: false, // check if itinerary is locked by server
+      activeName: '',
     }
   },
   methods: {
+    handleClick(tab, event) {
+      if(tab.name=='myMap'){
+        this.activeName = "myMap";
+      }else {
+        this.activeName = "";
+      }
+    },
     confirmDeleteOrNot: function(state, itinerary){
       this.visible = false;
       this.isConfirmed = state;
@@ -179,7 +180,8 @@ export default {
     deleteItinerary: async function(itinerary){
       if (this.isConfirmed){
         await apiDeleteItinerary(itinerary._id, this.$store.state.userToken);
-        this.$bus.$emit("changeToCarousel");
+        this.$emit("reloadItineraries");
+        this.$emit("changeToCarousel");
       }
     },
     changeLockStatus: function(){
@@ -281,32 +283,34 @@ export default {
             min: 0
           };
         }
-        for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3 0 0 0 ...
-          // 每天的行程
-          let tmpTogo = {};
-          let index = j + 1;
-          let name = this.itinerary.togos[i][j].name;
-          let address = this.addressFormat(this.itinerary.togos[i][j].address);
-          let stopTime = this.itinerary.togos[i][j].stopTime;
-          let memo = this.itinerary.togos[i][j].memo;
-          // let memo = "lalalalal";
-          let startTime = baseTime;
-          if (j !== 0 && this.itinerary.travelInfos[i] !== null){
-            if (this.itinerary.travelInfos[i] !== undefined){
-              startTime = 
-                this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
+        if (this.itinerary.togos.length !== 0){
+          for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3 0 0 0 ...
+            // 每天的行程
+            let tmpTogo = {};
+            let index = j + 1;
+            let name = this.itinerary.togos[i][j].name;
+            let address = this.addressFormat(this.itinerary.togos[i][j].address);
+            let stopTime = this.itinerary.togos[i][j].stopTime;
+            let memo = this.itinerary.togos[i][j].memo;
+            // let memo = "lalalalal";
+            let startTime = baseTime;
+            if (j !== 0 && this.itinerary.travelInfos[i] !== null){
+              if (this.itinerary.travelInfos[i] !== undefined){
+                startTime = 
+                  this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
+              }
             }
+            tmpTogo = {
+              index: index,
+              startTime: startTime,
+              stopTime: stopTime,
+              name: name,
+              address: address,
+              memo: memo
+            };
+            // console.log("tmpTogo", tmpTogo);
+            tmpDay.push(tmpTogo);
           }
-          tmpTogo = {
-            index: index,
-            startTime: startTime,
-            stopTime: stopTime,
-            name: name,
-            address: address,
-            memo: memo
-          };
-          // console.log("tmpTogo", tmpTogo);
-          tmpDay.push(tmpTogo);
         }
         if (this.itinerary.travelInfos[i] !== null){
           if (this.itinerary.travelInfos[i] !== undefined){
@@ -328,40 +332,43 @@ export default {
     },
     // 修改過後的取出資料方式
     resetItineraryData: function(itinerary){
-      console.log('itinerary', itinerary);
+      //console.log('itinerary', itinerary);
       this.days = [];
       for (let i = 0; i < itinerary.dayNum; i++){ // 天數
         var tmpDay = [];
-        for (let j = 0; j < itinerary.togos[i].length; j++){
-          let togo = itinerary.togos[i][j];
-          let index = j + 1;
-          let name = togo.name;
-          let address = this.addressFormat(togo.address);
-          let stopTime = togo.stopTime;
-          let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
-          let startTime = togo.startTime;
-          let endTime = togo.endTime;
-          let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
-          let memo = togo.memo;
-          let traffic = "";
-          
-          let tmpTogo = {
-            index: index, // No.
-            name: name, // 景點名稱
-            address: address, // 地址
-            stopTime: stopTime, 
-            stopTimeFormat: stopTimeFormat, // 停留時間
-            startTime: startTime, 
-            endTime: endTime,
-            stayTimeFormat: stayTimeFormat, // 開始時間
-            memo: memo, // 備忘錄
-            traffic: traffic // 交通時間
+        if (itinerary.togos.length !== 0){
+          for (let j = 0; j < itinerary.togos[i].length; j++){
+            let togo = itinerary.togos[i][j];
+            let index = j + 1;
+            let name = togo.name;
+            let address = this.addressFormat(togo.address);
+            let stopTime = togo.stopTime;
+            let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
+            let startTime = togo.startTime;
+            let endTime = togo.endTime;
+            let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
+            let memo = togo.memo;
+            let traffic = "";
+            
+            let tmpTogo = {
+              index: index, // No.
+              name: name, // 景點名稱
+              address: address, // 地址
+              stopTime: stopTime, 
+              stopTimeFormat: stopTimeFormat, // 停留時間
+              startTime: startTime, 
+              endTime: endTime,
+              stayTimeFormat: stayTimeFormat, // 開始時間
+              memo: memo, // 備忘錄
+              traffic: traffic // 交通時間
+            }
+            tmpDay.push(tmpTogo);
           }
-          tmpDay.push(tmpTogo);
         }
-        for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
-        
-          tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
+        if (this.itinerary.travelInfos[i] !== undefined){
+          for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
+            tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
+          }
         }
         this.days.push(tmpDay);
       }
@@ -397,7 +404,7 @@ export default {
       //this.$router.push({path: '/trip'});
       //console.log(this.isLocked)
       
-      this.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
+      this.$router.push('/trip?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
       
     },
     getLockStatus: function(){
@@ -448,15 +455,25 @@ export default {
     console.log("itinerary create", this.itinerary);
     // this.resetDetailInfo();
     this.resetItineraryData(this.itinerary);
+    if (this.itinerary.dayNum == 1){
+      this.activeName = "myMap";
+    } else {
+      this.activeName = "1";
+    }
   },
   mounted() {
     let self = this;
     this.$emit("loadingComplete");
   },
   watch: {
-    itinerary: function(){
+    itinerary: function(newVal, oldVal){
       this.$emit("loadingComplete");
       this.resetItineraryData(this.itinerary);
+      if (newVal.dayNum == 1){
+        this.activeName = "myMap";
+      } else {
+        this.activeName = "1";
+      }
     }
   },
   beforeUpdate() {

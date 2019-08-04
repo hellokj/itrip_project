@@ -26,13 +26,13 @@
         <div class="mt-2 mr-1 save-trip">
           <i title="編輯行程" id="edit" class="fas fa-edit" 
            @click="requestEdit"
-           :style="[isLocked ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
+           :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
            style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
-          <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails"
+          <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails" :lockIcon="lockIcon"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
-          <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @shareTrip="shareTrip"/>
+          <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @saveShare="saveShare"/>
         </div>
         <el-dropdown ref="dropdown" placement="bottom-start" trigger="click">
           <span>
@@ -40,8 +40,10 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item >
-              
-              <i title="儲存行程" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 儲存行程</i>
+            <i title="編輯行程" id="edit" class="fas fa-edit" 
+            @click="requestEdit"
+            :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
+            style="color:#8a8d91;font-size:15px;cursor: pointer;">編輯行程</i>
             </el-dropdown-item>
             <el-dropdown-item >
               <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 匯出成PDF</i>
@@ -54,7 +56,7 @@
             </el-dropdown-item>
             <el-dropdown-item>
               <div class="pl-3 row">
-                <SharingLink id="mobile-sharingLink" :shareUrl="shareUrl" :shareId="shareId" @shareTrip="shareTrip"/>分享行程
+                <SharingLink id="mobile-sharingLink" @saveShare="saveShare" :shareUrl="shareUrl" :shareId="shareId"/>儲存及分享
               </div>
             </el-dropdown-item>
           </el-dropdown-menu>         
@@ -98,7 +100,8 @@
                       <TogoItem :togo="togo"
                       @updateStopTime="updateStopTime"
                       @deleteTogo="$emit('deleteTogo', index)"
-                      @getNearby="getNearby"/>
+                      @getNearby="getNearby"
+                      @mouseOver="$emit('hoverItem', 'togos', index)"/>
                     </div>
                     <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"/>
                   </div>
@@ -130,7 +133,6 @@ export default {
         oldIndex: '',
         newIndex: '',
         travelInfos: Array,
-        tabCounter: 0,
         tabs: [0],
         currentPage: 0,
         tripName: '我的旅行',
@@ -152,7 +154,6 @@ export default {
         newMemberId: '',
         shareIdProp: undefined,
         editMode: false,
-        isLocked: false,
       }
     },
     components: {
@@ -168,11 +169,16 @@ export default {
       travelInfo: Array,
       page: Number,
       dayNum: Number,
-      shareId: Number,
+      shareId: String,
       currentAccessId: String,
       isLockedProp: Boolean,
       isLocked: Boolean,
       itinerary: Object
+    },
+    computed: {
+      lockIcon() {
+        return this.isLocked || this.itinerary.memberIds === undefined || this.itinerary.memberIds.length === 0;
+      }
     },
     methods: {
       saveTrip() {
@@ -199,15 +205,18 @@ export default {
           this.memberEmail = '';
         }
       },
-      shareTrip: function() {
+      saveShare: function() {
         if(this.shareId === undefined && this.shareIdProp === undefined) {
           //console.log(this.shareIdProp)
           let self = this;
           this.getDate();
-          this.$emit('share', this.tripName, this.tripDate);  
+          this.$emit('saveShare', this.tripName, this.tripDate);
+          //console.log(this.tripDate);
+
+          //this.$emit('share', this.tripName, this.tripDate);  
         }
         else {
-          this.$emit('updateShare', this.shareIdProp, this.tripName, this.tripDate);
+          //this.$emit('updateShare', this.shareIdProp, this.tripName, this.tripDate);
         }
       },
       changePage(){
@@ -229,7 +238,6 @@ export default {
         this.$emit('togos-changeOrder', this.togos_prop, this.oldIndex, this.newIndex);
       },
       newTab: function() {
-        this.tabs.push(this.tabCounter++);
         this.$emit('add-new-day');
       },
       addMember: function() {
@@ -285,7 +293,7 @@ export default {
           this.togos.pop();
           this.travelInfos.pop();
           this.$message.error('時間超出本日範圍!');
-          throw 'DAY LIMIT EXCEEDED';
+          //throw 'DAY LIMIT EXCEEDED';
         }
         if(this.togos[index].startTime === undefined) {
           this.togos[index].startTime = {};
@@ -319,14 +327,9 @@ export default {
         return hr.toString().padStart(2, '0') + ':' + min.toString().padStart(2, 0);
       },
       closeTab: function(x) {
-        for (let i = 0; i < this.tabs.length; i++) {
-          if (x > 0 && this.tabs[i] === x) {
-            this.tabs.splice(i, 1)
-            this.tabCounter--;
-          }
-        }
-        for(let i=1;i<this.tabCounter;i++) {
-          if(this.tabs[i] != i) {
+        this.tabs.splice(x, 1);
+        for(let i=0;i<this.tabs.length;i++) {
+          if(i != this.tabs[i]) {
             this.tabs[i] = i;
           }
         }
@@ -351,18 +354,13 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      updateTabs: function(){
-        let self = this;
-        if (self.itinerary != undefined){ 
-          if (self.itinerary.togos != undefined){
-            for (let i = 0; i < self.itinerary.togos.length - 1; i++){
-              self.tabs.push(this.tabCounter++);
-            };
-            self.tripName = self.itinerary.name;
-            self.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-          }
-        }
-      },
+      // updateTabs: function(){
+      //   for (let i = this.itinerary.dayNum; i < self.itinerary.togos.length - 1; i++){
+      //     self.tabs.push(this.tabCounter++);
+      //   };
+      //   this.tripName = self.itinerary.name;
+      //   this.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
+      // },
       getCurrentMembers: function() {
         //console.log(this.itinerary);
         let self = this;
@@ -427,14 +425,16 @@ export default {
         immediate: true,
       },
       itinerary: {
-        handler: function() {
-          if(!this.itineraryLoaded) {
-            this.updateTabs();
-            this.itineraryLoaded = true;
+        handler: function(newVal, oldVal) {
+          console.log(newVal);
+          for(let i=this.tabs.length;i<newVal.dayNum;i++) {
+            this.tabs.push(i);
           }
+          //console.log(this.tabs)
           // get name and date from itinerary
-          this.tripName = this.itinerary.name;
-          this.tripDate = this.stringifyStartDate(this.itinerary.startDate);
+          this.tripName = newVal.name;
+          //console.log(newVal)
+          this.tripDate = this.stringifyStartDate(newVal.startDate);
           // console.log(this.itinerary)
         },
         deep: true
@@ -496,7 +496,6 @@ export default {
         this.tabs.push(i);
       }
       this.currentPage = this.page;
-      this.tabCounter = this.dayNum;
     },
     mounted() {
       let self = this;

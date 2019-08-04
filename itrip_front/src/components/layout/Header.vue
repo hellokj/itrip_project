@@ -93,7 +93,8 @@
         </div>
         <div class="btns">
             <div class="div_trip">
-                <router-link  to="/trip">規劃</router-link>
+                <!-- <router-link  to="/trip">開始規劃</router-link> -->
+                <tripInfoInput/>
             </div>
             <div class="div_home">
                 <router-link to="/">首頁</router-link>
@@ -107,8 +108,8 @@
 import Vue from 'vue'
 import HeaderSearch from '../HeaderSearch'
 import ProfileButton from '../ProfileButton'
+import tripInfoInput from '../../components/template/TripInfoInput'
 import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
-// import InputTag from 'vue-input-tag'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
@@ -119,7 +120,8 @@ export default {
     components: {
         ProfileButton,
         Treeselect,
-        HeaderSearch
+        HeaderSearch,
+        tripInfoInput
     },
     props: {editMode: Boolean, isLockedProp: Boolean},
     data() {
@@ -161,20 +163,7 @@ export default {
         selectTypeText() {
             this.$refs['type'].select();
         },
-        // searchClicked() {
-        //     this.params = makeParams(this.selected_city, this.selected_region, this.selected_type, this.input_name);
-        //     this.$emit('search-click', this.params);
-
-        //     if(window.innerWidth <= 768) {
-        //         this.$bus.$emit('toggle', {id: 'Spots'});
-        //     }
-        //     this.input_name = '';
-        // },
         searchClicked(city, region, type, name) {
-            // alert(city)
-            // alert(region)
-            // alert(type)
-            // alert(name)
             this.params = makeParams(city, region, type, name);
             this.$emit('search-click', this.params);
 
@@ -222,9 +211,9 @@ export default {
     },
     computed: {
         logo:  function(){
-                if( this.editMode ) return "itripLogoWhite.svg"
-                if( this.isLocked ) return "itripLogoWhite.svg"
-                else return "itripLogo.svg"
+            if( this.editMode ) return "itripLogoWhite.svg"
+            if( this.isLocked ) return "itripLogoWhite.svg"
+            else return "itripLogo.svg"
         },
         
     },
@@ -597,9 +586,10 @@ export default {
         padding: 0px;
     }
     .dropdown {
-        display: inline-block;
+        display: block;
         position: relative;
         align-self: center;
+        float: right;
     }
     .btns {
         display: none;

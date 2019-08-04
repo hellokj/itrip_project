@@ -177,13 +177,9 @@ export default {
   watch: {
     togos: function(newVal, oldVal) {
       if(this.togos !== undefined) {
-        let togoIcon = L.divIcon({
-        html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;">' + (this.togos.length) + '</i>',
-        iconSize: [15, 45],
-        className: 'myDivIcon'
-        });
-        this.togoIcons.push(togoIcon);
+        this.resetTogosIcon();
         this.updateMarkers();
+        this.resetRoutesArr();
       }
       
     },

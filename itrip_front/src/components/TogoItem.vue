@@ -1,5 +1,5 @@
 <template>
-    <div class="px-2 py-2 togo-item">
+    <div class="px-2 py-2 togo-item" @mouseover="$emit('mouseOver')">
         <el-card :body-style="{ padding: '0px' }" shadow="hover"> 
             <div class="card-container">
                 <div class="picture-container">

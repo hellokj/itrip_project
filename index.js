@@ -49,6 +49,15 @@ io.on('connection', (socket) => {
     console.log("on locked itineraries", socketHandler.lockedItineraryIds);
     // console.log("connected members", socketHandler.connectedMembers);
     console.log("membersTable", socketHandler.membersTable);
+    // 刪除垃圾行程表
+    // socketHandler.getAllItinerary().exec((err, res) => {
+    //     res.forEach((element) => {
+    //         if(element.name.includes('我的旅行')) {
+    //             //console.log(element.name)
+    //             socketHandler.deleteItinerary(element._id);
+    //         }
+    //     })
+    // })
     socket.on('QQ', (data) => {
         let token = data.token;
         console.log("偷啃", token);
@@ -99,11 +108,15 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on("updateItinerary", function(data){
+    socket.on("updateItinerary", async function(data){
         console.log("updateItinerary", data);
         let itinerary = data.itinerary;
         let editorId = data.memberId;
-        socketHandler.updateItinerary(itinerary, editorId);
+        let onlineMembers = await socketHandler.updateItinerary(itinerary, editorId);
+        console.log("i'm here.");
+        for (let i = 0; i < onlineMembers.length; i++){
+            io.to(onlineMembers[i]).emit('updateNotification', itinerary); // 上鎖
+        }
     });
 
     socket.on('SEND_MESSAGE', function(data) {

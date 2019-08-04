@@ -2,10 +2,12 @@
 <div class="signUpForm">
     <el-dialog
       title="註冊"
+      v-model="isVisible"
       :visible.sync="isVisible"
       width="30%"
       :close-on-click-modal="false"
       :modal="false"
+      @close="closeDialog"
       center>
       <span style="text-align: center">{{ hint }}</span>
       <div style="height: 10px"></div>
@@ -41,7 +43,7 @@ import { UserInfo } from '../../../utils/dataClass'
 export default {
   name: "SignUpForm",
   props: {
-    isVisible: Boolean
+    visible: Boolean
   },
   data() {
     var validateEmail = (rule, value, callback) => {
@@ -72,6 +74,7 @@ export default {
       }
     };
     return {
+      isVisible: false,
       hint: "",
       signUpForm: {
         name: "",
@@ -105,6 +108,9 @@ export default {
     };
   },
   methods: {
+    closeDialog: function(){
+      this.$emit('closeDialog');
+    },
     submit: function(){
       let self = this;
       let data = {
@@ -113,7 +119,6 @@ export default {
         email: this.signUpForm.email,
         password: this.signUpForm.password
       }
-      
       apiSignUp(data)
       .then(function(res) {
         if (res.data.status == 200){
@@ -132,14 +137,23 @@ export default {
       this.$refs["signUpForm"].resetFields();
     },
     toLogIn: function(){
-      this.$emit("changeFormState", {
-        isLogIn: true,
-        isSignUp: false,
-        isFbSignUp: false
-      });
+      this.$emit("changeView", "LoginForm");
+      // this.$emit("changeFormState", {
+      //   isLogIn: true,
+      //   isSignUp: false,
+      //   isFbSignUp: false
+      // });
       this.resetForm();
     }
   },
+  created() {
+    this.isVisible = this.visible;
+  },
+  watch: {
+    visible: function(newVal, oldVal){
+      this.isVisible = newVal;
+    }
+  }
 };
 </script>
 

@@ -84,16 +84,6 @@ export default {
   },
   mounted() {
     let vm = this;
-    window.fbAsyncInit = function () {
-        FB.init({
-          appId: "2353529008088124",
-          xfbml: true,
-          status: true,
-          cookie: true,
-          autoLogAppEvents: true,
-          version: "v3.3"
-        });
-      };
     if (!vm.$store.state.isAuthorized){
       //login
       FB.AppEvents.logPageView();

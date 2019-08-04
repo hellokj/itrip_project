@@ -47,6 +47,7 @@
 
 <script>
 import { apiSaveTrip, apiShareTrip } from '../../../utils/api.js'
+import { resolve } from 'q';
 export default {
     name: 'TripInfoInput',
     props: {
@@ -65,8 +66,15 @@ export default {
     },
     methods: {
         submit() {
-            this.$router.push({path: '/trip'});
+            //this.$router.push({path: '/trip'});
             this.isSubmit = true;
+            if(this.$store.state.userToken.length == 0) {
+                this.$router.push({path: '/trip'});
+            }
+            else {
+                this.$destroy();
+            }
+            //this.$destroy();
         },
     },
     watch: {
@@ -88,29 +96,41 @@ export default {
                 apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
                 .then((function (res) {
                     self.$message.success('行程儲存成功!');
-                    self.$router.push('/trip/?currentAccessId=' + self.$store.state.user.id + '&itineraryId=' + _id);
+                    self.$router.push('/trip?currentAccessId=' + self.$store.state.user.id + '&itineraryId=' + _id);
                     self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
                 }))
                 .catch(function (error) {
                     console.log(error);
-            });
-        }
-        else {
-            apiShareTrip(this.tripDate, this.tripName, 1,[], [])
-            .then((function (res) {
-                self.$router.push('/trip/?itineraryId=' + _id);
-                self.itinerary = res.data.data;
-                self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: self.itinerary});
-            }))
-            .catch(function (error) {
-                console.log(error);
-            });
-        }
+                });
+            }
+            else {
+                let promise = new Promise((resolve, reject) => {
+                    //let date = new Date(Date.parse(self.tripDate));
+                    let year = self.tripDate.getFullYear();
+                    let month = self.tripDate.getMonth() + 1;
+                    let day = self.tripDate.getDate();
+                    let itinerary = {startDate: {year:year, month:month, day:day}, name: self.tripName, isPublic: true, dayNum: 1, togos:[], travelInfos: []};
+                    resolve(itinerary);
+                });
+                promise.then((data) => {
+                    this.$bus.$emit('createTrip', {itinerary: data});
+                })
+               
+                //console.log(itinerary);
+                // apiShareTrip(this.tripDate, this.tripName, 1,[], [])
+                // .then((function (res) {
+                //     self.$message.success('可以開始編輯及分享行程囉!');
+                //     self.$router.push('/trip?viewId=' + _id);
+                //     let viewId = res.data.data._id;
+                //     //console.log(self.itinerary)
+                //     self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
+                // }))
+                // .catch(function (error) {
+                //     console.log(error);
+                // });
+            }
         }
     },
-    destroyed() {
-
-    }
 };
 </script>
 

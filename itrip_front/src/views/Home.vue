@@ -16,7 +16,6 @@
             <router-link class="btn-home" to="/">首頁</router-link>
           </b-col>
           <b-col class="col-trip text-start" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center" style="white-space: nowrap; overflow: hidden;">
-            <!-- <router-link class="btn-trip" to="/trip">開始規劃</router-link> -->
             <tripInfoInput/>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
@@ -268,7 +267,6 @@ export default {
     window.removeEventListener("resize", this.resizeHandler);
   },
   methods: {
-
     toggle: function(toggle){
       console.log(toggle);
     },

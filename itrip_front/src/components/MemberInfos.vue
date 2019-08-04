@@ -63,7 +63,7 @@ export default {
         reCheckPwd: "",
       },
       isValidate: false,
-      msg: "我這邊放一些提示訊息",
+      msg: "",
       originInfo: {},
       rules: {
         name: [
@@ -92,15 +92,28 @@ export default {
   methods: {
     modifyProfile: function(memberInfo){
       let self = this;
-      // console.log("我是memberInfo", memberInfo);
+      let token = this.$store.state.userToken;
+      console.log("我是memberInfo", memberInfo);
       if (memberInfo == {}){
         return;
       }else {
-        apiModifyProfile(memberInfo)
+        apiModifyProfile(memberInfo, token)
         .then(function(res){
           // success
-          // console.log(res);
-          self.msg = "修改成功"
+          console.log(res);
+          if (res.data.status == -1){
+            // self.msg = "修改成功"
+            self.$message.success("修改成功");
+            self.memberInfo.name = res.data.data.name;
+            self.memberInfo.account = res.data.data.email;
+            self.memberInfo.url = res.data.data.url;
+            let token = res.data.token;
+            // 應該要取得新的token
+            self.$store.dispatch("updateUserToken", token);
+          }else {
+            // self.msg = "修改失敗"
+            self.$message.error("修改失敗");
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -118,7 +131,7 @@ export default {
     let self = this;
     apiGetMember(this.$store.state.userToken)
       .then(function(res){
-        // console.log("apiGetMember", res);
+        console.log("apiGetMember", res);
         self.memberInfo.name = res.data.data.name;
         self.memberInfo.account = res.data.data.account;
         self.memberInfo.url = res.data.data.url;
