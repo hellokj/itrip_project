@@ -1,8 +1,8 @@
 <template>
     <header class="header" :class="{headerBackgroundEdit : editMode, headerBackgroundLocked: isLocked}">
-        <!-- {{isLocked}}
-        {{editMode}} -->
-        <!-- {{editMode}} -->
+        {{isLocked}}
+        {{editMode}}
+        {{isLockedProp}}
         
         <!-- Edit mode modal -->    
         <b-modal ref="edit-tutorial" size="md" hide-footer hide-backdrop hide-header>
@@ -211,9 +211,9 @@ export default {
     },
     computed: {
         logo:  function(){
-            if( this.editMode ) return "itripLogoWhite.svg"
-            if( this.isLocked ) return "itripLogoWhite.svg"
-            else return "itripLogo.svg"
+            if( this.editMode ) return "itripLogoWhite.png"
+            if( this.isLocked ) return "itripLogoWhite.png"
+            else return "itripLogo.png"
         },
         
     },
@@ -231,7 +231,9 @@ export default {
 </script>
 
 <style scoped>
-
+    .logo img {
+    font-family: 'Noto Serif TC', serif;
+}
 
 @font-face {
     font-family: logoFont;
