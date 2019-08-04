@@ -228,42 +228,43 @@ export default {
     },
     // 修改過後的取出資料方式
     resetItineraryData: function(itinerary){
+      //console.log('itinerary', itinerary);
       this.days = [];
       for (let i = 0; i < itinerary.dayNum; i++){ // 天數
-        let tmpDay = [];
-        for (let j = 0; j < itinerary.togos[i].length; j++){
-          let togo = itinerary.togos[i][j];
-          let index = j + 1;
-          let name = togo.name;
-          let address = this.addressFormat(togo.address);
-          let stopTime = togo.stopTime;
-          let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
-          let startTime = togo.startTime;
-          let endTime = togo.endTime;
-          let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
-          let memo = togo.memo;
-          let traffic = "";
-          if (itinerary.travelInfos[i] !== null){
-            if (itinerary.travelInfos[i] !== undefined){
-              for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
-                traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
-              }
+        var tmpDay = [];
+        if (itinerary.togos.length !== 0){
+          for (let j = 0; j < itinerary.togos[i].length; j++){
+            let togo = itinerary.togos[i][j];
+            let index = j + 1;
+            let name = togo.name;
+            let address = this.addressFormat(togo.address);
+            let stopTime = togo.stopTime;
+            let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
+            let startTime = togo.startTime;
+            let endTime = togo.endTime;
+            let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
+            let memo = togo.memo;
+            let traffic = "";
+            
+            let tmpTogo = {
+              index: index, // No.
+              name: name, // 景點名稱
+              address: address, // 地址
+              stopTime: stopTime, 
+              stopTimeFormat: stopTimeFormat, // 停留時間
+              startTime: startTime, 
+              endTime: endTime,
+              stayTimeFormat: stayTimeFormat, // 開始時間
+              memo: memo, // 備忘錄
+              traffic: traffic // 交通時間
             }
+            tmpDay.push(tmpTogo);
           }
-          let tmpTogo = {
-            index: index, // No.
-            name: name, // 景點名稱
-            address: address, // 地址
-            stopTime: stopTime, 
-            stopTimeFormat: stopTimeFormat, // 停留時間
-            startTime: startTime, 
-            endTime: endTime,
-            stayTimeFormat: stayTimeFormat, // 開始時間
-            memo: memo, // 備忘錄
-            traffic: traffic // 交通時間
+        }
+        if (this.itinerary.travelInfos[i] !== undefined){
+          for (let j = 0; j < itinerary.travelInfos[i].length; j++){ // 0 1 1
+            tmpDay[j+1].traffic = this.trafficFormat(itinerary.travelInfos[i][j].mode, itinerary.travelInfos[i][j].duration);
           }
-          // console.log("tmpTogo", tmpTogo);
-          tmpDay.push(tmpTogo);
         }
         this.days.push(tmpDay);
       }
