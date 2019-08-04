@@ -1,3 +1,5 @@
+const config = require('../config');
+const jwt = require('jsonwebtoken');
 const Member = require('../models/member');
 const NilChecker = require('../utils/nilChecker');
 const Response = require('../utils/responseHandler');
@@ -18,6 +20,7 @@ const findMemberByMail = async (req, res, next) => {
 }
 
 const modifyProfile = async (req, res, next) => {
+  // console.log("req body", req.body);
   let _id = req.decoded.memberId;
   let email = req.body.memberInfo.account;
   let url = req.body.memberInfo.url;
@@ -35,9 +38,22 @@ const modifyProfile = async (req, res, next) => {
     newMember.email = email;
     newMember.name = name;
     newMember.url = url;
-    newMember.password = newPassword;
+    if (newPassword == ""){
+      newMember.password = originPassword;
+    }else {
+      newMember.password = newPassword;
+    }
+    // console.log("newMember", newMember);
     await Member.updateMemberInfo(_id, newMember);
-    return res.json({status: -1, msg:'success', data: newMember});
+    let token = jwt.sign(
+      {memberId: String(newMember._id),
+        account: newMember.email,
+        name: newMember.name,
+        url: newMember.url}
+      ,config.jwtSalt, {
+      expiresIn: 60*60*24 //24 hrs
+      });
+    return res.json({status: -1, msg:'success', data: newMember, token: token});
   }else {
     // 沒找到
     Response(errorHandler.INVALID_EMAIL_OR_PASSWORD, null, res);

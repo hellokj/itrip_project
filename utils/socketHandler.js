@@ -29,7 +29,9 @@ class SocketHandler {
       socketIds = this.membersTable.get(memberId);
       socketIds.push(socketId);
     }else {
-      this.membersTable.put(memberId, [socketId]);
+      if (memberId !== undefined){
+        this.membersTable.put(memberId, [socketId]);
+      }
     }
     console.log("memberTable", this.membersTable);
     // let connectedMember = { socketId : socketId, memberId: memberId };
