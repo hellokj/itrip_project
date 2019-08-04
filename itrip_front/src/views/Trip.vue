@@ -21,7 +21,8 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isMapShown="isMapShown" :queryRegion="queryRegion" 
+          :queryCounty="queryCounty" :queryName="queryName" :isLocked="isLocked"
           @filter-spot="filterSpot" @hoverItem="hoverItem" @add-spot="addSpotToTrip" @get-spot="getSpot" @get-nearby="getNearby" @sort-spot="sortSpot" @refresh="refresh"/> 
       </b-col>
       <b-col
@@ -598,6 +599,11 @@ export default {
     },
     isLocked: function(newVal) {
       if(newVal) this.$emit('is-locked-on');
+      if(!newVal) {
+        if(this.message != null) {
+          this.message.close()
+        }
+      }
     }
   },
   created () {
@@ -649,17 +655,14 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    //this.isLocked = true; //modetest
-    // console.log(this.itinerary)
-    // for (let i=0;i<this.itinerary.togos.length;i++){
-    //   if(self.itinerary.travelInfos[i] !== undefined) {
-    //     self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
-    //   }
-    // };
     // listen to update itinerary
     this.$socket.on('updateNotification', (itineraryOb) => {
       self.itinerary = Object.assign({}, itineraryOb);
       console.log('being notified...')
+    })
+    // listen to unclock notification
+    this.$socket.on('unlockNotification', (data) => {
+      self.isLocked = false;
     })
 
     if (this.qname !== undefined) {
@@ -679,6 +682,9 @@ export default {
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
     this.$bus.$off('createTrip');
+    if(!this.isLocked && this.$store.state.userToken.length > 0) {
+      this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.$store.state.userToken});
+    }
   },
   destroy: function() {
     window.removeEventListener('resize', this.handleResize);

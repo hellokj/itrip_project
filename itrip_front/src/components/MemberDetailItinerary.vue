@@ -375,23 +375,24 @@ export default {
     },
     checkItineraryStatus: function (timeout = 10000) {
       let self = this;
-    return new Promise((resolve, reject) => {
-        let timer;
-        self.$socket.emit('checkItinerary', {itineraryId: this.itinerary._id});
-        function responseHandler(checkedReply) {
-            // resolve promise with the value we got
-            resolve(checkedReply);
-            clearTimeout(timer);
-        }
-      self.$socket.on('checkedReply', responseHandler); 
-        // set timeout so if a response is not received within a 
-        // reasonable amount of time, the promise will reject
-        timer = setTimeout(() => {
-            reject(new Error("timeout waiting for msg"));
-          self.$socket.removeListener('checkedReply', responseHandler);
-        }, timeout);
+      return new Promise((resolve, reject) => {
+          let timer;
+          self.$socket.emit('checkItinerary', {itineraryId: this.itinerary._id, token: self.$store.state.userToken});
+          function responseHandler(checkedReply) {
+              // resolve promise with the value we got
+              //console.log(checkedReply)
+              resolve(checkedReply);
+              clearTimeout(timer);
+          }
+        self.$socket.on('checkedReply', responseHandler); 
+          // set timeout so if a response is not received within a 
+          // reasonable amount of time, the promise will reject
+          timer = setTimeout(() => {
+              reject(new Error("timeout waiting for msg"));
+            self.$socket.removeListener('checkedReply', responseHandler);
+          }, timeout);
 
-      });
+        });
     },
     modifyItinerary: async function(){
       let self = this;

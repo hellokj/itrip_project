@@ -48,6 +48,7 @@
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
           :spot="spot" :index="index" :perPage="perPage" :currentPage="currentPage" :sortBy="sortBy" :isInTogos="isInTogos(spot._id)"
+          :isLocked="isLocked"
           @add-spot="$emit('add-spot', spot)" 
           @mouseOver="$emit('hoverItem', 'spots', index)"
           @show-link="Show"
@@ -129,6 +130,7 @@ export default {
       queryCounty: String,
       queryRegion: Array,
       queryName: String,
+      isLocked: Boolean
     },
     methods: {
       Show(Url){

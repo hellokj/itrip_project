@@ -24,11 +24,6 @@
           style="width:150px;"/>  
         </div>
         <div class="mt-2 mr-1 save-trip">
-          <i title="編輯行程" id="edit" class="fas fa-edit" 
-           @click="requestEdit"
-           :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
-           style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
-          <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
           <i title="匯出成PDF" id="pdf" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails" :lockIcon="lockIcon"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
@@ -40,10 +35,6 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item >
-            <i title="編輯行程" id="edit" class="fas fa-edit" 
-            @click="requestEdit"
-            :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
-            style="color:#8a8d91;font-size:15px;cursor: pointer;">編輯行程</i>
             </el-dropdown-item>
             <el-dropdown-item >
               <i title="匯出成PDF" class="fas fa-file-pdf" @click="saveTripAsPdf" style="color:#8a8d91;font-size:15px;cursor:pointer;"> 匯出成PDF</i>
@@ -154,6 +145,7 @@ export default {
         newMemberId: '',
         shareIdProp: undefined,
         editMode: false,
+        message: null
       }
     },
     components: {
@@ -181,42 +173,12 @@ export default {
       }
     },
     methods: {
-      saveTrip() {
-        if (this.$store.state.isAuthorized == false){
-           Message({
-            type: 'warning',
-            message: '請先登入!'
-          });
-          this.$store.dispatch("updateFormState", {
-            isLogIn: true,
-            isSignUp: false,
-            isFbSignUp: false
-          });
-        }else{
-          this.getDate();
-          let token = this.$store.state.userToken;
-          let _id = "";
-          if (this.itinerary._id != undefined && typeof(this.itinerary._id) !== Object){
-            _id = this.itinerary._id;
-          }
-          // console.log("itinerary", this.itinerary);
-          // console.log("_id", _id);
-          this.$emit('saveTrip', this.tripName, this.tripDate, this.memberEmail);
-          this.memberEmail = '';
-        }
-      },
       saveShare: function() {
         if(this.shareId === undefined && this.shareIdProp === undefined) {
           //console.log(this.shareIdProp)
           let self = this;
           this.getDate();
           this.$emit('saveShare', this.tripName, this.tripDate);
-          //console.log(this.tripDate);
-
-          //this.$emit('share', this.tripName, this.tripDate);  
-        }
-        else {
-          //this.$emit('updateShare', this.shareIdProp, this.tripName, this.tripDate);
         }
       },
       changePage(){
@@ -265,10 +227,7 @@ export default {
               self.$emit('addMember', self.memberEmail);
             }
             else {
-              Message({
-                type: 'warning',
-                message: '找不到該旅伴的資料，確定Email沒有打錯嗎?'
-              });
+              this.$message.warning('找不到該旅伴的資料，確定Email沒有打錯嗎?')
             }
           });
         }
@@ -366,13 +325,6 @@ export default {
       updatePage: function(){
         this.update++;
       },
-      // updateTabs: function(){
-      //   for (let i = this.itinerary.dayNum; i < self.itinerary.togos.length - 1; i++){
-      //     self.tabs.push(this.tabCounter++);
-      //   };
-      //   this.tripName = self.itinerary.name;
-      //   this.tripDate = new Date(self.itinerary.startDate.year, self.itinerary.startDate.month - 1, self.itinerary.startDate.day);
-      // },
       getCurrentMembers: function() {
         //console.log(this.itinerary);
         let self = this;
@@ -388,26 +340,6 @@ export default {
             self.memberEmails.push(element)
           }
         });
-      },
-      requestEdit: async function() {
-        if(!this.isLocked) {
-          let self = this;
-          this.$socket.emit('editRequest', {itineraryId: this.itinerary._id, memberId: this.currentAccessId, token: this.$store.state.userToken});
-          await this.$socket.on('canEdit', (res) => {
-            if(res === 'granted') {
-              self.editMode = true;
-              Message({
-                showClose: true,
-                duration: 0,
-                type: 'success',
-                message: '開始編輯'
-              })
-            }
-            else {
-              self.editMode = false;
-            }
-          })
-        }
       },
       getDate() {
         if (this.tripDate.date == ""){
@@ -470,7 +402,7 @@ export default {
       },
       isLocked: function(newVal, oldVal) {
         if(newVal) {
-          Message({
+          this.message = Message({
             duration: 0,
             showClose: true,
             message: '此行程正在編輯中...，請稍後',
@@ -478,7 +410,7 @@ export default {
           });
         }
         else {
-          Message({
+          this.message = Message({
             duration: 0,
             showClose: true,
             message: '行程可編輯!',
@@ -512,7 +444,7 @@ export default {
     mounted() {
       let self = this;
       if(this.isLocked) {
-        Message({
+        this.message = Message({
           showClose: true,
           duration: 0,
           message: '此行程正在編輯中...，請稍後!',
@@ -523,6 +455,12 @@ export default {
       this.$socket.on('notifyLocked', () => {
         self.isLocked = true;
       });
+    },
+    beforeDestroy() {
+      if(this.message != null) {
+        console.log('!')
+        this.message.close();
+      }
     }
 }
 </script>
