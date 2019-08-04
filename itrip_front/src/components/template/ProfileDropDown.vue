@@ -1,6 +1,6 @@
 <template>
   <el-dropdown trigger="hover" style="margin-right: 10px">
-    <span class="el-dropdown-link">個人檔案<i class="el-icon-arrow-down el-icon--right"></i>
+    <span style="white-space: nowrap; overflow: hidden;" class="el-dropdown-link">個人檔案<i class="el-icon-arrow-down el-icon--right"></i>
     </span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item @click.native="myProfile">我的行程</el-dropdown-item>

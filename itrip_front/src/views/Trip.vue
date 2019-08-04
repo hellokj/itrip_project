@@ -649,7 +649,7 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    //this.isLocked = true; //modetest
+    // this.isLocked = true; //modetest
     // console.log(this.itinerary)
     // for (let i=0;i<this.itinerary.togos.length;i++){
     //   if(self.itinerary.travelInfos[i] !== undefined) {
