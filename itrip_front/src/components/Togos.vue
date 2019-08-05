@@ -1,8 +1,8 @@
 <template>
   <div class="MyTrip">
     <!-- <div style="position: fixed; right: 30vw; top: 0px; width: 400px; height: 200px; background-color: transparent; color:#AAA; z-index: 30; font-size: 30px;"><p>editMode: {{editMode}}</p><p>  isLockedProp: {{isLockedProp}}</p></div> -->
-    <!-- <div v-if="lockIcon" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
-    <div v-if="!isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 10px;"><div style="position: absolute; right: 30px; top: 0px; width: 50px; color: lightblue;">編輯中</div><div class="lds-circle"><div></div></div></div> -->
+    <div v-if="lockIcon" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
+    <!-- <div v-if="!isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 10px;"><div style="position: absolute; right: 30px; top: 0px; width: 50px; color: lightblue;">編輯中</div><div class="lds-circle"><div></div></div></div> -->
     
     <div class="py-2 m-0 info-container">
       <div class="tripName">

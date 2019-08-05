@@ -695,6 +695,7 @@ export default {
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
     this.$bus.$off('createTrip');
+      console.log(this.$store.state.userToken);
     if(this.$store.state.userToken.length > 0) {
       this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.$store.state.userToken, isLocked: this.isLocked});
     }

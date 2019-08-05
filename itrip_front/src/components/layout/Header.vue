@@ -182,17 +182,27 @@ export default {
             }
             if(newVal === false) this.isLocked = false;
         },
-        isLocked: function(newVal) {
-            console.log("watch isLocked change")
-            if(!this.isLocked && this.atTrip) this.showEditTutorial();
-            else if(this.isLocked && this.atTrip) this.showLockedTutorial();
-            alert("isLocked: " + newVal)
+        isLocked: function(newVal, oldVal) {
+
+            if ( newVal && this.atTrip && oldVal !== null){ this.hideEditTutorial(); this.showLockedTutorial(); }
+            
+            else if (!newVal && this.atTrip && oldVal !== null){ this.hideLockedTutorial(); this.showEditTutorial(); }
+
+            else if (!newVal && this.atTrip && oldVal === null){ this.hideLockedTutorial(); this.showEditTutorial(); }
+            
+            else if (newVal && this.atTrip && oldVal === null) { this.hideEditTutorial(); his.showLockedTutorial(); }
+            
+            console.log(this.isLocked)
         },
         atTrip: function(newVal, oldVal) {
-            if(!oldVal && neVal) this.firstInTrip = true;
-            // if(newVal === true && !this.isLocked && !this.firstInTrip) this.showEditTutorial();
-            // else if(newVal === true && this.isLocked) this.showLockedTutorial();
-            // alert("atTrip: " + newVal)
+
+            if(newVal) { 
+                this.isLocked = null;
+                alert("isLockedProp is: " + this.isLockedProp);
+                this.isLocked = this.isLockedProp;
+                if(this.isLocked) this.showLockedTutorial();
+                if(!this.isLocked) this.showEditTutorial();
+            }
         }
     },
 }
