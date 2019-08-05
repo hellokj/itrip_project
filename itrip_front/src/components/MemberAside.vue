@@ -18,9 +18,9 @@
         <el-menu-item-group title="帳戶安全">
           <el-menu-item index="2-1" @click.native="setting"><i class="el-icon-user"></i>會員資訊</el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group title="社群網路">
+        <!-- <el-menu-item-group title="社群網路">
           <el-menu-item index="2-2" @click.native="checkFollowing"><i class="el-icon-star-off"></i>我的追蹤清單</el-menu-item>
-        </el-menu-item-group>
+        </el-menu-item-group> -->
       </el-submenu>
     </el-menu>
   </el-aside>

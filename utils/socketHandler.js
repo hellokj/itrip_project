@@ -151,8 +151,8 @@ class SocketHandler {
   // 改成membersTable 
 
   async updateItinerary(itinerary, editorId){
-    // console.log("update itinerary", itinerary);
-    // console.log("update editor", editorId);
+    console.log("update itinerary", itinerary);
+    console.log("update editor", editorId);
     let _id = itinerary._id;
     let onlineMembers = [];
     let self = this;
@@ -160,13 +160,16 @@ class SocketHandler {
     await Itinerary.updateItinerary(_id, itinerary).then(function(res){
       let itineraryMembers = itinerary.memberIds;
       // 其他人
-      itineraryMembers = itineraryMembers.filter(function(value, index, arr){
-        return value !== editorId;
-      });
-      for (let i = 0; i < itineraryMembers.length; i++){
-        if (self.membersTable.containsKey(itineraryMembers[i])){
-          for (let j = 0; j < self.membersTable.get(itineraryMembers[i]).length; j++){
-            onlineMembers.push(self.membersTable.get(itineraryMembers[i])[j]);
+      console.log("itineraryMembers", itineraryMembers);
+      if (itineraryMembers !== undefined){
+        itineraryMembers = itineraryMembers.filter(function(value, index, arr){
+          return value !== editorId;
+        });
+        for (let i = 0; i < itineraryMembers.length; i++){
+          if (self.membersTable.containsKey(itineraryMembers[i])){
+            for (let j = 0; j < self.membersTable.get(itineraryMembers[i]).length; j++){
+              onlineMembers.push(self.membersTable.get(itineraryMembers[i])[j]);
+            }
           }
         }
       }
