@@ -119,10 +119,13 @@ io.on('connection', (socket) => {
         let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
         console.log("通知這些人", otherMembersSocketIds);
         console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
-        for (let i = 0; i < otherMembersSocketIds.length; i++){
-            console.log("人", otherMembersSocketIds[i]);
-            io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
+        if (otherMembersSocketIds.length > 0){ // 有人才通知第一個
+            io.to(otherMembersSocketIds[0]).emit('unlockNotification');
         }
+        // for (let i = 0; i < otherMembersSocketIds.length; i++){
+        //     console.log("人", otherMembersSocketIds[i]);
+        //     io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
+        // }
     })
 
     socket.on("updateItinerary", async function(data){

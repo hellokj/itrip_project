@@ -23,7 +23,7 @@
       </el-popover>
       <!-- <el-button style="border-radius: 50; padding: 5px; margin:0px auto; " @click="confirmDeleteOrNot(true, itinerary)"><i class="el-icon-delete"></i></el-button> -->
     </div>
-      <el-tabs type="border-card" v-model="index" @tab-click="handleClick">
+      <el-tabs type="border-card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
           <el-container style="display: flex">
             <el-container style="width: 70%">
@@ -129,7 +129,7 @@
             </el-container>
           </el-container>
           <el-container>
-            <MemberMap v-if="activeName=='myMap'" :travelInfos="itinerary.travelInfos[0]" :itinerary='itinerary'></MemberMap>
+            <MemberMap v-if="activeName=='myMap'" :travelInfos="itinerary.travelInfos" :togos="itinerary.togos"></MemberMap>
           </el-container>
         </el-tab-pane>
       </el-tabs>
@@ -161,7 +161,7 @@ export default {
       visible: false,
       isConfirmed: false, // check wheather delete or not
       isLocked: false, // check if itinerary is locked by server
-      activeName: '',
+      activeName: '0',
     }
   },
   methods: {
@@ -169,7 +169,7 @@ export default {
       if(tab.name=='myMap'){
         this.activeName = "myMap";
       }else {
-        this.activeName = "";
+        this.activeName = "1";
       }
     },
     confirmDeleteOrNot: function(state, itinerary){
@@ -453,14 +453,9 @@ export default {
     }
   },
   created() {
-    //console.log("itinerary create", this.itinerary);
+    console.log("itinerary create", this.itinerary);
     // this.resetDetailInfo();
     this.resetItineraryData(this.itinerary);
-    if (this.itinerary.dayNum == 1){
-      this.activeName = "myMap";
-    } else {
-      this.activeName = "1";
-    }
   },
   mounted() {
     let self = this;
@@ -470,11 +465,7 @@ export default {
     itinerary: function(newVal, oldVal){
       this.$emit("loadingComplete");
       this.resetItineraryData(this.itinerary);
-      if (newVal.dayNum == 1){
-        this.activeName = "myMap";
-      } else {
-        this.activeName = "1";
-      }
+      this.activeName = "0";
     }
   },
   beforeUpdate() {
