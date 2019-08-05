@@ -37,7 +37,7 @@
         <div class="logo">
             <img :src="require('./'+logo)" alt="iTripLogo" @click="toHome">
             <div class="dropdown">
-                <button class="btn-burger" @click="burgerClicked()"><i  class="fas fa-bars"></i></button>
+                <button class="mr-5 btn-burger" @click="burgerClicked()"><i  class="fas fa-bars"></i></button>
                 <div id="myDropdown" class="dropdown-content" :class="{'show-burger-content': burgerShow}">
                     <router-link to="/trip">規劃</router-link>
                     <router-link to="/">首頁</router-link> 
@@ -48,45 +48,6 @@
         </div>
         <div class="searchbar" >
             <HeaderSearch @header-search-btn-clicked="searchClicked"></HeaderSearch>
-            <!-- <div class="inner-addon right-addon">
-                <i class="fas fa-search"></i>
-                <input  
-                class="input_name"
-                type="text"
-                placeholder="想去哪?"
-                v-model="input_name"
-                style="text-align:center;" />
-            </div>
-            <div class="trees">
-     
-                <treeselect
-                class="input_type"
-                :multiple="false"
-                :options="types"
-                :flat="false"
-                :sort-value-by="sortValueBy"
-                :default-expand-level="0"
-                placeholder="種類"
-                v-model="selected_type"
-                style="text-align:center;" />
-                
-                <treeselect
-                class="input_region"
-                :multiple="false"
-                :options="regions"
-                :flat="false"
-                :sort-value-by="sortValueBy"
-                :default-expand-level="0"
-                placeholder="地區"
-                v-model="selected_region"
-                style="text-align:center;" 
-                @select="setCity"
-                />  
-            </div>
-        
-            <img @mouseover="hover = true" @mouseleave="hover = false" :class={active:hover} 
-            class="icon_search" src="../icons/search.svg" 
-            @click="searchClicked"> -->
         </div>
         <div class="btns">
             <div class="div_trip">

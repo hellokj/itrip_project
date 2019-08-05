@@ -1,5 +1,5 @@
 <template>
-  <el-dropdown trigger="hover" style="margin-right: 10px">
+  <el-dropdown class="py-2 px-1" trigger="hover" style="margin-right: 10px">
     <span style="white-space: nowrap; overflow: hidden;" class="el-dropdown-link">個人檔案<i class="el-icon-arrow-down el-icon--right"></i>
     </span>
     <el-dropdown-menu slot="dropdown">
@@ -24,6 +24,11 @@
     font-size: 14px;
     margin-bottom: 20px;
   }
+ @media only screen and (max-width: 768px) {
+   .el-dropdown-link {
+     color: black;
+   }
+ }
 </style>
 
 <script>
