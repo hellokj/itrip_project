@@ -12,7 +12,7 @@
 
         <Togos
         id="togos"
-        class="togos"
+        class="togos" style="width: 100%;"
         :togos="itinerary.togos[page]" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
         :page="page" :isLocked="isLocked" :itinerary="itinerary"
         @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 

@@ -22,7 +22,7 @@
           <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{catTranslation[cat]}}</el-checkbox>
         </el-checkbox-group>
       </div>
-      <div class="ml-4 mobile-category-container" style="height:100%;">
+      <div class="ml-4 mobile-category-container" style="">
         <a-dropdown :trigger="['click']" placement="bottomRight" style="position:absolute;left:20px;">
             <a class="ant-dropdown-link">
               <i class="fas fa-filter" style="color: black;cursor:pointer;"> 搜尋篩選<i class="el-icon-arrow-down el-icon--right"></i></i>
@@ -41,8 +41,8 @@
             </a-menu>
           </a-dropdown>
       </div>
-      <div>
-        <a-dropdown :trigger="['click']" placement="bottomRight" style="position:absolute;right:15px;">
+      <div class="filter-categories">
+        <a-dropdown :trigger="['click']" placement="bottomRight">
             <a class="ant-dropdown-link">
               <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer;"></i>
             </a>
@@ -264,18 +264,13 @@ export default {
     width: 100%;
   }
   .tag-container {
-    height: 15vh;
     width: 100%;
-    position: relative;
+    background-color: rgb(250, 250, 250);
     display: flex;
     flex-direction:column;
-    border-width: 3px;
-    border-style: solid;
-    border-image: linear-gradient( to bottom, rgb(255, 255, 255), rgb(206, 206, 206)) 1 100%;
-    /* box-shadow: 0px 3px 5px #333; */
-    border-bottom: none;
-    box-shadow: 3px 2px 5px #c5c8ce;
-    z-index: 3;
+    border: 3px solid rgba(235, 235, 235, 0.514);
+    /* box-shadow: 3px 2px 5px #c5c8ce; */
+    z-index: 4;
   }
   .view-map {
     height: 40px;
@@ -311,6 +306,11 @@ export default {
     display:flex;
     flex-direction:column;
   }
+  .filter-categories {
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+  }
   .mobile-category-container {
     display: none;
   }
@@ -319,12 +319,21 @@ export default {
       display: none;
     }
     .mobile-category-container {
+      margin-top: 10px;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
     .checkbox::after {
       display: none;
+    }
+    .tag-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      padding-top: 0px;
+      height: 230px;
+      position: relative;
+      margin-top: 0px;
     }
   }
 
@@ -337,7 +346,14 @@ export default {
     .tag-container {
       flex-wrap: wrap;
       justify-content: center;
-      height: auto;
-    } 
+      padding-top: 0px;
+      height: 230px;
+      position: relative;
+      margin-top: 0px;
+    }
+    .filter-categories {
+      bottom: 3px;
+      right: 15px;
+    }
   } 
 </style>
