@@ -16,16 +16,35 @@
           
         </div>
       </div>
-      <div class="ml-4 category-container" style="display:flex;flex-direction:column;">
+      <div class="ml-4 category-container">
         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange" style="width:30px;">All</el-checkbox>
         <el-checkbox-group class="checkbox-group" v-model="checkedCategories" @change="handleCheckedCategoryListChange">
           <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
         </el-checkbox-group>
       </div>
+      <div class="ml-4 mobile-category-container" style="height:100%;">
+        <a-dropdown :trigger="['click']" placement="bottomRight" style="position:absolute;left:20px;">
+            <a class="ant-dropdown-link">
+              <i class="fas fa-filter" style="color: black;cursor:pointer;"> 搜尋篩選<i class="el-icon-arrow-down el-icon--right"></i></i>
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange" style="width:30px;">All</el-checkbox>
+              </a-menu-item>
+                <el-checkbox-group class="checkbox-group" v-model="checkedCategories" @change="handleCheckedCategoryListChange">
+                    <a-menu-item class="px-2" :key="index" v-for="(cat, index) in categories">
+                      <el-checkbox class="checkbox" :label="cat">
+                        <i :class="categoryIcons[index]"></i> {{cat}}
+                      </el-checkbox>
+                    </a-menu-item>
+                </el-checkbox-group>
+            </a-menu>
+          </a-dropdown>
+      </div>
       <div>
         <a-dropdown :trigger="['click']" placement="bottomRight" style="position:absolute;right:15px;">
             <a class="ant-dropdown-link">
-            <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer;"></i>
+              <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer;"></i>
             </a>
             <a-menu slot="overlay">
                 <a-menu-item>
@@ -33,7 +52,6 @@
                 </a-menu-item>
             </a-menu>
         </a-dropdown>
-        
       </div>
     </div>
     
@@ -276,6 +294,7 @@ export default {
   }
 
   .checkbox::after {
+    display: block;
     position: absolute;
     content: '';
     left: calc(100% + 3px);
@@ -283,6 +302,26 @@ export default {
     width: 1px;
     height: 20px;
     background-color: rgb(182, 199, 255);
+  }
+  .category-container {
+    display:flex;
+    flex-direction:column;
+  }
+  .mobile-category-container {
+    display: none;
+  }
+  @media only screen and (max-width: 1200px) {
+    .category-container {
+      display: none;
+    }
+    .mobile-category-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .checkbox::after {
+      display: none;
+    }
   }
 
   @media only screen and (max-width: 768px) {
@@ -295,6 +334,6 @@ export default {
       flex-wrap: wrap;
       justify-content: center;
       height: auto;
-    }
+    } 
   } 
 </style>

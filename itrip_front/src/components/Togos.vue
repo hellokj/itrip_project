@@ -28,7 +28,7 @@
           <AddMemberPopover id="pc-addMember-popover" v-model="memberEmail" :memberEmails="memberEmails" :lockIcon="lockIcon"
           @getCurrentMembers="getCurrentMembers" @addMember="addMember" @removeMember="removeMember"/>
           <SharingLink id="pc-sharingLink" :shareUrl="shareUrl" :shareId="shareIdProp" @saveShare="saveShare"/>
-          <i title="開啟導航" class="fas fa-map-marked-alt" style="color:#8a8d91;font-size:25px;cursor: pointer;" @click="navigate"></i>
+          <i id="pc-navi" title="開啟導航" class="fas fa-map-marked-alt" style="color:#8a8d91;font-size:25px;cursor: pointer;" @click="navigate"></i>
         </div>
         <el-dropdown ref="dropdown" placement="bottom-start" trigger="click">
           <span>
@@ -52,7 +52,7 @@
               </div>
             </el-dropdown-item>
             <el-dropdown-item>
-              <i title="開啟導航" class="fas fa-map-marked-alt" style="color:#8a8d91;font-size:15px;cursor: pointer;" @click="navigate"> 開啟導航</i>
+              <i id="mobile-navi" title="開啟導航" class="fas fa-map-marked-alt" style="color:#8a8d91;font-size:15px;cursor: pointer;" @click="navigate"> 開啟導航</i>
             </el-dropdown-item>
           </el-dropdown-menu>         
         </el-dropdown>
@@ -635,6 +635,9 @@ export default {
   #mobile-sharingLink {
     display: none;
   }
+  #mobile-nav {
+    display: none;
+  }
   .togoContainer {
     display: flex;
     flex-wrap: nowrap;
@@ -669,6 +672,12 @@ export default {
     }
     .fa-ellipsis-h {
       display: block
+    }
+    #pc-navi {
+      display: none;
+    }
+    #mobile-nav {
+      display: block;
     }
     .save-trip {
       width: 10%;

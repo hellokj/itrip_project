@@ -173,9 +173,12 @@ export default {
       }
     },
     centerRoutes() {
-      const map = this.$refs.myMap.mapObject;
-      let myBounds = new L.LatLngBounds(this.routesArr);
-      map.fitBounds(myBounds); //Centers and zooms the map around the bounds
+      if(this.routesArr !== undefined) {
+        const map = this.$refs.myMap.mapObject;
+        let myBounds = new L.LatLngBounds(this.routesArr);
+        map.fitBounds(myBounds); //Centers and zooms the map around the bounds
+      }
+      
     }
   },
   watch: {
