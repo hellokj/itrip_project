@@ -44,10 +44,12 @@ export default {
 <style scoped>
     .MobileHeader {
         position: sticky;
-        top: 0;
+        top: 120px;
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         margin-top: 5px;
+        z-index: 5;
     }
 </style>

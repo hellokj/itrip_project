@@ -30,11 +30,10 @@
         </b-modal>
 
         <!-- for mode test -->
-        <div v-if="editMode" style="background-color: transparent; position:absolute; left: 60%; top: 5px; text-align: center;"><b-button id="show-btn" @click="showEditTutorial">Open Modal</b-button></div>
         <div v-if="isLocked" style="background-color: transparent; position:absolute; left: 60%; top: 0px; text-align: center;"><b-button id="show-btn" @click="showLockedTutorial">Open Modal</b-button></div>
         
         <div class="logo">
-            <img :src="require('./'+logo)" alt="iTripLogo" @click="toHome">
+            <img :src="require('./'+logo)" alt="iTripLogo" style="100%; height: auto;" @click="toHome">
             <div class="dropdown">
                 <button class="mr-5 btn-burger" @click="burgerClicked()"><i  class="fas fa-bars"></i></button>
                 <div id="myDropdown" class="dropdown-content" :class="{'show-burger-content': burgerShow}">
@@ -99,6 +98,7 @@ export default {
             // isLocked: null
             burgerShow: false,
             burgerDropdown: false,
+            firstInTrip: false,
         }
     },
     created: function() {
@@ -185,11 +185,14 @@ export default {
         isLocked: function(newVal) {
             console.log("watch isLocked change")
             if(!this.isLocked && this.atTrip) this.showEditTutorial();
-            if(this.isLocked && this.atTrip) this.showLockedTutorial();
+            else if(this.isLocked && this.atTrip) this.showLockedTutorial();
+            alert("isLocked: " + newVal)
         },
-        atTrip: function(newVal) {
-            if(newVal === true && !this.isLocked) this.showEditTutorial();
-            if(newVal === true && this.isLocked) this.showLockedTutorial();
+        atTrip: function(newVal, oldVal) {
+            // if(!oldVal && neVal) this.firstInTrip = true;
+            // if(newVal === true && !this.isLocked && !this.firstInTrip) this.showEditTutorial();
+            // else if(newVal === true && this.isLocked) this.showLockedTutorial();
+            // alert("atTrip: " + newVal)
         }
     },
 }
@@ -216,6 +219,7 @@ export default {
         flex-grow: 3;
         width: 100vw;
         z-index: 20;
+        overflow: visible;
     }
 
     .headerBackgroundEdit {
@@ -377,7 +381,7 @@ export default {
         background-color: #f1f1f1;
         min-width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
+        z-index: 10;
     }
 
     /* Links inside the dropdown */
@@ -386,6 +390,7 @@ export default {
         color: black;
         padding: 12px 16px;
         text-decoration: none;
+        z-index: 8;
         display: block;
     }
 
@@ -516,12 +521,16 @@ export default {
     }
     .logo img {
         margin: 0px;
+        position: relative;
+        top: 10px;
         width: 55px;
         height: 55px;
     }
     .logo {
+        position: relative;
         margin-left: 10px;
         height: 40px;
+        width: 100%;
         flex-direction: row;
         display: flex;
         justify-content: space-between;
@@ -558,7 +567,7 @@ export default {
         display: block;
         position: relative;
         align-self: center;
-        float: right;
+        right: -40px;
     }
     .btns {
         display: none;
