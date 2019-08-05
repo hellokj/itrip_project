@@ -45,10 +45,11 @@ mongoose.connect(config.mongodb,{
 
 socketHandler = new SocketHandler();
 io.on('connection', (socket) => {
-    console.log(socket.id + ' has connected.');
-    console.log("on locked itineraries", socketHandler.lockedItineraryIds);
+    // console.log(socket.id + ' has connected.');
+    // console.log("on locked itineraries", socketHandler.lockedItineraries);
     // console.log("connected members", socketHandler.connectedMembers);
-    console.log("membersTable", socketHandler.membersTable);
+    // console.log("membersTable", socketHandler.membersTable);
+
     // 刪除垃圾行程表
     // socketHandler.getAllItinerary().exec((err, res) => {
     //     res.forEach((element) => {
@@ -84,20 +85,18 @@ io.on('connection', (socket) => {
         console.log("membersTable", socketHandler.membersTable);
     });
 
-    socket.on("checkItinerary", async (data) => {
+    socket.on("checkItinerary", (data) => {
         let itineraryId = data.itineraryId;
-        let token = data.token;
-        console.log("......", socketHandler.checkLockedItineraries(itineraryId, token));
-        if (socketHandler.checkLockedItineraries(itineraryId, token) == -1){
-            io.emit('checkedReply', false); // locked
-            let otherMembersSocketIds = await socketHandler.lockItinerary(itineraryId, token);
-            for (let i = 1; i < otherMembersSocketIds.length; i++){
-                io.to(otherMembersSocketIds[i]).emit('notifyLocked'); // 上鎖
-            }
+        let token = data.token; // 此次發來的memberId
+        let socketId = socket.id; // 此次發來的socketId
+        // console.log("......", socketHandler.checkLockedItineraries(itineraryId, token));
+        let isLocked = socketHandler.checkLockedItineraries(itineraryId, socketId);
+        if (isLocked){
+            io.emit('checkedReply', true);
         }else {
-            io.emit('checkedReply', true); // unlocked
+            io.emit('checkedReply', false); // locked
         }
-        console.log("locked", socketHandler.lockedItineraryIds);
+        console.log("locked", socketHandler.lockedItineraries);
     });
 
     // socket.on("editRequest", async function(data){
@@ -113,31 +112,38 @@ io.on('connection', (socket) => {
     //     }
     // });
 
-    socket.on("releaseEditMode", async function(data){
+    socket.on("releaseEditMode", function(data){
         let itineraryId = data.itineraryId;
-        let token = data.token;
-        let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
-        console.log("通知這些人", otherMembersSocketIds);
-        console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
-        if (otherMembersSocketIds.length > 0){ // 有人才通知第一個
-            io.to(otherMembersSocketIds[0]).emit('unlockNotification');
+        let isLocked = data.isLocked;
+        let socketId = socket.id;
+        let nextEditor = socketHandler.releaseItinerary(itineraryId, isLocked, socketId);
+        if (nextEditor !== null){
+            io.to(nextEditor).emit("unlockNotification");
         }
+        console.log("lockedItineraries", socketHandler.lockedItineraries);
+        // let token = data.token;
+        // let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
+        // console.log("通知這些人", otherMembersSocketIds);
+        // console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
+        // if (otherMembersSocketIds.length > 0){ // 有人才通知第一個
+        //     io.to(otherMembersSocketIds[0]).emit('unlockNotification');
+        // }
         // for (let i = 0; i < otherMembersSocketIds.length; i++){
         //     console.log("人", otherMembersSocketIds[i]);
         //     io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
         // }
     })
 
-    socket.on("updateItinerary", async function(data){
-        // console.log("updateItinerary", data);
-        let itinerary = data.itinerary;
-        let editorId = data.memberId;
-        let onlineMembers = await socketHandler.updateItinerary(itinerary, editorId);
-        // console.log("i'm here.");
-        for (let i = 0; i < onlineMembers.length; i++){
-            io.to(onlineMembers[i]).emit('updateNotification', itinerary); // 上鎖
-        }
-    });
+    // socket.on("updateItinerary", async function(data){
+    //     // console.log("updateItinerary", data);
+    //     let itinerary = data.itinerary;
+    //     let editorId = data.memberId;
+    //     let onlineMembers = await socketHandler.updateItinerary(itinerary, editorId);
+    //     // console.log("i'm here.");
+    //     for (let i = 0; i < onlineMembers.length; i++){
+    //         io.to(onlineMembers[i]).emit('updateNotification', itinerary); // 上鎖
+    //     }
+    // });
 
     socket.on('SEND_MESSAGE', function(data) {
         console.log(data);
