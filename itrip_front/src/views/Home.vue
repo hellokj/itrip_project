@@ -10,7 +10,7 @@
       <b-container class="nav-bar mt-0 mb-3 mx-auto">
         <b-row style="height: 100px;">
           <b-col align-self="center" cols="2">
-            <img href="/trip" class="home-logo" src="../assets/home/Logo.svg" />
+            <img href="/trip" class="home-logo" src="https://i.imgur.com/oo9xHHY.png" />
           </b-col>
           <b-col class="col-home text-start" offset="2" offset-sm="2"  offset-md="4" offset-lg="6" offset-xl="7" cols="2" sm="2" md="2" lg="1" style="white-space: nowrap; overflow: hidden;">
             <router-link class="btn-home" to="/">首頁</router-link>
@@ -42,7 +42,7 @@
             </b-col>
             <!-- <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
               <span class="search-icon" ><img style="width: 50px;" @click.native="handleSearch" 
-              src="../assets/home/Search.svg"/></span>
+              src="https://i.imgur.com/ovxPjNv.png"/></span>
             </b-col> -->
           </b-row>
           <b-row class="mt-2" align-h="center">
@@ -167,7 +167,7 @@
             
           </b-col>
           <b-col class="p-0 m-0" lg="8" xl="9">
-            <img class="img-intro" src="../assets/home/webPageBig.svg" alt="pic">
+            <img class="img-intro" src="https://i.imgur.com/DdxhOGH.png" alt="pic">
           </b-col>
 
         </b-row>
@@ -179,7 +179,7 @@
       <b-container fluid>
         <b-row class="mt-5 footer-row">
           <b-col class="footer-col-one" sm="12" md="6" lg="6" style="align-content: flex-start;">
-            <img src="../assets/home/itripLogoWhite.svg" @click="ScrollToTop" alt="logo" style="width: auto;">
+            <img src="https://i.imgur.com/fuDNJwj.png" @click="ScrollToTop" alt="logo" style="width: auto;">
           </b-col>
           <b-col class="footer-col-two" sm="12" md="3" lg="3">
             <router-link class="footer-home" to="/">首頁</router-link>
@@ -418,7 +418,7 @@ export default {
   }
 
   .index-area {
-    background-image: url("../assets/home/homeBg04.jpg");
+    background-image: url("https://i.imgur.com/FCgGPEH.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;

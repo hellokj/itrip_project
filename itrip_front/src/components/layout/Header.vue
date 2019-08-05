@@ -5,7 +5,7 @@
             <div class="edit-tutorial" style="width: 100%; height:auto; text-align:center;">
                 <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">開始編輯您的行程!</h3>
                 <div style="display: block; width: 100%; height: 250px; text-align: center;">
-                    <img src="../../assets/itinerary.png" alt="" style="width: 50%">
+                    <img src="https://i.imgur.com/lmtpuzL.png" alt="" style="width: 50%">
                 </div>                
                 <div class="locked-tutorial-cursor">
                     <i class="far fa-hand-pointer"></i>
@@ -33,7 +33,7 @@
         <div v-if="isLocked" style="background-color: transparent; position:absolute; left: 60%; top: 0px; text-align: center;"><b-button id="show-btn" @click="showLockedTutorial">Open Modal</b-button></div>
         
         <div class="logo">
-            <img :src="require('./'+logo)" alt="iTripLogo" style="100%; height: auto;" @click="toHome">
+            <img :src="logo" alt="iTripLogo" style="100%; height: auto;" @click="toHome">
             <div class="dropdown">
                 <button class="mr-5 btn-burger" @click="burgerClicked()"><i  class="fas fa-bars"></i></button>
                 <div id="myDropdown" class="dropdown-content" :class="{'show-burger-content': burgerShow}">
@@ -166,8 +166,8 @@ export default {
     },
     computed: {
         logo:  function(){
-            if( this.isLocked ) return "itripLogoWhite.png"
-            else return "itripLogo.png"
+            if( this.isLocked ) return "https://i.imgur.com/fuDNJwj.png"
+            else return "https://i.imgur.com/oo9xHHY.png"
         },
         
     },
@@ -211,18 +211,13 @@ export default {
     font-family: 'Noto Serif TC', serif;
 }
 
-@font-face {
-    font-family: logoFont;
-    src: url(../../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
-}
-
     .header {
         position: sticky;
         top: 0;
         background-image: linear-gradient(90deg, rgba(255,208,129,1) 0%, rgba(246,165,144,1) 60%, rgba(231,126,125,1) 100%); 
         height: 10vh;
         display: flex;
-        font-family: logoFont;
+        font-family: 'Noto Serif TC', serif;
         justify-content: space-between;
         flex-grow: 3;
         width: 100vw;
