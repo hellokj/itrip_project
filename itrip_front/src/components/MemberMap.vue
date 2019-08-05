@@ -1,10 +1,10 @@
 <template>
 <div class="map" style="width: 50vw; height:60vh">
   <l-map ref="myMap" :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
-    <l-tile-layer :url="url" :attribution="attribution" dragging="true"></l-tile-layer>
+    <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
     <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
     <l-polyline
-      v-for="(day, index) in itinerary.travelInfos"
+      v-for="(day, index) in travelInfos"
       :key="index"
       :lat-lngs="getDayRoutes(day)"
       :color="colors[index % 7]"
@@ -13,7 +13,7 @@
       :visible='true'>
     </l-polyline>
     <l-marker
-      v-for="togo in getTotalTogos(itinerary)"
+      v-for="togo in getTotalTogos(togos)"
       :icon="icon"
       :key="togo._id"
       :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])">
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom, LatLngBounds } from 'vue2-leaflet';
 import { Icon, divIcon }  from 'leaflet'
 import L from "leaflet"
 
@@ -47,7 +47,7 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       icon: L.divIcon({
         html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;"></i>',
-        iconSize: [20, 20],
+        iconSize: [15, 45],
         className: 'myDivIcon'
       }),
       // polyline options
@@ -56,18 +56,23 @@ export default {
       opacity: 0.6,
       weight: 7,
       centerLatLng: [],
+      routesArr: []
     }
   },
   props: {
-    itinerary: Object,
+    togos: Array,
     travelInfos: Array
   },
   created() {
-    this.centerLatLng = this.calculateCenterPoin(this.getTotalTogos(this.itinerary));
-    this.center = L.latLng(this.centerLatLng[1], this.centerLatLng[0]);
+    this.resetRoutesArr();
+    this.centerRoutes();
+    // this.centerLatLng = this.calculateCenterPoin(this.getTotalTogos(this.itinerary));
+    // this.center = L.latLng(this.centerLatLng[1], this.centerLatLng[0]);
   },
   mounted() {
-    console.log("total togos", this.getTotalTogos(this.itinerary));
+    // console.log("total togos", this.getTotalTogos(this.itinerary));
+    const map = this.$refs.myMap.mapObject;
+    map.addControl(new window.L.Control.Fullscreen());
   },
   methods: {
     getLatLng: function(lat, lng) {
@@ -81,19 +86,17 @@ export default {
     },
     getDayRoutes: function(day){
       let dayRoutes = [];
-      if (day !== null){
-        for(let i = 0; i < day[0].routes.length; i++){
-          dayRoutes.push(day[0].routes[i]);
-        }
+      for (let i = 0; i < day.length; i++){
+        dayRoutes = dayRoutes.concat(day[i].routes);
       }
       return dayRoutes;
     },
-    getTotalTogos: function(itinerary){
+    getTotalTogos: function(togos){
       let totalTogos = [];
       // 天數
-      for (let i = 0;  i < itinerary.togos.length; i++){
-        for (let j = 0; j < itinerary.togos[i].length; j++){
-          totalTogos.push(itinerary.togos[i][j]);
+      for (let i = 0;  i < togos.length; i++){
+        for (let j = 0; j < togos[i].length; j++){
+          totalTogos.push(togos[i][j]);
         }
       }
       return totalTogos;
@@ -109,12 +112,29 @@ export default {
       lat = lat / spots.length;
       return [lng, lat];
     },
+    resetRoutesArr: function(travelInfos){
+      this.routesArr = [];
+      for (let i = 0; i < travelInfos.length; i++){
+        for (let j = 0; j < travelInfos[i].length; j++){
+          this.routesArr = this.routesArr.concat(travelInfos[i][j].routes);
+        }
+      }
+    },
+    centerRoutes() {
+      const map = this.$refs.myMap.mapObject;
+      console.log("routesArr", this.routesArr);
+      let myBounds = new L.LatLngBounds(this.routesArr);
+      map.fitBounds(myBounds); //Centers and zooms the map around the bounds
+    }
   },
   watch: {
-    itinerary: function(newVal, oldVal){
-      this.centerLatLng = this.calculateCenterPoin(this.getTotalTogos(newVal));
-      this.center = L.latLng(this.centerLatLng[1], this.centerLatLng[0]);
-    },
+    travelInfos: {
+      handler: function(newVal, oldVal){
+        this.resetRoutesArr(newVal);
+        this.centerRoutes();
+      },
+      deep: true,
+    }
   },
   computed: {
     

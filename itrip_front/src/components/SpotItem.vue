@@ -2,7 +2,6 @@
     <div class="spot-item-container" @mouseover="$emit('mouseOver')">
         <el-card class="el-card" :body-style="{ width: '100%', padding: '10px'}">
             <div class="card-container">
-                        
                 <div class="picture-container" style="position:relative;">
                     <vue-load-image>
                         <img ref="image" class="spot-picture" slot="image" :src="srcFunc">
