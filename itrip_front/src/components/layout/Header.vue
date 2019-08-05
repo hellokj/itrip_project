@@ -189,7 +189,7 @@ export default {
             alert("isLocked: " + newVal)
         },
         atTrip: function(newVal, oldVal) {
-            if(!oldVal && neVal) this.firstInTrip = true;
+            if(!oldVal && newVal) this.firstInTrip = true;
             // if(newVal === true && !this.isLocked && !this.firstInTrip) this.showEditTutorial();
             // else if(newVal === true && this.isLocked) this.showLockedTutorial();
             // alert("atTrip: " + newVal)
