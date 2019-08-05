@@ -77,11 +77,11 @@
             placeholder="請輸入時間"
             style="width: 140px;"/>
           </div>
-          <b-tab v-for="i in tabs" :key="'tab' + i" style="heigh: 55vh; overflow-Y: scroll;">
+          <b-tab v-for="i in tabs" :key="'tab' + i" style="heigh: 55vh; width: 100%; overflow-Y: scroll;">
             <template slot="title">
                 {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
-            <div style="height: 65vh;">
+            <div style="height: 65vh; width: 100%;">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
                 <transition-group type="transition" name="flip-list" :key="update">
                   <div class="togoContainer sortable" :key="index" v-for="(togo,index) in togos_prop"  overflow:auto>
@@ -100,9 +100,9 @@
                     <TravelTimeItem v-if="isTravelTimeShown(index)" v-bind="$attrs" v-on="$listeners" :index="index" :travelTime="travelInfos[index].duration"/>
                   </div>
                 </transition-group>
-            </draggable> 
-          </div>
-        </b-tab>    
+              </draggable> 
+            </div>
+          </b-tab>    
       </b-tabs>
     </div>
   </div>
@@ -623,6 +623,7 @@ export default {
     cursor: pointer;
   }
   .tab-container{
+    width: 100%;
     height: 500px;
   }
   .fa-ellipsis-h {
@@ -638,6 +639,7 @@ export default {
     display: none;
   }
   .togoContainer {
+    width: 100%;
     display: flex;
     flex-wrap: nowrap;
     justify-content:flex-start;
