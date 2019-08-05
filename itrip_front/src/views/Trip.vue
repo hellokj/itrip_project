@@ -4,7 +4,11 @@
       <b-col
         class="px-0" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
-      :value="selected">
+      :value="selected"
+      style="position: relative;">
+
+        <!-- <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 90vh; background-color: rgba(55, 55, 55, .05); z-index: 40;">{{"isLocked: " + isLocked}}</div> -->
+
         <Togos
         id="togos"
         class="togos"
@@ -137,6 +141,7 @@ export default {
       queryName: '',
       isAddSpotLocked: false,
       currentAccessId:'',
+      editMode: false,
       isLocked: false,
     }
   },
@@ -605,6 +610,7 @@ export default {
     },
     isLocked: function(newVal) {
       if(newVal) this.$emit('is-locked-on');
+      else if(!newVal) this.$emit('is-locked-off')
       if(!newVal) {
         if(this.message != null) {
           this.message.close();

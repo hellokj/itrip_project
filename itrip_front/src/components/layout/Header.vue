@@ -1,8 +1,5 @@
 <template>
     <header class="header" :class="{headerBackgroundEdit : editMode, headerBackgroundLocked: isLocked}">
-        {{isLocked}}
-        {{editMode}}
-        {{isLockedProp}}
         
         <!-- Edit mode modal -->    
         <b-modal ref="edit-tutorial" size="md" hide-footer hide-backdrop hide-header>
@@ -99,7 +96,7 @@ export default {
             options: getAreas(),
             sortValueBy: 'ORDER_SELECTED',
             val: '',
-            isLocked: false,
+            isLocked: null,
             burgerShow: false,
             burgerDropdown: false,
         }
@@ -108,8 +105,8 @@ export default {
         window.addEventListener('click',this.clickOutSide);
     },
     mounted() {
-        if(this.editMode) this.showEditTutorial();
-        if(this.isLocked) console.log(`isLocked become true`)
+        console.log("mounted: isLocked becomes " + this.isLocked);
+        if (this.isLocked === null) this.showEditTutorial();  // isLocked is never changed
     },
     destroyed: function() {
         window.removeEventListener('click', this.clickOutSide);
@@ -180,14 +177,19 @@ export default {
     },
     watch: {
         isLockedProp: function(newVal){
-            if(newVal) {
+            if(newVal === true) {
                 this.isLocked = true;
                 this.showLockedTutorial();
-                console.log("isLockedProp Change")
+                console.log("watch isLockedProp Change")
             }
-            else this.isLocked = false;
+            if(newVal === false) this.isLocked = false;
+        },
+        isLocked: function(newVal) {
+            console.log("watch isLocked change")
+            if(!this.isLocked) this.showEditTutorial();
+            if(this.isLocked) this.showLockedTutorial();
         }
-    }
+    },
 }
 </script>
 

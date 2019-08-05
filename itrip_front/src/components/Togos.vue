@@ -1,9 +1,8 @@
 <template>
   <div class="MyTrip">
-
     <!-- <div style="position: fixed; right: 30vw; top: 0px; width: 400px; height: 200px; background-color: transparent; color:#AAA; z-index: 30; font-size: 30px;"><p>editMode: {{editMode}}</p><p>  isLockedProp: {{isLockedProp}}</p></div> -->
-    <div v-if="isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
-    <div v-if="editMode" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-circle"><div></div></div></div>
+    <div v-if="lockIcon" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
+    <div v-if="!isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div style="position: absolute; right: 30px; top: 0px; width: 50px; color: lightblue;">編輯中</div><div class="lds-circle"><div></div></div></div>
     
     <div class="py-2 m-0 info-container">
       <div class="tripName">
@@ -453,7 +452,6 @@ export default {
       //console.log("itinerary", this.itinerary);
       // 註冊監聽事件
       // get name and date from itinerary
-      
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -482,6 +480,7 @@ export default {
         this.message.close();
       }
     }
+
 }
 </script>
 
@@ -744,13 +743,16 @@ export default {
 
   .lds-circle {
     display: inline-block;
+    position: absolute;
+    right: 0px;
+    top: 0px;
     transform: translateZ(1px);
   }
   .lds-circle > div {
     display: inline-block;
-    width: 45px;
-    height: 45px;
-    margin: 10px;
+    width: 25px;
+    height: 25px;
+    margin: 0px;
     border-radius: 50%;
     background: lightblue;
     animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
