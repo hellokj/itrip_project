@@ -77,7 +77,7 @@
             placeholder="請輸入時間"
             style="width: 140px;"/>
           </div>
-          <b-tab v-for="i in tabs" :key="'tab' + i" style="heigh: 55vh; width: 100%; overflow-Y: scroll;">
+          <b-tab v-for="i in tabs" :key="'tab' + i" style="height: 60vh; width: 100%; overflow-Y: scroll;">
             <template slot="title">
                 {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
@@ -184,7 +184,7 @@ export default {
           //console.log(this.shareIdProp)
           let self = this;
           this.getDate();
-          this.$emit('saveShare', this.tripName, this.tripDate);
+          this.$emit('saveShare', this.tripDate, this.tripName);
         }
       },
       changePage(){
@@ -389,8 +389,8 @@ export default {
           this.tripName = newVal.name;
           //console.log(newVal)
           this.tripDate = this.stringifyStartDate(newVal.startDate);
-          if(this.togos.length > 0) {
-            this.startTime = this.togos[0].startTime.hr.toString().padStart(2, '0') + ':' + this.togos[0].startTime.min.toString().padStart(2, 0);
+          if(this.togos_prop.length > 0) {
+            this.startTime = this.togos_prop[0].startTime.hr.toString().padStart(2, '0') + ':' + this.togos_prop[0].startTime.min.toString().padStart(2, 0);
           }
           // console.log(this.itinerary)
         },
@@ -449,12 +449,6 @@ export default {
           this.newWin = null;
         }
       }
-    },
-    created() {
-      let self = this;
-      //console.log("itinerary", this.itinerary);
-      // 註冊監聽事件
-      // get name and date from itinerary
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
