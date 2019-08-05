@@ -233,12 +233,18 @@ export default {
               self.$emit('addMember', self.memberEmail);
             }
             else {
-              this.$message.warning('找不到該旅伴的資料，確定Email沒有打錯嗎?')
+              Message({
+                  message: '找不到該旅伴的資料，確定Email沒有打錯嗎?!',
+                  type: 'warning'
+              });
             }
           });
         }
         else {
-          this.$message.warning('該旅伴已在列表中!')
+          Message({
+              message: '該旅伴已在列表中!',
+              type: 'warning'
+          });
         }
         this.memberEmail = '';
       },
@@ -269,7 +275,10 @@ export default {
         if(hr >= 24) {
           this.togos.pop();
           this.travelInfos.pop();
-          this.$message.error('時間超出本日範圍!');
+          Message({
+              message: '時間超出本日範圍!',
+              type: 'error'
+          });
           //throw 'DAY LIMIT EXCEEDED';
         }
         if(this.togos[index].startTime === undefined) {
@@ -291,7 +300,10 @@ export default {
         if(hr + this.togos[index].stopTime.hrs >= 24) {
           this.togos[index].stopTime.hrs = 1
           this.updateStopTime();
-          this.$message.error('時間超出本日範圍!');
+          Message({
+              message: '時間超出本日範圍!',
+              type: 'error'
+          });
           throw 'DAY LIMIT EXCEEDED';
         }
         hr += this.togos[index].stopTime.hrs;

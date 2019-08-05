@@ -103,7 +103,10 @@ export default {
           console.log(res);
           if (res.data.status == -1){
             // self.msg = "修改成功"
-            self.$message.success("修改成功");
+            Message({
+              message: '修改成功!',
+              type: 'success'
+            });
             self.memberInfo.name = res.data.data.name;
             self.memberInfo.account = res.data.data.email;
             self.memberInfo.url = res.data.data.url;
@@ -112,7 +115,10 @@ export default {
             self.$store.dispatch("updateUserToken", token);
           }else {
             // self.msg = "修改失敗"
-            self.$message.error("修改失敗");
+             Message({
+              message: '修改失敗!',
+              type: 'error'
+            });
           }
         })
         .catch(function (error) {

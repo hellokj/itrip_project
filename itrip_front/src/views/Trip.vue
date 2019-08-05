@@ -70,7 +70,6 @@
 
 <script>
 // @ is an alias to /src
-import Vue from 'vue'
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
@@ -244,7 +243,10 @@ export default {
       let self = this;
       apiShareTrip(date, name, this.itinerary.togos.length,this.itinerary.togos, this.itinerary.travelInfos)
         .then((function (res) {
-            self.$message.success('行程儲存完成，請記住目前網址!');
+            Message({
+                message: '行程儲存完成，請記住目前網址!!',
+                type: 'success'
+            });
             self.$router.push('/trip?viewId=' + res.data.data._id);
             let viewId = res.data.data._id;
             //console.log(self.itinerary)
@@ -260,7 +262,10 @@ export default {
         memberIds.push(memberId);
       }
       this.$set(this.itinerary, 'memberIds', memberIds);
-      this.$message.success('旅伴新增成功!');
+      Message({
+          message: '旅伴新增成功!',
+          type: 'success'
+      });
     },
     removeMember(mailToRemove) {
       let tmp = this.itinerary.memberIds;
@@ -270,7 +275,10 @@ export default {
         }
       }
       this.$set(this.itinerary, 'memberIds', tmp);
-      this.$message.success('旅伴刪除成功!');
+      Message({
+          message: '旅伴刪除成功!',
+          type: 'success'
+      });
     },
     changeName(name) {
       this.$set(this.itinerary, 'name', name);
