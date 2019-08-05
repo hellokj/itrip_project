@@ -30,7 +30,6 @@ module.exports = {
         'jspdf': 'jsPDF',
         'axios': 'axios',
         'leaflet': 'L',
-        'bootstrap-vue': 'BootstrapVue'
        }
     }
   }
