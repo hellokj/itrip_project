@@ -42,7 +42,7 @@
           </a-dropdown>
       </div>
       <div class="filter-categories">
-        <a-dropdown :trigger="['click']" placement="bottomRight">
+        <a-dropdown :trigger="['click']" placement="bottomRight" style="float: right; padding-right: 5px; padding-bottom: 5px;">
             <a class="ant-dropdown-link">
               <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer;"></i>
             </a>
@@ -264,6 +264,7 @@ export default {
     width: 100%;
   }
   .tag-container {
+    position: relative;
     width: 100%;
     background-color: rgb(250, 250, 250);
     display: flex;
@@ -307,9 +308,8 @@ export default {
     flex-direction:column;
   }
   .filter-categories {
-    position: absolute;
-    right: 10px;
-    bottom: 5px;
+    position: relative;
+    z-index: 9;
   }
   .mobile-category-container {
     display: none;

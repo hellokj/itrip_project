@@ -74,11 +74,11 @@ const logIn = async(req, res, next) => {
 }
 
 const fbLogIn = async(req, res, next) => {
-    console.log('req.body', req.body);
+    // console.log('req.body', req.body);
     let name = req.body.name;
     let email = req.body.email;
     let member = await Member.findMember(email, null, null);
-    console.log('fbMember', member);
+    // console.log('fbMember', member);
     if (member !== null){
         // 登入進去，給token回去
         let token = jwt.sign(
@@ -116,7 +116,7 @@ const fbLogIn = async(req, res, next) => {
             password: password,
         });
         fbMember.isThirdPartyAccount = true;
-        console.log('fbMember', fbMember);
+        // console.log('fbMember', fbMember);
         fbMember.save().then(function(){
             let token = jwt.sign(
                 {memberId: String(fbMember._id),
