@@ -95,7 +95,7 @@ export default {
             options: getAreas(),
             sortValueBy: 'ORDER_SELECTED',
             val: '',
-            isLocked: true,
+            isLocked: null,
             // isLocked: null
             burgerShow: false,
             burgerDropdown: false,
