@@ -134,7 +134,10 @@ class SocketHandler {
       }
       return null;
     }else {
-      this.lockedItineraries.get(itineraryId).shift();
+      if (this.lockedItineraries.get(itineraryId).length !== 0){
+        this.lockedItineraries.get(itineraryId).shift();
+      }
+      // shift完判斷
       let socketIds = this.lockedItineraries.get(itineraryId);
       if (socketIds.length == 0){
         this.lockedItineraries.remove(itineraryId);
