@@ -115,19 +115,6 @@ export default {
                 promise.then((data) => {
                     this.$bus.$emit('createTrip', {itinerary: data});
                 })
-               
-                //console.log(itinerary);
-                // apiShareTrip(this.tripDate, this.tripName, 1,[], [])
-                // .then((function (res) {
-                //     self.$message.success('可以開始編輯及分享行程囉!');
-                //     self.$router.push('/trip?viewId=' + _id);
-                //     let viewId = res.data.data._id;
-                //     //console.log(self.itinerary)
-                //     self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
-                // }))
-                // .catch(function (error) {
-                //     console.log(error);
-                // });
             }
         }
     },

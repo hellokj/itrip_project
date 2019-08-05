@@ -123,7 +123,6 @@ export default {
 </script>
 <style scoped>
 @import "https://cdn.jsdelivr.net/npm/animate.css@3.5.1";
-
 @font-face {
   font-family: logoFont;
   src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
@@ -143,16 +142,12 @@ export default {
     padding: 7px 20px;
     cursor: pointer;
   }
-
   body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.4;
-    
   }
-
-
   .mobileHeader {
     display: none;
   }

@@ -136,7 +136,7 @@
         <b-row style="flex-direction: row-reverse;">
           <b-col class="itinerary-col mb-5" cols="12" sm="6" md="6" lg="3" v-for="i in 4" :key="i">
             <div class="itinerary-item">
-              <img v-if="officialItineraries!==undefined" class="img-itinerary" :src="officialItineraries[i-1].togos[0][0]['images'][0]" alt="">
+              <img v-if="officialItineraries!==undefined && officialItineraries[i-1]!==undefined" class="img-itinerary" :src="officialItineraries[i-1].togos[0][0]['images'][0]" alt="">
               <p class="itinerary-name">{{officialItineraries[i-1].name}}</p>
               <div class="itinerary-days">
                 <p style="margin: 0px; padding: 0px;">{{ dayStr(i) }}</p>
@@ -144,7 +144,7 @@
               <button @click="viewOfficialTrip(officialItineraries[i-1]._id)" class="itinerary-go-now">
                 馬上出發
               </button>
-              <div class="itinerary-stops">
+              <div class="itinerary-stops" v-if="officialItineraries!==undefined && officialItineraries[i-1]!==undefined">
                 <p v-for="(v, k) in officialItineraries[i-1].togos[0]" :key="k" style="margin: 0px; padding: 0px;" class="itinerary-stop">{{v.name}}</p>
               </div>
             </div>

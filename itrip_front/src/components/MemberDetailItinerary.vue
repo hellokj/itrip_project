@@ -140,7 +140,6 @@
 import {getAddress} from "../../utils/checker"
 import { apiDeleteItinerary } from '../../utils/api'
 import MemberMap from '../components/MemberMap'
-import { duration } from 'moment';
 import { start } from 'repl';
 import { setTimeout } from 'timers';
 import { async } from 'q';

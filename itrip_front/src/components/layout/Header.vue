@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import HeaderSearch from '../HeaderSearch'
 import ProfileButton from '../ProfileButton'
 import tripInfoInput from '../../components/template/TripInfoInput'
@@ -69,7 +68,6 @@ import {getAreas, getTypes, makeParams} from '../../../utils/area.js'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-Vue.component('ProfileButton', ProfileButton);
 
 export default {
     name: "Header",
@@ -77,7 +75,7 @@ export default {
         ProfileButton,
         Treeselect,
         HeaderSearch,
-        tripInfoInput
+        tripInfoInput,
     },
     props: {editMode: Boolean, isLockedProp: Boolean, atTrip: Boolean},
     data() {

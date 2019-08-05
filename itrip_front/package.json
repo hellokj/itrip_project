@@ -40,7 +40,11 @@
     "sass-loader": "^7.1.0",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
+<<<<<<< HEAD
     "terser": "^4.0.2",
+=======
+    "terser": "^4.0.0",
+>>>>>>> 911e48f43510c30881e0da33e89b423c55c3c8c5
     "underscore": "^1.9.1",
     "vee-validate": "^2.2.12",
     "vue": "^2.6.10",
@@ -66,6 +70,7 @@
     "vuex": "^3.1.1"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.5.5",
     "@fortawesome/fontawesome-free": "^5.9.0",
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-eslint": "^3.8.0",

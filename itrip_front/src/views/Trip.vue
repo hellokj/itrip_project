@@ -1,19 +1,16 @@
 <template>
   <b-container class="trip" fluid>
-
     <b-row class="trip-row" fluid align-h="center">
       <b-col
         class="px-0" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
       :value="selected"
       style="position: relative;">
-
         <div v-if="isLocked" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 90vh; background-color: rgba(255, 255, 255, .15); z-index: 40;"></div>
-
         <Togos
         id="togos"
         class="togos" style="width: 100%;"
-        :togos="itinerary.togos[page]" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
+        :togos="togo" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
         :page="page" :isLocked="isLocked" :itinerary="itinerary"
         @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 
         @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @addMember="addMember" 
@@ -59,7 +56,7 @@
             ref="map"
             class="map"
             :key="updateMap"
-            :spots="spots" :togos="itinerary.togos[page]" :routes="routes" 
+            :spots="spots" :togos="togo" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage"
             :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
@@ -73,7 +70,6 @@
 
 <script>
 // @ is an alias to /src
-import Vue from 'vue'
 import Togos from '../components/Togos'
 import Spots from '../components/Spots'
 import Map from '../components/Map'
@@ -244,10 +240,14 @@ export default {
       });
     },
     saveShare(date, name) {
-      apiShareTrip(date, name, this.itinerary.togos.length,this.itinerary.togos, this.travelInfos)
+      let self = this;
+      apiShareTrip(date, name, this.itinerary.togos.length,this.itinerary.togos, this.itinerary.travelInfos)
         .then((function (res) {
-            self.$message.success('行程儲存完成，請記住目前網址!');
-            self.$router.push('/trip?viewId=' + _id);
+            Message({
+                message: '行程儲存完成，請記住目前網址!!',
+                type: 'success'
+            });
+            self.$router.push('/trip?viewId=' + res.data.data._id);
             let viewId = res.data.data._id;
             //console.log(self.itinerary)
             self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
@@ -262,7 +262,10 @@ export default {
         memberIds.push(memberId);
       }
       this.$set(this.itinerary, 'memberIds', memberIds);
-      this.$message.success('旅伴新增成功!');
+      Message({
+          message: '旅伴新增成功!',
+          type: 'success'
+      });
     },
     removeMember(mailToRemove) {
       let tmp = this.itinerary.memberIds;
@@ -272,7 +275,10 @@ export default {
         }
       }
       this.$set(this.itinerary, 'memberIds', tmp);
-      this.$message.success('旅伴刪除成功!');
+      Message({
+          message: '旅伴刪除成功!',
+          type: 'success'
+      });
     },
     changeName(name) {
       this.$set(this.itinerary, 'name', name);
@@ -522,16 +528,22 @@ export default {
   },
   computed: {
     togo: function() {
-      if(this.itinerary.togos === undefined) {
-        return []
+      if(this.itinerary.togos !== undefined) {
+        if(this.itinerary.togos.length == 0) {
+          return []
+        }
+        return this.itinerary.togos[this.page];
       }
-      return this.itinerary.togos[this.page];
+      return [];
     },
     travelInfo: function() {
-      if(this.itinerary.travelInfos === undefined) {
-        return []
+      if(this.itinerary.travelInfos !== undefined) {
+        if(this.itinerary.travelInfos.length == 0) {
+          return []
+        }
+        return this.itinerary.travelInfos[this.page];
       }
-      return this.itinerary.travelInfos[this.page];
+      return [];
     },
     token: function() {
       return this.$store.state.userToken;
@@ -545,7 +557,7 @@ export default {
     },
     checkList: function(newVal, oldVal) {
       if(!newVal.includes('景點圖標')) {
-        if(this.itinerary.togos[this.page][0] !== undefined) {
+        if(this.itinerary.togos[this.page] !== undefined) {
           this.centerSpot = this.itinerary.togos[this.page][0];
           this.$set(this.centerSpot, 'zoom', 12);
         }

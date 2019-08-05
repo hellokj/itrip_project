@@ -1,4 +1,3 @@
-import axios from 'axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import {SERVER_IP, ORS_API_KEY} from '../src/config/config';

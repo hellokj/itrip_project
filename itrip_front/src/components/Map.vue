@@ -27,8 +27,6 @@ import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControl
 import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover' 
-import Vue from 'vue'
-import L from "leaflet"
 import { getAddress } from '../../utils/checker.js'
 
 export default {
