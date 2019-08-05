@@ -389,6 +389,9 @@ export default {
           this.tripName = newVal.name;
           //console.log(newVal)
           this.tripDate = this.stringifyStartDate(newVal.startDate);
+          if(this.togos.length > 0) {
+            this.startTime = this.togos[0].startTime.hr.toString().padStart(2, '0') + ':' + this.togos[0].startTime.min.toString().padStart(2, 0);
+          }
           // console.log(this.itinerary)
         },
         deep: true
