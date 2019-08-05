@@ -1,5 +1,6 @@
 <template>
   <b-container class="trip" fluid>
+
     <b-row class="trip-row" fluid align-h="center">
       <b-col
         class="px-0" cols="12" sm="12" md="6" lg="4" xl="4"
@@ -7,7 +8,7 @@
       :value="selected"
       style="position: relative;">
 
-        <!-- <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 90vh; background-color: rgba(55, 55, 55, .05); z-index: 40;">{{"isLocked: " + isLocked}}</div> -->
+        <div v-if="isLocked" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 90vh; background-color: rgba(255, 255, 255, .15); z-index: 40;"></div>
 
         <Togos
           id="togos"

@@ -22,10 +22,10 @@
           <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
         </el-checkbox-group>
       </div>
-      <div>
-        <a-dropdown :trigger="['click']" placement="bottomRight" style="position:absolute;right:15px;">
+      <div style="position:absolute;right:15px; bottom:3px; z-index: 20;">
+        <a-dropdown :trigger="['click']" placement="bottomRight" >
             <a class="ant-dropdown-link">
-            <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer;"></i>
+            <i class="fas fa-cog" style="font-size: 20px;color:#8a8d91;cursor:pointer; position:absolute; right: 5px; bottom: 5px;"></i>
             </a>
             <a-menu slot="overlay">
                 <a-menu-item>
@@ -245,6 +245,7 @@ export default {
   .tag-container {
     height: 15vh;
     width: 100%;
+    position: relative;
     display: flex;
     flex-direction:column;
     border-width: 3px;
@@ -276,6 +277,7 @@ export default {
   }
 
   .checkbox::after {
+    display: block;
     position: absolute;
     content: '';
     left: calc(100% + 3px);

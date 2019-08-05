@@ -1,8 +1,8 @@
 <template>
   <el-carousel :interval="4000" type="card" height="30vh">
     <el-carousel-item style="border: 3px solid #edb855" v-model="itineraries" v-for="(item, index) in itineraries" :key="index">
-      <div style="width: auto; height: 100%;" @click="checkDetail(item)">
-        <img fit="fit" :src='imgSrc(item)' style="width: 100%; height: 100%;" class="card_img">
+      <div class="img-container" @click="checkDetail(item)">
+        <img :src='imgSrc(item)' style="width: 100%; height: auto;" class="card_img">
         <!-- <div class="ribbon">公開</div> -->
         <span class="card_text">{{ item.name }} {{ item.startDate.year }} - {{ item.startDate.month }} - {{ item.startDate.day }}</span>
       </div>
@@ -58,6 +58,15 @@ export default {
   .card_img {
     position: absolute;
     overflow: hidden;
+  }
+
+  .img-container {
+    width: auto; 
+    height: 100%; 
+    overflow: hidden; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
   }
 
   .ribbon {

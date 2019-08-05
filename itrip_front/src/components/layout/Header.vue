@@ -1,14 +1,13 @@
 <template>
-    <header class="header" :class="{headerBackgroundEdit : editMode, headerBackgroundLocked: isLocked}">
-        
+    <header class="header" :class="{headerBackgroundLocked : isLocked}">
         <!-- Edit mode modal -->    
         <b-modal ref="edit-tutorial" size="md" hide-footer hide-backdrop hide-header>
             <div class="edit-tutorial" style="width: 100%; height:auto; text-align:center;">
-                <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">點擊以下圖示以退出編輯模式</h3>
-                <div style="margin-bottom: 150px; display: block; width: 100%; font-size: 100px;">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <div class="edit-tutorial-cursor">
+                <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">開始編輯您的行程!</h3>
+                <div style="display: block; width: 100%; height: 250px; text-align: center;">
+                    <img src="../../assets/itinerary.png" alt="" style="width: 50%">
+                </div>                
+                <div class="locked-tutorial-cursor">
                     <i class="far fa-hand-pointer"></i>
                 </div>
                 <button class="edit-tutorial-ok" @click="hideEditTutorial">我知道了</button>
@@ -18,14 +17,14 @@
         <!-- Lock mode modal -->
         <b-modal ref="locked-tutorial" size="md" hide-footer hide-backdrop hide-header>
             <div class="locked-tutorial" style="text-align:center;">
-                <h3 style="margin-top: 100px; width: 100%; font-size: 25px; color:#FFF;">此行程已鎖定</h3>
+                <h3 style="margin-top: 80px; width: 100%; font-size: 25px; color:#FFF;">此行程已鎖定</h3>
                 <h3 style="margin-top: 10px; width: 100%; font-size: 25px; color:#FFF;">可即時查看行程變更</h3>
-                <div style="display: block; width: 100%; height: 250px; text-align: center;">
-                    <img src="../../assets/itinerary.png" alt="" style="width: 50%">
-                </div>                
-                <div class="locked-tutorial-cursor">
-                    <i class="far fa-hand-pointer"></i>
+                <div style="margin-top: -15px; margin-bottom: 150px; display: block; width: 100%; font-size: 100px;">
+                    <img src="../../assets/lockedMode.svg" alt="" width="30%">
                 </div>
+                <!-- <div class="edit-tutorial-cursor">
+                    <i class="far fa-hand-pointer"></i>
+                </div> -->
                 <button class="locked-tutorial-ok" @click="hideLockedTutorial">我知道了</button>
             </div>
         </b-modal>
@@ -120,7 +119,7 @@ export default {
         HeaderSearch,
         tripInfoInput
     },
-    props: {editMode: Boolean, isLockedProp: Boolean},
+    props: {editMode: Boolean, isLockedProp: Boolean, atTrip: Boolean},
     data() {
         return {
             input_name: '',
@@ -135,7 +134,8 @@ export default {
             options: getAreas(),
             sortValueBy: 'ORDER_SELECTED',
             val: '',
-            isLocked: null,
+            isLocked: true,
+            // isLocked: null
             burgerShow: false,
             burgerDropdown: false,
         }
@@ -145,7 +145,6 @@ export default {
     },
     mounted() {
         console.log("mounted: isLocked becomes " + this.isLocked);
-        if (this.isLocked === null) this.showEditTutorial();  // isLocked is never changed
     },
     destroyed: function() {
         window.removeEventListener('click', this.clickOutSide);
@@ -208,7 +207,6 @@ export default {
     },
     computed: {
         logo:  function(){
-            if( this.editMode ) return "itripLogoWhite.png"
             if( this.isLocked ) return "itripLogoWhite.png"
             else return "itripLogo.png"
         },
@@ -225,8 +223,12 @@ export default {
         },
         isLocked: function(newVal) {
             console.log("watch isLocked change")
-            if(!this.isLocked) this.showEditTutorial();
-            if(this.isLocked) this.showLockedTutorial();
+            if(!this.isLocked && this.atTrip) this.showEditTutorial();
+            if(this.isLocked && this.atTrip) this.showLockedTutorial();
+        },
+        atTrip: function(newVal) {
+            if(newVal === true && !this.isLocked) this.showEditTutorial();
+            if(newVal === true && this.isLocked) this.showLockedTutorial();
         }
     },
 }
@@ -452,11 +454,12 @@ export default {
         left: 0px; 
         top: -5px; 
         width:100%; 
-        height: 600px;
+        height: 400px;
         border-radius: 5px;
         background-color: #FFF;
         background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
         box-shadow: 0px 3px 6px rgba(55, 55, 55, 0.85);
+        overflow: hidden;
     }
     .edit-tutorial-ok {
         position: absolute;
@@ -469,6 +472,7 @@ export default {
         color: #FFF;
         background: transparent;
         bottom: 15px;
+        box-shadow: 0px 3px 6px rgba(55, 55, 55, 0.15);
     }
     .edit-tutorial-ok:hover {
         background: #FFF;
@@ -493,7 +497,7 @@ export default {
         left: 0px; 
         top: -5px; 
         width: 100%; 
-        height: auto;
+        height: 400px;
         border-radius: 5px;
         background-color: #FFF;
         background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);

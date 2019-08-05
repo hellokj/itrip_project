@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" :editMode="editMode" :isLockedProp="isLocked"/>
+    <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" :editMode="editMode" :isLockedProp="isLocked" :atTrip="atTrip"/>
     <MobileHeader v-if="!atHome" class="mobileHeader"/>
     <TabletHeader v-if="!atHome" class="tabletHeader"/>
     <div id="nav"></div>
@@ -29,6 +29,7 @@ export default {
       type: '',
       param: {},
       atHome: true,
+      atTrip: false,
       isAuthorized: this.$store.state.isAuthorized,
       editMode: false,
       isLocked: false,
@@ -110,6 +111,9 @@ export default {
         } else {
           this.atHome = false;
         }
+
+        if (to.name === "trip") this.atTrip = true;
+        else this.atTrip = false;
     },
     isAuthorized() {
       console.log(this.isAuthorized)
