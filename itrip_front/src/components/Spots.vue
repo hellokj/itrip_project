@@ -235,7 +235,7 @@ export default {
       },
       sortBy: function(newVal) {
         // alert(this.sortBy)
-        let choices = {'checkins':'臉書打卡王','ig_post_num':'IG Tag熱度'}
+        let choices = {'checkins':'IG打卡王','ig_post_num':'HashTag熱度'}
         this.sortString = choices[newVal];
         this.$emit('sort-spot', newVal);
       },

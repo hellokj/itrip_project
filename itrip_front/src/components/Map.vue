@@ -8,8 +8,7 @@
       :lat-lngs="routesArr" :color="colors[0 % 7]" :opacity="opacity" :weight="weight"></l-polyline>
       <div class="spot-marker" :key="spot._id" v-for="(spot, index) in spots">
         <l-marker ref="marker"  v-if="checkList.includes('景點圖標')"
-        :icon="icons[index]" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
-        @mouseover="mouseOver" @mouseout="mouseOut" @add="openPopup($event, index, selectedSpot)">
+        :icon="icons[index]" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])" @add="openPopup($event, index, selectedSpot)">
           <l-popup :options="{autoClose: false, closeOnClick: false}" style="width:auto;height:10px;">
             <div class="name"><b>{{ spots[index].name }}</b></div>
           </l-popup>
@@ -17,8 +16,7 @@
       </div>
       <div class="route-marker" :key="index" v-for="(togo, index) in togos" >
         <l-marker v-if="checkList.includes('路徑指示')"
-        :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
-        @add="openTogosPopup($event)">
+        :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])" @add="openPopup($event, index, selectedSpot)">
         </l-marker>
       </div>
     </l-map>
@@ -103,12 +101,12 @@ export default {
         }));
       }
     },
-    mouseOver(evt) {
-      this.$set(evt.target.options.icon.options, 'markerColor', 'red');
-    },
-    mouseOut(evt) {
-      this.$set(evt.target.options.icon.options, 'markerColor', 'darkblue');
-    },
+    // mouseOver(evt) {
+    //   this.$set(evt.target.options.icon.options, 'markerColor', 'red');
+    // },
+    // mouseOut(evt) {
+    //   this.$set(evt.target.options.icon.options, 'markerColor', 'darkblue');
+    // },
     visbleUpdate(visible){
       this.visible = visible;
     },
@@ -143,19 +141,24 @@ export default {
       this.routesArr = this.routes[this.currentPage].routes;
     },
     openPopup: function(event, index, selectedSpot) {
+      //
       this.$nextTick( ()=> {
         if(index === selectedSpot) {
           setTimeout(() => {
              event.target.openPopup();
-          }, 500);
+          }, 1000);
         }
       });
     },
-    openTogosPopup: function(event) {
+    openTogosPopup: function(event, index, selectedSpot) {
+      // console.log('index', index)
+      // console.log('selectedSpot', (selectedSpot + 1) * -1)
       this.$nextTick( ()=> {
+        if(index == (selectedSpot + 1) * -1) {
           setTimeout(() => {
              event.target.openPopup();
-          }, 500);
+          }, 1000);
+        }
       });
     },
     getPopupContent(index) {
@@ -206,6 +209,9 @@ export default {
         this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
         this.zoom = 12;
       }
+    },
+    selectedSpot: function(newVal, oldVal) {
+      console.log(newVal)
     },
     routes: {
       handler(newVal, oldVal) {

@@ -77,7 +77,7 @@
             placeholder="請輸入時間"
             style="width: 140px;"/>
           </div>
-          <b-tab v-for="i in tabs" :key="'tab' + i" style="heigh: 55vh; overflow-Y: scroll;">
+          <b-tab v-for="i in tabs" :key="'tab' + i" style="padding-bottom:20px;height: 60vh; overflow-Y: scroll;">
             <template slot="title">
                 {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
@@ -476,7 +476,6 @@ export default {
     },
     beforeDestroy() {
       if(this.message != null) {
-        console.log('!')
         this.message.close();
       }
     }

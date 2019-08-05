@@ -290,7 +290,7 @@ export default {
       }
     },
     hoverItem: function(type, index) {
-      console.log(index);
+      //console.log(index);
       if(type == 'spots') {
         if(this.checkList.includes('景點圖標')) {
           this.centerSpot = Object.assign({}, this.spots[index]);;
@@ -583,6 +583,7 @@ export default {
     },
     selectedSpot: function(newVal, oldVal) {
       this.updateMap++;
+      //console.log(newVal)
     },
     qresult: function(newVal) {
       if (newVal  && !this.qadded) {
@@ -694,8 +695,8 @@ export default {
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
     this.$bus.$off('createTrip');
-    if(!this.isLocked && this.$store.state.userToken.length > 0) {
-      this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.$store.state.userToken});
+    if(this.$store.state.userToken.length > 0) {
+      this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.$store.state.userToken, isLocked: this.isLocked});
     }
   },
   destroy: function() {
