@@ -198,7 +198,7 @@ export default {
 
             if(newVal) { 
                 this.isLocked = null;
-                alert("isLockedProp is: " + this.isLockedProp);
+                // alert("isLockedProp is: " + this.isLockedProp);
                 this.isLocked = this.isLockedProp;
                 if(this.isLocked) this.showLockedTutorial();
                 if(!this.isLocked) this.showEditTutorial();

@@ -144,6 +144,7 @@ export default {
       currentAccessId:'',
       editMode: false,
       isLocked: false,
+      storedToken: this.$store.state.userToken
     }
   },
   methods: {
@@ -531,9 +532,17 @@ export default {
         return []
       }
       return this.itinerary.travelInfos[this.page];
+    },
+    token: function() {
+      return this.$store.state.userToken;
     }
   },
   watch: {
+    token: function(newVal, oldVal) {
+      if(oldVal.length == 0) {
+        this.storedToken = newVal;
+      }
+    },
     checkList: function(newVal, oldVal) {
       if(!newVal.includes('景點圖標')) {
         if(this.itinerary.togos[this.page][0] !== undefined) {
@@ -695,9 +704,8 @@ export default {
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
     this.$bus.$off('createTrip');
-      console.log(this.$store.state.userToken);
-    if(this.$store.state.userToken.length > 0) {
-      this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.$store.state.userToken, isLocked: this.isLocked});
+    if(this.storedToken.length > 0) {
+      this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.storedToken, isLocked: this.isLocked});
     }
   },
   destroy: function() {

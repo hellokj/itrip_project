@@ -55,7 +55,7 @@ const QueryHelper = (name, city, region) => {
 
 // query for place search => shortening
 const Place_query = (schema, city, region, categories, name, sortBy, page, limit, order) => {
-    console.log(city, region, categories, name, sortBy, page, limit, order);
+    // console.log(city, region, categories, name, sortBy, page, limit, order);
     if(name != undefined) {
         return schema.paginate(QueryHelper(name, city, region), Options(sortBy, page, limit, order),
             function(err, result) {
