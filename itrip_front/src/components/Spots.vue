@@ -19,7 +19,7 @@
       <div class="ml-4 category-container">
         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCategoryListChange" style="width:30px;">All</el-checkbox>
         <el-checkbox-group class="checkbox-group" v-model="checkedCategories" @change="handleCheckedCategoryListChange">
-          <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{cat}}</el-checkbox>
+          <el-checkbox class="checkbox" v-for="(cat, index) in categories" :label="cat" :key="cat"><i :class="categoryIcons[index]"></i> {{catTranslation[cat]}}</el-checkbox>
         </el-checkbox-group>
       </div>
       <div class="ml-4 mobile-category-container" style="height:100%;">
@@ -34,7 +34,7 @@
                 <el-checkbox-group class="checkbox-group" v-model="checkedCategories" @change="handleCheckedCategoryListChange">
                     <a-menu-item class="px-2" :key="index" v-for="(cat, index) in categories">
                       <el-checkbox class="checkbox" :label="cat">
-                        <i :class="categoryIcons[index]"></i> {{cat}}
+                        <i :class="categoryIcons[index]"></i> {{catTranslation[cat]}}
                       </el-checkbox>
                     </a-menu-item>
                 </el-checkbox-group>
@@ -61,7 +61,6 @@
         <p style="font-size: 30px;text-align: center;">抱歉，沒有結果!</p>
         </div>
         <div style="width: 100%; height: 75vh; padding-top: 10px; overflow-y: scroll;" ref="spotslist">
-      <!-- <virtual-list :size="165" :remain="5" @change="showLoading" ref="list"> -->
         <loading :active.sync="isLoading" 
         :is-full-page="false"></loading>
         <SpotItem :key="spot._id" v-for="(spot, index) in spots" 
@@ -73,12 +72,12 @@
           @edit-form="EditSpot"
           @is-in-togos="isInTogos"/>
         <v-pagination 
-                v-if="isScrollbarShown"
-                v-model="currentPage"
-                :page-count="totalPages"
-                :classes="bootstrapPaginationClasses"
-                :labels="paginationAnchorTexts"
-                style="display:flex;justify-content:center;"></v-pagination>
+          v-if="isScrollbarShown"
+          v-model="currentPage"
+          :page-count="totalPages"
+          :classes="bootstrapPaginationClasses"
+          :labels="paginationAnchorTexts"
+          style="display:flex;justify-content:center;"></v-pagination>
         <p v-if="isScrollbarShown" class="spotResults" style="text-align:center;">我們幫您找到了{{dataCount}}筆地點</p>
       <!-- </virtual-list> -->
       </div>
@@ -98,8 +97,9 @@ import EditSpotModal from './template/EditSpotModal'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import {types} from '../../utils/area.js'
 
-const categoryList = ['美食','購物', '景點', '交通', '住宿', '娛樂'];
+const categoryList = ['gourmet','shopping', 'scenic spot', 'transportation', 'lodging', 'entertainment'];
 const categoryIcons = ['fas fa-utensils', 'fas fa-shopping-bag', 'fas fa-binoculars', 'fas fa-bus-alt', 'fas fa-hotel', 'fas fa-glass-martini-alt'];
+const catTranslation = {'gourmet': '美食', 'shopping': '購物', 'scenic spot': '景點', 'transportation': '交通', 'lodging': '住宿', 'entertainment': '娛樂'};
 
 export default {
     name: "Spots",
@@ -112,6 +112,7 @@ export default {
     },
     data() {
       return {
+        catTranslation: catTranslation,
         currentPage: 1,
         totalPages: 0,
         dataCount: 0,
@@ -239,13 +240,15 @@ export default {
         this.$emit('sort-spot', newVal);
       },
       checkedCategories: function(newVal) {
-        let catArr = [];
-        for(let i=0;i<newVal.length;i++) {
-          catArr.push(types[newVal[i]]);
-        }
-        this.$emit('filter-spot', catArr);
+        this.$emit('filter-spot', newVal);
       }
     },
+    mounted() {
+      let self = this;
+      this.$bus.$on('typesChecked', event => {
+        self.checkedCategories = event.typesChecked;
+      })
+    }
 }
 </script>
 

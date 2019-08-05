@@ -8,7 +8,7 @@
         <Togos
         id="togos"
         class="togos"
-        :togos="togo" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
+        :togos="itinerary.togos[page]" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
         :page="page" :isLocked="isLocked" :itinerary="itinerary"
         @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 
         @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @addMember="addMember" 
@@ -27,7 +27,7 @@
       </b-col>
       <b-col
       v-if="isMapShown"
-      class="px-0 pl-3 map-col" order=displayOrders[2] order-md="3"
+      class="px-0 pl-0 map-col" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(1025) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected" no-gutters fluid>
         <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
@@ -42,19 +42,19 @@
               </el-carousel-item>
             </el-carousel>
           </div>
-          <div class="row" style="display:flex;justify-content:center;">
+          <div class="row" style="width:100%;display:flex;flex-direction:row;justify-content:center;">
             <el-checkbox-group v-model="checkList">
               <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
               <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
             </el-checkbox-group>
-            <i class="ml-5 mt-1 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
+            <i class="mt-1 ml-2 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
           </div>
           <Map 
             id="map"
             ref="map"
             class="map"
             :key="updateMap"
-            :spots="spots" :togos="togo" :routes="routes" 
+            :spots="spots" :togos="itinerary.togos[page]" :routes="routes" 
             :page="page" :perPage="perPage" :spotPage="spotPage"
             :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
@@ -163,7 +163,6 @@ export default {
             this.$bus.$emit('toggle', {id: 'Togos'});
         }
         this.isAddSpotLocked = true;
-        this.$refs.map.centerRoutes();
       }
     },
     addTravelInfo(startOb, destOb) {
@@ -238,7 +237,7 @@ export default {
       });
     },
     saveShare(date, name) {
-      apiShareTrip(date, name, this.togos.length,this.togos, this.travelInfos)
+      apiShareTrip(date, name, this.itinerary.togos.length,this.itinerary.togos, this.travelInfos)
         .then((function (res) {
             self.$message.success('行程儲存完成，請記住目前網址!');
             self.$router.push('/trip?viewId=' + _id);
@@ -285,6 +284,7 @@ export default {
       }
     },
     hoverItem: function(type, index) {
+      console.log(index);
       if(type == 'spots') {
         if(this.checkList.includes('景點圖標')) {
           this.centerSpot = Object.assign({}, this.spots[index]);;
@@ -588,10 +588,11 @@ export default {
       }
     },
     isAddSpotLocked: function(newVal, oldVal) {
+      let self = this;
       if(newVal) {
         setTimeout(() => {
-            this.isAddSpotLocked = false
-        },2000)
+            self.isAddSpotLocked = false
+        },3000)
       }
     },
     windowWidth: function(newVal, oldVal) {
@@ -609,7 +610,7 @@ export default {
           this.message.close();
         }
       }
-    }
+    },
   },
   created () {
     //console.log('created!')
@@ -700,7 +701,7 @@ export default {
   .trip {
     height: 90vh;
     overflow: hidden;
-    background: rgb(250,250,250);
+    background:#FFF;
   }
   .map-col {
     height: 90vh;

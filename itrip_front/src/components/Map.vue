@@ -145,13 +145,17 @@ export default {
     openPopup: function(event, index, selectedSpot) {
       this.$nextTick( ()=> {
         if(index === selectedSpot) {
-          event.target.openPopup();
+          setTimeout(() => {
+             event.target.openPopup();
+          }, 500);
         }
       });
     },
     openTogosPopup: function(event) {
       this.$nextTick( ()=> {
-          event.target.openPopup();
+          setTimeout(() => {
+             event.target.openPopup();
+          }, 500);
       });
     },
     getPopupContent(index) {
@@ -161,19 +165,21 @@ export default {
       return getAddress(this.spots[index].address);
     },
     resetTogosIcon() {
+      this.togoIcons = [];
       if(this.togos !== undefined) {
         for(let i=0;i<this.togos.length;i++) {
           let togoIcon = L.divIcon({
             html: '<i class="fas fa-map-pin" style="color: black;font-size:25px;text-shadow:-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF;">' + (i+1) + '</i>',
             iconSize: [15, 45],
             className: 'myDivIcon'
-        });
-        this.togoIcons.push(togoIcon);
+           });
+          this.togoIcons.push(togoIcon);
         }
       }
     },
     centerRoutes() {
-      if(this.routesArr !== undefined) {
+      //console.log(this.routesArr);
+      if(this.routesArr.length != 0) {
         const map = this.$refs.myMap.mapObject;
         let myBounds = new L.LatLngBounds(this.routesArr);
         map.fitBounds(myBounds); //Centers and zooms the map around the bounds
@@ -183,25 +189,28 @@ export default {
   },
   watch: {
     togos: function(newVal, oldVal) {
-      if(this.togos !== undefined) {
+      if(newVal !== undefined) {
         this.resetTogosIcon();
         this.updateMarkers();
-        this.resetRoutesArr();
+        //this.resetRoutesArr();
+        //this.centerRoutes();
       }
-      
     },
     page: function(){
       this.currentPage = this.page;
       this.resetRoutesArr();
     },
-    spots: function(){
-      let spot = this.spots[0];
-      this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
-      this.zoom = 12;
+    spots: function(newVal, oldVal){
+      if(newVal[0] !== undefined) {
+        let spot = this.spots[0];
+        this.center =  L.latLng(spot.location.coordinates[1], spot.location.coordinates[0]);
+        this.zoom = 12;
+      }
     },
     routes: {
-      handler() {
+      handler(newVal, oldVal) {
         this.resetRoutesArr();
+        this.centerRoutes()
       },
       deep: true
     },
