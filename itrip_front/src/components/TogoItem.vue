@@ -58,7 +58,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import {getAddress} from '../../utils/checker.js'
 import VNumberSmarty from 'vue-number-smarty'
 import moment from 'moment'

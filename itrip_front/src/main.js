@@ -1,31 +1,25 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import { Icon }  from 'leaflet'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
 import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import 'leaflet/dist/leaflet.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen';
-import '@fortawesome/fontawesome-free/css/all.css'
 import VModal from 'vue-js-modal'
 import store from './store'
 import eventBus from '../utils/eventBus.js'
-import 'ant-design-vue/dist/antd.css'
-import Antd from 'ant-design-vue'
 import {MediaQueries} from 'vue-media-queries'
-import jsPDF from 'jspdf'
 import SocialSharing from 'vue-social-sharing'
 import VueSocketio from 'vue-socket.io-extended';
 import io from 'socket.io-client';
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css'
+
 
 Vue.use(VueSocketio, io('http://35.194.247.229:4000'));
 
@@ -34,14 +28,11 @@ Vue.use(VueSocketio, io('http://35.194.247.229:4000'));
 
 const mediaQueries = new MediaQueries();
 Vue.use(mediaQueries);
-Vue.use(ElementUI);
+Vue.use(Antd);
 Vue.use(SocialSharing);
 //Vue.use(emailjs);
 // configure language
 locale.use(lang)
-Vue.use(Vuex);
-Vue.use(jsPDF);
-Vue.use(Antd);
 Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
 Vue.use(VModal, { dynamic: true, injectModalsContainer: false });

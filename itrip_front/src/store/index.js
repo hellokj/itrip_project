@@ -1,8 +1,3 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-
-Vue.use(Vuex);
-
 const localStoragePlugin = store => {
   store.subscribe((mutation, store) => {
     if (mutation.type === "AUTHORIZE") {

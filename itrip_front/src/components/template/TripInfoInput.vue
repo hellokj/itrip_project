@@ -95,10 +95,7 @@ export default {
             if(token.length > 0) {
                 apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
                 .then((function (res) {
-                    Message({
-                        message: '行程儲存成功!',
-                        type: 'success'
-                    });
+                    self.$message.success('行程儲存成功!');
                     self.$router.push('/trip?currentAccessId=' + self.$store.state.user.id + '&itineraryId=' + _id);
                     self.$bus.$emit('createTrip', {tripDate: self.tripDate, itinerary: res.data.data});
                 }))
