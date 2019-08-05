@@ -10,6 +10,21 @@ class SocketHandler {
     this.lockedItineraryIds = []; // 存放 被鎖定的行程id們
   }
 
+  verifyToken(token){
+    let memberId;
+    jwt.verify(token, config.jwtSalt, (err, decoded) => {
+      if(err){
+        console.log("error", err);
+        return -1;
+      }
+      else {
+        memberId = decoded.memberId;
+        console.log("success", memberId);
+      }
+    });
+    return memberId;
+  }
+
   connect(socketId, token){
     let memberId;
     if(token) {
@@ -42,7 +57,7 @@ class SocketHandler {
 
   disconnect(socketId){
     for (var key in this.membersTable.obj){
-      console.log("???????????????", key);
+      // console.log("???????????????", key);
       for(let j = 0; j < this.membersTable.obj[key].length; j++){
         if (socketId == this.membersTable.obj[key][j]){
           this.membersTable.obj[key].splice(j, 1);
@@ -69,6 +84,7 @@ class SocketHandler {
   // 確認行程是否上鎖
   checkLockedItineraries(itineraryId){
     let target = -1; // 沒被lock
+    console.log("全部的鎖住", this.lockedItineraryIds);
     for (let i = 0; i < this.lockedItineraryIds.length; i++){
       if (itineraryId == this.lockedItineraryIds[i]){
         target = i;
@@ -78,21 +94,22 @@ class SocketHandler {
   }
 
   async lockItinerary(itineraryId, token){
-    console.log(itineraryId);
+    console.log("我要鎖住", itineraryId);
     let itinerary = await Itinerary.get(itineraryId); // 找出這個行程並lock
-    console.log("itinerary", itinerary);
+    // console.log("itinerary", itinerary);
     if (itinerary !== null && !this.lockedItineraryIds.includes(itinerary._id)){
+      console.log("我鎖住了", itineraryId);
       this.lockedItineraryIds.push(itinerary._id);
       let editorId = this.verifyToken(token); // 編輯者id
       console.log("token editor id", editorId);
-      return this.notify(itinerary, editorId);
+      return this.getNotifiedMembers(itinerary, editorId);
     }else {
       // 沒找到 抱錯
       return null;
     }
   }
 
-  notify(itinerary, editorId){
+  getNotifiedMembers(itinerary, editorId){
     console.log("editor id", editorId);
     let editor = itinerary.memberIds.filter(function(value, index, arr){
       return value == editorId;
@@ -101,36 +118,46 @@ class SocketHandler {
       return value !== editorId;
     });
     // 再由此ids去找到各自對應的socketIds
-    let members = []; // 裡面是 connectedMember { socketId: xxx, memberId: xxx} Object
+    let membersSocketIds = []; // 裡面是 connectedMember { socketId: xxx, memberId: xxx} Object
     console.log("editor handler", editor);
-    console.log("connected members handler", this.connectedMembers);
-    for (let i = 0; i < this.connectedMembers.length; i++){
-      if (this.connectedMembers[i].memberId == editor[0]){
-        members.push(this.connectedMembers[i]);
-        break;
-      }
-    }
+    console.log("connected members handler", this.membersTable);
     for (let i = 0; i < othersId.length; i++){
-      for (let j = 0; j < this.connectedMembers.length; j++){
-        if (this.connectedMembers[j].memberId == othersId[i]){
-          members.push(this.connectedMembers[j]);
-          continue;
+      let socketIds = [];
+      if (this.membersTable.containsKey(othersId[i])){
+        socketIds = this.membersTable.get(othersId[i]);
+        for (let j = 0; j < socketIds.length; j++){
+          membersSocketIds.push(socketIds[j]);
         }
       }
     }
-    console.log("handler members", members);
-    return members;
+    console.log("handler membersSocketIds", membersSocketIds);
+    return membersSocketIds;
   }
 
+  async releaseItinerary(itineraryId, token){
+    let editorId = this.verifyToken(token); // 編輯者id
+    let itinerary = await Itinerary.get(itineraryId); // 找出這個行程
+    // 去除掉本次要解鎖的行程
+    this.lockedItineraryIds = this.lockedItineraryIds.filter(function(value, index, arr){
+      return value !== itineraryId;
+    });
+    let membersSocketIds = this.getNotifiedMembers(itinerary, editorId);
+    console.log("我要通知這些socketIds", membersSocketIds);
+    return membersSocketIds;
+  }
+
+  // 改成membersTable 
+
   async updateItinerary(itinerary, editorId){
-    console.log("update itinerary", itinerary);
-    console.log("update editor", editorId);
+    // console.log("update itinerary", itinerary);
+    // console.log("update editor", editorId);
     let _id = itinerary._id;
     let onlineMembers = [];
     let self = this;
-    console.log("self", self);
+    // console.log("self", self);
     await Itinerary.updateItinerary(_id, itinerary).then(function(res){
       let itineraryMembers = itinerary.memberIds;
+      // 其他人
       itineraryMembers = itineraryMembers.filter(function(value, index, arr){
         return value !== editorId;
       });
@@ -144,21 +171,6 @@ class SocketHandler {
     });
     console.log("online members", onlineMembers);
     return onlineMembers;
-  }
-
-  verifyToken(token){
-    let memberId;
-    jwt.verify(token, config.jwtSalt, (err, decoded) => {
-      if(err){
-        console.log("error", err);
-        return -1;
-      }
-      else {
-        memberId = decoded.memberId;
-        console.log("success", memberId);
-      }
-    });
-    return memberId;
   }
 
   getAllItinerary() {

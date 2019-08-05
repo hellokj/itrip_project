@@ -25,7 +25,8 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isLocked="isLocked" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isMapShown="isMapShown" :queryRegion="queryRegion" 
+          :queryCounty="queryCounty" :queryName="queryName" :isLocked="isLocked"
           @filter-spot="filterSpot" @hoverItem="hoverItem" @add-spot="addSpotToTrip" @get-spot="getSpot" @get-nearby="getNearby" @sort-spot="sortSpot" @refresh="refresh"/> 
       </b-col>
       <b-col
@@ -50,13 +51,15 @@
               <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
               <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
             </el-checkbox-group>
+            <i class="ml-5 mt-1 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
           </div>
           <Map 
             id="map"
+            ref="map"
             class="map"
             :key="updateMap"
             :spots="spots" :togos="togo" :routes="routes" 
-            :page="page" :perPage="perPage" :spotPage="spotPage" 
+            :page="page" :perPage="perPage" :spotPage="spotPage"
             :centerSpot="centerSpot" :selectedSpot="selectedSpot" :checkList="checkList"/>
         </b-col>
       </b-col>
@@ -165,8 +168,7 @@ export default {
             this.$bus.$emit('toggle', {id: 'Togos'});
         }
         this.isAddSpotLocked = true;
-        //this.$set(this.itinerary, 'togos', this.togos);
-        //this.$set(this.itinerary, 'travelInfos', this.travelInfos);
+        this.$refs.map.centerRoutes();
       }
     },
     addTravelInfo(startOb, destOb) {
@@ -302,7 +304,7 @@ export default {
         //console.log('!')
         if(this.checkList.includes('路徑指示')) {
           this.centerSpot = Object.assign({}, this.itinerary.togos[this.page][index]);;
-          this.$set(this.centerSpot, 'zoom', 12);
+          this.$set(this.centerSpot, 'zoom', 10);
           this.$set(this.centerSpot, 'index', index);
         }
       }
@@ -496,6 +498,8 @@ export default {
         //console.log(res.data)
         self.itinerary = res.data.data;
         self.currentAccessId = self.qcurrentAccessId;
+        // reset routes
+        self.resetRoutes();
       }))
       .catch(function (error) {
         console.log(error);
@@ -508,6 +512,10 @@ export default {
         day: s.getDate()
       }
       return ob;
+    },
+    centerRoutes() {
+      this.$refs.map.centerRoutes();
+
     }
   },
   computed: {
@@ -528,10 +536,8 @@ export default {
     checkList: function(newVal, oldVal) {
       if(!newVal.includes('景點圖標')) {
         if(this.itinerary.togos[this.page][0] !== undefined) {
-          this.centerSpot = this.itinerary.togos[this.page][0];  
-        }
-        else {
-          this.centerSpot = this.itinerary.spots[this.page][0];
+          this.centerSpot = this.itinerary.togos[this.page][0];
+          this.$set(this.centerSpot, 'zoom', 12);
         }
       }
     },
@@ -604,6 +610,11 @@ export default {
     isLocked: function(newVal) {
       if(newVal) this.$emit('is-locked-on');
       else if(!newVal) this.$emit('is-locked-off')
+      if(!newVal) {
+        if(this.message != null) {
+          this.message.close();
+        }
+      }
     }
   },
   created () {
@@ -636,7 +647,6 @@ export default {
     }
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
-    
   },
   beforeMount() {
     if(this.qviewId !== undefined) {
@@ -655,17 +665,15 @@ export default {
       page: 1,
       sortBy: 'ig_post_num'
     };
-    // this.isLocked = true; //modetest
-    // console.log(this.itinerary)
-    // for (let i=0;i<this.itinerary.togos.length;i++){
-    //   if(self.itinerary.travelInfos[i] !== undefined) {
-    //     self.$set(self.routes, i, self.itinerary.travelInfos[i].routes);
-    //   }
-    // };
     // listen to update itinerary
     this.$socket.on('updateNotification', (itineraryOb) => {
       self.itinerary = Object.assign({}, itineraryOb);
       console.log('being notified...')
+    })
+    // listen to unclock notification
+    this.$socket.on('unlockNotification', () => {
+      console.log('being notified to unlock!')
+      self.isLocked = false;
     })
 
     if (this.qname !== undefined) {
@@ -678,14 +686,15 @@ export default {
     } else {
       this.paramProp = data;
     }
-    let token = this.$store.state.userToken
-    if( this.isLocked ) this.$emit('trip-lock')
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]
     this.$bus.$off('toggle');
     this.$bus.$off('modifyItinerary');
     this.$bus.$off('createTrip');
+    if(!this.isLocked && this.$store.state.userToken.length > 0) {
+      this.$socket.emit('releaseEditMode', {itineraryId: this.itinerary._id, token: this.$store.state.userToken});
+    }
   },
   destroy: function() {
     window.removeEventListener('resize', this.handleResize);

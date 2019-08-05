@@ -73,7 +73,7 @@ class HashMap{
   */  
   keySet(){  
       var _keys = new Array();  
-      for(var key in obj){  
+      for(var key in this.obj){  
           _keys.push(key);  
       }  
       return _keys;  

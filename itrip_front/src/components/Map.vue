@@ -3,7 +3,9 @@
     <l-map ref="myMap" :zoom="zoom" :center="center" style="height: 100%;" :options="{zoomControl: false}" @update:center="centerUpdate" @update:zoom="zoomUpdate">
       <l-tile-layer :url="url" :attribution="attribution" dragging="false"></l-tile-layer>
       <l-control-zoom :position="zoomControlPosition"></l-control-zoom>
-      <l-polyline v-if="isRouteArr && checkList.includes('路徑指示')" :lat-lngs="routesArr" :color="color" :opacity="opacity" :weight="weight"></l-polyline>
+      <l-polyline
+      v-if="isRouteArr && checkList.includes('路徑指示')"
+      :lat-lngs="routesArr" :color="colors[0 % 7]" :opacity="opacity" :weight="weight"></l-polyline>
       <div class="spot-marker" :key="spot._id" v-for="(spot, index) in spots">
         <l-marker ref="marker"  v-if="checkList.includes('景點圖標')"
         :icon="icons[index]" :lat-lng="getLatLng(spot.location.coordinates[1], spot.location.coordinates[0])"
@@ -17,22 +19,19 @@
         <l-marker v-if="checkList.includes('路徑指示')"
         :icon="togoIcons[index]" :lat-lng="getLatLng(togo.location.coordinates[1], togo.location.coordinates[0])"
         @add="openTogosPopup($event)">
-        <!-- <l-popup class="togo-popup" :options="{autoClose: false, closeOnClick: false}" style="width:auto;height:10px;">
-          <div class="name"><b>{{index + 1}}. {{ togos[index].name }}</b></div>
-        </l-popup> -->
         </l-marker>
       </div>
     </l-map>
   </div>
 </template>
 <script>
-import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LIcon, LPolyline, LPopup, LTooltip, LControlZoom, LatLngBounds } from 'vue2-leaflet';
 import { Icon, divIcon }  from 'leaflet'
 import { AwesomeMarkers } from 'leaflet.awesome-markers'
 import MarkerPopover from '../components/template/MarkerPopover' 
 import Vue from 'vue'
 import L from "leaflet"
-import {getAddress} from '../../utils/checker.js'
+import { getAddress } from '../../utils/checker.js'
 
 export default {
   name: 'Map',
@@ -63,7 +62,8 @@ export default {
       spotsPerPage: 10,
        // polyline options
       className: 'my_polyline',
-      color: "#fc9d03",
+      color: "black",
+      colors: ["#f7534a", "#f7bd4a", "#f7f74a", "#87f74a", "#4af1f7", "#4a5bf7", "#bd4af7"],
       opacity: 1,
       weight: 8,
       routesArr: [],
@@ -82,7 +82,7 @@ export default {
     selectedSpot: Number,
     updateMap: Number,
     isSpotIconShown: Boolean,
-    checkList: Array
+    checkList: Array,
   },
   mounted() {
     const map = this.$refs.myMap.mapObject;
@@ -171,7 +171,11 @@ export default {
         this.togoIcons.push(togoIcon);
         }
       }
-      
+    },
+    centerRoutes() {
+      const map = this.$refs.myMap.mapObject;
+      let myBounds = new L.LatLngBounds(this.routesArr);
+      map.fitBounds(myBounds); //Centers and zooms the map around the bounds
     }
   },
   watch: {

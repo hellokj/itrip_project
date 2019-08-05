@@ -9,7 +9,9 @@
                         <img class="px-2 py-2 preloader" slot="preloader" src="../assets/image-loader.gif"/>
                         <div slot="error"><img class="px-2 py-2 picNotFound" src="../assets/picNotFound.jpg"></div>
                     </vue-load-image>
-                    <i :class="markClass" class="add-marker" @click="clickAdd(spot)" style="position:absolute;z-index:1;padding:3px;"></i> 
+                    <i 
+                    :style="[isLocked ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#ffaa00', disable: 'false' }]"
+                    :class="markClass" class="add-marker" @click="clickAdd(spot)" style="position:absolute;z-index:1;padding:3px;"></i> 
                 </div>
                 <div class="info-col">
                     <div class="spot-header">
@@ -73,10 +75,13 @@ export default {
         currentPage: Number,
         sortBy: String,
         isInTogos: Boolean,
+        isLocked: Boolean
     },
     methods: {
         clickAdd: function(spot) {
-            this.$emit('add-spot', spot);
+            if(!this.isLocked) {
+                this.$emit('add-spot', spot);
+            }
         },
         getAddress: function(){
             return getAddress(this.spot.address)

@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
     // })
     socket.on('QQ', (data) => {
         let token = data.token;
-        console.log("偷啃", token);
+        // console.log("偷啃", token);
         if (token){
             socketHandler.connect(socket.id, token);
         }
@@ -69,13 +69,13 @@ io.on('connection', (socket) => {
     socket.on('logIn', (data) => {
         let token = data.token;
         socketHandler.connect(socket.id, token);
-        console.log("socket id", socket.id);
-        console.log("membersTable", socketHandler.membersTable);
+        // console.log("socket id", socket.id);
+        // console.log("membersTable", socketHandler.membersTable);
     });
     // when member logout
     socket.on('logOut', (data) => {
         socketHandler.disconnect(socket.id);
-        console.log("membersTable", socketHandler.membersTable);
+        // console.log("membersTable", socketHandler.membersTable);
     })
 
     socket.on("disconnect", () => {
@@ -84,35 +84,53 @@ io.on('connection', (socket) => {
         console.log("membersTable", socketHandler.membersTable);
     });
 
-    socket.on("checkItinerary", (data) => {
+    socket.on("checkItinerary", async (data) => {
         let itineraryId = data.itineraryId;
-        if (socketHandler.checkLockedItineraries(itineraryId) == -1){
+        let token = data.token;
+        console.log("......", socketHandler.checkLockedItineraries(itineraryId, token));
+        if (socketHandler.checkLockedItineraries(itineraryId, token) == -1){
             io.emit('checkedReply', false); // locked
+            let otherMembersSocketIds = await socketHandler.lockItinerary(itineraryId, token);
+            for (let i = 1; i < otherMembersSocketIds.length; i++){
+                io.to(otherMembersSocketIds[i]).emit('notifyLocked'); // 上鎖
+            }
         }else {
             io.emit('checkedReply', true); // unlocked
         }
         console.log("locked", socketHandler.lockedItineraryIds);
     });
 
-    socket.on("editRequest", async function(data){
-        console.log("data", data);
+    // socket.on("editRequest", async function(data){
+    //     // console.log("data", data);
+    //     let itineraryId = data.itineraryId;
+    //     let token = data.token;
+    //     let members = await socketHandler.lockItinerary(itineraryId, token);
+    //     // console.log("members", members);
+    //     io.to(members[0].socketId).emit('canEdit', "granted"); // 沒鎖 // editor
+    //     // console.log("editor socket id", members[0].socketId);
+    //     for (let i = 1; i < members.length; i++){
+    //         io.to(members[i].socketId).emit('notifyLocked'); // 上鎖
+    //     }
+    // });
+
+    socket.on("releaseEditMode", async function(data){
         let itineraryId = data.itineraryId;
         let token = data.token;
-        let members = await socketHandler.lockItinerary(itineraryId, token);
-        console.log("members", members);
-        io.to(members[0].socketId).emit('canEdit', "granted"); // 沒鎖 // editor
-        console.log("editor socket id", members[0].socketId);
-        for (let i = 1; i < members.length; i++){
-            io.to(members[i].socketId).emit('notifyLocked'); // 上鎖
+        let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
+        console.log("通知這些人", otherMembersSocketIds);
+        console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
+        for (let i = 0; i < otherMembersSocketIds.length; i++){
+            console.log("人", otherMembersSocketIds[i]);
+            io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
         }
-    });
+    })
 
     socket.on("updateItinerary", async function(data){
-        console.log("updateItinerary", data);
+        // console.log("updateItinerary", data);
         let itinerary = data.itinerary;
         let editorId = data.memberId;
         let onlineMembers = await socketHandler.updateItinerary(itinerary, editorId);
-        console.log("i'm here.");
+        // console.log("i'm here.");
         for (let i = 0; i < onlineMembers.length; i++){
             io.to(onlineMembers[i]).emit('updateNotification', itinerary); // 上鎖
         }
