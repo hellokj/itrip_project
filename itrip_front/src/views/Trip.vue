@@ -4,15 +4,19 @@
       <b-col
         class="px-0" cols="12" sm="12" md="6" lg="4" xl="4"
         :style="[($resize && !$mq.above(1025) && selected != 0 && selected != 3) ? { display: 'none' }:{ display: 'flex'}]"
-      :value="selected">
+      :value="selected"
+      style="position: relative;">
+
+        <!-- <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 90vh; background-color: rgba(55, 55, 55, .05); z-index: 40;">{{"isLocked: " + isLocked}}</div> -->
+
         <Togos
-        id="togos"
-        class="togos"
-        :togos="togo" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
-        :page="page" :isLocked="isLocked" :itinerary="itinerary"
-        @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 
-        @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @addMember="addMember" 
-        @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember" @hoverItem="hoverItem" @saveShare="saveShare"/>
+          id="togos"
+          class="togos"
+          :togos="togo" :travelInfo="travelInfo" :dayNum="itinerary.dayNum" :key="update" :shareId="qviewId" :currentAccessId="currentAccessId"
+          :page="page" :itinerary="itinerary"
+          @togos-changeOrder="updateTogos" @click-view-map="clickViewMap" @changeMode="changeMode" @resetRoutes="resetRoutes" @getNearby="getNearby" 
+          @deleteTogo="deleteTogo" @change-page="changePage" @zoom-togos="zoomTogos" @add-new-day="addNewDay" @remove-day="removeDay" @addMember="addMember" 
+          @changeName="changeName" @changeDate="changeDate" @removeMember="removeMember" @hoverItem="hoverItem" @saveShare="saveShare"/>
       </b-col>
       <b-col 
       class="px-0 spots-col" cols="12" sm="12" md="6" lg="5" xl="5"
@@ -21,7 +25,7 @@
         <Spots
           id="spots"
           class="spots"
-          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
+          :paginator="paginator" :spots="spots" :perPage="perPage" :togos="togo" :isLocked="isLocked" :isMapShown="isMapShown" :queryRegion="queryRegion" :queryCounty="queryCounty" :queryName="queryName"
           @filter-spot="filterSpot" @hoverItem="hoverItem" @add-spot="addSpotToTrip" @get-spot="getSpot" @get-nearby="getNearby" @sort-spot="sortSpot" @refresh="refresh"/> 
       </b-col>
       <b-col
@@ -134,6 +138,7 @@ export default {
       queryName: '',
       isAddSpotLocked: false,
       currentAccessId:'',
+      editMode: false,
       isLocked: false,
     }
   },
@@ -598,6 +603,7 @@ export default {
     },
     isLocked: function(newVal) {
       if(newVal) this.$emit('is-locked-on');
+      else if(!newVal) this.$emit('is-locked-off')
     }
   },
   created () {
@@ -673,6 +679,7 @@ export default {
       this.paramProp = data;
     }
     let token = this.$store.state.userToken
+    if( this.isLocked ) this.$emit('trip-lock')
   },
   beforeDestroy: function() {
     // [銷毀監聽事件]

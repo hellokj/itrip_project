@@ -1,9 +1,8 @@
 <template>
   <div class="MyTrip">
-
     <!-- <div style="position: fixed; right: 30vw; top: 0px; width: 400px; height: 200px; background-color: transparent; color:#AAA; z-index: 30; font-size: 30px;"><p>editMode: {{editMode}}</p><p>  isLockedProp: {{isLockedProp}}</p></div> -->
-    <div v-if="isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
-    <div v-if="editMode" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-circle"><div></div></div></div>
+    <div v-if="lockIcon" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
+    <div v-if="!isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div style="position: absolute; right: 30px; top: 0px; width: 50px; color: lightblue;">編輯中</div><div class="lds-circle"><div></div></div></div>
     
     <div class="py-2 m-0 info-container">
       <div class="tripName">
@@ -25,7 +24,7 @@
         </div>
         <div class="mt-2 mr-1 save-trip">
           <i title="編輯行程" id="edit" class="fas fa-edit" 
-           @click="requestEdit"
+           
            :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
            style="color:#8a8d91;font-size:25px;cursor: pointer;"></i>
           <!-- <i title="儲存行程" id="save" class="fas fa-save" @click="saveTrip" style="color:#8a8d91;font-size:25px;"></i> -->
@@ -41,7 +40,7 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item >
             <i title="編輯行程" id="edit" class="fas fa-edit" 
-            @click="requestEdit"
+           
             :style="[lockIcon ? { cursor: 'not-allowed', color:'#e7e7e7', disable: 'true' }:{ cursor: 'pointer', color:'#8a8d91', disable: 'false' }]"
             style="color:#8a8d91;font-size:15px;cursor: pointer;">編輯行程</i>
             </el-dropdown-item>
@@ -389,26 +388,26 @@ export default {
           }
         });
       },
-      requestEdit: async function() {
-        if(!this.isLocked) {
-          let self = this;
-          this.$socket.emit('editRequest', {itineraryId: this.itinerary._id, memberId: this.currentAccessId, token: this.$store.state.userToken});
-          await this.$socket.on('canEdit', (res) => {
-            if(res === 'granted') {
-              self.editMode = true;
-              Message({
-                showClose: true,
-                duration: 0,
-                type: 'success',
-                message: '開始編輯'
-              })
-            }
-            else {
-              self.editMode = false;
-            }
-          })
-        }
-      },
+      // requestEdit: async function() {
+      //   if(!this.isLocked) {
+      //     let self = this;
+      //     this.$socket.emit('editRequest', {itineraryId: this.itinerary._id, memberId: this.currentAccessId, token: this.$store.state.userToken});
+      //     await this.$socket.on('canEdit', (res) => {
+      //       if(res === 'granted') {
+      //         self.editMode = true;
+      //         Message({
+      //           showClose: true,
+      //           duration: 0,
+      //           type: 'success',
+      //           message: '開始編輯'
+      //         })
+      //       }
+      //       else {
+      //         self.editMode = false;
+      //       }
+      //     })
+      //   }
+      // },
       getDate() {
         if (this.tripDate.date == ""){
           // 預設今天日期
@@ -501,7 +500,6 @@ export default {
       //console.log("itinerary", this.itinerary);
       // 註冊監聽事件
       // get name and date from itinerary
-      
     },
     beforeMount() {
       for(let i = 1; i < this.dayNum; i++) {
@@ -523,7 +521,9 @@ export default {
       this.$socket.on('notifyLocked', () => {
         self.isLocked = true;
       });
+      
     }
+
 }
 </script>
 
@@ -777,13 +777,16 @@ export default {
 
   .lds-circle {
     display: inline-block;
+    position: absolute;
+    right: 0px;
+    top: 0px;
     transform: translateZ(1px);
   }
   .lds-circle > div {
     display: inline-block;
-    width: 45px;
-    height: 45px;
-    margin: 10px;
+    width: 25px;
+    height: 25px;
+    margin: 0px;
     border-radius: 50%;
     background: lightblue;
     animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;

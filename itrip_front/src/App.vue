@@ -5,7 +5,7 @@
     <TabletHeader v-if="!atHome" class="tabletHeader"/>
     <div id="nav"></div>
     <transition name="router-anim" enter-active-class="animated fadeIn" >
-      <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn"/>
+      <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn" @is-locked-off="isLockedOff"/>
     </transition>
   </div>
 </template>
@@ -61,7 +61,12 @@ export default {
       this.editMode = true;
     },
     isLockedOn() {
+      console.log("App: event isLockedOn")
       this.isLocked = true;
+    },
+    isLockedOff() {
+      console.log("App: event isLockedOff")
+      this.isLocked = false;
     }
   },
   created() {
