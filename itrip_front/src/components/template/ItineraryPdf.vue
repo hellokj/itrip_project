@@ -8,7 +8,7 @@
 <script>
 import jsPDF from 'jspdf'
 import 'jspdf-autotable';
-// import font from '../../../utils/msyh-normal.js'
+import font from '../../../utils/msyh-normal.js'
 import {getAddress} from '../../../utils/checker.js'
 
 export default {
