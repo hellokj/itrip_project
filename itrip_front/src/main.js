@@ -21,7 +21,7 @@ import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css'
 
 
-Vue.use(VueSocketio, io('wss://35.194.247.229:4000'));
+Vue.use(VueSocketio, io('http://35.194.247.229:4000'));
 
 //Vue.use(VueSocketio, socketio('ws://'));
 //import emailjs from 'emailjs-com';

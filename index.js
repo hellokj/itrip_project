@@ -10,45 +10,21 @@ const router = require('./routes');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-app.use(function(req, res, next) {
-    //replace localhost:8080 to the ip address:port of your server
-    res.header("Access-Control-Allow-Origin", "https://www.itrip.ga");
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, x-access-token, Content-Type, Accept');
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header('Access-Control-Allow-Credentials', true);
-    next(); 
-});
-
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
-//enable pre-flight
-// app.options('*', cors());
-
+app.use(cors());
 app.use('/api', router);
 
 const SocketHandler = require('./utils/socketHandler');
-var fs = require('fs');
 
 // socket.io
-const server = require('https').createServer({
-    key: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/cert.pem')
-}, app);
-
-const io = require('socket.io')(server, { handlePreflightRequest: (req, res) => {
-    const headers = {
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
-        "Access-Control-Allow-Credentials": true
-    };
-    res.writeHead(200, headers);
-    res.end();
-}});
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 //const port = process.env.PORT||8000;
-//io.origins('*:*');
+
 // 網站監聽4000的socket server
 server.listen(4000, function(){
     console.log('Server listening at port %d', 4000);
@@ -56,9 +32,9 @@ server.listen(4000, function(){
 
 mongoose.connect(config.mongodb,{
     useNewUrlParser: true }).then(() => {
-    // app.listen(config.port, ()=> {
-    //     console.log('listening on ' + config.port);
-    // });
+    app.listen(config.port, ()=> {
+        console.log('listening on ' + config.port);
+    });
 }).catch((err) => {
     console.log(err);
 })
@@ -69,11 +45,10 @@ mongoose.connect(config.mongodb,{
 
 socketHandler = new SocketHandler();
 io.on('connection', (socket) => {
-    // console.log(socket.id + ' has connected.');
-    // console.log("on locked itineraries", socketHandler.lockedItineraries);
+    console.log(socket.id + ' has connected.');
+    console.log("on locked itineraries", socketHandler.lockedItineraryIds);
     // console.log("connected members", socketHandler.connectedMembers);
-    // console.log("membersTable", socketHandler.membersTable);
-
+    console.log("membersTable", socketHandler.membersTable);
     // 刪除垃圾行程表
     // socketHandler.getAllItinerary().exec((err, res) => {
     //     res.forEach((element) => {
@@ -109,18 +84,20 @@ io.on('connection', (socket) => {
         console.log("membersTable", socketHandler.membersTable);
     });
 
-    socket.on("checkItinerary", (data) => {
+    socket.on("checkItinerary", async (data) => {
         let itineraryId = data.itineraryId;
-        let token = data.token; // 此次發來的memberId
-        let socketId = socket.id; // 此次發來的socketId
-        // console.log("......", socketHandler.checkLockedItineraries(itineraryId, token));
-        let isLocked = socketHandler.checkLockedItineraries(itineraryId, socketId);
-        if (isLocked){
-            io.emit('checkedReply', true);
-        }else {
+        let token = data.token;
+        console.log("......", socketHandler.checkLockedItineraries(itineraryId, token));
+        if (socketHandler.checkLockedItineraries(itineraryId, token) == -1){
             io.emit('checkedReply', false); // locked
+            let otherMembersSocketIds = await socketHandler.lockItinerary(itineraryId, token);
+            for (let i = 1; i < otherMembersSocketIds.length; i++){
+                io.to(otherMembersSocketIds[i]).emit('notifyLocked'); // 上鎖
+            }
+        }else {
+            io.emit('checkedReply', true); // unlocked
         }
-        console.log("locked", socketHandler.lockedItineraries);
+        console.log("locked", socketHandler.lockedItineraryIds);
     });
 
     // socket.on("editRequest", async function(data){
@@ -136,27 +113,16 @@ io.on('connection', (socket) => {
     //     }
     // });
 
-    socket.on("releaseEditMode", function(data){
-        console.log("有人離開了");
+    socket.on("releaseEditMode", async function(data){
         let itineraryId = data.itineraryId;
-        let isLocked = data.isLocked;
-        let socketId = socket.id;
-        let nextEditor = socketHandler.releaseItinerary(itineraryId, isLocked, socketId);
-        if (nextEditor !== null){
-            io.to(nextEditor).emit("unlockNotification");
+        let token = data.token;
+        let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
+        console.log("通知這些人", otherMembersSocketIds);
+        console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
+        for (let i = 0; i < otherMembersSocketIds.length; i++){
+            console.log("人", otherMembersSocketIds[i]);
+            io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
         }
-        console.log("lockedItineraries", socketHandler.lockedItineraries);
-        // let token = data.token;
-        // let otherMembersSocketIds = await socketHandler.releaseItinerary(itineraryId, token);
-        // console.log("通知這些人", otherMembersSocketIds);
-        // console.log("release edit 剩下的鎖住行程", socketHandler.lockedItineraryIds);
-        // if (otherMembersSocketIds.length > 0){ // 有人才通知第一個
-        //     io.to(otherMembersSocketIds[0]).emit('unlockNotification');
-        // }
-        // for (let i = 0; i < otherMembersSocketIds.length; i++){
-        //     console.log("人", otherMembersSocketIds[i]);
-        //     io.to(otherMembersSocketIds[i]).emit('unlockNotification'); // 通知解鎖
-        // }
     })
 
     socket.on("updateItinerary", async function(data){
