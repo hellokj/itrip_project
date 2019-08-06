@@ -19,9 +19,15 @@ app.use(cors());
 app.use('/api', router);
 
 const SocketHandler = require('./utils/socketHandler');
+var fs = require('fs');
 
 // socket.io
-const server = require('http').createServer(app);
+const server = require('https').createServer({
+    key: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/cert.pem'),
+    requestCert: false, 
+    rejectUnauthorized: false
+}, app);
 const io = require('socket.io')(server);
 //const port = process.env.PORT||8000;
 
