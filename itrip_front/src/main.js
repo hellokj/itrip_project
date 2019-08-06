@@ -21,7 +21,7 @@ import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css'
 
 
-Vue.use(VueSocketio, io('https://35.194.247.229:4000'));
+Vue.use(VueSocketio, io('wss://35.194.247.229:4000'));
 
 //Vue.use(VueSocketio, socketio('ws://'));
 //import emailjs from 'emailjs-com';
@@ -54,7 +54,6 @@ Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
-
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

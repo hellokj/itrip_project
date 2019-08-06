@@ -2,33 +2,43 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import {SERVER_IP, ORS_API_KEY} from '../src/config/config';
 
+axios.create({
+  withCredentials: true
+  });
+
 // spot api
 const spotRequest = axios.create({
-  baseURL: SERVER_IP + '/api/spot/'
+  baseURL: SERVER_IP + '/api/spot/',
+  withCredentials: true
 });
 // routing api
 const routingRequest = axios.create({
-  baseURL: 'https://api.openrouteservice.org/v2/'
+  baseURL: 'https://api.openrouteservice.org/v2/',
+  withCredentials: true
 });
 
 // logIn signUp相關的 api
 const authRequest = axios.create({
-  baseURL: SERVER_IP + '/api/auth/'
+  baseURL: SERVER_IP + '/api/auth/',
+  withCredentials: true
 });
 
 // itinerary api
 const itineraryRequest = axios.create({
-  baseURL: SERVER_IP + '/api/itinerary/'
+  baseURL: SERVER_IP + '/api/itinerary/',
+  withCredentials: true
 });
 
 // share api
 const shareRequest = axios.create({
-  baseURL: SERVER_IP + '/api/share/'
+  baseURL: SERVER_IP + '/api/share/',
+  withCredentials: true
 });
 
 // member api
 const memberRequest = axios.create({
-  baseURL: SERVER_IP + '/api/member/'
+  baseURL: SERVER_IP + '/api/member/',
+  withCredentials: true
 })
 
 const requestList = [spotRequest, routingRequest, authRequest, itineraryRequest, memberRequest];
@@ -66,7 +76,8 @@ const apiDeleteSpot = (data) => {
 let headers = {
     'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
     'Authorization': ORS_API_KEY,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, x-access-token, Content-Type, Accept'
 };
 
 // routing api

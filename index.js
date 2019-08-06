@@ -10,12 +10,23 @@ const router = require('./routes');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+app.use(function(req, res, next) {
+    //replace localhost:8080 to the ip address:port of your server
+    res.header("Access-Control-Allow-Origin", "https://www.itrip.ga");
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, x-access-token, Content-Type, Accept');
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.header('Access-Control-Allow-Credentials', true);
+    next(); 
+});
+
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
-app.use(cors());
+//enable pre-flight
+// app.options('*', cors());
+
 app.use('/api', router);
 
 const SocketHandler = require('./utils/socketHandler');
@@ -24,13 +35,20 @@ var fs = require('fs');
 // socket.io
 const server = require('https').createServer({
     key: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/cert.pem'),
-    requestCert: false, 
-    rejectUnauthorized: false
+    cert: fs.readFileSync('/etc/letsencrypt/live/www.itrip.ga/cert.pem')
 }, app);
-const io = require('socket.io')(server);
-//const port = process.env.PORT||8000;
 
+const io = require('socket.io')(server, { handlePreflightRequest: (req, res) => {
+    const headers = {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
+        "Access-Control-Allow-Credentials": true
+    };
+    res.writeHead(200, headers);
+    res.end();
+}});
+//const port = process.env.PORT||8000;
+//io.origins('*:*');
 // 網站監聽4000的socket server
 server.listen(4000, function(){
     console.log('Server listening at port %d', 4000);
@@ -38,9 +56,9 @@ server.listen(4000, function(){
 
 mongoose.connect(config.mongodb,{
     useNewUrlParser: true }).then(() => {
-    app.listen(config.port, ()=> {
-        console.log('listening on ' + config.port);
-    });
+    // app.listen(config.port, ()=> {
+    //     console.log('listening on ' + config.port);
+    // });
 }).catch((err) => {
     console.log(err);
 })
