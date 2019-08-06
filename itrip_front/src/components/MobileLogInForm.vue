@@ -21,7 +21,7 @@
   <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="confirm">確認</el-button>
     <el-button @click="toSignUp">註冊</el-button>
-    <el-button type="info" @click="fbLogIn">以FB帳號登入</el-button>
+    <el-button class="mt-2" type="info" @click="fbLogIn">以FB帳號登入</el-button>
   </span>
 </el-dialog>
 </template>

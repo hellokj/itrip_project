@@ -123,15 +123,16 @@ export default {
 </script>
 <style scoped>
 @import "https://cdn.jsdelivr.net/npm/animate.css@3.5.1";
-@font-face {
+@import url("https://fonts.googleapis.com/css?family=Noto+Serif+TC&display=swap");
+/* @font-face {
   font-family: logoFont;
-  src: url(/../assets/Noto_Serif_TC/NotoSerifTC-Medium.otf);
-}
+  src
+} */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: logoFont;
+    font-family: 'Noto Sans TC', sans-serif;;
     overflow-x: hidden;
   }
   .btn {

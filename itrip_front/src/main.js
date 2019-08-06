@@ -8,28 +8,39 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
-import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
-import 'leaflet-fullscreen/dist/Leaflet.fullscreen';
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
+import 'leaflet-fullscreen/dist/Leaflet.fullscreen'
 import VModal from 'vue-js-modal'
 import store from './store'
 import eventBus from '../utils/eventBus.js'
 import {MediaQueries} from 'vue-media-queries'
 import SocialSharing from 'vue-social-sharing'
-import VueSocketio from 'vue-socket.io-extended';
-import io from 'socket.io-client';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css'
+import VueSocketio from 'vue-socket.io-extended'
+import io from 'socket.io-client'
+import Dropdown from 'ant-design-vue/lib/dropdown'
+import 'ant-design-vue/lib/dropdown/style/css'
+import Menu from 'ant-design-vue/lib/menu'
+import 'ant-design-vue/lib/menu/style/css'
+import TimePicker from 'ant-design-vue/lib/time-picker'
+import 'ant-design-vue/lib/time-picker/style/css'
+import Tag from 'ant-design-vue/lib/tag'
+import 'ant-design-vue/lib/tag/style/css'
 
-
+// socket.in
 Vue.use(VueSocketio, io('http://35.194.247.229:4000'));
 
-//Vue.use(VueSocketio, socketio('ws://'));
-//import emailjs from 'emailjs-com';
+// ant-design
+Vue.use(Dropdown);
+Vue.use(Menu);
+Vue.use(TimePicker);
+Vue.use(Tag);
 
+// media-queries
 const mediaQueries = new MediaQueries();
 Vue.use(mediaQueries);
-Vue.use(Antd);
+
 Vue.use(SocialSharing);
+
 //Vue.use(emailjs);
 // configure language
 locale.use(lang)
@@ -37,6 +48,7 @@ Vue.use(VModal);
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } });
 Vue.use(VModal, { dynamic: true, injectModalsContainer: false });
 
+// leaflet set up for fixing icon issue
 delete Icon.Default.prototype._getIconUrl;
 (function (d, s, id) {
   var js,
@@ -48,7 +60,6 @@ delete Icon.Default.prototype._getIconUrl;
   fjs.parentNode.insertBefore(js, fjs);
   })(document, "script", "facebook-jssdk");
 
-
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
@@ -57,6 +68,7 @@ Icon.Default.mergeOptions({
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
+
 new Vue({
   data() {
     return {

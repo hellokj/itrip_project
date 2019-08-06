@@ -350,7 +350,7 @@ export default {
     }
     .spot-picture {
         width: 100px;
-        height: 90px;
+        height: 105px;
     }
     .preloader {
         width: 100px;

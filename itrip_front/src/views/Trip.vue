@@ -45,11 +45,11 @@
             </el-carousel>
           </div>
           <div class="row" style="width:100%;display:flex;flex-direction:row;justify-content:center;">
-            <el-checkbox-group v-model="checkList">
+            <el-checkbox-group v-model="checkList" style="width:auto;">
               <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
               <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
+              <i class="mt-1 ml-2 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
             </el-checkbox-group>
-            <i class="mt-1 ml-2 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
           </div>
           <Map 
             id="map"

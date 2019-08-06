@@ -65,7 +65,7 @@
           <div class="trip-time">
             <p class="mb-0 pt-1">出發時間:</p>
             <el-time-select
-            class="ml-3 mr-4"
+            class="ml-3 mr-5"
             v-model="startTime"
             :picker-options="{
               start: '00:00',
@@ -516,7 +516,7 @@ export default {
     justify-content: space-around;
   }
   .info-container {
-    height: 15vh;
+    height: 20vh;
     border-bottom: 3px solid rgb(243, 243, 243);
     z-index: 3;
     border-top: 3px solid transparent;
@@ -655,11 +655,11 @@ export default {
     margin: 0px;
   }
 
-  @media only screen and (max-width: 768px) {
-    .MyTrip {
+@media only screen and (max-width: 768px) {
+  .MyTrip {
       width: 100%;
-    }
   }
+}
  @media only screen and (max-width: 1200px) {
     #save {
       display: none;
