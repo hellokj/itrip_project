@@ -59,9 +59,12 @@ io.on('connection', (socket) => {
     // })
     socket.on('QQ', (data) => {
         let token = data.token;
-        // console.log("偷啃", token);
+        console.log("偷啃", token);
         if (token){
             socketHandler.connect(socket.id, token);
+        }
+        else {
+            socketHandler.connect(socket.id, null);
         }
     })
     // when member login
@@ -98,7 +101,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on("notifyMessage", async function(data){
-        let message = data.memberName[0] + '*'.repeat(data.memberName.length - 1) + '在' + data.sec + '前創建了' + data.name + '行程' + '在' + data.date.substring(0, 10) + '出發'
+        let message;
+        if(data.type === 'create') {
+            message = data.memberName[0] + '*'.repeat(data.memberName.length - 1) + '在' + data.sec + '前創建了' + data.name + '行程' + '在' + data.date.substring(0, 10) + '出發'
+        }
+        else if(data.type ==='pdf') {
+            message = data.memberName[0] + '*'.repeat(data.memberName.length - 1) + '在' + data.sec + '前導出了PDF行程表!';
+        }
         let membersToNotify = socketHandler.notifyAll(data.memberId);
         membersToNotify.forEach(element => {
             io.to(element).emit("notifyCreateTripMessage", {message: message});

@@ -35,8 +35,7 @@ class SocketHandler {
       console.log("memberId", memberId);
     }
     else {
-      console.log("error");
-      return;
+      memberId = 'guest';
     }
     let socketIds;
     if (this.membersTable.containsKey(memberId)){

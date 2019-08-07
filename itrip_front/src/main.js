@@ -8,6 +8,8 @@ import locale from 'element-ui/lib/locale'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import Leaflet from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
@@ -27,8 +29,7 @@ import TimePicker from 'ant-design-vue/lib/time-picker'
 import 'ant-design-vue/lib/time-picker/style/css'
 import Tag from 'ant-design-vue/lib/tag'
 import 'ant-design-vue/lib/tag/style/css'
-import Leaflet from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+
 
 // Leaflet
 Vue.use(Leaflet);

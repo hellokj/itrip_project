@@ -96,8 +96,9 @@ export default {
             });
             let sec = Math.floor(Math.random()*10000)+1000
             setTimeout(() => {
-              self.$socket.emit('notifyMessage', {name: self.tripName, date: self.tripDate, memberId: self.$store.state.user.id, memberName: self.$store.state.user.name, sec: Math.floor(sec/1000)})
-            }, sec)
+              self.$socket.emit('notifyMessage',
+               {name: self.tripName, date: self.tripDate, memberId: self.$store.state.user.id, memberName: self.$store.state.user.name, sec: Math.floor(sec/1000), type: 'create'});
+            }, sec);
           })
           .catch(function(error) {
             console.log(error);

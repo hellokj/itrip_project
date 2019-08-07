@@ -67,7 +67,14 @@ export default {
       this.param = para;
     },
     connectionSuccess() {
-      this.$socket.emit('QQ', { token: this.$store.state.userToken});
+      let token;
+      if(this.$store.state.userToken.length == 0) {
+        token = null;
+      }
+      else {
+        token = this.$store.state.userToken;
+      }
+      this.$socket.emit('QQ', { token: token});
     },
     editOn() {
       this.editMode = true;
