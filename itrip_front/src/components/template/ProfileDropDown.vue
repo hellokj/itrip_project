@@ -41,6 +41,7 @@
     },
     methods: {
       myProfile: function(){
+        this.$bus.$emit("loading", {duration: 2500});
         // 導向瀏覽行程元件
         this.$router.push({path: '/member'});
         this.$bus.$emit("changeToCarousel");

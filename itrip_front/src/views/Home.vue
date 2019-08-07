@@ -589,7 +589,7 @@ export default {
   .footer {
     background-image: linear-gradient(to left, rgba(253,153,116,100%), rgba(255,210,151,58%));
     width:100%; 
-    height:25vh; 
+    height:20vh; 
     overflow: hidden;
   }
 

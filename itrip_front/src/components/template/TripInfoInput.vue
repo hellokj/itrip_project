@@ -64,7 +64,6 @@ export default {
       } else {
         this.$destroy();
       }
-      //this.$destroy();
     }
   },
   watch: {

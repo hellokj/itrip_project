@@ -60,20 +60,22 @@
           <template slot="tabs">
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
           </template>
-          <div class="trip-time">
-            <p class="mb-0 pt-1">出發時間:</p>
-            <el-time-select
-            class="ml-3 mr-5"
-            v-model="startTime"
-            :picker-options="{
-              start: '00:00',
-              step: '00:15',
-              end: '23:45'
-            }"
-            :align="'center'"
-            :size="'small'"
-            placeholder="請輸入時間"
-            style="width: 140px;"/>
+          <div class="trip-time" style="float:right;">
+            <div class="container" style="display:inline-block;">
+              <p class="mb-0 pt-1" style="display:inline-block;">出發時間:</p>
+              <el-time-select
+              class="ml-3 mr-5"
+              v-model="startTime"
+              :picker-options="{
+                start: '00:00',
+                step: '00:15',
+                end: '23:45'
+              }"
+              :align="'center'"
+              :size="'small'"
+              placeholder="請輸入時間"
+              style="width: 140px;"/>  
+            </div>
           </div>
           <b-tab v-for="i in tabs" :key="'tab' + i" style="height: 55vh; width: 100%; overflow-Y: scroll;">
             <template slot="title">
@@ -273,11 +275,7 @@ export default {
         if(hr >= 24) {
           this.togos.pop();
           this.travelInfos.pop();
-          Message({
-              message: '時間超出本日範圍!',
-              type: 'error'
-          });
-          //throw 'DAY LIMIT EXCEEDED';
+          this.$message.error('時間超出本日範圍!');
         }
         if(this.togos[index].startTime === undefined) {
           this.togos[index].startTime = {};
@@ -298,11 +296,7 @@ export default {
         if(hr + this.togos[index].stopTime.hrs >= 24) {
           this.togos[index].stopTime.hrs = 1
           this.updateStopTime();
-          Message({
-              message: '時間超出本日範圍!',
-              type: 'error'
-          });
-          throw 'DAY LIMIT EXCEEDED';
+          this.$message.error('時間超出本日範圍!');
         }
         hr += this.togos[index].stopTime.hrs;
         if(this.togos[index].endTime === undefined) {

@@ -24,13 +24,19 @@
                         <i class="fab fa-instagram"></i>
                         <div class="my-0 tags">
                             <el-tag
+                                :style="[($resize && !$mq.above(1300)) ? { display: 'none' }:{ display: 'block'}]"
                                 class="mx-1 el-tag"
                                 v-for="(t, index) in spot.ig_tag"
                                 :key="index" effect="plain" size="mini" @click="link('ig', t)">
                                 #{{t}}
+                            </el-tag>
+                            <el-tag
+                                :style="[($resize && !$mq.above(1299)) ? { display: 'block' }:{ display: 'none'}]"
+                                class="mx-1 el-tag"
+                                :key="index" effect="plain" size="mini" @click="link('ig', spot.ig_tag[0])">
+                                #{{spot.ig_tag[0]}}
                             </el-tag> 
                         </div>
-                        <!-- <i class="pt-1 fas fa-ellipsis-h" style="color:#db4e35"></i> -->
                     </div>
                     <a-tag v-if="sortBy === 'ig_post_num'" class="mt-2 ig-post-num-tag" color="#f50"><i class="fas fa-fire-alt"></i><b>   {{spot.ig_post_num}}</b> 次<b>TAG</b></a-tag>
                     <a-tag v-if="sortBy === 'checkins'" class="mt-2 fb-checkins-tag" color="#3b5998"><i class="fas fa-map-marker"></i><b>   {{spot.checkins}}</b> 次<b>打卡</b></a-tag>

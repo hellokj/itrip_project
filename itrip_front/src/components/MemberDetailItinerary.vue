@@ -404,10 +404,8 @@ export default {
         //console.log(checkedReply)
         self.$bus.$emit('modifyItinerary', {itinerary: self.itinerary, currentAccessId: self.currentAccessId, isLocked: self.isLocked});
       })
-      this.$bus.$emit('loading');
-      setTimeout(() => {
-          self.$router.push('/trip?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
-      }, 2000);
+      self.$bus.$emit('loading', {duration: 2500});
+      self.$router.push('/trip?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
     },
     getLockStatus: function(){
       if (this.itinerary.isPublic == undefined || this.itinerary.isPublic == true){

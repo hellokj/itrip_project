@@ -7,7 +7,7 @@
     <transition name="router-anim" enter-active-class="animated fadeIn" >
       <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn" @is-locked-off="isLockedOff"/>
     </transition>
-    <loading :active.sync="isLoading" :is-full-page="true" loader="dots">
+    <loading :active.sync="isLoading" :is-full-page="true" loader="dots" opacity="0.3">
     </loading>
   </div>
 </template>
