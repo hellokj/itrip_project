@@ -24,7 +24,7 @@
     </div>
     <div v-for="(togo, i) in itinerary.togos[index]" :key="togo._id">
       <MobileMemberTogoItem :togo="togo" style="text-align: right"></MobileMemberTogoItem>
-      <MobileTravelTimeItem v-if="itinerary.travelInfos[index]" :mode="getTravelTimeMode(itinerary.travelInfos[index][i])" :travelTime="getTravelTimeDuration(itinerary.travelInfos[index][i])" :index="index"></MobileTravelTimeItem>
+      <MobileTravelTimeItem v-if="itinerary.travelInfos[index][i]" :mode="getTravelTimeMode(itinerary.travelInfos[index][i])" :travelTime="getTravelTimeDuration(itinerary.travelInfos[index][i])" :index="index"></MobileTravelTimeItem>
     </div>
   </el-main>
 </template>
@@ -154,78 +154,6 @@ export default {
       }
       return hrs + "小時" + mins + "分鐘";
     },
-    startTimeFormat: function(startTime){
-      if (startTime.min.toString().length == 1){
-        return startTime.hr + "：0" + startTime.min;
-      }
-      return startTime.hr + "：" + startTime.min;
-    },
-    stayTimeFormat: function(startTime, stopTime){
-      let endTime = {
-        hr: startTime.hr + stopTime.hrs,
-        min: startTime.min + stopTime.mins
-      };
-      return this.startTimeFormat(startTime) + " ~ " + this.startTimeFormat(endTime);
-    },
-    resetDetailInfo: function(){
-      // 修改一下，應該改成dayNum，debug........
-      this.days = [];
-      for (let i = 0; i < this.itinerary.dayNum; i++){ // 天數 3
-        let tmpDay = [];
-        let baseTime;
-        if (this.itinerary.startTimes !== undefined){
-          baseTime = this.itinerary.startTimes[i];
-        }else {
-          baseTime = {
-            hr: 8,
-            min: 0
-          };
-        }
-        for (let j = 0; j < this.itinerary.togos[i].length; j++){ // 每天景點 2 3 3 0 0 0 ...
-          // 每天的行程
-          let tmpTogo = {};
-          let index = j + 1;
-          let name = this.itinerary.togos[i][j].name;
-          let address = this.addressFormat(this.itinerary.togos[i][j].address);
-          let stopTime = this.itinerary.togos[i][j].stopTime;
-          let memo = this.itinerary.togos[i][j].memo;
-          // let memo = "lalalalal";
-          let startTime = baseTime;
-          if (j !== 0 && this.itinerary.travelInfos[i] !== null){
-            if (this.itinerary.travelInfos[i] !== undefined){
-              startTime = 
-                this.calculateStartTime(tmpDay[0].startTime, this.itinerary.travelInfos[i][0].duration, this.itinerary.togos[i][j].stopTime);
-            }
-          }
-          tmpTogo = {
-            index: index,
-            startTime: startTime,
-            stopTime: stopTime,
-            name: name,
-            address: address,
-            memo: memo
-          };
-          // console.log("tmpTogo", tmpTogo);
-          tmpDay.push(tmpTogo);
-        }
-        if (this.itinerary.travelInfos[i] !== null){
-          if (this.itinerary.travelInfos[i] !== undefined){
-            for (let j = 0; j < this.itinerary.travelInfos[i].length; j++){ // 0 1 1
-              tmpDay[j+1].traffic = this.trafficFormat(this.itinerary.travelInfos[i][j].mode, this.itinerary.travelInfos[i][j].duration);
-              tmpDay[j+1].startTime = 
-                this.calculateStartTime(tmpDay[j].startTime, this.itinerary.travelInfos[i][j].duration, this.itinerary.togos[i][j+1].stopTime);
-            }
-            for (let j = 0; j < this.itinerary.togos[i].length; j++){
-              tmpDay[j].stopTimeFormat = this.stopTimeFormat(tmpDay[j].stopTime.hrs, tmpDay[j].stopTime.mins)
-              tmpDay[j].startTimeFormat = this.startTimeFormat(tmpDay[j].startTime);
-              tmpDay[j].stayTimeFormat = this.stayTimeFormat(tmpDay[j].startTime, tmpDay[j].stopTime);
-            }
-          }
-        }
-        this.days.push(tmpDay);
-      }
-      // console.log("days", this.days);
-    },
     // 修改過後的取出資料方式
     resetItineraryData: function(itinerary){
       //console.log('itinerary', itinerary);
@@ -240,9 +168,7 @@ export default {
             let address = this.addressFormat(togo.address);
             let stopTime = togo.stopTime;
             let stopTimeFormat = this.stopTimeFormat(togo.stopTime.hrs, togo.stopTime.mins);
-            let startTime = togo.startTime;
             let endTime = togo.endTime;
-            let stayTimeFormat = this.stayTimeFormat(startTime, stopTime);
             let memo = togo.memo;
             let traffic = "";
             
@@ -252,9 +178,7 @@ export default {
               address: address, // 地址
               stopTime: stopTime, 
               stopTimeFormat: stopTimeFormat, // 停留時間
-              startTime: startTime, 
               endTime: endTime,
-              stayTimeFormat: stayTimeFormat, // 開始時間
               memo: memo, // 備忘錄
               traffic: traffic // 交通時間
             }
@@ -312,43 +236,6 @@ export default {
       }
       return false;
     },
-    calculateStartTime: function(lastStartTime, trafficDuration, stopTime){
-      let hr = 0;
-      let min = 0;
-      // 處理上一開始時間
-      if (lastStartTime.hr !== 'undefined' && lastStartTime.hr !== 'null'){
-        hr = hr + lastStartTime.hr;
-      }
-      if (lastStartTime.min !== 'undefined' && lastStartTime.min !== 'null'){
-        min = min + lastStartTime.min;
-      }
-      // 處理本次交通時間
-      let mins = this.carryTimeUnit(trafficDuration);
-      let hours = Math.floor(mins / 60);
-      let remainingMins = Math.floor(mins % 60);
-      if (hours !== 'undefined' && hours !== 'null'){
-        hr = hr + hours;
-      }
-      if (remainingMins !== 'undefined' && remainingMins !== 'null'){
-        min = min + remainingMins;
-      }
-      if (stopTime.hrs !== 'undefined' && stopTime.hrs !== 'null'){
-        hr = hr + Number(stopTime.hrs);
-      }
-      if (stopTime.mins !== 'undefined' && stopTime.mins !== 'null'){
-        min = min + Number(stopTime.mins);
-      }
-      // 處理超過的時間
-      if (min > 60){
-        hr = hr + Math.floor(min / 60);
-        min = min % 60;
-      }
-      let nextStartTime = {
-        hr: hr,
-        min: min
-      };
-      return nextStartTime;
-    }
   },
   created() {
     // console.log("itinerary create", this.itinerary);
