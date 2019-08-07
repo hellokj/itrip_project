@@ -1,13 +1,13 @@
 <template>
   <div id="app">
     <Header v-if="!atHome" v-model="isAuthorized" v-on:search-click="Search" :editMode="editMode" :isLockedProp="isLocked" :atTrip="atTrip"/>
-    <MobileHeader v-if="!atHome" class="mobileHeader"/>
-    <TabletHeader v-if="!atHome" class="tabletHeader"/>
+    <MobileHeader v-if="!atHome && $route.name != 'member'" class="mobileHeader"/>
+    <TabletHeader v-if="!atHome && $route.name != 'member'" class="tabletHeader"/>
     <div id="nav"></div>
     <transition name="router-anim" enter-active-class="animated fadeIn" >
       <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn" @is-locked-off="isLockedOff"/>
     </transition>
-    <loading :active.sync="isLoading" :is-full-page="true" loader="dots" opacity="0.3">
+    <loading :active.sync="isLoading" :is-full-page="true" loader="dots" :opacity="opacity">
     </loading>
   </div>
 </template>
@@ -39,6 +39,7 @@ export default {
       editMode: false,
       isLocked: false,
       isLoading: false,
+      opacity: 0.3
     }
   },
   sockets: {
@@ -109,7 +110,6 @@ export default {
       });
     };
     this.connectionSuccess();
-
     let self = this;
     // 註冊loading bus
     this.$bus.$on('loading', event => {
@@ -126,6 +126,14 @@ export default {
           self.isLoading = false;
         }, duration);
       }
+    });
+    // 註冊socket on
+    this.$socket.on('notifyCreateTripMessage', event => {
+      let message = event.message;
+      self.$notify({
+          message: message,
+          type: 'success'
+      });
     })
   },
   watch: {

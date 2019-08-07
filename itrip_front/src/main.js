@@ -1,6 +1,8 @@
 import App from './App.vue'
 import router from './router'
 import { Icon }  from 'leaflet'
+import elementUi from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
 import BootstrapVue from 'bootstrap-vue'
@@ -25,6 +27,11 @@ import TimePicker from 'ant-design-vue/lib/time-picker'
 import 'ant-design-vue/lib/time-picker/style/css'
 import Tag from 'ant-design-vue/lib/tag'
 import 'ant-design-vue/lib/tag/style/css'
+import Leaflet from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+// Leaflet
+Vue.use(Leaflet);
 
 // socket.in
 Vue.use(VueSocketio, io('http://35.194.247.229:4000'));
@@ -35,10 +42,12 @@ Vue.use(Menu);
 Vue.use(TimePicker);
 Vue.use(Tag);
 
+// element-ui
+Vue.use(elementUi);
+
 // media-queries
 const mediaQueries = new MediaQueries();
 Vue.use(mediaQueries);
-
 Vue.use(SocialSharing);
 
 //Vue.use(emailjs);

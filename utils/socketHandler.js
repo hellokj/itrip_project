@@ -182,6 +182,19 @@ class SocketHandler {
     return onlineMembers;
   }
 
+  notifyAll(memberId) {
+    let onlineMembers = [];
+    let keySet = this.membersTable.keySet();
+    for(let i=0;i<keySet.length;i++) {
+      if(keySet[i] == memberId) continue;
+      let socketIds = this.membersTable.get(keySet[i]);
+      for(let j=0;j<socketIds.length;j++) {
+        onlineMembers.push(socketIds[j]);
+      }
+    }
+    return onlineMembers;
+  }
+
   getAllItinerary() {
     return Itinerary.find({});
   }

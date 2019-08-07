@@ -154,6 +154,21 @@ export default {
     }
   },
   methods: {
+    saveTrip(_id, date, name, dayNum, startTimes, togos, travelInfos, memberId, token) {
+      apiSaveTrip(_id, date, name, dayNum, startTimes, togos, travelInfos, memberId, token)
+          .then(function(res) {
+            self.$message.success("行程儲存成功!");
+            self.$router.push(
+              "/trip?currentAccessId=" +
+                self.$store.state.user.id +
+                "&itineraryId=" +
+                _id
+            );
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+    },
     editOn: function(){
       this.$emit("edit-on")
     },
@@ -401,11 +416,12 @@ export default {
         self.resetRoutes();
       })
       .catch(function (error) {
-        //console.log(error);
+        // Travel time
+        let start = startOb.name;
+        let dest = destOb.name;
+        let travelInfo = new TravelInfo(start, dest, null, null, null, null);
+        self.$set(self.itinerary.travelInfos[self.page], index, travelInfo);
       })
-      .then(function () {
-        // always executed
-      });
     },
     changeMode(index, mode) {
       this.callGetRoutesApi(index, this.itinerary.togos[this.page][index], this.itinerary.togos[this.page][index + 1], mode);
@@ -563,6 +579,14 @@ export default {
     token: function(newVal, oldVal) {
       if(oldVal.length == 0) {
         this.storedToken = newVal;
+        let _id;
+        if(this.qviewId !== undefined) {
+          _id = this.qviewId;
+        }
+        else {
+          _id = new Date().getTime();
+        }
+        this.saveTrip(_id, this.itinerary.startDate, this.itinerary.name, this.itinerary.dayNum, [], this.itinerary.togos, this.itinerary.travelInfos, null, newVal);
       }
     },
     checkList: function(newVal, oldVal) {

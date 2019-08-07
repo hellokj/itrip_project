@@ -33,7 +33,7 @@
                             <el-tag
                                 :style="[($resize && !$mq.above(1299)) ? { display: 'block' }:{ display: 'none'}]"
                                 class="mx-1 el-tag"
-                                :key="index" effect="plain" size="mini" @click="link('ig', spot.ig_tag[0])">
+                                effect="plain" size="mini" @click="link('ig', spot.ig_tag[0])">
                                 #{{spot.ig_tag[0]}}
                             </el-tag> 
                         </div>
@@ -260,7 +260,7 @@ export default {
         cursor: pointer;
     }
     .fa-bookmark {
-        font-size: 25px;
+        font-size: 35px;
         cursor: pointer;
         padding-right: 5px;
         color: #ffaa00;
@@ -382,7 +382,7 @@ export default {
         font-size: 10px;
     }
     .fa-bookmark {
-        font-size: 15px;
+        font-size: 25px;
     }
     
     .fa-facebook-square {
