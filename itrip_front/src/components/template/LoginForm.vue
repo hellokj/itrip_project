@@ -153,10 +153,11 @@ export default {
               self.$refs["logInForm"].resetFields();
               
               self.$store.dispatch("updateAuthorized", true); // 登入成功
-              Message({
-                message: self.$store.state.user.name + ', 歡迎回來!',
-                type: 'success'
-              });
+              self.$message.success(self.$store.state.user.name + ', 歡迎回來!');
+              // Message({
+              //   message: self.$store.state.user.name + ', 歡迎回來!',
+              //   type: 'success'
+              // });
               self.$socket.emit('logIn', {token: self.$store.state.userToken});
             }
           })
