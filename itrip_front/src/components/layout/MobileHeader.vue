@@ -36,6 +36,7 @@ export default {
                     this.toggle('Map');
                     break;
             }
+            console.log(newVal);
         }
     },
 }

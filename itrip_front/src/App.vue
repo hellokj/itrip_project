@@ -7,10 +7,14 @@
     <transition name="router-anim" enter-active-class="animated fadeIn" >
       <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn" @is-locked-off="isLockedOff"/>
     </transition>
+    <loading :active.sync="isLoading" :is-full-page="true" loader="dots" opacity="0.3">
+    </loading>
   </div>
 </template>
 
 <script>
+import VueLoading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 import Header from './components/layout/Header'
 import MobileHeader from './components/layout/MobileHeader'
 import TabletHeader from './components/layout/TabletHeader'
@@ -20,7 +24,8 @@ export default {
   components: {
     Header,
     MobileHeader,
-    TabletHeader
+    TabletHeader,
+    loading: VueLoading
   },
   data() {
     return {
@@ -33,6 +38,7 @@ export default {
       isAuthorized: this.$store.state.isAuthorized,
       editMode: false,
       isLocked: false,
+      isLoading: false,
     }
   },
   sockets: {
@@ -103,6 +109,24 @@ export default {
       });
     };
     this.connectionSuccess();
+
+    let self = this;
+    // 註冊loading bus
+    this.$bus.$on('loading', event => {
+      let duration;
+      if(event.duration === undefined) {
+        duration = 2000;
+      }
+      else {
+        duration = event.duration;
+      }
+      this.isLoading = true;
+      if(this.isLoading) {
+        setTimeout(() => {
+          self.isLoading = false;
+        }, duration);
+      }
+    })
   },
   watch: {
     $route (to, from){

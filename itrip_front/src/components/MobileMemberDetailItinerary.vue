@@ -196,24 +196,23 @@ export default {
     modifyItinerary: function(){
       this.$router.push({path: '/trip'});
     },
-        checkItineraryStatus: function (timeout = 10000) {
+    checkItineraryStatus: function (timeout = 10000) {
       let self = this;
-    return new Promise((resolve, reject) => {
-        let timer;
-        self.$socket.emit('checkItinerary', {itineraryId: this.itinerary._id});
-        function responseHandler(checkedReply) {
-            // resolve promise with the value we got
-            resolve(checkedReply);
-            clearTimeout(timer);
-        }
-        self.$socket.on('checkedReply', responseHandler); 
-        // set timeout so if a response is not received within a 
-        // reasonable amount of time, the promise will reject
-        timer = setTimeout(() => {
-            reject(new Error("timeout waiting for msg"));
-          self.$socket.removeListener('checkedReply', responseHandler);
-        }, timeout);
-
+      return new Promise((resolve, reject) => {
+      let timer;
+      self.$socket.emit('checkItinerary', {itineraryId: this.itinerary._id});
+      function responseHandler(checkedReply) {
+          // resolve promise with the value we got
+          resolve(checkedReply);
+          clearTimeout(timer);
+      }
+      self.$socket.on('checkedReply', responseHandler); 
+      // set timeout so if a response is not received within a 
+      // reasonable amount of time, the promise will reject
+      timer = setTimeout(() => {
+          reject(new Error("timeout waiting for msg"));
+        self.$socket.removeListener('checkedReply', responseHandler);
+      }, timeout);
       });
     },
     modifyItinerary: async function(){
@@ -226,9 +225,10 @@ export default {
       })
       //this.$router.push({path: '/trip'});
       //console.log(this.isLocked)
-      
-      this.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
-      
+      this.$bus.$emit('loading');
+      setTimeout(() => {
+        self.$router.push('/trip/?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
+      }, 2000);
     },
     getLockStatus: function(){
       if (this.itinerary.isPublic == undefined || this.itinerary.isPublic == true){

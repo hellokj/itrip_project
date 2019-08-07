@@ -101,10 +101,6 @@ export default {
           
           self.$store.dispatch("updateAuthorized", true); // 登入成功
           self.$message.success(self.$store.state.user.name + ', 歡迎回來!');
-          // Message({
-          //     message: ,
-          //     type: 'success'
-          //   });
           self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;
