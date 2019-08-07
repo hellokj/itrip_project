@@ -19,7 +19,6 @@
             <tripInfoInput/>
           </b-col>
           <b-col class="text-center" cols="2" sm="2" md="2" lg="1" align-h="center" align-self="center">
-            <!-- <button class="btn-login">登入</button> -->
             <ProfileButton :type="'danger'"></ProfileButton>
           </b-col>
         </b-row>
@@ -184,9 +183,9 @@
           <b-col class="footer-col-two" sm="12" md="3" lg="3">
             <router-link class="footer-home" to="/">首頁</router-link>
             <router-link class="footer-trip" to="/trip">開始規劃</router-link>
-            <router-link class="footer-login" to="/">登入</router-link>
           </b-col>
           <b-col class="footer-col-three" sm="12" md="3" lg="3">
+            <router-link class="footer-login" to="/">登入</router-link>
             <p class="footer-login">聯絡我們</p>
           </b-col>
         </b-row>
@@ -590,7 +589,7 @@ export default {
   .footer {
     background-image: linear-gradient(to left, rgba(253,153,116,100%), rgba(255,210,151,58%));
     width:100%; 
-    height:40vh; 
+    height:25vh; 
     overflow: hidden;
   }
 

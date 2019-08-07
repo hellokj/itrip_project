@@ -2,8 +2,6 @@
   <div class="MyTrip">
     <!-- <div style="position: fixed; right: 30vw; top: 0px; width: 400px; height: 200px; background-color: transparent; color:#AAA; z-index: 30; font-size: 30px;"><p>editMode: {{editMode}}</p><p>  isLockedProp: {{isLockedProp}}</p></div> -->
     <div v-if="lockIcon" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 0px;"><div class="lds-facebook"><div></div><div></div><div></div></div></div>
-    <!-- <div v-if="!isLocked" style="position: absolute; background-color:rgb(250,250,250);right: 10px; top: 10px;"><div style="position: absolute; right: 30px; top: 0px; width: 50px; color: lightblue;">編輯中</div><div class="lds-circle"><div></div></div></div> -->
-    
     <div class="py-2 m-0 info-container">
       <div class="tripName">
         <div style="width:100%;">
@@ -57,7 +55,7 @@
         </el-dropdown>
       </div>
     </div>
-    <div class="tab-container" style="height: 75vh;">
+    <div class="tab-container" style="height:75vh;">
       <b-tabs content-class="mt-3" @input="changePage()" v-model="currentPage" style="width: 100%;" :key="update + 'o'">
           <template slot="tabs">
               <b-nav-item @click.prevent="newTab" href="#"><i class="fas fa-plus"></i></b-nav-item>
@@ -77,7 +75,7 @@
             placeholder="請輸入時間"
             style="width: 140px;"/>
           </div>
-          <b-tab v-for="i in tabs" :key="'tab' + i" style="height: 60vh; width: 100%; overflow-Y: scroll;">
+          <b-tab v-for="i in tabs" :key="'tab' + i" style="height: 55vh; width: 100%; overflow-Y: scroll;">
             <template slot="title">
                 {{ 'Day ' + (i+1) }}<i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
             </template>
@@ -143,7 +141,7 @@ export default {
         update: 0,
         viewMapString: '檢視地圖',
         itineraryLoaded: false,
-        shareUrl: 'http://localhost:8080/#/trip?viewId=',
+        shareUrl: 'https://www.itrip.ga/#/trip?viewId=',
         memberEmail: '',
         memberEmails: [],
         newMemberId: '',
@@ -422,6 +420,7 @@ export default {
       shareId: function(newVal, oldVal) {
         if(oldVal == undefined) {
           this.shareUrl += newVal;
+          console.log(this.shareUrl);
           this.shareIdProp = newVal;
         }
       },
@@ -556,11 +555,6 @@ export default {
     flex-direction: column;
     justify-content: space-evenly;
     margin-left: 8px;
-  }
-  .trip-time {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
   }
   .big-container {
     display: flex;
