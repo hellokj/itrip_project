@@ -42,17 +42,18 @@ export default {
     reconnect(){
       console.log("socket reconnected");
     },
-    // disconnect() {
-    //   console.log('you have been kicked by server');
-    //   this.$store.dispatch('updateAuthorized', false);
-    //   this.$store.dispatch("updateUserToken", "");
-    //   this.$store.dispatch('updateUserInfo', {});
-    //   FB.logout(function (response) {
-    //     console.log('res when logout', response);
-    //   });
-    //   // 登出後導向首頁
-    //   this.$router.push({path: '/'});
-    // }
+    disconnect() {
+      // reload 會出事
+      // console.log('you have been kicked by server');
+      // this.$store.dispatch('updateAuthorized', false);
+      // this.$store.dispatch("updateUserToken", "");
+      // this.$store.dispatch('updateUserInfo', {});
+      // FB.logout(function (response) {
+      //   console.log('res when logout', response);
+      // });
+      // // 登出後導向首頁
+      // this.$router.push({path: '/'});
+    }
   },
   methods: {
     Search(para) {
@@ -167,12 +168,12 @@ export default {
       justify-content: center;
     }
   }
-   @media only screen and (min-width: 768px) and (max-width: 1024px) {
-     .tabletHeader {
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .tabletHeader {
       display: flex;
       justify-content: center;
     }
-   }
+  }
 
 
 </style>

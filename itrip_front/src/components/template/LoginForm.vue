@@ -31,6 +31,7 @@
 <script>
 import { apiLogIn, apiFbLogIn } from '../../../utils/api'
 import { EmailChecker } from '../../../utils/checker'
+
 export default {
   name: "LogInForm",
   props: {
@@ -99,10 +100,11 @@ export default {
           self.$refs["logInForm"].resetFields();
           
           self.$store.dispatch("updateAuthorized", true); // 登入成功
-          Message({
-              message: self.$store.state.user.name + ', 歡迎回來!',
-              type: 'success'
-            });
+          self.$message.success(self.$store.state.user.name + ', 歡迎回來!');
+          // Message({
+          //     message: ,
+          //     type: 'success'
+          //   });
           self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;

@@ -21,7 +21,7 @@ module.exports = {
         })
     },
     configureWebpack: config => {
-       config.externals = {
+      config.externals = {
         'vue': 'Vue',
         'vuex': 'Vuex',
         'vue-router': 'VueRouter',
@@ -30,6 +30,6 @@ module.exports = {
         'jspdf': 'jsPDF',
         'axios': 'axios',
         'leaflet': 'L',
-       }
+      }
     }
   }
