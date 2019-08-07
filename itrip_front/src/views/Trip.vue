@@ -175,8 +175,8 @@ export default {
         if(window.innerWidth <= 768) {
             this.$bus.$emit('toggle', {id: 'Togos'});
         }
-        this.isAddSpotLocked = true;
       }
+      this.isAddSpotLocked = true;
     },
     addTravelInfo(startOb, destOb) {
       // initialize travelInfos
@@ -494,6 +494,9 @@ export default {
           }
         }
       }
+      if(window.innerWidth <= 768) {
+          this.$bus.$emit('toggleMobile', {id: this.selected})
+        }
     },
     refresh: function() {
       if(Object.keys(this.paramProp).includes('distance')) {

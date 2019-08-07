@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     submit() {
-      this.$bus.$emit("loading", {duration: 2500});
+      this.$bus.$emit("loading", { duration: 2500 });
       this.isSubmit = true;
       if (this.$store.state.userToken.length == 0) {
         this.$router.push({ path: "/trip" });
