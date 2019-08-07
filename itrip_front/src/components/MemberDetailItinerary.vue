@@ -21,7 +21,6 @@
         </div>
         <el-button slot="reference" icon='el-icon-delete' round style="height: min-content; float: right;">刪除行程</el-button>
       </el-popover>
-      <!-- <el-button style="border-radius: 50; padding: 5px; margin:0px auto; " @click="confirmDeleteOrNot(true, itinerary)"><i class="el-icon-delete"></i></el-button> -->
     </div>
       <el-tabs type="border-card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane :label='dayFormat(index)' v-for="(day, index) in days" :key="index + 'QQ' ">
@@ -146,6 +145,7 @@ import { async } from 'q';
 export default {
   components: {
     MemberMap,
+    VueLoading: 'loading'
   },
   props: {
     itinerary: Object,
@@ -393,6 +393,9 @@ export default {
 
         });
     },
+    loading() {
+      this.isLoading = true;
+    },
     modifyItinerary: async function(){
       let self = this;
       this.checkItineraryStatus()
@@ -401,11 +404,8 @@ export default {
         //console.log(checkedReply)
         self.$bus.$emit('modifyItinerary', {itinerary: self.itinerary, currentAccessId: self.currentAccessId, isLocked: self.isLocked});
       })
-      //this.$router.push({path: '/trip'});
-      //console.log(this.isLocked)
-      
-      this.$router.push('/trip?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
-      
+      self.$bus.$emit('loading', {duration: 2500});
+      self.$router.push('/trip?currentAccessId=' + this.currentAccessId + '&itineraryId=' + this.itinerary._id);
     },
     getLockStatus: function(){
       if (this.itinerary.isPublic == undefined || this.itinerary.isPublic == true){
@@ -469,9 +469,6 @@ export default {
   },
   beforeUpdate() {
     this.$emit("loadingComplete");
-  },
-  computed: {
-    
   },
 }
 </script>

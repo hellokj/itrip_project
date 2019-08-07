@@ -50,7 +50,7 @@
     v-on:loadingComplete="loadingComplete"
     v-on:checkDetail="checkDetail">
   </component>
-  <loading :active.sync="isLoading" :is-full-page="true">
+  <loading :active.sync="isLoading" :is-full-page="true" loader="dots">
   </loading>
 </el-container>
 </template>

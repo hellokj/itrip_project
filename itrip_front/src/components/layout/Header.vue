@@ -202,8 +202,10 @@ export default {
                 this.isLocked = null;
                 // alert("isLockedProp is: " + this.isLockedProp);
                 this.isLocked = this.isLockedProp;
-                if(this.isLocked) this.showLockedTutorial();
-                if(!this.isLocked) this.showEditTutorial();
+                // if(this.isLocked) this.showLockedTutorial();
+                // if(!this.isLocked) this.showEditTutorial();
+                if(this.isLocked === true) this.showLockedTutorial();
+                if(this.isLocked === null || this.isLocked === false) this.showEditTutorial();
             }
         }
     },

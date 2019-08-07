@@ -32,7 +32,7 @@
       class="px-0 pl-0 map-col" order=displayOrders[2] order-md="3"
       :style="[($resize && !$mq.above(1025) && selected != 2) ? { display: 'none' }:{ display: 'block'}]"
       :value="selected" no-gutters fluid>
-        <b-col class="px-0" style="height:100%;display:flex;flex-direction:column;justify-content:space-evenly;">
+        <b-col class="px-0" style="height:100%;align-h:center;">
           <div class="big-image-container" :style="[($resize && !$mq.above(1025)) ? { display: 'none' }:{ display: 'block'}]">
             <el-carousel height="100%" :autoplay="false" trigger="click" style="height:100%;">
               <el-carousel-item v-for="(item, index) in getImages(selectedSpot)" :key="index">
@@ -44,11 +44,11 @@
               </el-carousel-item>
             </el-carousel>
           </div>
-          <div class="row" style="width:100%;display:flex;flex-direction:row;justify-content:center;">
+          <div class="mx-0 row" style="width:100%;display:flex;flex-direction:row;justify-content:center;">
             <el-checkbox-group v-model="checkList" style="width:auto;">
-              <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt"> 景點圖標</i></el-checkbox>
-              <el-checkbox label="路徑指示"><i class="fas fa-road"> 路徑指示</i></el-checkbox>
-              <i class="mt-1 ml-2 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:15px;"> 完整路徑</i>
+              <el-checkbox label="景點圖標"><i class="fas fa-map-marker-alt" style="font-size:12px;"> 景點圖標</i></el-checkbox>
+              <el-checkbox label="路徑指示"><i class="fas fa-road" style="font-size:12px;"> 路徑指示</i></el-checkbox>
+              <i class="mt-1 ml-2 fas fa-map-pin" @click="centerRoutes" style="cursor: pointer;font-size:12px;"> 完整路徑</i>
             </el-checkbox-group>
           </div>
           <Map 
@@ -116,7 +116,17 @@ export default {
       paramProp: '',
       selectedSpot: 0,
       update: 0,
-      itinerary: {},
+      itinerary: {
+        startDate: {
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          day: new Date().getDate()
+        },
+        name: '我的旅行',
+        dayNum: 1,
+        togos: [],
+        travelInfos: []
+      },
       updateMap:0,
       windowWidth: 0,
       tripName: '',

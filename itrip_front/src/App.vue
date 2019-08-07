@@ -7,10 +7,14 @@
     <transition name="router-anim" enter-active-class="animated fadeIn" >
       <router-view :param="param" :region="region" :type="type" @search-click="Search" @edit-on="editOn" @is-locked-on="isLockedOn" @is-locked-off="isLockedOff"/>
     </transition>
+    <loading :active.sync="isLoading" :is-full-page="true" loader="dots" opacity="0.3">
+    </loading>
   </div>
 </template>
 
 <script>
+import VueLoading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 import Header from './components/layout/Header'
 import MobileHeader from './components/layout/MobileHeader'
 import TabletHeader from './components/layout/TabletHeader'
@@ -20,7 +24,8 @@ export default {
   components: {
     Header,
     MobileHeader,
-    TabletHeader
+    TabletHeader,
+    loading: VueLoading
   },
   data() {
     return {
@@ -33,6 +38,7 @@ export default {
       isAuthorized: this.$store.state.isAuthorized,
       editMode: false,
       isLocked: false,
+      isLoading: false,
     }
   },
   sockets: {
@@ -42,17 +48,18 @@ export default {
     reconnect(){
       console.log("socket reconnected");
     },
-    // disconnect() {
-    //   console.log('you have been kicked by server');
-    //   this.$store.dispatch('updateAuthorized', false);
-    //   this.$store.dispatch("updateUserToken", "");
-    //   this.$store.dispatch('updateUserInfo', {});
-    //   FB.logout(function (response) {
-    //     console.log('res when logout', response);
-    //   });
-    //   // 登出後導向首頁
-    //   this.$router.push({path: '/'});
-    // }
+    disconnect() {
+      // reload 會出事
+      // console.log('you have been kicked by server');
+      // this.$store.dispatch('updateAuthorized', false);
+      // this.$store.dispatch("updateUserToken", "");
+      // this.$store.dispatch('updateUserInfo', {});
+      // FB.logout(function (response) {
+      //   console.log('res when logout', response);
+      // });
+      // // 登出後導向首頁
+      // this.$router.push({path: '/'});
+    }
   },
   methods: {
     Search(para) {
@@ -102,6 +109,24 @@ export default {
       });
     };
     this.connectionSuccess();
+
+    let self = this;
+    // 註冊loading bus
+    this.$bus.$on('loading', event => {
+      let duration;
+      if(event.duration === undefined) {
+        duration = 2000;
+      }
+      else {
+        duration = event.duration;
+      }
+      this.isLoading = true;
+      if(this.isLoading) {
+        setTimeout(() => {
+          self.isLoading = false;
+        }, duration);
+      }
+    })
   },
   watch: {
     $route (to, from){
@@ -167,12 +192,12 @@ export default {
       justify-content: center;
     }
   }
-   @media only screen and (min-width: 768px) and (max-width: 1024px) {
-     .tabletHeader {
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .tabletHeader {
       display: flex;
       justify-content: center;
     }
-   }
+  }
 
 
 </style>

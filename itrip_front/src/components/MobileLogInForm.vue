@@ -79,14 +79,26 @@ export default {
         if (res.data.status == -1){
           self.hint = "";
           self.isVisible = false;
+          self.$store.dispatch("updateUserToken", res.data.data);
+          
+          let userInfo = {
+            id: res.data.memberId,
+            name: res.data.memberName,
+            email: "",
+            url: ""
+          }
+          //console.log(userInfo)
+          self.$store.dispatch("updateUserInfo", userInfo);
+          // token
+          self.$router.push('?currentAccessId=' + self.logInForm.account);
           self.$refs["logInForm"].resetFields();
-          self.$store.dispatch("updateUserToken", res.data.data); // token
-          self.$store.dispatch("updateFormState", {
-            isLogIn: false,
-            isSignUp: false,
-            isFbSignUp: false
-          });
+          
           self.$store.dispatch("updateAuthorized", true); // 登入成功
+          self.$message.success(self.$store.state.user.name + ', 歡迎回來!');
+          // Message({
+          //     message: ,
+          //     type: 'success'
+          //   });
           self.$socket.emit('logIn', {token: self.$store.state.userToken});
         }else{
           self.hint = res.data.msg;
@@ -135,10 +147,11 @@ export default {
               self.$refs["logInForm"].resetFields();
               
               self.$store.dispatch("updateAuthorized", true); // 登入成功
-               Message({
-                message: self.$store.state.user.name + ', 歡迎回來!',
-                type: 'success'
-              });
+              self.$message.success(self.$store.state.user.name + ', 歡迎回來!');
+              // Message({
+              //   message: self.$store.state.user.name + ', 歡迎回來!',
+              //   type: 'success'
+              // });
               self.$socket.emit('logIn', {token: self.$store.state.userToken});
             }
           })

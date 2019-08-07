@@ -134,16 +134,20 @@ class SocketHandler {
       }
       return null;
     }else {
-      if (this.lockedItineraries.get(itineraryId).length !== 0){
-        this.lockedItineraries.get(itineraryId).shift();
-      }
-      // shift完判斷
-      let socketIds = this.lockedItineraries.get(itineraryId);
-      if (socketIds.length == 0){
-        this.lockedItineraries.remove(itineraryId);
-        return null;
+      if (this.lockedItineraries.get(itineraryId) !== null){
+        if (this.lockedItineraries.get(itineraryId).length !== 0){
+          this.lockedItineraries.get(itineraryId).shift();
+        }
+        // shift完判斷
+        let socketIds = this.lockedItineraries.get(itineraryId);
+        if (socketIds.length == 0){
+          this.lockedItineraries.remove(itineraryId);
+          return null;
+        }else {
+          return socketIds[0]; // 下一個人
+        }
       }else {
-        return socketIds[0]; // 下一個人
+        return null;
       }
     }
   }
