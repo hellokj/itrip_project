@@ -98,8 +98,8 @@ export default {
       }
     },
     beforeDestroy(){
-      alert("ready to destroy")
-      alert(this.placeClicked)
+      // alert("ready to destroy")
+      // alert(this.placeClicked)
       if(this.placeClicked){
         let self = this;
         let _id = new Date().getTime();

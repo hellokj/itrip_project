@@ -285,7 +285,7 @@ export default {
       console.log(toggle);
     },
     handleSearch: function() {
-      alert(this.selected);
+      // alert(this.selected);
 
       if (options.indexOf(this.selected) !== -1){
         this.params = makeParams(null, null, this.selected, null);  // type 
