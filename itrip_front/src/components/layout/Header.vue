@@ -102,7 +102,7 @@ export default {
     created: function() {
         window.addEventListener('click',this.clickOutSide);
         this.$bus.$on('createTrip', event => {
-            alert("accept from bus");
+            this.showEditTutorial();
             //console.log(self.itinerary)
         });
     },
@@ -206,6 +206,9 @@ export default {
                 // if(!this.isLocked) this.showEditTutorial();
                 if(this.isLocked === true) this.showLockedTutorial();
                 if(this.isLocked === null || this.isLocked === false) this.showEditTutorial();
+            }
+            if(!newVal) {
+                this.$bus.$off('createTrip');
             }
         }
     },

@@ -36,7 +36,7 @@
       <div class="container pt-3 pb-3" style=" border-radius: 10px; background-color: rgba(0, 0, 0, 30%); overflow: visible;">
         <b-container >
           <b-row align-h="center" align-v="center" >
-            <b-col class="p-0" cols="12" sm="6" md="6" >
+            <b-col class="p-0" cols="12" sm="12" md="6" >
               <HomeSearch class="home-search" style="display: absolute; z-index: 1;"></HomeSearch>
             </b-col>
             <!-- <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
@@ -45,7 +45,7 @@
             </b-col> -->
           </b-row>
           <b-row class="mt-2" align-h="center">
-            <b-col cols="12" sm="6" md="6" >
+            <b-col cols="12" sm="12" md="6" >
               <p class="key-word" style="display: inline-block; margin-right: 2rem;" :key="keyWord" v-for="keyWord in keyWords" @click="sendNameToTripPage(keyWord)">{{ keyWord }}</p>
             </b-col>
           </b-row>
