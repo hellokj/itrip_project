@@ -101,6 +101,10 @@ export default {
     },
     created: function() {
         window.addEventListener('click',this.clickOutSide);
+        this.$bus.$on('createTrip', event => {
+            alert("accept from bus");
+            //console.log(self.itinerary)
+        });
     },
     mounted() {
         console.log("mounted: isLocked becomes " + this.isLocked);

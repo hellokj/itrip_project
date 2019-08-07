@@ -128,8 +128,8 @@
     </div>
 
     <!-- Itinerary Recommend Area  -->
-    <div  class="itinerary-area" style="width:100%; height:auto; overflow: hidden">
-      <b-container class="mt-5 mb-5" v-if="officialItineraries !== []">
+    <div class="itinerary-area" style="width:100%; height:auto; overflow: hidden" v-if="officialItineraries != undefined && officialItineraries != []">
+      <b-container class="mt-5 mb-5" >
         <b-row>
           <p class="col itinerary-title" style="font-size: 28px;">精選行程</p>
         </b-row>
@@ -227,7 +227,7 @@ export default {
       ig_recommend: [],
       food_recommend: [],
       keyWords: [],
-      itinerary: ['nothing'],
+      itinerary: [],
       token: '',
       data: {},
       officialItineraries: []
