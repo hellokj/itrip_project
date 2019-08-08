@@ -35,8 +35,7 @@ class SocketHandler {
       console.log("memberId", memberId);
     }
     else {
-      console.log("error");
-      return;
+      memberId = 'guest';
     }
     let socketIds;
     if (this.membersTable.containsKey(memberId)){
@@ -179,6 +178,19 @@ class SocketHandler {
       }
     });
     console.log("online members", onlineMembers);
+    return onlineMembers;
+  }
+
+  notifyAll(memberId) {
+    let onlineMembers = [];
+    let keySet = this.membersTable.keySet();
+    for(let i=0;i<keySet.length;i++) {
+      if(keySet[i] == memberId) continue;
+      let socketIds = this.membersTable.get(keySet[i]);
+      for(let j=0;j<socketIds.length;j++) {
+        onlineMembers.push(socketIds[j]);
+      }
+    }
     return onlineMembers;
   }
 

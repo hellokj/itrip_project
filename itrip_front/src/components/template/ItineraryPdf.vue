@@ -53,6 +53,21 @@ export default {
                     columnStyles: {text: {cellWidth: 'auto'}}})
             }
             doc.output("dataurlnewwindow");
+            let sec = Math.floor(Math.random()*10000)+1000
+            let self = this;
+            let memberId, memberName;
+            if(this.$store.state.user == null) {
+                memberId = 'guest';
+                memberName = 'guest';
+            }
+            else {
+                memberId = this.$store.state.user.id;
+                memberName = this.$store.state.user.name;
+            }
+            setTimeout(() => {
+              self.$socket.emit('notifyMessage',
+               {name: self.tripName, memberId: memberId, memberName: memberName, sec: Math.floor(sec/1000), type: 'pdf'});
+            }, sec);
         },
         makeBody: function(dayIndex) {
             let wholeItinerary = [];

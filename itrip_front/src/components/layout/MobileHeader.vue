@@ -10,39 +10,33 @@
 
 <script>
 export default {
-  name: "MobileHeader",
-  data() {
-    return {
-      currentMode: 1
-    };
-  },
-  methods: {
-    toggle: function(id) {
-      this.$bus.$emit("toggle", { id: id });
-    }
-  },
-  watch: {
-    currentMode: function(newVal, oldVal) {
-      switch (newVal) {
-        case 0:
-          this.toggle("Togos");
-          break;
-        case 1:
-          this.toggle("Spots");
-          break;
-        case 2:
-          this.toggle("Map");
-          break;
-      }
-    }
-  },
-  created() {
-    let self = this;
-    this.$bus.$on("toggleMobile", event => {
-      self.currentMode = event.id;
-    });
-  }
-};
+    name: "MobileHeader",
+    data() {
+        return {
+            currentMode: 1,
+        }
+    },
+    methods: {
+       toggle: function(id) {
+           this.$bus.$emit('toggle', {id: id});
+       }
+    },
+    watch: {
+        currentMode: function(newVal, oldVal) {
+            switch(newVal) {
+                case 0:
+                    this.toggle('Togos');
+                    break;
+                case 1:
+                    this.toggle('Spots');
+                    break;
+                case 2:
+                    this.toggle('Map');
+                    break;
+            }
+        }
+    },
+}
 </script>
 
 <style scoped>

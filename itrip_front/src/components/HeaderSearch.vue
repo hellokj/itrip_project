@@ -9,8 +9,8 @@
     </div>
 
     <!-- select panel -->
-    <b-container class="select-panel-container">
-      <b-row class="select-panel" @mouseover="selectPanelHover = true"  @mouseleave="selectPanelHover = false" v-if="regionControl && (inputTextFocus || selectPanelHover)">
+    <b-container class="select-panel-container" v-if="regionControl && (inputTextFocus || selectPanelHover)">
+      <b-row class="select-panel" @mouseover="selectPanelHover = true"  @mouseleave="selectPanelHover = false" >
 
         <!-- type checkboxes -->
         <b-col class="col-left" md="3">
@@ -295,7 +295,7 @@
       margin-left: 5px;
     }
     .input-wrap {
-      width: 100%;
+      width: 95%;
       margin-top: 10px;
       margin-left: 10px;
     }
@@ -308,25 +308,26 @@
     .label-clear::after {
       left: calc(80% - 10px);
     }
+    
+    .select-panel-container {
+      width: 100%;
+      font-size: 16px;
+      height: 80vh;
+      overflow-y: scroll; 
+    }
+
+    .containerCounty {
+      font-size: 16px;
+    }
+    .containerRegion {
+      font-size: 16px;
+    }
+    .container-ame-search {
+      width: 350px;
+    }
   }
 </style>
 <style>
-  /* .select-panel-container {
-    width: 100%;
-    font-size: 16px;
-    height: 80vh;
-    overflow-y: scroll; 
-  }
-
-  .containerCounty {
-    font-size: 16px;
-  }
-  .containerRegion {
-    font-size: 16px;
-  }
-  .container-ame-search {
-    width: 350px;
-  } */
   
    /* The container */
   .containerCounty {

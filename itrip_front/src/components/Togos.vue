@@ -159,6 +159,9 @@
             {{ 'Day ' + (i+1) }}
             <i v-if="i != 0" class="fas fa-times" @click="closeTab(i)"></i>
           </template>
+          <loading :active.sync="isLoading" :is-full-page="false" loader="dots">
+            <p style="font-size:20px;">計算路徑中</p>
+          </loading>
           <div style="height: 65vh; width: 100%;">
             <draggable v-model="togos_prop" ghost-class="ghost" @end="onEnd">
               <transition-group type="transition" name="flip-list" :key="update">
@@ -189,7 +192,7 @@
                     v-bind="$attrs"
                     v-on="$listeners"
                     :index="index"
-                    :travelTime="travelInfos[index].duration"
+                    :travelTime="travelTime(index)"
                   />
                 </div>
               </transition-group>
@@ -202,6 +205,7 @@
 </template>
 
 <script>
+import VueLoading from "vue-loading-overlay";
 import TogoItem from "./TogoItem";
 import TravelTimeItem from "./TravelTimeItem";
 import virtualList from "vue-virtual-scroll-list";
@@ -259,6 +263,7 @@ export default {
     "virtual-list": virtualList,
     AddMemberPopover,
     SharingLink,
+    loading: VueLoading
   },
   props: {
     togos: Array,
@@ -278,7 +283,7 @@ export default {
         this.itinerary.memberIds === undefined ||
         this.itinerary.memberIds.length === 0
       );
-    }
+    },
   },
   methods: {
     saveShare: function() {
@@ -367,9 +372,6 @@ export default {
       this.memberEmails.splice(index, 1);
     },
     getStartTime: function(index) {
-      // if(index == 0) {
-      //   return this.startTime;
-      // }
       let hr = this.startTimeOb.hr;
       let min = this.startTimeOb.min;
 
@@ -456,11 +458,17 @@ export default {
       this.update++;
     },
     getCurrentMembers: function() {
+      //console.log(this.itinerary);
       let self = this;
       this.memberEmails = [];
+      //console.log(this.itinerary)
+      //console.log(this.currentAccessId)
       let memberIds = this.itinerary.memberIds;
+      //console.log(self.$store.state.user);
+      //console.log(this.itinerary)
       memberIds.forEach(element => {
         if (element != self.$store.state.user.id) {
+          //console.log(JSON.parse(self.$store.state.user.id))
           self.memberEmails.push(element);
         }
       });
@@ -487,42 +495,55 @@ export default {
     navigate() {
       this.newWin = window.open();
       this.googleMapUrl = getUrl(this.togos_prop);
+    },
+    travelTime(index) {
+      if(this.travelInfos[index].duration == null) {
+        return '無路徑資料'
+      }
+      return this.travelInfos[index].duration
     }
   },
   watch: {
     travelInfo: {
       handler: function() {
         this.travelInfos = this.travelInfo;
-        this.isLoading = true;
-        if (this.isLoading) {
-          setTimeout(() => {
-            this.isLoading = false;
-          }, 1000);
-        }
       },
       immediate: true
     },
     itinerary: {
       handler: function(newVal, oldVal) {
+        //console.log(newVal);
         for (let i = this.tabs.length; i < newVal.dayNum; i++) {
           this.tabs.push(i);
         }
+        //console.log(this.tabs)
+        // get name and date from itinerary
         this.tripName = newVal.name;
+        //console.log(newVal)
         this.tripDate = this.stringifyStartDate(newVal.startDate);
-        if (this.togos_prop.length > 1) {
+        if (this.togos_prop.length > 0) {
           this.startTime =
             this.togos_prop[0].startTime.hr.toString().padStart(2, "0") +
             ":" +
             this.togos_prop[0].startTime.min.toString().padStart(2, 0);
         }
+        // console.log(this.itinerary)
       },
       deep: true
     },
     page: function() {
       this.currentPage = this.page;
     },
-    togos: function() {
+    togos: function(newVal, oldVal) {
       this.togos_prop = this.togos;
+      if (newVal.length > 1) {
+        this.isLoading = true;
+        if (this.isLoading) {
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 1500);
+        }
+      }
     },
     startTime: function() {
       let tmp = this.startTime.split(":");

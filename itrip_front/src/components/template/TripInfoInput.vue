@@ -81,17 +81,7 @@ export default {
       let _id = new Date().getTime();
       let token = this.$store.state.userToken;
       if (token.length > 0) {
-        apiSaveTrip(
-          _id,
-          this.tripDate,
-          this.tripName,
-          1,
-          [],
-          [],
-          [],
-          null,
-          token
-        )
+        apiSaveTrip(_id, this.tripDate, this.tripName, 1, [], [], [], null, token)
           .then(function(res) {
             self.$router.push(
               "/trip?currentAccessId=" +
@@ -103,6 +93,11 @@ export default {
               tripDate: self.tripDate,
               itinerary: res.data.data
             });
+            let sec = Math.floor(Math.random()*10000)+1000
+            setTimeout(() => {
+              self.$socket.emit('notifyMessage',
+               {name: self.tripName, date: self.tripDate, memberId: self.$store.state.user.id, memberName: self.$store.state.user.name, sec: Math.floor(sec/1000), type: 'create'});
+            }, sec);
           })
           .catch(function(error) {
             console.log(error);

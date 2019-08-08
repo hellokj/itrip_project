@@ -259,7 +259,7 @@ export default {
         cursor: pointer;
     }
     .fa-bookmark {
-        font-size: 30px;
+        font-size: 35px;
         cursor: pointer;
         padding-right: 5px;
         color: #ffaa00;

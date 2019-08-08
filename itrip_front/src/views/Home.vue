@@ -3,7 +3,7 @@
     <!-- <div style="width: 500px; height: 500px; position: fixed; left: 0px; top: 0px; border: 1px solid black; z-index: 30; overflowY: scroll;" >{{officialItineraries}}</div> -->
     <!-- Scroll to Top Button-->
     <button class="btn-scroll-to-top" @click="ScrollToTop" style="position: fixed; right: 50px; bottom: 50px; z-index: 20;">Top</button>
-    
+    <!-- <div style="width: 800px; height: 800px; position: relative; top: 0px; right: 0px; border: 1px solid black;">{{officialItineraries}}</div> -->
     <!-- Index Area -->
     <div class="index-area" style="width:100%; height:60vh; z-index: 10">
       <!-- nav region -->
@@ -36,7 +36,7 @@
       <div class="container pt-3 pb-3" style=" border-radius: 10px; background-color: rgba(0, 0, 0, 30%); overflow: visible;">
         <b-container >
           <b-row align-h="center" align-v="center" >
-            <b-col class="p-0" cols="12" sm="6" md="6" >
+            <b-col class="p-0" cols="12" sm="12" md="6" >
               <HomeSearch class="home-search" style="display: absolute; z-index: 1;"></HomeSearch>
             </b-col>
             <!-- <b-col class="p-0" cols="1" sm="1" md="1" style="align-self: flex-start" >
@@ -45,7 +45,7 @@
             </b-col> -->
           </b-row>
           <b-row class="mt-2" align-h="center">
-            <b-col cols="12" sm="6" md="6" >
+            <b-col cols="12" sm="12" md="6" >
               <p class="key-word" style="display: inline-block; margin-right: 2rem;" :key="keyWord" v-for="keyWord in keyWords" @click="sendNameToTripPage(keyWord)">{{ keyWord }}</p>
             </b-col>
           </b-row>
@@ -127,8 +127,8 @@
     </div>
 
     <!-- Itinerary Recommend Area  -->
-    <div  class="itinerary-area" style="width:100%; height:auto; overflow: hidden">
-      <b-container class="mt-5 mb-5" v-if="officialItineraries !== []">
+    <div class="itinerary-area" style="width:100%; height:auto; overflow: hidden" v-if="officialItineraries != undefined && officialItineraries != []">
+      <b-container class="mt-5 mb-5" >
         <b-row>
           <p class="col itinerary-title" style="font-size: 28px;">精選行程</p>
         </b-row>
@@ -140,7 +140,7 @@
               <div class="itinerary-days">
                 <p style="margin: 0px; padding: 0px;">{{ dayStr(i) }}</p>
               </div>
-              <button @click="viewOfficialTrip(officialItineraries[i-1]._id)" class="itinerary-go-now">
+              <button @click="viewOfficialTrip(officialItineraries[i-1]._id, i-1)" class="itinerary-go-now">
                 馬上出發
               </button>
               <div class="itinerary-stops" v-if="officialItineraries!==undefined && officialItineraries[i-1]!==undefined">
@@ -226,10 +226,19 @@ export default {
       ig_recommend: [],
       food_recommend: [],
       keyWords: [],
-      itinerary: ['nothing'],
+      itinerary: [],
       token: '',
       data: {},
-      officialItineraries: []
+      officialItineraries: [],
+      // for saveTrip
+      addToTripClicked: false,
+      viewOfficialTripClicked: false,
+      tripDate: new Date(),
+      tripName: "我的旅行",
+      itinerary: {},
+      visible: false,
+      currentAccessId: this.$route.query.currentAccessId,
+      itenaryNum: null
     }
   },
   created: function() {
@@ -262,6 +271,12 @@ export default {
       }
     
   },
+  beforeDestroy() {
+    // alert("ready to destroy")
+    // alert(this.addToTripClicked)
+    if(this.addToTripClicked) this.callSaveTripApi();
+    if(this.viewOfficialTripClicked) this.callSaveTripApi();
+  },
   destroyed: function(){
     window.removeEventListener("resize", this.resizeHandler);
   },
@@ -270,7 +285,7 @@ export default {
       console.log(toggle);
     },
     handleSearch: function() {
-      alert(this.selected);
+      // alert(this.selected);
 
       if (options.indexOf(this.selected) !== -1){
         this.params = makeParams(null, null, this.selected, null);  // type 
@@ -297,12 +312,15 @@ export default {
     },
     addToTrip(spot, id){
       this.$router.push("/trip/?qspot=" + spot + "&qid=" + id);
+      this.addToTripClicked = true;
     },
     sendNameToTripPage(name){
         this.$router.push("/trip/?qname=" + name);
     },
-    viewOfficialTrip(viewId){
+    viewOfficialTrip(viewId, iteNum){
       this.$router.push("/trip/?viewId=" + viewId);
+      this.viewOfficialTripClicked = true;
+      this.itenaryNum = iteNum;
     },
 
     // Handle scroll 
@@ -351,6 +369,65 @@ export default {
     resizeHandler(e) {
       this.windowSize.w = window.innerWidth;
       this.windowSize.h = window.innerHeight;
+    },
+    callSaveTripApi() {
+      let self = this;
+      let _id = new Date().getTime();
+      let token = this.$store.state.userToken;
+      let dayNum = 1;
+      let togos = [];
+      if(this.itenaryNum !== null) {
+        dayNum = this.officialItineraries[this.itenaryNum].dayNum;
+        togos = this.officialItineraries[this.itenaryNum].togos;
+      }
+      if (token.length > 0) {
+        apiSaveTrip(
+          _id,
+          this.tripDate,
+          this.tripName,
+          dayNum,
+          [],
+          togos,
+          [],
+          null,
+          token
+        )
+          .then(function(res) {
+            self.$message.success("行程儲存成功!");
+            self.$router.push(
+              "/trip?currentAccessId=" +
+                self.$store.state.user.id +
+                "&itineraryId=" +
+                _id
+            );
+            self.$bus.$emit("createTrip", {
+              tripDate: self.tripDate,
+              itinerary: res.data.data
+            });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      } else {
+        let promise = new Promise((resolve, reject) => {
+          //let date = new Date(Date.parse(self.tripDate));
+          let year = self.tripDate.getFullYear();
+          let month = self.tripDate.getMonth() + 1;
+          let day = self.tripDate.getDate();
+          let itinerary = {
+            startDate: { year: year, month: month, day: day },
+            name: self.tripName,
+            isPublic: true,
+            dayNum: 1,
+            togos: [],
+            travelInfos: []
+          };
+          resolve(itinerary);
+        });
+        promise.then(data => {
+          this.$bus.$emit("createTrip", { itinerary: data });
+        });
+      }
     }
   },
   watch: {

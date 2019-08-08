@@ -49,7 +49,7 @@
 </template>
 <script>
 import {getAreaPics, makeParams} from '../../utils/area.js'
-import {apiGetSpots} from '../../utils/api.js'
+import {apiGetSpots, apiSaveTrip} from '../../utils/api.js'
 
 export default {
     name: "HomeSearch",
@@ -69,6 +69,13 @@ export default {
         params: {},
         searchResults: [],
 
+        // for saveTrip
+        tripDate: new Date(),
+        tripName: "我的旅行",
+        itinerary: {},
+        visible: false,
+        currentAccessId: this.$route.query.currentAccessId,
+        placeClicked: false,
       }
     },
     methods: {
@@ -76,6 +83,7 @@ export default {
         var p = place;
         if (place.indexOf('台') == 0) p = '臺' + place.substr(1, 2);
         this.$router.push("/trip/?qplace=" + p);
+        this.placeClicked = true;
       },
       sendNameToTripPage(name){
         this.$router.push("/trip/?qname=" + name);
@@ -87,6 +95,63 @@ export default {
     created(){
       if (window.matchMedia("(max-width: 767px)").matches) {
         this.isMobile = true;
+      }
+    },
+    beforeDestroy(){
+      // alert("ready to destroy")
+      // alert(this.placeClicked)
+      if(this.placeClicked){
+        let self = this;
+        let _id = new Date().getTime();
+        let token = this.$store.state.userToken;
+        if (token.length > 0) {
+          apiSaveTrip(
+            _id,
+            this.tripDate,
+            this.tripName,
+            1,
+            [],
+            [],
+            [],
+            null,
+            token
+          )
+            .then(function(res) {
+              self.$message.success("行程儲存成功!");
+              self.$router.push(
+                "/trip?currentAccessId=" +
+                  self.$store.state.user.id +
+                  "&itineraryId=" +
+                  _id
+              );
+              self.$bus.$emit("createTrip", {
+                tripDate: self.tripDate,
+                itinerary: res.data.data
+              });
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+        } else {
+          let promise = new Promise((resolve, reject) => {
+            //let date = new Date(Date.parse(self.tripDate));
+            let year = self.tripDate.getFullYear();
+            let month = self.tripDate.getMonth() + 1;
+            let day = self.tripDate.getDate();
+            let itinerary = {
+              startDate: { year: year, month: month, day: day },
+              name: self.tripName,
+              isPublic: true,
+              dayNum: 1,
+              togos: [],
+              travelInfos: []
+            };
+            resolve(itinerary);
+          });
+          promise.then(data => {
+            this.$bus.$emit("createTrip", { itinerary: data });
+          });
+        }
       }
     },
     watch: {

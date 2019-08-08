@@ -2,8 +2,8 @@
   <div class="spotContainer" >
     <div class="tag-container" style="width: 100%;">
       <div class="sort-container" style="display:flex;flex-direction:row;justify-content:space-between; width:100%;">
-        <div style="display:flex;flex-direction:row;width:60%;">
-          <p class="ml-4 my-0" style="line-height:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">搜尋:    <b style="font-size:18px;">{{getQuery}}</b></p>
+        <div style="display:flex;flex-direction:row;width:60%; line-height:40px;   ">
+          <p class="ml-4 my-0" style="width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" >搜尋:    <b style="font-size:18px;">{{getQuery}}</b></p>
           
         </div>
         <div style="display:flex;flex-direction:row;">

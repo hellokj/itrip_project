@@ -10,8 +10,6 @@ const router = require('./routes');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
@@ -44,6 +42,7 @@ mongoose.connect(config.mongodb,{
 // });
 
 socketHandler = new SocketHandler();
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!以下的CODE 打包的時候要記得貼回去!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 io.on('connection', (socket) => {
     console.log(socket.id + ' has connected.');
     console.log("on locked itineraries", socketHandler.lockedItineraries);
@@ -52,17 +51,20 @@ io.on('connection', (socket) => {
     // 刪除垃圾行程表
     // socketHandler.getAllItinerary().exec((err, res) => {
     //     res.forEach((element) => {
-    //         if(element.name.includes('我的旅行')) {
-    //             //console.log(element.name)
-    //             socketHandler.deleteItinerary(element._id);
+    //         if(!element.memberIds.includes('example@mail.com')) {
+    //             console.log(element.name)
+    //             //socketHandler.deleteItinerary(element._id);
     //         }
     //     })
     // })
     socket.on('QQ', (data) => {
         let token = data.token;
-        // console.log("偷啃", token);
+        console.log("偷啃", token);
         if (token){
             socketHandler.connect(socket.id, token);
+        }
+        else {
+            socketHandler.connect(socket.id, null);
         }
     })
     // when member login
@@ -98,18 +100,19 @@ io.on('connection', (socket) => {
         console.log("locked", socketHandler.lockedItineraries);
     });
 
-    // socket.on("editRequest", async function(data){
-    //     // console.log("data", data);
-    //     let itineraryId = data.itineraryId;
-    //     let token = data.token;
-    //     let members = await socketHandler.lockItinerary(itineraryId, token);
-    //     // console.log("members", members);
-    //     io.to(members[0].socketId).emit('canEdit', "granted"); // 沒鎖 // editor
-    //     // console.log("editor socket id", members[0].socketId);
-    //     for (let i = 1; i < members.length; i++){
-    //         io.to(members[i].socketId).emit('notifyLocked'); // 上鎖
-    //     }
-    // });
+    socket.on("notifyMessage", async function(data){
+        let message;
+        if(data.type === 'create') {
+            message = data.memberName[0] + '*'.repeat(data.memberName.length - 1) + '在' + data.sec + '前創建了' + data.name + '行程' + '在' + data.date.substring(0, 10) + '出發'
+        }
+        else if(data.type ==='pdf') {
+            message = data.memberName[0] + '*'.repeat(data.memberName.length - 1) + '在' + data.sec + '前導出了PDF行程表!';
+        }
+        let membersToNotify = socketHandler.notifyAll(data.memberId);
+        membersToNotify.forEach(element => {
+            io.to(element).emit("notifyCreateTripMessage", {message: message});
+        });
+    });
 
     socket.on("releaseEditMode", function(data){
         console.log("有人離開了");

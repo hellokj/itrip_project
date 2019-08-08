@@ -57,6 +57,9 @@ export default {
             return Math.floor(time / 60);
         },
         formatTime(sec) {
+            if(typeof sec == 'string') {
+                return sec
+            }
             // to mins
             let mins = this.carryTimeUnit(sec);
             let remainingSec = Math.floor(sec % mins);

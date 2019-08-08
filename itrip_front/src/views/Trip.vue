@@ -249,8 +249,23 @@ export default {
     };
   },
   methods: {
-    editOn: function() {
-      this.$emit("edit-on");
+    saveTrip(_id, date, name, dayNum, startTimes, togos, travelInfos, memberId, token) {
+      apiSaveTrip(_id, date, name, dayNum, startTimes, togos, travelInfos, memberId, token)
+          .then(function(res) {
+            self.$message.success("行程儲存成功!");
+            self.$router.push(
+              "/trip?currentAccessId=" +
+                self.$store.state.user.id +
+                "&itineraryId=" +
+                _id
+            );
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+    },
+    editOn: function(){
+      this.$emit("edit-on")
     },
     addSpotToTrip(spot) {
       if (!this.isAddSpotLocked) {
@@ -505,36 +520,30 @@ export default {
       };
       // call get routes api
       await apiGetRoutes(data, mode)
-        .then(function(res) {
-          let tmpCoordinates = res.data.features[0].geometry.coordinates;
-          // reverse coordinates because leaflet uses inverted coordinates
-          self.reverseCoordinates(tmpCoordinates);
-          // assign routes to draw polyLine
-          let routes = tmpCoordinates;
-          // Travel time
-          let tmp = res.data.features[0].properties.segments[0];
-          let duration = tmp.duration;
-          let distance = tmp.distance;
-          let start = startOb.name;
-          let dest = destOb.name;
-          let travelInfo = new TravelInfo(
-            start,
-            dest,
-            mode,
-            duration,
-            distance,
-            routes
-          );
-          self.$set(self.itinerary.travelInfos[self.page], index, travelInfo);
-          // reset routes
-          self.resetRoutes();
-        })
-        .catch(function(error) {
-          //console.log(error);
-        })
-        .then(function() {
-          // always executed
-        });
+      .then(function (res) {
+        let tmpCoordinates = res.data.features[0].geometry.coordinates;
+        // reverse coordinates because leaflet uses inverted coordinates
+        self.reverseCoordinates(tmpCoordinates);
+        // assign routes to draw polyLine
+        let routes = tmpCoordinates;
+        // Travel time
+        let tmp = res.data.features[0].properties.segments[0];
+        let duration = tmp.duration;
+        let distance = tmp.distance;
+        let start = startOb.name;
+        let dest = destOb.name;
+        let travelInfo = new TravelInfo(start, dest, mode, duration, distance, routes);
+        self.$set(self.itinerary.travelInfos[self.page], index, travelInfo);
+        // reset routes
+        self.resetRoutes();
+      })
+      .catch(function (error) {
+        // Travel time
+        let start = startOb.name;
+        let dest = destOb.name;
+        let travelInfo = new TravelInfo(start, dest, null, null, null, null);
+        self.$set(self.itinerary.travelInfos[self.page], index, travelInfo);
+      })
     },
     changeMode(index, mode) {
       this.callGetRoutesApi(
@@ -708,6 +717,14 @@ export default {
     token: function(newVal, oldVal) {
       if (oldVal.length == 0) {
         this.storedToken = newVal;
+        let _id;
+        if(this.qviewId !== undefined) {
+          _id = this.qviewId;
+        }
+        else {
+          _id = new Date().getTime();
+        }
+        this.saveTrip(_id, this.itinerary.startDate, this.itinerary.name, this.itinerary.dayNum, [], this.itinerary.togos, this.itinerary.travelInfos, null, newVal);
       }
     },
     checkList: function(newVal, oldVal) {
