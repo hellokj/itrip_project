@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     submit() {
-      this.$bus.$emit("loading", { duration: 2500 });
+      this.$bus.$emit("loading", { duration: 3000 });
       this.isSubmit = true;
       if (this.$store.state.userToken.length == 0) {
         this.$router.push({ path: "/trip" });
@@ -93,7 +93,6 @@ export default {
           token
         )
           .then(function(res) {
-            self.$message.success("行程儲存成功!");
             self.$router.push(
               "/trip?currentAccessId=" +
                 self.$store.state.user.id +
@@ -110,7 +109,6 @@ export default {
           });
       } else {
         let promise = new Promise((resolve, reject) => {
-          //let date = new Date(Date.parse(self.tripDate));
           let year = self.tripDate.getFullYear();
           let month = self.tripDate.getMonth() + 1;
           let day = self.tripDate.getDate();
@@ -128,6 +126,11 @@ export default {
           this.$bus.$emit("createTrip", { itinerary: data });
         });
       }
+    }
+  },
+  destroyed() {
+    if (this.$store.state.userToken.length > 0) {
+      this.$message.success("行程儲存成功!");
     }
   }
 };

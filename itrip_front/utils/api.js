@@ -146,6 +146,7 @@ const apiDeleteItinerary = (id, token) => {
 const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
   let id = new Date().getTime();
   let date;
+  let self = this;
   if(typeof(startDate) === 'string') {
     date = new Date(Date.parse(startDate));
   }
@@ -164,7 +165,6 @@ const apiShareTrip = (startDate, name, dayNum, togos, travelInfos) => {
     togos: togos,
     travelInfos: travelInfos
   }
-  //console.log(data)
   return shareRequest.post('/shareItineraries', data);
 };
 
